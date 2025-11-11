@@ -16,7 +16,7 @@ class OnboardingWidgets extends StatelessWidget {
       child: PageView.builder(
         onPageChanged: onBoardingController.onPageChanged,
         controller: onBoardingController.pageController,
-        physics: NeverScrollableScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         itemCount: onBoardingController.onBoardingPages.length,
         itemBuilder: (context, index) {
           if (onBoardingController.onBoardingPages[index].points !=

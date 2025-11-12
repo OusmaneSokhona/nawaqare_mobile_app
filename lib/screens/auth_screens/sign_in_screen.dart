@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/auth_controller.dart';
+import 'package:patient_app/controllers/sign_in_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/custom_button.dart';
@@ -115,15 +115,12 @@ class SignInScreen extends StatelessWidget {
                   if (signInController.formKey.currentState!.validate()) {
                     if (signInController.isPasswordValid()) {
                       print("Validation passed!");
-                      // Optionally reset hasPasswordInteracted.value = false if successful
                     } else {
-                      // Mark as interacted so the validation checklist stays visible
                       signInController.markPasswordInteracted();
                       FocusScope.of(context).unfocus();
                       print("Password validation failed.");
                     }
                   } else {
-                    // Mark as interacted if initial form validation fails
                     signInController.markPasswordInteracted();
                     print("Form validation failed.");
                   }
@@ -137,7 +134,9 @@ class SignInScreen extends StatelessWidget {
                   ),),
                   5.horizontalSpace,
                   InkWell(
-                    onTap: (){},
+                    onTap: (){
+                      signInController.goToSignUpScreen();
+                    },
                     child: Text("Sign Up",style: TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 15.sp,

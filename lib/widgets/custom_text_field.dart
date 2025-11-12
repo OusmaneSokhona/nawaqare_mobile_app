@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:patient_app/utils/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
   final String labelText;
@@ -32,7 +34,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primaryColor = Color(0xFF1E88E5);
+    const Color primaryColor = AppColors.primaryColor;
     const Color fillColor = Colors.white;
     const double borderRadius = 12.0;
 
@@ -44,10 +46,10 @@ class CustomTextField extends StatelessWidget {
           child: Text(
             labelText,
             style: const TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
+          fontSize: 16.0,
+          fontWeight: FontWeight.w600,
+          color: Colors.black87,
+          ),
           ),
         ),
         Container(
@@ -73,7 +75,7 @@ class CustomTextField extends StatelessWidget {
               onChanged: onChanged,
               obscureText: isEnabled,
               validator: validator,
-              style: const TextStyle(fontSize: 16.0, color: Colors.black),
+              style:  TextStyle(fontSize: 16.sp, color: Colors.black),
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(
@@ -82,17 +84,17 @@ class CustomTextField extends StatelessWidget {
                 ),
                 prefixIcon: prefixIcon != null
                     ? Padding(
-                  padding: const EdgeInsets.only(left: 15.0, right: 10.0),
+                  padding:  EdgeInsets.only(left: 15.0, right: 5.w),
                   child: Icon(
                     prefixIcon,
                     color: primaryColor,
-                    size: 24.0,
+                    size: 24.sp,
                   ),
                 )
                     : null,
                 suffixIcon: isPasswordField
                     ? Padding(
-                  padding: const EdgeInsets.only(right: 15.0),
+                  padding:  EdgeInsets.only(right: 15.w),
                   child: InkWell(
                     onTap: () {
                       onTapEye!();
@@ -100,14 +102,14 @@ class CustomTextField extends StatelessWidget {
                     child: Icon(
                       !isEnabled?Icons.visibility:Icons.visibility_off,
                       color: Colors.grey,
-                      size: 24.0,
+                      size: 24.sp,
                     ),
                   ),
                 )
                     : null,
                 contentPadding: prefixIcon != null
                     ? null
-                    : const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                    :  EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                 filled: true,
                 fillColor: fillColor,
                 border: OutlineInputBorder(
@@ -116,7 +118,7 @@ class CustomTextField extends StatelessWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
-                  borderSide: BorderSide.none,
+                  borderSide:  BorderSide(color: AppColors.lightGrey.withOpacity(0.3), width: 0.5),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(borderRadius),

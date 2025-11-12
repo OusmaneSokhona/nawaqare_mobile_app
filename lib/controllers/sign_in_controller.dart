@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/forgot_password.dart';
+import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
 
 import '../widgets/validation_check_list.dart';
 
@@ -25,6 +26,35 @@ class SignInController extends GetxController {
     if (!regExp.hasMatch(value)) {
       return 'Please enter a valid email address.';
     }
+    return null;
+  }
+  String? nameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Name is required and cannot be empty.';
+    }
+    return null;
+  }
+  String? phoneNumberValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Phone number is required.';
+    }
+
+    // 1. Clean the input: Remove common non-digit characters (spaces, dashes, parens, dots)
+    final cleanedValue = value.replaceAll(RegExp(r'[^\d+]'), '');
+
+    // 2. Define a flexible pattern.
+    // This pattern matches:
+    // - Optional leading '+' (for international format)
+    // - Followed by 7 to 15 digits (a reasonable range for most international and domestic numbers)
+    const pattern = r'^\+?\d{7,15}$';
+    final regExp = RegExp(pattern);
+
+    if (!regExp.hasMatch(cleanedValue)) {
+      // If you need to enforce a specific 10-digit US/Canadian format,
+      // you would change the pattern to r'^\+?1?\d{10}$' and adjust the error message.
+      return 'Please enter a valid phone number (7-15 digits, optional leading +).';
+    }
+
     return null;
   }
 
@@ -82,12 +112,14 @@ class SignInController extends GetxController {
     }
   }
 
-// Add a method to explicitly mark as interacted, used after form submit
   void markPasswordInteracted() {
     hasPasswordInteracted.value = true;
   }
   void goToForgotPasswordScreen(){
     Get.to(ForgotPassword());
+  }
+  void goToSignUpScreen(){
+    Get.to(SignUpScreen());
   }
 
 

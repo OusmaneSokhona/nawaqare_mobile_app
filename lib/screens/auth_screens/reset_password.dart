@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/auth_controller.dart';
 import 'package:patient_app/controllers/forget_password_contorller.dart';
-
+import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../widgets/custom_button.dart';
@@ -60,7 +59,6 @@ class ResetPassword extends StatelessWidget {
                 ),),
               ),
               20.verticalSpace,
-              // In the 'New Password' CustomTextField
               Obx(
                     ()=> CustomTextField(
                   labelText: 'New Password',
@@ -72,7 +70,6 @@ class ResetPassword extends StatelessWidget {
                   onFocusChange: authController.setPasswordActive,
                   validator: authController.validatePassword,
                   onChanged: (value) => authController.currentPassword.value = value,
-                  // --- START OF CHANGE ---
                   validationView: authController.isPasswordActive.value
                       ? Obx(
                         () => ValidationChecklist(
@@ -80,7 +77,6 @@ class ResetPassword extends StatelessWidget {
                     ),
                   )
                       : null,
-                  // --- END OF CHANGE ---
                   onTapEye: (){
                     authController.newPasswordVisibility.value = !authController.newPasswordVisibility.value;
                   },
@@ -105,6 +101,7 @@ class ResetPassword extends StatelessWidget {
               40.verticalSpace,
               CustomButton(borderRadius: 15, text: "Reset Password", onTap: (){
                 if (authController.formKeyForget.currentState!.validate()) {
+                  Get.offAll(SignInScreen());
                   print("Validation passed!");
                 } else {
                   print("Validation failed.");

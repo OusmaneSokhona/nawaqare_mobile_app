@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/controllers/forget_password_contorller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class VerificationCodeWidget extends StatelessWidget {
-  final ForgetPasswordController controller;
+  // FIX: Changed the type from ForgetPasswordController to GetxController
+  final GetxController controller;
   const VerificationCodeWidget({super.key,required this.controller});
 
   @override
   Widget build(BuildContext context) {
+    // Cast the controller to dynamic to safely access shared properties
+    // (controllers, focusNodes, handleCodeChange) that exist on both SignUpController and ForgetPasswordController.
+    final dynamic verifiedController = controller;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(6, (index) {
@@ -19,9 +25,10 @@ class VerificationCodeWidget extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1,
               child: _DigitInputField(
-                controller: controller.controllers[index],
-                focusNode: controller.focusNodes[index],
-                onChanged: (value) => controller.handleCodeChange(index, value),
+                // Accessing properties via the dynamic variable
+                controller: verifiedController.controllers[index],
+                focusNode: verifiedController.focusNodes[index],
+                onChanged: (value) => verifiedController.handleCodeChange(index, value),
               ),
             ),
           ),

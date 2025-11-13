@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:patient_app/controllers/sign_in_controller.dart';
 
+import '../screens/auth_screens/sign_in_screen.dart';
 import '../widgets/validation_check_list.dart';
 
 class SignUpController extends GetxController {
@@ -262,7 +263,14 @@ class SignUpController extends GetxController {
       selectedFileName.value = 'File selection cancelled';
     }
   }
-
+void moveToSignInScreen(){
+    nameController.clear();
+    emailController.clear();
+    passwordController.clear();
+    phoneNumberController.clear();
+    controllers.clear();
+  Get.to(SignInScreen());
+}
   // ............On Close Function..............
 
   @override

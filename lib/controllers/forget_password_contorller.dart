@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../screens/auth_screens/sign_in_screen.dart';
 import '../widgets/validation_check_list.dart';
 
 class ForgetPasswordController extends GetxController{
@@ -149,6 +150,12 @@ class ForgetPasswordController extends GetxController{
       return 'Password does not meet all requirements.';
     }
     return null;
+  }
+  void moveToSignInScreen(){
+    confrimNewPassword.clear();
+    newPassword.clear();
+    controllers.clear();
+    Get.to(SignInScreen());
   }
   @override
   void onClose() {

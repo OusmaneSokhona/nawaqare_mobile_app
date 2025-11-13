@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/sign_up_controller.dart';
+import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/widgets/display_field.dart';
 import 'package:patient_app/widgets/profile_picture_widget.dart';
 import 'package:patient_app/widgets/success_dialog.dart';
@@ -136,11 +137,16 @@ class DocumentsReports extends StatelessWidget {
               ),
 
               40.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Submit", onTap: () {
+              CustomButton(borderRadius: 15, text: "Submit", onTap: () async {
                 Get.dialog(SuccessDialog());
+                await Future.delayed(Duration(seconds: 3),(){
+                  signUpController.moveToSignInScreen();
+                });
               }),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Skip", onTap: () {},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+              CustomButton(borderRadius: 15, text: "Skip", onTap: () {
+                signUpController.moveToSignInScreen();
+              },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
               50.verticalSpace,
             ],
           ),

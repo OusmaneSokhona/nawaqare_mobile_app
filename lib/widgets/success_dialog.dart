@@ -54,24 +54,24 @@ class SuccessDialog extends StatelessWidget {
             ),
           ),
 
-          Positioned(
-            top: 10,
-            right: 10,
-            child: InkWell(
-              onTap: (){Get.back();},
-              child: Container(
-                height: 35.h,
-                width: 35.w,
-                alignment: Alignment.center,
-
-                decoration: BoxDecoration(color: AppColors.primaryColor,shape: BoxShape.circle),
-                child:  Icon(
-                    Icons.close_rounded,
-                    color: Colors.white,
-                  ),
-              ),
-            ),
-          ),
+          // Positioned(
+          //   top: 10,
+          //   right: 10,
+          //   child: InkWell(
+          //     onTap: (){Get.back();},
+          //     child: Container(
+          //       height: 35.h,
+          //       width: 35.w,
+          //       alignment: Alignment.center,
+          //
+          //       decoration: BoxDecoration(color: AppColors.primaryColor,shape: BoxShape.circle),
+          //       child:  Icon(
+          //           Icons.close_rounded,
+          //           color: Colors.white,
+          //         ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

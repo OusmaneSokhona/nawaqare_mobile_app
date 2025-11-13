@@ -114,6 +114,7 @@ class SignInScreen extends StatelessWidget {
                 CustomButton(borderRadius: 15, text: "Sign In", onTap: (){
                   if (signInController.formKey.currentState!.validate()) {
                     if (signInController.isPasswordValid()) {
+                      signInController.goToMainScreen();
                       print("Validation passed!");
                     } else {
                       signInController.markPasswordInteracted();

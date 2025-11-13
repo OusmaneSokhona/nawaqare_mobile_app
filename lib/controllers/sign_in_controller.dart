@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/forgot_password.dart';
 import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
+import 'package:patient_app/screens/main_screen.dart';
 
 import '../widgets/validation_check_list.dart';
 
@@ -120,6 +121,9 @@ class SignInController extends GetxController {
   }
   void goToSignUpScreen(){
     Get.to(SignUpScreen());
+  }
+  void goToMainScreen(){
+    Get.to(MainScreen());
   }
 
 

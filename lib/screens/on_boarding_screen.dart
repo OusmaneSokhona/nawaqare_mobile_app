@@ -24,7 +24,7 @@ class OnBoardingScreen extends StatelessWidget {
         child: Column(
           children: [
             120.verticalSpace,
-OnboardingWidgets(onBoardingController: onBoardingController),
+Obx(()=>onBoardingController.currentPageIndex.value<3?OnboardingWidgets(onBoardingController: onBoardingController):SizedBox()),
             20.verticalSpace,
             Obx(
               () => Row(
@@ -89,8 +89,7 @@ OnboardingWidgets(onBoardingController: onBoardingController),
                 ],
               ),
             ),
-
-            100.verticalSpace,
+            70.verticalSpace,
           ],
         ),
       ),

@@ -27,6 +27,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/fonts/
+    - assets/demo_images/
 fonts:
   - family: JakartaSansExtraBold
     fonts:

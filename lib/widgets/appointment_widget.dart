@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:patient_app/widgets/custom_button.dart';
 import '../models/appointment_model.dart';
 import '../utils/app_colors.dart';
 
@@ -20,11 +21,11 @@ class AppointmentWidget extends StatelessWidget {
       case "follow up":
         return AppColors.primaryColor;
       case "renewal":
-        return Colors.orange;
+        return AppColors.orange;
       case "exam review":
         return Colors.lightBlueAccent;
       case "initial":
-        return Colors.green;
+        return AppColors.green;
       default:
         return Colors.grey;
     }
@@ -214,28 +215,9 @@ class AppointmentWidget extends StatelessWidget {
             ),
 
             const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () {
-                  onTap();
-                },
-                child: Text(
-                  "View Detail",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18.sp,
-                  ),
-                ),
-              ),
-            ),
+            CustomButton(borderRadius: 15, text: "View Detail", onTap: (){
+              onTap();
+            },height: 40,),
           ],
         ),
       ),

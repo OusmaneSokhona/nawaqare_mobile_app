@@ -9,14 +9,15 @@ class CustomButton extends StatelessWidget {
   final Color fontColor;
   final VoidCallback onTap;
   final int fontSize;
-  const CustomButton({super.key,required this.borderRadius,required this.text, required this.onTap, this.bgColor = AppColors.primaryColor, this.fontSize = 20, this.fontColor = Colors.white});
+  final double height;
+  const CustomButton({super.key,required this.borderRadius,required this.text, required this.onTap, this.bgColor = AppColors.primaryColor, this.fontSize = 20, this.fontColor = Colors.white,this.height=50});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 50.h,
+        height: height.h,
         width: 0.9.sw,
         decoration: BoxDecoration(
           color:bgColor,

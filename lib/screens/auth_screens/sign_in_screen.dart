@@ -112,19 +112,7 @@ class SignInScreen extends StatelessWidget {
                 40.verticalSpace,
 
                 CustomButton(borderRadius: 15, text: "Sign In", onTap: (){
-                  if (signInController.formKey.currentState!.validate()) {
-                    if (signInController.isPasswordValid()) {
-                      signInController.goToMainScreen();
-                      print("Validation passed!");
-                    } else {
-                      signInController.markPasswordInteracted();
-                      FocusScope.of(context).unfocus();
-                      print("Password validation failed.");
-                    }
-                  } else {
-                    signInController.markPasswordInteracted();
-                    print("Form validation failed.");
-                  }
+signInController.signInTap();
                 },fontSize: 18),
                 20.verticalSpace,
                 Row(mainAxisAlignment: MainAxisAlignment.center,children: [

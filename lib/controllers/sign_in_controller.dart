@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/forgot_password.dart';
 import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
 import 'package:patient_app/screens/main_screen.dart';
+import 'package:patient_app/utils/shared_prefrence.dart';
 
 import '../widgets/validation_check_list.dart';
 
@@ -125,7 +126,22 @@ class SignInController extends GetxController {
   void goToMainScreen(){
     Get.to(MainScreen());
   }
-
+void signInTap(){
+  if (formKey.currentState!.validate()) {
+    if (isPasswordValid()) {
+      LocalStorageUtils.setLogined();
+      goToMainScreen();
+      print("Validation passed!");
+    } else {
+      markPasswordInteracted();
+      FocusManager.instance.primaryFocus!.unfocus();
+      print("Password validation failed.");
+    }
+  } else {
+    markPasswordInteracted();
+    print("Form validation failed.");
+  }
+}
 
 
 

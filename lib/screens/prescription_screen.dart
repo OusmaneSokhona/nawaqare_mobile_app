@@ -1,22 +1,19 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/home_controller.dart';
+import 'package:patient_app/controllers/prescription_controller.dart';
+import 'package:patient_app/widgets/prescription_card.dart';
 
 import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_images.dart';
-import '../widgets/appointment_widget.dart';
-import 'appointment_detail_screen.dart';
 
-class AppointmentScreen extends StatelessWidget {
-  AppointmentScreen({super.key});
-
-  HomeController homeController = Get.find();
-
+class PrescriptionScreen extends StatelessWidget {
+  PrescriptionScreen({super.key});
+PrescriptionController prescriptionController =Get.put(PrescriptionController());
   @override
   Widget build(BuildContext context) {
+    print(prescriptionController.prescriptionType.value);
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -47,7 +44,7 @@ class AppointmentScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Appointments",
+                    "Prescription",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -71,31 +68,31 @@ class AppointmentScreen extends StatelessWidget {
                     Obx(
                           () => InkWell(
                         onTap: () {
-                          homeController.appointmentType.value =
-                          "upcoming";
+                          prescriptionController.prescriptionType.value =
+                          "activePrescription";
                         },
                         child: Container(
                           height: 55.h,
                           width: 0.455.sw,
                           decoration: BoxDecoration(
                             color:
-                            homeController.appointmentType.value ==
-                                "upcoming"
+                            prescriptionController.prescriptionType.value ==
+                                "activePrescription"
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Upcoming",
+                            "Active Prescriptions",
                             style: TextStyle(
                               color:
-                              homeController.appointmentType.value ==
-                                  "upcoming"
+                              prescriptionController.prescriptionType.value ==
+                                  "activePrescription"
                                   ? Colors.white
                                   : Colors.black,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 14.5.sp,
+                              fontWeight: FontWeight.w700,
                               fontFamily: AppFonts.jakartaMedium,
                             ),
                           ),
@@ -105,30 +102,30 @@ class AppointmentScreen extends StatelessWidget {
                     Obx(
                           () => InkWell(
                         onTap: () {
-                          homeController.appointmentType.value = "past";
+                          prescriptionController.prescriptionType.value = "pastPrescription";
                         },
                         child: Container(
                           height: 55.h,
                           width: 0.455.sw,
                           decoration: BoxDecoration(
                             color:
-                            homeController.appointmentType.value ==
-                                "past"
+                            prescriptionController.prescriptionType.value==
+                                "pastPrescription"
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Past",
+                            "Past Prescriptions",
                             style: TextStyle(
                               color:
-                              homeController.appointmentType.value ==
-                                  "past"
+                              prescriptionController.prescriptionType.value ==
+                                  "pastPrescription"
                                   ? Colors.white
                                   : Colors.black,
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.w600,
+                              fontSize: 14.5.sp,
+                              fontWeight: FontWeight.w700,
                               fontFamily: AppFonts.jakartaMedium,
                             ),
                           ),
@@ -140,27 +137,26 @@ class AppointmentScreen extends StatelessWidget {
               ),
               10.verticalSpace,
               Obx(
-                    ()=> homeController.appointmentType.value=="upcoming"?
+                    ()=> prescriptionController.prescriptionType.value=="activePrescription"?
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.only(top: 20.h,bottom: 20.h),
-                    itemCount: homeController.doctorList.length,
+                    itemCount: prescriptionController.prescriptions.length,
                     itemBuilder: (context, index) {
-                      return AppointmentWidget(
-                        onTap: (){Get.to(AppointmentDetailScreen(appointmentModel: homeController.doctorList[index]));},
-                        appointmentModel: homeController.doctorList[index],
+                      return PrescriptionCard(
+                        isActive: true,
+                        prescription: prescriptionController.prescriptions[index],
                       );
                     },
                   ),
                 ): Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.only(top: 20.h,bottom: 20.h),
-                    itemCount: homeController.doctorList.length,
+                    itemCount: prescriptionController.postPrescriptions.length,
                     itemBuilder: (context, index) {
-                      return AppointmentWidget(
-                        isCompleted: true,
-                        onTap: (){Get.to(AppointmentDetailScreen(isCompleted: true,appointmentModel: homeController.doctorList[index]));},
-                        appointmentModel: homeController.doctorList[index],
+                      return PrescriptionCard(
+                        isActive: false,
+                        prescription: prescriptionController.postPrescriptions[index],
                       );
                     },
                   ),

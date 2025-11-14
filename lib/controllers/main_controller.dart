@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/home_screen.dart';
 
 class MainController extends GetxController{
-  var currentIndex = 0.obs; // Use .obs for reactive state
+  var currentIndex = 0.obs;
   var currentTitle = 'Home'.obs;
   final List<Widget> screens = [
     HomeScreen(),

@@ -140,25 +140,25 @@ class CompleteProfile extends StatelessWidget {
                       10.verticalSpace,
                       DisplayFieldContainer(label: "Phone Number", value: signUpController.phoneNumberController.text),
                       10.verticalSpace,
-                      _buildDropdownField(
+                      buildDropdownField(
                         title: 'Gender',
                         items: signUpController.genderList,
                         selectedValue: signUpController.selectedGender,
                         onChanged: signUpController.updateSelectedGender,
                       ),
-                      _buildDropdownField(
+                      buildDropdownField(
                         title: 'Country of Residence',
                         items: signUpController.countryList,
                         selectedValue: signUpController.selectedCountry,
                         onChanged: signUpController.updateSelectedCountry,
                       ),
-                      _buildDropdownField(
+                      buildDropdownField(
                         title: 'Religion',
                         items: signUpController.religionList,
                         selectedValue: signUpController.selectedReligion,
                         onChanged: signUpController.updateSelectedReligion,
                       ),
-                      _buildDropdownField(
+                      buildDropdownField(
                         title: 'Department',
                         items: signUpController.departmentList,
                         selectedValue: signUpController.selectedDepartment,
@@ -196,7 +196,7 @@ class CompleteProfile extends StatelessWidget {
       borderRadius: BorderRadius.circular(15),
     );
   }
-  Widget _buildDropdownField({
+  static Widget buildDropdownField({
     required String title,
     required List<String> items,
     required Rx<String?> selectedValue,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/past_appointment_widgets.dart';
 import '../models/appointment_model.dart';
 import '../utils/app_colors.dart';
@@ -116,53 +117,9 @@ class AppointmentDetailScreen extends StatelessWidget {
                             fontFamily: AppFonts.jakartaMedium,
                           ),),
                         70.verticalSpace,
-                        SizedBox(
-                          height: 55.h,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            onPressed: () {
-
-                            },
-                            child: Text(
-                              "Join Consultation",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18.sp,
-                              ),
-                            ),
-                          ),
-                        ),
+                        CustomButton(borderRadius: 15, text: "Join Consultation", onTap: (){}),
                         10.verticalSpace,
-                        SizedBox(
-                          height: 55.h,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey.withOpacity(0.2),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            onPressed: () {
-
-                            },
-                            child: Text(
-                              "Reschedule",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 18.sp,
-                              ),
-                            ),
-                          ),
-                        ),
+                       CustomButton(borderRadius: 15, text: "Reschedule", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,)
                       }
                     ],
                   ),

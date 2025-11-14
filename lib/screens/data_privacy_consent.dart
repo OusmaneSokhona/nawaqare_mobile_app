@@ -4,11 +4,14 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/shared_prefrence.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 class DataPrivacyConsent extends StatelessWidget {
-   DataPrivacyConsent({super.key});
-RxBool isChecked = false.obs;
+  DataPrivacyConsent({super.key});
+
+  RxBool isChecked = false.obs;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +26,7 @@ RxBool isChecked = false.obs;
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               80.verticalSpace,
@@ -55,9 +58,9 @@ RxBool isChecked = false.obs;
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Padding(
-                    padding:  EdgeInsets.only(bottom: 9.h),
+                    padding: EdgeInsets.only(bottom: 9.h),
                     child: Obx(
-                      ()=> SizedBox(
+                      () => SizedBox(
                         width: 26.w,
                         child: Checkbox(
                           activeColor: AppColors.primaryColor,
@@ -85,17 +88,55 @@ RxBool isChecked = false.obs;
               40.verticalSpace,
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text("View full privacy policy",style: TextStyle(fontFamily: AppFonts.jakartaMedium,fontSize: 16.sp,fontWeight:FontWeight.w500,color: AppColors.primaryColor,decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor),),
+                child: Text(
+                  "View full privacy policy",
+                  style: TextStyle(
+                    fontFamily: AppFonts.jakartaMedium,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.primaryColor,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primaryColor,
+                  ),
+                ),
               ),
               7.verticalSpace,
               Align(
                 alignment: Alignment.centerLeft,
-                child: Text("Terms of medical data processing",style: TextStyle(fontFamily: AppFonts.jakartaMedium,fontSize: 16.sp,fontWeight:FontWeight.w500,color: AppColors.primaryColor,decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor),),
+                child: Text(
+                  "Terms of medical data processing",
+                  style: TextStyle(
+                    fontFamily: AppFonts.jakartaMedium,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.primaryColor,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primaryColor,
+                  ),
+                ),
               ),
               60.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Accept & Continue", onTap: (){Get.to(SignInScreen());},fontSize: 18,),
+              CustomButton(
+                borderRadius: 15,
+                text: "Accept & Continue",
+                onTap: () {
+                  LocalStorageUtils.setFirstTime();
+                  Get.to(SignInScreen());
+                },
+                fontSize: 18,
+              ),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Decline", onTap: (){Get.to(SignInScreen());},fontSize: 18,bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+              CustomButton(
+                borderRadius: 15,
+                text: "Decline",
+                onTap: () {
+                  LocalStorageUtils.setFirstTime();
+                  Get.to(SignInScreen());
+                },
+                fontSize: 18,
+                bgColor: AppColors.inACtiveButtonColor,
+                fontColor: Colors.black,
+              ),
             ],
           ),
         ),

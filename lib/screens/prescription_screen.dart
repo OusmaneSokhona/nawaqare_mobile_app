@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/prescription_controller.dart';
 import 'package:patient_app/widgets/prescription_card.dart';
-
 import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_images.dart';
@@ -144,6 +143,9 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
                     itemCount: prescriptionController.prescriptions.length,
                     itemBuilder: (context, index) {
                       return PrescriptionCard(
+                        onTap: (){
+                          prescriptionController.viewDetail(prescriptionController.prescriptions[index]);
+                        },
                         isActive: true,
                         prescription: prescriptionController.prescriptions[index],
                       );
@@ -155,6 +157,9 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
                     itemCount: prescriptionController.postPrescriptions.length,
                     itemBuilder: (context, index) {
                       return PrescriptionCard(
+                        onTap: (){
+                          prescriptionController.viewDetail(prescriptionController.postPrescriptions[index]);
+                        },
                         isActive: false,
                         prescription: prescriptionController.postPrescriptions[index],
                       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/payment_detail_screen.dart';
 
 import '../utils/app_colors.dart';
 import '../utils/app_fonts.dart';
@@ -65,6 +66,7 @@ class OrderSummaryScreen extends StatelessWidget {
                 _buildCertificationNote(),
                 30.verticalSpace,
                 CustomButton(borderRadius: 15, text: "Confirm order", onTap: (){
+                  Get.to(PaymentDetailScreen());
                 }),
                 20.verticalSpace,
                 CustomButton(borderRadius: 15, text: "Cancel", onTap: (){

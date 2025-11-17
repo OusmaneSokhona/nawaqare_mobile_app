@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/chat_screen.dart';
 import 'package:patient_app/screens/home_screen.dart';
 
 class MainController extends GetxController{
@@ -7,7 +8,7 @@ class MainController extends GetxController{
   var currentTitle = 'Home'.obs;
   final List<Widget> screens = [
     HomeScreen(),
-    Scaffold(body: Center(child: Text("Coming Soon Chat"),),),
+    ChatScreen(),
     Scaffold(body: Center(child: Text("Coming Soon Search"),),),
     Scaffold(body: Center(child: Text("Coming Soon Profile"),),),
   ];

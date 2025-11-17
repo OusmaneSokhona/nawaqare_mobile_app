@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/prescription_details.dart';
 import 'package:patient_app/screens/refill_staus.dart';
 import 'package:patient_app/screens/request_refill.dart';
 
+import '../models/delivery_options_model.dart';
 import '../models/prscription_model.dart';
 
 class PrescriptionController extends GetxController{
@@ -13,6 +15,7 @@ class PrescriptionController extends GetxController{
   @override
   void onInit() {
     super.onInit();
+    selectedOption.value=options.first;
     loadDummyData();
   }
 
@@ -105,7 +108,7 @@ class PrescriptionController extends GetxController{
   }
 
   void viewDetail(PrescriptionModel prescription) {
-    Get.snackbar('View Detail', 'Navigating to details for ${prescription.medicationName}.');
+    Get.to(PrescriptionDetails(prescriptionModel: prescription));
   }
   final selectedCycle = '1 month'.obs;
   final refillCycles = ['1 month', '3 months', '6 months'];
@@ -118,5 +121,16 @@ class PrescriptionController extends GetxController{
   TextEditingController noteController=TextEditingController();
   void sendRequest(){
     Get.to(RefillStaus());
+  }
+  // .........delivery option .............//
+  final List<DeliveryOption> options = [
+    DeliveryOption(name: 'Home Delivery', price: 5.00),
+    DeliveryOption(name: 'Pickup in pharmacy', price: 0.00),
+  ];
+  var selectedOption = Rx<DeliveryOption?>(null);
+  void selectOption(DeliveryOption? option) {
+    if (option != null) {
+      selectedOption.value = option;
+    }
   }
 }

@@ -8,10 +8,10 @@ import 'package:patient_app/utils/app_colors.dart';
 import '../models/prscription_model.dart';
 
 class PrescriptionCard extends StatelessWidget {
-
+  Function onTap;
   final PrescriptionModel prescription;
 final bool isActive;
-   PrescriptionCard({required this.prescription, super.key,this.isActive=true});
+   PrescriptionCard({required this.prescription, super.key,this.isActive=true,required this.onTap});
 PrescriptionController controller=Get.find();
   Color _getStatusColor(PrescriptionStatus status) {
     switch (status) {
@@ -189,7 +189,7 @@ PrescriptionController controller=Get.find();
               _buildActionChip(
                 'View Detail',
                 primaryColor,
-                    () => controller.viewDetail(prescription),Colors.white
+                    () {onTap();},Colors.white
               ),
             ],
           ),

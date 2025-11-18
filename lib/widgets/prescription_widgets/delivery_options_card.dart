@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
-import '../models/delivery_options_model.dart';
+import '../../models/delivery_options_model.dart';
 
 class DeliveryOptionsCard extends StatelessWidget {
   const DeliveryOptionsCard({super.key});

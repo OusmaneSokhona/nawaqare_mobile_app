@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:patient_app/models/prscription_model.dart';
 
-import '../utils/app_colors.dart';
-import '../utils/app_fonts.dart';
-import '../utils/app_images.dart';
-import '../widgets/custom_button.dart';
+import '../../utils/app_colors.dart';
+import '../../utils/app_fonts.dart';
+import '../../utils/app_images.dart';
+import '../../widgets/custom_button.dart';
 import 'order_summary.dart';
 
 class PrescriptionDetails extends StatelessWidget {

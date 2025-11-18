@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/payment_detail_screen.dart';
+import 'package:patient_app/screens/prescription_screens/payment_detail_screen.dart';
 
-import '../utils/app_colors.dart';
-import '../utils/app_fonts.dart';
-import '../utils/app_images.dart';
-import '../widgets/custom_button.dart';
+import '../../utils/app_colors.dart';
+import '../../utils/app_fonts.dart';
+import '../../utils/app_images.dart';
+import '../../widgets/custom_button.dart';
 
 class OrderSummaryScreen extends StatelessWidget {
   const OrderSummaryScreen({super.key});

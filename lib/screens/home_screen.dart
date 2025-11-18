@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/home_controller.dart';
-import 'package:patient_app/screens/appointment_screen.dart';
-import 'package:patient_app/screens/prescription_screen.dart';
+import 'package:patient_app/screens/appointment_screens/appointment_screen.dart';
+import 'package:patient_app/screens/notifications_screens/notifications_screen.dart';
+import 'package:patient_app/screens/order_screens/order_screen.dart';
+import 'package:patient_app/screens/prescription_screens/prescription_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
-import 'package:patient_app/widgets/appointment_card.dart';
+import 'package:patient_app/widgets/appointment_widgets/appointment_card.dart';
 import 'package:patient_app/widgets/category_button.dart';
 import 'package:patient_app/widgets/next_action_row.dart';
 import 'package:patient_app/widgets/order_tracking_card.dart';
@@ -68,9 +70,14 @@ class HomeScreen extends StatelessWidget {
                     20.horizontalSpace,
                     Text("Mr Alex",style: TextStyle(color: Colors.white,fontFamily:AppFonts.jakartaBold,fontSize: 22.h,fontWeight: FontWeight.w700),),
                     Spacer(),
-                    Image.asset(
-                      "assets/images/bell_icon.png",
-                      height: 25.h,
+                    InkWell(
+                      onTap: (){
+                        Get.to(NotificationScreen());
+                      },
+                      child: Image.asset(
+                        "assets/images/bell_icon.png",
+                        height: 25.h,
+                      ),
                     ),
                   ],
                 ),
@@ -95,9 +102,14 @@ class HomeScreen extends StatelessWidget {
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
-                          Image.asset(
-                            "assets/images/bell_icon.png",
-                            height: 30.h,
+                          InkWell(
+                            onTap: (){
+                              Get.to(NotificationScreen());
+                            },
+                            child: Image.asset(
+                              "assets/images/bell_icon.png",
+                              height: 30.h,
+                            ),
                           ),
                         ],
                       ),
@@ -176,7 +188,9 @@ class HomeScreen extends StatelessWidget {
                             color: AppColors.green,
                           ),
                           CategoryButton(
-                            onTap: (){},
+                            onTap: (){
+                              Get.to(OrderScreen());
+                            },
                             title: "Orders",
                             icon: "assets/images/box_icon.png",
                             color: AppColors.orange,

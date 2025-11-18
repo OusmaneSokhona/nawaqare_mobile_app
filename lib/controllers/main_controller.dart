@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/chat_screen.dart';
+import 'package:patient_app/screens/chat_screens/chat_screen.dart';
 import 'package:patient_app/screens/home_screen.dart';
 
 class MainController extends GetxController{

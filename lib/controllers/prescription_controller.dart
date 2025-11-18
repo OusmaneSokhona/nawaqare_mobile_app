@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/prescription_details.dart';
-import 'package:patient_app/screens/refill_staus.dart';
-import 'package:patient_app/screens/request_refill.dart';
+import 'package:patient_app/screens/prescription_screens/prescription_details.dart';
+import 'package:patient_app/screens/prescription_screens/refill_staus.dart';
+import 'package:patient_app/screens/prescription_screens/request_refill.dart';
 
 import '../models/delivery_options_model.dart';
 import '../models/prscription_model.dart';

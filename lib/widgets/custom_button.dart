@@ -10,7 +10,8 @@ class CustomButton extends StatelessWidget {
   final VoidCallback onTap;
   final int fontSize;
   final double height;
-  const CustomButton({super.key,required this.borderRadius,required this.text, required this.onTap, this.bgColor = AppColors.primaryColor, this.fontSize = 20, this.fontColor = Colors.white,this.height=50});
+  final IconData? icon;
+  const CustomButton({super.key,required this.borderRadius,required this.text, required this.onTap, this.bgColor = AppColors.primaryColor, this.fontSize = 20, this.fontColor = Colors.white,this.height=50,this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,15 @@ class CustomButton extends StatelessWidget {
         ),
         alignment: Alignment.center,
 
-        child: Text(text,
+        child: icon!=null?Row(mainAxisAlignment: MainAxisAlignment.center,children: [
+          Icon(icon,size: 24.sp,color: fontColor,),
+          Text(text,
+              style: TextStyle(
+                color:fontColor,
+                fontSize: fontSize.sp,
+                fontWeight: FontWeight.w600,
+              )),
+        ],):Text(text,
             style: TextStyle(
               color:fontColor,
               fontSize: fontSize.sp,

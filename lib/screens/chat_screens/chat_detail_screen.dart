@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_images.dart';
 
-import '../controllers/chat_controller.dart';
-import '../models/chat_model.dart';
+import '../../controllers/chat_controller.dart';
+import '../../models/chat_model.dart';
 
 class ChatDetailScreen extends StatelessWidget {
   ChatDetailScreen({super.key});

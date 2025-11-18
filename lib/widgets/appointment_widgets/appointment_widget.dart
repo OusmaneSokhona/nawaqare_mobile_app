@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/appointment_model.dart';
-import '../utils/app_colors.dart';
+import 'package:patient_app/widgets/custom_button.dart';
+import '../../models/appointment_model.dart';
+import '../../utils/app_colors.dart';
 
-class AppintmentDetailWidget extends StatelessWidget {
+class AppointmentWidget extends StatelessWidget {
   final AppointmentModel appointmentModel;
+  Function onTap;
+  bool isCompleted = false;
 
-  AppintmentDetailWidget({Key? key, required this.appointmentModel, })
-      : super(key: key);
+  AppointmentWidget({
+    Key? key,
+    required this.appointmentModel,
+    this.isCompleted = false,
+    required this.onTap,
+  }) : super(key: key);
 
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case "follow up":
         return AppColors.primaryColor;
       case "renewal":
-        return Colors.orange;
+        return AppColors.orange;
       case "exam review":
         return Colors.lightBlueAccent;
       case "initial":
-        return Colors.green;
+        return AppColors.green;
       default:
         return Colors.grey;
     }
@@ -51,7 +58,10 @@ class AppintmentDetailWidget extends StatelessWidget {
                       children: [
                         Text(
                           "${appointmentModel.date}",
-                          style:  TextStyle(color: Colors.black54, fontSize: 12.sp),
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12.sp,
+                          ),
                         ),
                         8.horizontalSpace,
                         Icon(
@@ -62,24 +72,56 @@ class AppintmentDetailWidget extends StatelessWidget {
                         4.horizontalSpace,
                         Text(
                           "${appointmentModel.time}",
-                          style:  TextStyle(color: Colors.black54, fontSize: 12.sp),
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12.sp,
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                Icon(Icons.chat, color: AppColors.primaryColor, size: 20.sp),
+                isCompleted
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.star, color: Colors.orange, size: 16),
+                        const SizedBox(width: 4),
+                        Text("4.3/5", style: const TextStyle(fontSize: 13)),
+                        20.horizontalSpace,
+                      ],
+                    )
+                    : Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 7,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getStatusColor(appointmentModel.status),
+                        borderRadius: BorderRadius.circular(8.sp),
+                      ),
+                      child: Text(
+                        appointmentModel.status,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
               ],
             ),
 
             const SizedBox(height: 4),
-            Divider(thickness: 0.3,color: Colors.black45,),
+            Divider(thickness: 0.3, color: Colors.black45),
             const SizedBox(height: 4),
 
             Row(
               children: [
                 Image.asset(
-                  appointmentModel.imageUrl,height: 105.h,fit: BoxFit.fill,
+                  appointmentModel.imageUrl,
+                  height: 105.h,
+                  fit: BoxFit.fill,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -88,26 +130,23 @@ class AppintmentDetailWidget extends StatelessWidget {
                     children: [
                       Text(
                         appointmentModel.name,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
                         ),
                       ),
-                      Divider(thickness: 0.3,color: Colors.black45,),
+                      Divider(thickness: 0.3, color: Colors.black45),
                       Text(
                         appointmentModel.specialty,
-                        style:  TextStyle(
-                          color: Colors.black,
-                          fontSize: 15.sp,
-                        ),
+                        style: TextStyle(color: Colors.black, fontSize: 15.sp),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
                           Icon(
                             appointmentModel.consultationType
-                                .toLowerCase()
-                                .contains("remote")
+                                    .toLowerCase()
+                                    .contains("remote")
                                 ? Icons.add_ic_call
                                 : Icons.meeting_room_outlined,
                             color: Colors.blue,
@@ -116,7 +155,7 @@ class AppintmentDetailWidget extends StatelessWidget {
                           const SizedBox(width: 6),
                           Text(
                             appointmentModel.consultationType,
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: Colors.black,
                               fontSize: 13.sp,
                             ),
@@ -128,7 +167,11 @@ class AppintmentDetailWidget extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.star, color: Colors.orange, size: 16),
+                              const Icon(
+                                Icons.star,
+                                color: Colors.orange,
+                                size: 16,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 "${appointmentModel.rating}",
@@ -137,13 +180,17 @@ class AppintmentDetailWidget extends StatelessWidget {
                             ],
                           ),
                           7.horizontalSpace,
-                          Container(height: 15.h,width: 1.w,color: AppColors.primaryColor,),
+                          Container(
+                            height: 15.h,
+                            width: 1.w,
+                            color: AppColors.primaryColor,
+                          ),
                           7.horizontalSpace,
                           Row(
                             children: [
                               Text(
                                 "Fee:",
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13.sp,
@@ -151,7 +198,7 @@ class AppintmentDetailWidget extends StatelessWidget {
                               ),
                               Text(
                                 "\$${appointmentModel.fee.toStringAsFixed(0)}",
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13.sp,
@@ -167,9 +214,10 @@ class AppintmentDetailWidget extends StatelessWidget {
               ],
             ),
 
-
-
-
+            const SizedBox(height: 12),
+            CustomButton(borderRadius: 15, text: "View Detail", onTap: (){
+              onTap();
+            },height: 40,),
           ],
         ),
       ),

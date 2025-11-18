@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/chat_controller.dart';
 
-import '../utils/app_colors.dart';
-import '../utils/app_fonts.dart';
+import '../../utils/app_colors.dart';
+import '../../utils/app_fonts.dart';
 import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
-import '../models/prscription_model.dart';
+import '../../models/prscription_model.dart';
 
 class PrescriptionCard extends StatelessWidget {
   Function onTap;

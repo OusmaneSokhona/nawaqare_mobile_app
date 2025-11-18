@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
-import '../utils/app_fonts.dart';
+import '../../utils/app_fonts.dart';
 
 class PastAppointmentWidgets extends StatelessWidget {
   const PastAppointmentWidgets({super.key});

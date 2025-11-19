@@ -50,6 +50,7 @@ class ChatController extends GetxController{
       Doctor(name: 'Dr. Emily Davis', specialty: 'Oncologist', imageUrl: 'assets/demo_images/doctor_1.png', lastMessageTime: '09:30', unreadCount: 0),
       mockDoctor,
       mockDoctor,
+      mockDoctor,mockDoctor,mockDoctor,mockDoctor,mockDoctor,mockDoctor
     ];
     _doctors.assignAll(mockDoctors);
 

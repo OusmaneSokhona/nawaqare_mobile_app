@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/chat_screens/chat_screen.dart';
 import 'package:patient_app/screens/home_screen.dart';
+import 'package:patient_app/screens/search_screens/search_screen.dart';
 
 class MainController extends GetxController{
   var currentIndex = 0.obs;
@@ -9,7 +10,7 @@ class MainController extends GetxController{
   final List<Widget> screens = [
     HomeScreen(),
     ChatScreen(),
-    Scaffold(body: Center(child: Text("Coming Soon Search"),),),
+    SearchScreen(),
     Scaffold(body: Center(child: Text("Coming Soon Profile"),),),
   ];
   final List<String> titles = [

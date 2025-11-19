@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/chat_controller.dart';
+import 'package:patient_app/screens/notifications_screens/notifications_screen.dart';
 
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
@@ -32,16 +33,16 @@ ChatController chatController=Get.put(ChatController());
           children: [
             Obx(() {
               final bool isScrolledPastThreshold =
-                  chatController.scrollValue.value >= 280;
+                  chatController.scrollValue.value >= 330;
 
-              final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
+              final double targetHeight = isScrolledPastThreshold ? 120.0 : 0.0;
 
               final Color targetColor =
               isScrolledPastThreshold
                   ? AppColors.primaryColor
                   : Colors.transparent;
 
-              return AnimatedContainer(
+              return isScrolledPastThreshold?AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
                 height: targetHeight,
@@ -52,23 +53,49 @@ ChatController chatController=Get.put(ChatController());
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    CircleAvatar(
-                      radius: 20.h,
-                      backgroundColor: Colors.white,
-                      foregroundImage: AssetImage(
-                        "assets/demo_images/home_demo_image.png",
+
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          onTapOutside: (_){
+                            FocusManager.instance.primaryFocus!.unfocus();
+                          },
+                          onChanged: chatController.updateSearchQuery,
+                          decoration: const InputDecoration(
+                            hintText: 'Search',
+                            border: InputBorder.none,
+                            icon: Icon(Icons.search, color: Colors.grey),
+                          ),
+                        ),
                       ),
                     ),
-                    20.horizontalSpace,
-                    Text("Mr Alex",style: TextStyle(color: Colors.white,fontFamily:AppFonts.jakartaBold,fontSize: 22.h,fontWeight: FontWeight.w700),),
-                    Spacer(),
-                    Image.asset(
-                      "assets/images/bell_icon.png",
-                      height: 25.h,
+                    Padding(
+                      padding:  EdgeInsets.only(bottom: 8.h),
+                      child: InkWell(
+                        onTap: (){
+                          Get.to(NotificationScreen());
+                        },
+                        child: Image.asset(
+                          "assets/images/bell_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              );
+              ):SizedBox();
             }),
             Expanded(
               child: SingleChildScrollView(
@@ -89,9 +116,14 @@ ChatController chatController=Get.put(ChatController());
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
-                          Image.asset(
-                            "assets/images/bell_icon.png",
-                            height: 30.h,
+                          InkWell(
+                            onTap:(){
+                              Get.to(NotificationScreen());
+                            },
+                            child: Image.asset(
+                              "assets/images/bell_icon.png",
+                              height: 30.h,
+                            ),
                           ),
                         ],
                       ),
@@ -135,6 +167,9 @@ ChatController chatController=Get.put(ChatController());
                           ],
                         ),
                         child: TextField(
+                          onTapOutside: (_){
+                            FocusManager.instance.primaryFocus!.unfocus();
+                          },
                           onChanged: chatController.updateSearchQuery,
                           decoration: const InputDecoration(
                             hintText: 'Search',
@@ -145,7 +180,7 @@ ChatController chatController=Get.put(ChatController());
                       ),
                       10.verticalSpace,
                       Obx(
-                            () => Container(
+                            () => chatController.filteredDoctors.isNotEmpty?Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20.0),
@@ -211,7 +246,7 @@ ChatController chatController=Get.put(ChatController());
                               );
                                                         },
                                                       ),
-                            ),
+                            ):Text("No Data Found",style: TextStyle(fontSize: 18.sp,fontWeight: FontWeight.w600,color:Colors.black),),
                       ),
                       10.verticalSpace,
                     ],

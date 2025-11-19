@@ -121,8 +121,8 @@ class AppointmentCard extends StatelessWidget {
         const SizedBox(width: 6),
         Text(
           text,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: 12.sp,
             color: Color(0xFF4B5563),
           ),
         ),

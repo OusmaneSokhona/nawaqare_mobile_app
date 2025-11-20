@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/video_call_screens/preview_screen.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/appointment_widgets/past_appointment_widgets.dart';
 import '../../models/appointment_model.dart';
@@ -117,7 +118,9 @@ class AppointmentDetailScreen extends StatelessWidget {
                             fontFamily: AppFonts.jakartaMedium,
                           ),),
                         70.verticalSpace,
-                        CustomButton(borderRadius: 15, text: "Join Consultation", onTap: (){}),
+                        CustomButton(borderRadius: 15, text: "Join Consultation", onTap: (){
+                          Get.to(PreviewScreen(appointmentModel: appointmentModel));
+                        }),
                         10.verticalSpace,
                        CustomButton(borderRadius: 15, text: "Reschedule", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,)
                       }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
@@ -14,6 +15,7 @@ class CustomTextField extends StatelessWidget {
   final bool isEnabled;
   final Widget? validationView;
   final void Function(bool)? onFocusChange;
+  final int maxLength;
   final String? Function(String?)? validator;
 
   const CustomTextField({
@@ -26,6 +28,7 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.isEnabled = false,
     this.onTapEye ,
+    this.maxLength=14,
     this.isPasswordField = false,
     this.validationView,
     this.onFocusChange,
@@ -70,6 +73,13 @@ class CustomTextField extends StatelessWidget {
               onTapOutside: (_){
                 FocusManager.instance.primaryFocus?.unfocus();
               },
+              maxLength: maxLength,
+              buildCounter: (
+                  BuildContext context, {
+                    required int currentLength,
+                    required int? maxLength,
+                    required bool isFocused,
+                  }) => const SizedBox.shrink(),
               controller: controller,
               keyboardType: keyboardType,
               onChanged: onChanged,

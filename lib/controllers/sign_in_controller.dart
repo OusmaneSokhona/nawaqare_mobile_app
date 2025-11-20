@@ -124,7 +124,7 @@ class SignInController extends GetxController {
     Get.to(SignUpScreen());
   }
   void goToMainScreen(){
-    Get.to(MainScreen());
+    Get.offAll(MainScreen());
   }
 void signInTap(){
   if (formKey.currentState!.validate()) {

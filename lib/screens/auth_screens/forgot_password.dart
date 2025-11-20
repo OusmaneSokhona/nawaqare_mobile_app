@@ -44,23 +44,32 @@ gradient: LinearGradient(colors: [AppColors.onboardingBackground,AppColors.light
                   ),
                 ],
               ),
-              20.verticalSpace,
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text("Then Let’s Submit Password Reset.",style: TextStyle(
-                  color: AppColors.darkGrey,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400,
-                ),),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+
+                      20.verticalSpace,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text("Then Let’s Submit Password Reset.",style: TextStyle(
+                          color: AppColors.darkGrey,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w400,
+                        ),),
+                      ),
+                    20.verticalSpace,
+                      VerificationViaWidget(title: "Verification via Email", subtitle: "Verify code via email.", iconPath: AppImages.mailIcon,onTap: (){
+                  Get.to(VerificationScreen(authController:forgetPasswordController ,title: "A 6-digit Code Has Been Sent To Email",subTitle: "ali@gmail.com",));
+                      },iconColor: AppColors.darkGrey,),
+                      25.verticalSpace,
+                      VerificationViaWidget(title: "Verification via Whatsapp", subtitle: "Verify code via Whatsapp.", iconPath: AppImages.whatsAppIcon,onTap: (){
+                        Get.to(VerificationScreen(authController: forgetPasswordController,title: "A 6-digit Code Has Been Sent To Whatsapp",subTitle: "+33 3 6 12 34 56 78",));
+                      },),
+                    ],
+                  ),
+                ),
               ),
-            20.verticalSpace,
-              VerificationViaWidget(title: "Verification via Email", subtitle: "Verify code via email.", iconPath: AppImages.mailIcon,onTap: (){
-Get.to(VerificationScreen(authController:forgetPasswordController ,title: "A 6-digit Code Has Been Sent To Email",subTitle: "ali@gmail.com",));
-              },iconColor: AppColors.darkGrey,),
-              25.verticalSpace,
-              VerificationViaWidget(title: "Verification via Whatsapp", subtitle: "Verify code via Whatsapp.", iconPath: AppImages.whatsAppIcon,onTap: (){
-                Get.to(VerificationScreen(authController: forgetPasswordController,title: "A 6-digit Code Has Been Sent To Whatsapp",subTitle: "+33 3 6 12 34 56 78",));
-              },),
             ],
           ),
         ),

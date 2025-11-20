@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/book_appointment_controller.dart';
 import 'package:patient_app/models/appointment_model.dart';
+import 'package:patient_app/screens/appointment_screens/payment_screen.dart';
 import 'package:patient_app/widgets/progress_stepper.dart';
 import 'package:patient_app/widgets/search_widgets/my_appointment_doctor_card.dart';
 import 'package:patient_app/widgets/search_widgets/summary_card.dart';
@@ -113,7 +114,9 @@ class MyAppointmentScreens extends StatelessWidget {
                       CustomButton(
                         borderRadius: 15,
                         text: "Next",
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(PaymentScreen());
+                        },
                       ),
                       30.verticalSpace,
                     ],

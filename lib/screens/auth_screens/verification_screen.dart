@@ -118,91 +118,99 @@ class VerificationScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              10.verticalSpace,
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: AppColors.darkGrey,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              3.verticalSpace,
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  subTitle,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              20.verticalSpace,
-              VerificationCodeWidget(controller: authController),
-              20.verticalSpace,
-              Obx(
-                    () => Text(
-                  verifiedController.isTimerActive.value
-                      ? verifiedController.formatTime(
-                    verifiedController.timerCount.value,
-                  )
-                      : 'You can request a new code now.',
-                  style: TextStyle(
-                    color:
-                    verifiedController.isTimerActive.value
-                        ? Colors.black
-                        : Colors.red,
-                    fontSize:
-                    verifiedController.isTimerActive.value ? 24.sp : 15.sp,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: AppFonts.jakartaBold,
-                  ),
-                ),
-              ),
-              5.verticalSpace,
-              Obx(
-                    () =>
-                !verifiedController.isTimerActive.value
-                    ? const SizedBox.shrink()
-                    : Text(
-                  "Code expires soon.",
-                  style: TextStyle(
-                    color: AppColors.red,
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              60.verticalSpace,
-              CustomButton(
-                borderRadius: 15,
-                text: "Confirm",
-                onTap: _confirmAction,
-              ),
-              20.verticalSpace,
-              InkWell(
-                onTap:  _startTimer, // Disable resend if timer is active
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(AppImages.whatsAppGreenIcon, height: 27.sp),
-                    Text(
-                      "Re-send To Whatsapp",
-                      style: TextStyle(
-                        color: AppColors.darkGrey,
-                        fontSize: 17.sp,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColors.darkGrey,
-                        fontFamily: AppFonts.jakartaMedium,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      10.verticalSpace,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            color: AppColors.darkGrey,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                      3.verticalSpace,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          subTitle,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      20.verticalSpace,
+                      VerificationCodeWidget(controller: authController),
+                      20.verticalSpace,
+                      Obx(
+                            () => Text(
+                          verifiedController.isTimerActive.value
+                              ? verifiedController.formatTime(
+                            verifiedController.timerCount.value,
+                          )
+                              : 'You can request a new code now.',
+                          style: TextStyle(
+                            color:
+                            verifiedController.isTimerActive.value
+                                ? Colors.black
+                                : Colors.red,
+                            fontSize:
+                            verifiedController.isTimerActive.value ? 24.sp : 15.sp,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: AppFonts.jakartaBold,
+                          ),
+                        ),
+                      ),
+                      5.verticalSpace,
+                      Obx(
+                            () =>
+                        !verifiedController.isTimerActive.value
+                            ? const SizedBox.shrink()
+                            : Text(
+                          "Code expires soon.",
+                          style: TextStyle(
+                            color: AppColors.red,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                      60.verticalSpace,
+                      CustomButton(
+                        borderRadius: 15,
+                        text: "Confirm",
+                        onTap: _confirmAction,
+                      ),
+                      20.verticalSpace,
+                      InkWell(
+                        onTap:  _startTimer, // Disable resend if timer is active
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(AppImages.whatsAppGreenIcon, height: 27.sp),
+                            Text(
+                              "Re-send To Whatsapp",
+                              style: TextStyle(
+                                color: AppColors.darkGrey,
+                                fontSize: 17.sp,
+                                fontWeight: FontWeight.w500,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.darkGrey,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

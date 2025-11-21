@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/sign_in_controller.dart';
-import 'package:patient_app/controllers/forget_password_contorller.dart';
+import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
+import 'package:patient_app/controllers/auth_controllers/forget_password_contorller.dart';
 import 'package:patient_app/screens/auth_screens/complete_profile.dart';
 import 'package:patient_app/screens/auth_screens/reset_password.dart';
 import 'package:patient_app/utils/app_fonts.dart';
@@ -10,7 +10,7 @@ import 'package:patient_app/utils/app_images.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/verification_code_widget.dart';
 
-import '../../controllers/sign_up_controller.dart';
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 
 class VerificationScreen extends StatelessWidget {

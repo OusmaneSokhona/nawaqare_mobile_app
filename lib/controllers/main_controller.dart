@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/chat_screens/chat_screen.dart';
 import 'package:patient_app/screens/home_screen.dart';
+import 'package:patient_app/screens/profile_screens/profile_screen.dart';
 import 'package:patient_app/screens/search_screens/search_screen.dart';
 
 class MainController extends GetxController{
@@ -11,7 +12,7 @@ class MainController extends GetxController{
     HomeScreen(),
     ChatScreen(),
     SearchScreen(),
-    Scaffold(body: Center(child: Text("Coming Soon Profile"),),),
+    ProfileScreen(),
   ];
   final List<String> titles = [
     'Home',

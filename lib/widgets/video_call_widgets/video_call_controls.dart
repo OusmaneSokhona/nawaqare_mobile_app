@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/video_call_controller.dart';
+import 'package:patient_app/controllers/appointment_controllers/video_call_controller.dart';
+import 'package:patient_app/screens/chat_screens/chat_detail_screen.dart';
+import 'package:patient_app/screens/chat_screens/chat_screen.dart';
+import 'package:patient_app/screens/video_call_screens/setting_screen.dart';
+import 'package:patient_app/widgets/video_call_widgets/call_end_dialog.dart';
 
 class VideoCallControls extends StatelessWidget {
    VideoCallControls({super.key});
@@ -34,7 +38,7 @@ class VideoCallControls extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ElevatedButton(
-              onPressed: () => _showEndCallDialog(context),
+              onPressed: () => _showEndCallDialog(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[700],
                 shape: RoundedRectangleBorder(
@@ -150,6 +154,11 @@ class VideoCallControls extends StatelessWidget {
           ),
           onSelected: (String result) {
             print('Selected: $result');
+            if(result=="messages"){
+              Get.to(ChatDetailScreen());
+            }else if(result=="setting"){
+              Get.to(SettingScreen());
+            }
           },
           offset: const Offset(0, -200),
           color: Colors.white,
@@ -179,24 +188,7 @@ class VideoCallControls extends StatelessWidget {
     );
   }
 
-  void _showEndCallDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Call Ended'),
-          content: const Text('The call has been simulated and ended.'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-               Get.back();
-               Get.back();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void _showEndCallDialog() {
+   Get.dialog(barrierDismissible: false,CallEndDialog());
   }
 }

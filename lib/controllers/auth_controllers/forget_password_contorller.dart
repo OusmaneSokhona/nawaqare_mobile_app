@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../screens/auth_screens/sign_in_screen.dart';
-import '../widgets/validation_check_list.dart';
+import '../../screens/auth_screens/sign_in_screen.dart';
+import '../../widgets/validation_check_list.dart';
 
 class ForgetPasswordController extends GetxController{
   final int _initialTime = 60;

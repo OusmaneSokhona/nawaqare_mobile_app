@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/book_appointment_controller.dart';
+import 'package:patient_app/controllers/appointment_controllers/book_appointment_controller.dart';
 import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/screens/appointment_screens/payment_screen.dart';
 import 'package:patient_app/widgets/progress_stepper.dart';

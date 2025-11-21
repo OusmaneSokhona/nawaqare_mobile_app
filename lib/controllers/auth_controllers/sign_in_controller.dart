@@ -7,7 +7,7 @@ import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
 import 'package:patient_app/screens/main_screen.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
 
-import '../widgets/validation_check_list.dart';
+import '../../widgets/validation_check_list.dart';
 
 class SignInController extends GetxController {
   RxString signInType="doctor".obs;

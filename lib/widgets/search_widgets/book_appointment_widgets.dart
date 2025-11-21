@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/book_appointment_controller.dart';
+import 'package:patient_app/controllers/appointment_controllers/book_appointment_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class ConsultationDetailsCard extends StatelessWidget {

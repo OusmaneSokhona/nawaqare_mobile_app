@@ -90,7 +90,6 @@ class PreviewScreen extends StatelessWidget {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            // Exclamation Mark Icon
                             Icon(
                               Icons.error_outline,
                               color: AppColors.orange,

@@ -60,8 +60,7 @@ SettingsController controller=Get.put(SettingsController());
               20.verticalSpace,
               CustomButton(borderRadius: 15, text: "Save Settings", onTap: (){}),
               10.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Help Center", onTap: (){
-                Get.to(HelpCenterScreen());
+              CustomButton(borderRadius: 15, text: "Restore Defaults", onTap: (){
               },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
               40.verticalSpace,
             ],

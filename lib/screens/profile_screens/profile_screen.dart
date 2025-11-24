@@ -2,14 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/profile_controller.dart';
+import 'package:patient_app/screens/video_call_screens/help_center_screen.dart';
+import 'package:patient_app/widgets/profile_widgets/delete_account_dialog.dart';
+import 'package:patient_app/widgets/profile_widgets/documents_and_reports.dart';
+import 'package:patient_app/widgets/profile_widgets/medical_vitals.dart';
+import 'package:patient_app/widgets/profile_widgets/personal_info.dart';
 
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../widgets/profile_widgets/health_space_card.dart';
 import '../notifications_screens/notifications_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-   ProfileScreen({super.key});
-ProfileController controller=Get.put(ProfileController());
+  ProfileScreen({super.key});
+
+  ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
@@ -37,9 +45,9 @@ ProfileController controller=Get.put(ProfileController());
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
               final Color targetColor =
-              isScrolledPastThreshold
-                  ? AppColors.primaryColor
-                  : Colors.transparent;
+                  isScrolledPastThreshold
+                      ? AppColors.primaryColor
+                      : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -47,7 +55,7 @@ ProfileController controller=Get.put(ProfileController());
                 height: targetHeight,
                 width: 1.sw,
                 color: targetColor,
-                padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -60,10 +68,18 @@ ProfileController controller=Get.put(ProfileController());
                       ),
                     ),
                     20.horizontalSpace,
-                    Text("Mr Alex",style: TextStyle(color: Colors.white,fontFamily:AppFonts.jakartaBold,fontSize: 22.h,fontWeight: FontWeight.w700),),
+                    Text(
+                      "Mr Alex",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: AppFonts.jakartaBold,
+                        fontSize: 22.h,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     Spacer(),
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         Get.to(NotificationScreen());
                       },
                       child: Image.asset(
@@ -84,7 +100,7 @@ ProfileController controller=Get.put(ProfileController());
                     children: [
                       60.verticalSpace,
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
@@ -94,8 +110,19 @@ ProfileController controller=Get.put(ProfileController());
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
+                          Spacer(),
                           InkWell(
-                            onTap: (){
+                            onTap: () {
+                              Get.to(HelpCenterScreen());
+                            },
+                            child: Image.asset(
+                              "assets/images/help_center_icon.png",
+                              height: 30.h,
+                            ),
+                          ),
+                          10.horizontalSpace,
+                          InkWell(
+                            onTap: () {
                               Get.to(NotificationScreen());
                             },
                             child: Image.asset(
@@ -109,7 +136,7 @@ ProfileController controller=Get.put(ProfileController());
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Hello,\nMr. Alex",
+                          "Profile",
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 35.sp,
@@ -118,11 +145,94 @@ ProfileController controller=Get.put(ProfileController());
                           ),
                         ),
                       ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Real-Time Messaging For Consultations.",
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFonts.jakartaMedium,
+                            color: AppColors.darkGrey,
+                          ),
+                        ),
+                      ),
+                      15.verticalSpace,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          profileType("Personal Info", 80.w),
+                          9.horizontalSpace,
+                          profileType("Medical Vitals", 100.w),
+                          9.horizontalSpace,
+                          profileType("Documents & Reports", 130.w),
+                        ],
+                      ),
+                      15.verticalSpace,
+                      Obx(
+                        () =>
+                            controller.type.value == "Personal Info"
+                                ? PersonalInfo()
+                                : controller.type.value == "Medical Vitals"
+                                ? MedicalVitalsProfile()
+                                : DocumentsAndReportsProfile(),
+                      ),
+                      10.verticalSpace,
+                      HealthSpaceCard(
+                        icon: Icons.person_remove_alt_1,
+                        title: 'Delete Account',
+                        onTap: () {
+                          Get.dialog(DeleteAccountDialog());
+                        },
+                        color: AppColors.red,
+                        textColor: AppColors.red,
+                      ),
+                      10.verticalSpace,
                     ],
                   ),
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget profileType(String title, double width) {
+    return Obx(
+      () => InkWell(
+        onTap: () {
+          controller.type.value = title;
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color:
+                    controller.type.value == title
+                        ? AppColors.primaryColor
+                        : AppColors.lightGrey,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            2.verticalSpace,
+            controller.type.value == title
+                ? Container(
+                  width: width.w,
+                  height: 3.h,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor,
+                    borderRadius: BorderRadius.circular(7.sp),
+                  ),
+                )
+                : SizedBox(),
           ],
         ),
       ),

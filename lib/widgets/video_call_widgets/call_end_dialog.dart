@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/video_call_screens/consultaion_finished_screen.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 
+import '../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
 import '../../utils/app_colors.dart';
 
 class CallEndDialog extends StatelessWidget {

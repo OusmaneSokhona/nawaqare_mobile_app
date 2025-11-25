@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:patient_app/utils/app_colors.dart';
-import '../../controllers/search_controller.dart';
+import '../../controllers/patient_controllers/search_controller.dart';
 
 class SearchBottomSheet extends GetView<SearchController> {
    SearchBottomSheet({super.key});

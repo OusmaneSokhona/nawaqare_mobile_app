@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/profile_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 
 class DeleteAccountDialog extends StatelessWidget {
   const DeleteAccountDialog({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/on_boarding_splash_controllers/splash_controller.dart';
+import '../../controllers/patient_controllers/on_boarding_splash_controllers/splash_controller.dart';
 
 class SplashScreen extends StatelessWidget {
    SplashScreen({super.key});

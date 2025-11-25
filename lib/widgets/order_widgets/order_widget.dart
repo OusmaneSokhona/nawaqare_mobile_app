@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/order_screens/order_detail_screen.dart';
-import 'package:patient_app/screens/order_screens/order_status_screen.dart';
-import 'package:patient_app/screens/order_screens/track_order_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 import '../../models/orders_model.dart';
+import '../../screens/patient_screens/order_screens/order_detail_screen.dart';
+import '../../screens/patient_screens/order_screens/order_status_screen.dart';
+import '../../screens/patient_screens/order_screens/track_order_screen.dart';
 
 class OrderWidget extends StatelessWidget {
   final Order order;

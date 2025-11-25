@@ -1,12 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:patient_app/controllers/prescription_controller.dart';
-import 'package:patient_app/controllers/profile_controller.dart';
-import 'package:patient_app/models/medical_history_model.dart';
 import 'package:patient_app/models/vaccination_history_model.dart';
-import 'package:patient_app/screens/profile_screens/medical_history.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 import '../../models/prscription_model.dart';

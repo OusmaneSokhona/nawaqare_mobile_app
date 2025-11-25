@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/profile_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 
 class LanguageDialog extends GetView<ProfileController> {

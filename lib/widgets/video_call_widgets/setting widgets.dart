@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
-import '../../controllers/appointment_controllers/setting_controller.dart';
+import '../../controllers/patient_controllers/appointment_controllers/setting_controller.dart';
 
 class SectionTitle extends StatelessWidget {
   final String title;

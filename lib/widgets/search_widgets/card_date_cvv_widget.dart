@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/payment_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
 
 class CardDateCvvWidget extends StatelessWidget {
   CardDateCvvWidget({super.key});

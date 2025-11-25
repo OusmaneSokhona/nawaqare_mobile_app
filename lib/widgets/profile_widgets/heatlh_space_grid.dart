@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/profile_screens/allergies_screen.dart';
-import 'package:patient_app/screens/profile_screens/blood_type.dart';
-import 'package:patient_app/screens/profile_screens/medical_history.dart';
-import 'package:patient_app/screens/profile_screens/privacy_security.dart';
-import 'package:patient_app/screens/profile_screens/update_password.dart';
 import 'package:patient_app/widgets/profile_widgets/language_dialogs.dart';
 
-import '../../controllers/profile_controller.dart';
+import '../../controllers/patient_controllers/profile_controller.dart';
+import '../../screens/patient_screens/profile_screens/allergies_screen.dart';
+import '../../screens/patient_screens/profile_screens/blood_type.dart';
+import '../../screens/patient_screens/profile_screens/medical_history.dart';
+import '../../screens/patient_screens/profile_screens/privacy_security.dart';
+import '../../screens/patient_screens/profile_screens/update_password.dart';
 import 'health_space_card.dart';
 class HeatlhSpaceGrid extends StatelessWidget {
   final ProfileController profileController;

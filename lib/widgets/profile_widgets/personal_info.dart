@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/profile_widgets/heatlh_space_grid.dart';
 import 'package:patient_app/widgets/profile_widgets/info_row.dart';
-
-import '../../controllers/profile_controller.dart';
-import 'health_space_card.dart';
+import '../../controllers/patient_controllers/profile_controller.dart';
 
 class PersonalInfo extends GetView<ProfileController> {
    PersonalInfo({super.key});

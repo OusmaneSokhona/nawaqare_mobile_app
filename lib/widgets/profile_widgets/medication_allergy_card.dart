@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/screens/profile_screens/edit_allergy_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
-
 import '../../models/allergy_model.dart';
+import '../../screens/patient_screens/profile_screens/edit_allergy_screen.dart';
 
 class MedicationAllergyCard extends StatelessWidget {
   final AllergyData data;

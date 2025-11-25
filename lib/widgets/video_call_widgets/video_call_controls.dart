@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/appointment_controllers/video_call_controller.dart';
-import 'package:patient_app/screens/chat_screens/chat_detail_screen.dart';
-import 'package:patient_app/screens/chat_screens/chat_screen.dart';
-import 'package:patient_app/screens/video_call_screens/setting_screen.dart';
 import 'package:patient_app/widgets/video_call_widgets/call_end_dialog.dart';
+
+import '../../controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
+import '../../screens/patient_screens/chat_screens/chat_detail_screen.dart';
+import '../../screens/patient_screens/video_call_screens/setting_screen.dart';
 
 class VideoCallControls extends StatelessWidget {
    VideoCallControls({super.key});

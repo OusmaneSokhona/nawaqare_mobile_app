@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:patient_app/controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
-
+import '../controllers/patient_controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
 import 'app_colors.dart';
 import 'app_fonts.dart';
 

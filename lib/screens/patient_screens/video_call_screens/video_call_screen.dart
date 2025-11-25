@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:patient_app/widgets/video_call_widgets/video_call_controls.dart';
+
+import '../../../widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
 
 class VideoCallScreen extends StatelessWidget {
   const VideoCallScreen({super.key});

@@ -3,10 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
-import 'package:patient_app/widgets/search_widgets/card_date_cvv_widget.dart';import '../../../utils/app_colors.dart';
+import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../widgets/patient_widgets/search_widgets/card_date_cvv_widget.dart';
 
 class AddNewCardScreen extends StatelessWidget {
   AddNewCardScreen({super.key});

@@ -5,11 +5,11 @@ import 'package:patient_app/controllers/patient_controllers/home_controller.dart
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
-import 'package:patient_app/widgets/appointment_widgets/appointment_card.dart';
 import 'package:patient_app/widgets/category_button.dart';
-import 'package:patient_app/widgets/next_action_row.dart';
-import 'package:patient_app/widgets/order_tracking_card.dart';
+import 'package:patient_app/widgets/patient_widgets/prescription_widgets/next_action_row.dart';
+import 'package:patient_app/widgets/patient_widgets/order_widgets/order_tracking_card.dart';
 
+import '../../widgets/patient_widgets/appointment_widgets/appointment_card.dart';
 import 'appointment_screens/appointment_screen.dart';
 import 'notifications_screens/notifications_screen.dart';
 import 'order_screens/order_screen.dart';

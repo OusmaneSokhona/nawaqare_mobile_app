@@ -7,7 +7,7 @@ import 'package:patient_app/controllers/patient_controllers/home_controller.dart
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../../widgets/appointment_widgets/appointment_widget.dart';
+import '../../../widgets/patient_widgets/appointment_widgets/appointment_widget.dart';
 import 'appointment_detail_screen.dart';
 
 class AppointmentScreen extends StatelessWidget {

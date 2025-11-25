@@ -6,7 +6,7 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../../widgets/prescription_widgets/refill_indicator.dart';
+import '../../../widgets/patient_widgets/prescription_widgets/refill_indicator.dart';
 
 class RequestRefill extends StatelessWidget {
    RequestRefill({super.key});

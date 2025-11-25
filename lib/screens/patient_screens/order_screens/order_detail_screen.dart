@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/widgets/order_widgets/order_detail_card.dart';
-
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/patient_widgets/order_widgets/order_detail_card.dart';
 
 
 class OrderDetailScreen extends StatelessWidget {

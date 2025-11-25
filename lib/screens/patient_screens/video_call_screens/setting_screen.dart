@@ -6,7 +6,7 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
-import '../../../widgets/video_call_widgets/setting widgets.dart';
+import '../../../widgets/patient_widgets/video_call_widgets/setting widgets.dart';
 
 class SettingScreen extends StatelessWidget {
    SettingScreen({super.key});

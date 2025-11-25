@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/appointment_widgets/past_appointment_widgets.dart';
-
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../../widgets/appointment_widgets/appintment_detail_widget.dart';
+import '../../../widgets/patient_widgets/appointment_widgets/appintment_detail_widget.dart';
+import '../../../widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
 import '../video_call_screens/preview_screen.dart';
 class AppointmentDetailScreen extends StatelessWidget {
   bool isCompleted;

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
-import 'package:patient_app/widgets/profile_widgets/delete_account_dialog.dart';
-import 'package:patient_app/widgets/profile_widgets/documents_and_reports.dart';
-import 'package:patient_app/widgets/profile_widgets/medical_vitals.dart';
-import 'package:patient_app/widgets/profile_widgets/personal_info.dart';import '../../../utils/app_colors.dart';
+import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-import '../../../widgets/profile_widgets/health_space_card.dart';
+import '../../../widgets/patient_widgets/profile_widgets/delete_account_dialog.dart';
+import '../../../widgets/patient_widgets/profile_widgets/documents_and_reports.dart';
+import '../../../widgets/patient_widgets/profile_widgets/health_space_card.dart';
+import '../../../widgets/patient_widgets/profile_widgets/medical_vitals.dart';
+import '../../../widgets/patient_widgets/profile_widgets/personal_info.dart';
 import '../notifications_screens/notifications_screen.dart';
 import '../video_call_screens/help_center_screen.dart';
 

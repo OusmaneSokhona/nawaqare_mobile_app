@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/search_controller.dart';
 import 'package:patient_app/screens/patient_screens/search_screens/search_doctor_detail_screen.dart';
-import 'package:patient_app/widgets/search_widgets/doctor_widget.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-import '../../../widgets/search_widgets/search_bottom_sheet.dart';
+import '../../../widgets/patient_widgets/search_widgets/doctor_widget.dart';
+import '../../../widgets/patient_widgets/search_widgets/search_bottom_sheet.dart';
 import '../notifications_screens/notifications_screen.dart';
 
 class SearchScreen extends StatelessWidget {

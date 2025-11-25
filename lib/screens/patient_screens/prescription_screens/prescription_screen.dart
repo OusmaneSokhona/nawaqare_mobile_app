@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/prescription_controller.dart';
-import 'package:patient_app/widgets/prescription_widgets/prescription_card.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/patient_widgets/prescription_widgets/prescription_card.dart';
 
 class PrescriptionScreen extends StatelessWidget {
   PrescriptionScreen({super.key});

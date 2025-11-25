@@ -3,12 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/widgets/progress_stepper.dart';
-import 'package:patient_app/widgets/search_widgets/my_appointment_doctor_card.dart';
-import 'package:patient_app/widgets/search_widgets/summary_card.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../widgets/patient_widgets/search_widgets/my_appointment_doctor_card.dart';
+import '../../../widgets/patient_widgets/search_widgets/summary_card.dart';
 import '../appointment_screens/payment_screen.dart';
 
 class MyAppointmentScreens extends StatelessWidget {

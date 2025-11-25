@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/profile_widgets/medication_allergy_card.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/patient_widgets/profile_widgets/medication_allergy_card.dart';
 import 'add_allergy_screen.dart';
 
 class AllergiesScreen extends GetView<ProfileController> {

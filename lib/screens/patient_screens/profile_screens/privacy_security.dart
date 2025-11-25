@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
-import 'package:patient_app/widgets/profile_widgets/privacy_toggle_item.dart';
-
 import '../../../models/profile_models.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/patient_widgets/profile_widgets/privacy_toggle_item.dart';
 
 
 class PrivacySecurity extends GetView<ProfileController> {

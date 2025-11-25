@@ -3,10 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/search_widgets/doctor_detail_widget.dart';
-import 'package:patient_app/widgets/search_widgets/rating_widget.dart';import '../../../utils/app_colors.dart';
+import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/patient_widgets/search_widgets/doctor_detail_widget.dart';
+import '../../../widgets/patient_widgets/search_widgets/rating_widget.dart';
 import 'book_appointment_screen.dart';
 
 class SearchDoctorDetailScreen extends StatelessWidget {

@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/patient_screens/order_screens/report_issue_screen.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/order_widgets/track_order_card.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/patient_widgets/order_widgets/track_order_card.dart';
 
 class TrackOrderScreen extends StatelessWidget {
   const TrackOrderScreen({super.key});

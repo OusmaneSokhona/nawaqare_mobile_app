@@ -7,7 +7,7 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
-import '../../../widgets/search_widgets/book_appointment_widgets.dart';
+import '../../../widgets/patient_widgets/search_widgets/book_appointment_widgets.dart';
 import 'my_appointment_screens.dart';
 
 class BookAppointmentScreen extends StatelessWidget {

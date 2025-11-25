@@ -8,8 +8,8 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../widgets/patient_widgets/search_widgets/appointment_confimation_dialog.dart';
 import '../../../widgets/progress_stepper.dart';
-import '../../../widgets/search_widgets/appointment_confimation_dialog.dart';
 import '../search_screens/add_new_card_screen.dart';
 import '../search_screens/card_widget.dart';
 class PaymentScreen extends StatelessWidget {

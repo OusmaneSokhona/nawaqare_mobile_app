@@ -8,9 +8,8 @@ import 'package:patient_app/widgets/profile_widgets/info_row.dart';
 import '../../controllers/profile_controller.dart';
 import 'health_space_card.dart';
 
-class PersonalInfo extends StatelessWidget {
+class PersonalInfo extends GetView<ProfileController> {
    PersonalInfo({super.key});
-ProfileController controller=Get.find();
   @override
   Widget build(BuildContext context) {
     return Obx(

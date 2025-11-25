@@ -9,10 +9,9 @@ import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
 import '../../widgets/custom_button.dart';
 
-class BloodType extends StatelessWidget {
+class BloodType extends GetView<ProfileController> {
   BloodType({super.key});
 
-  ProfileController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {

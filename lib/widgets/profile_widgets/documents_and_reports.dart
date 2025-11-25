@@ -5,13 +5,10 @@ import 'package:patient_app/controllers/profile_controller.dart';
 import 'package:patient_app/widgets/profile_widgets/heatlh_space_grid.dart';
 
 import '../../models/profile_models.dart';
-import '../../utils/app_colors.dart';
-import 'health_space_card.dart';
 
-class DocumentsAndReportsProfile extends StatelessWidget {
+class DocumentsAndReportsProfile extends GetView<ProfileController> {
   DocumentsAndReportsProfile({super.key});
 
-  ProfileController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {

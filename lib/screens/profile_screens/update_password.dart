@@ -9,9 +9,8 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/validation_check_list.dart';
 
-class UpdatePassword extends StatelessWidget {
+class UpdatePassword extends GetView<ForgetPasswordController> {
   UpdatePassword({super.key});
-  ForgetPasswordController authController=Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class UpdatePassword extends StatelessWidget {
           ],begin: Alignment.topCenter,end: Alignment.bottomCenter),
         ),
         child: Form(
-          key: authController.formKeyForget,
+          key: controller.formKeyForget,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(
@@ -58,10 +57,10 @@ class UpdatePassword extends StatelessWidget {
                     hintText: 'Enter your password',
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
-                    isEnabled: authController.confirmNewPasswordVisibility.value,
-                    validator: authController.validateConfirmPassword, // Use the new method
+                    isEnabled: controller.confirmNewPasswordVisibility.value,
+                    validator: controller.validateConfirmPassword, // Use the new method
                     onTapEye: (){
-                      authController.confirmNewPasswordVisibility.value = !authController.confirmNewPasswordVisibility.value;
+                      controller.confirmNewPasswordVisibility.value = !controller.confirmNewPasswordVisibility.value;
                     },
                   ),
                 ),
@@ -72,20 +71,20 @@ class UpdatePassword extends StatelessWidget {
                     hintText: 'Enter your password',
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
-                    controller: authController.newPassword,
-                    isEnabled: authController.newPasswordVisibility.value,
-                    onFocusChange: authController.setPasswordActive,
-                    validator: authController.validatePassword,
-                    onChanged: (value) => authController.currentPassword.value = value,
-                    validationView: authController.isPasswordActive.value
+                    controller: controller.newPassword,
+                    isEnabled: controller.newPasswordVisibility.value,
+                    onFocusChange: controller.setPasswordActive,
+                    validator: controller.validatePassword,
+                    onChanged: (value) => controller.currentPassword.value = value,
+                    validationView: controller.isPasswordActive.value
                         ? Obx(
                           () => ValidationChecklist(
-                        rules: authController.getValidationRules(),
+                        rules: controller.getValidationRules(),
                       ),
                     )
                         : null,
                     onTapEye: (){
-                      authController.newPasswordVisibility.value = !authController.newPasswordVisibility.value;
+                      controller.newPasswordVisibility.value = !controller.newPasswordVisibility.value;
                     },
                   ),
                 ),
@@ -96,18 +95,18 @@ class UpdatePassword extends StatelessWidget {
                     hintText: 'Enter your password',
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
-                    controller: authController.confrimNewPassword,
-                    isEnabled: authController.confirmNewPasswordVisibility.value,
-                    validator: authController.validateConfirmPassword, // Use the new method
+                    controller: controller.confrimNewPassword,
+                    isEnabled: controller.confirmNewPasswordVisibility.value,
+                    validator: controller.validateConfirmPassword, // Use the new method
                     onTapEye: (){
-                      authController.confirmNewPasswordVisibility.value = !authController.confirmNewPasswordVisibility.value;
+                      controller.confirmNewPasswordVisibility.value = !controller.confirmNewPasswordVisibility.value;
                     },
                   ),
                 ),
                 10.verticalSpace,
                 40.verticalSpace,
                 CustomButton(borderRadius: 15, text: "Update", onTap: (){
-                  if (authController.formKeyForget.currentState!.validate()) {
+                  if (controller.formKeyForget.currentState!.validate()) {
                     print("Validation passed!");
                   } else {
                     print("Validation failed.");

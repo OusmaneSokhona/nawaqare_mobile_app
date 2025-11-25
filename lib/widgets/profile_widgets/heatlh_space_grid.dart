@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/profile_screens/allergies_screen.dart';
 import 'package:patient_app/screens/profile_screens/blood_type.dart';
+import 'package:patient_app/screens/profile_screens/medical_history.dart';
 import 'package:patient_app/screens/profile_screens/privacy_security.dart';
 import 'package:patient_app/screens/profile_screens/update_password.dart';
 import 'package:patient_app/widgets/profile_widgets/language_dialogs.dart';
@@ -31,7 +32,7 @@ class HeatlhSpaceGrid extends StatelessWidget {
         HealthSpaceCard(
           icon: Icons.medical_services_outlined,
           title: 'Medical History',
-          onTap: () {},
+          onTap: () {profileController.handleHealthSpaceTap(MedicalHistory());},
         ),
         HealthSpaceCard(
           icon: Icons.update,

@@ -3,14 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/profile_controller.dart';
 import 'package:patient_app/widgets/profile_widgets/heatlh_space_grid.dart';
-
-import '../../utils/app_colors.dart';
-import 'health_space_card.dart';
 import 'info_row.dart';
 
-class MedicalVitalsProfile extends StatelessWidget {
+class MedicalVitalsProfile extends GetView<ProfileController> {
    MedicalVitalsProfile({super.key});
-ProfileController controller=Get.find();
   @override
   Widget build(BuildContext context) {
     return Obx(

@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/profile_controller.dart';
+import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/widgets/custom_text_field.dart';
+
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
-import '../../widgets/custom_button.dart';
 
-class EditBloodType extends GetView<ProfileController> {
-  EditBloodType({super.key});
-
+class AddMedicationScreen extends GetView<ProfileController> {
+  const AddMedicationScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class EditBloodType extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Blood Type",
+                    "Add Medication",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -55,110 +56,84 @@ class EditBloodType extends GetView<ProfileController> {
                   ),
                 ],
               ),
-              20.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      buildDropdownField(
-                        title: "Blood Type",
-                        items: controller.bloodList,
-                        selectedValue: controller.selectedBloodType,
-                        onChanged: (_) {},
+                      30.verticalSpace,
+                      CustomTextField(
+                        labelText: "Medication Name",
+                        hintText: "Metformin 500mg",
+                      ),
+                      10.verticalSpace,
+                      CustomTextField(
+                        labelText: "Dosage",
+                        hintText: "1 tablet twice daily",
+                      ),
+                      10.verticalSpace,
+                      CustomTextField(
+                        labelText: "Doctor",
+                        hintText: "Dr. Maria Waston",
                       ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Upload test proof (optional)',
+                          "Refill",
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontFamily: AppFonts.jakartaMedium,
                           ),
                         ),
                       ),
-                      3.verticalSpace,
                       InkWell(
-                        onTap: controller.pickFile,
-                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => _showDatePicker(context),
                         child: Container(
-                          width: double.infinity,
                           padding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 20,
+                            horizontal: 16,
+                            vertical: 18,
                           ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFFE5E7EB),
-                              width: 1,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                controller.formattedDate,
+                                // Display the formatted date
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color:
+                                      controller.selectedDate == null
+                                          ? Colors.grey
+                                          : Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Icon(
+                                Icons.calendar_today,
+                                color: Colors.blue,
+                                size: 24,
                               ),
                             ],
                           ),
-                          child: Obx(
-                            () => Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.cloud_upload_outlined,
-                                  size: 40,
-                                  color: Colors.blue.shade700,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  controller.selectedFileName.value ==
-                                              'No file selected' ||
-                                          controller.selectedFileName.value ==
-                                              'File selection cancelled'
-                                      ? 'Upload test proof'
-                                      : controller.selectedFileName.value!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                if (controller.selectedFileName.value !=
-                                        'No file selected' &&
-                                    controller.selectedFileName.value !=
-                                        'File selection cancelled')
-                                  const Text(
-                                    'Tap to select a new file',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
                         ),
                       ),
-                      30.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: "Update",
-                        onTap: () {Get.back();},
+                      10.verticalSpace,
+                      buildDropdownField(
+                        title: "Status",
+                        items: controller.medicationStatusList,
+                        selectedValue: controller.medicationStatus,
+                        onChanged: (_) {},
                       ),
-                      15.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: "Cancel",
-                        bgColor: AppColors.inACtiveButtonColor,
-                        fontColor: Colors.black,
-                        onTap: () {Get.back();},
-                      ),
-                      15.verticalSpace,
+                      20.verticalSpace,
+                      CustomButton(borderRadius: 15, text: "Add & Save", onTap: (){}),
+                      10.verticalSpace,
+                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
                     ],
                   ),
                 ),

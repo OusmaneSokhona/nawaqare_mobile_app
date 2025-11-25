@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/profile_controller.dart';
+import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
-import '../../widgets/custom_button.dart';
 
-class AddAllergyScreen extends GetView<ProfileController> {
-   AddAllergyScreen({super.key});
+class AddVaccinationScreen extends GetView<ProfileController> {
+  const AddVaccinationScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +46,7 @@ class AddAllergyScreen extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add Allergy",
+                    "Add Vaccination",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -55,22 +56,26 @@ class AddAllergyScreen extends GetView<ProfileController> {
                   ),
                 ],
               ),
-              20.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      buildDropdownField(title: "Medical", items: controller.allergyTypeList, selectedValue: controller.selectedAllergy, onChanged: (_){}),
-                      10.verticalSpace,
-                      CustomTextField(labelText: "Allergen name",hintText: "Penicillin",),
-                      10.verticalSpace,
-                      CustomTextField(labelText: "Reaction",hintText: "Rash",),
-                      10.verticalSpace,
-                      buildDropdownField(title: "Severity", items: controller.severityList, selectedValue: controller.selectedSeverity, onChanged: (_){}),
+                      30.verticalSpace,
+                      CustomTextField(
+                        labelText: "Vaccination Name",
+                        hintText: "Influenza",
+                      ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("Date Identified",style: TextStyle(color: AppColors.darkGrey,fontWeight: FontWeight.w600,fontSize: 15.sp),),
+                        child: Text(
+                          "Date",
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: AppFonts.jakartaMedium,
+                          ),
+                        ),
                       ),
                       InkWell(
                         onTap: () => _showDatePicker(context),
@@ -91,7 +96,7 @@ class AddAllergyScreen extends GetView<ProfileController> {
                                 controller.formattedDate,
                                 // Display the formatted date
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 14,
                                   color:
                                   controller.selectedDate == null
                                       ? Colors.grey
@@ -109,18 +114,24 @@ class AddAllergyScreen extends GetView<ProfileController> {
                         ),
                       ),
                       10.verticalSpace,
+                      buildDropdownField(
+                        title: "Status",
+                        items: controller.medicationStatusList,
+                        selectedValue: controller.vaccinationStatus,
+                        onChanged: (_) {},
+                      ),
+                      10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Upload Document/Photo',
+                          "Upload Certificate",
                           style: TextStyle(
-                            fontSize: 16.0,
+                            fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                            fontFamily: AppFonts.jakartaMedium,
                           ),
                         ),
                       ),
-                      3.verticalSpace,
                       InkWell(
                         onTap: controller.pickFile,
                         borderRadius: BorderRadius.circular(12),
@@ -152,11 +163,11 @@ class AddAllergyScreen extends GetView<ProfileController> {
                                 const SizedBox(height: 12),
                                 Text(
                                   controller.selectedFileName.value == 'No file selected' || controller.selectedFileName.value == 'File selection cancelled'
-                                      ? 'Upload PDF/JPEG'
+                                      ? 'Upload lab test or  report (PDF, JPG, PNG)'
                                       : controller.selectedFileName.value!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: 16,
+                                    fontSize: 14.sp,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black,
                                   ),
@@ -171,44 +182,11 @@ class AddAllergyScreen extends GetView<ProfileController> {
                           ),
                         ),
                       ),
+
+                      20.verticalSpace,
+                      CustomButton(borderRadius: 15, text: "Add & Save", onTap: (){}),
                       10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Note',
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      3.verticalSpace,
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300, width: 1),
-                        ),
-                        child: TextField(
-                          maxLines: 5,
-                          onTapOutside: (_){
-                            FocusManager.instance.primaryFocus!.unfocus();
-                          },
-                          decoration: InputDecoration(
-                            hintText: 'Write a note to your doctor',
-                            hintStyle: TextStyle(color: Colors.grey.shade500),
-                            border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                          ),
-                        ),
-                      ),
-                      10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Save", onTap: (){}),
-                      15.verticalSpace,
                       CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
-                      30.verticalSpace,
                     ],
                   ),
                 ),
@@ -219,20 +197,22 @@ class AddAllergyScreen extends GetView<ProfileController> {
       ),
     );
   }
-   void _showDatePicker(BuildContext context) async {
-     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
-       context: context,
-       config: CalendarDatePicker2WithActionButtonsConfig(
-         calendarType: CalendarDatePicker2Type.single,
-         selectedDayHighlightColor: Colors.blue,
-         centerAlignModePicker: true,
-       ),
-       dialogSize: const Size(325, 400),
-       value: [controller.selectedDate],
-       // Current date value
-       borderRadius: BorderRadius.circular(15),
-     );
-   }
+
+  void _showDatePicker(BuildContext context) async {
+    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+      context: context,
+      config: CalendarDatePicker2WithActionButtonsConfig(
+        calendarType: CalendarDatePicker2Type.single,
+        selectedDayHighlightColor: Colors.blue,
+        centerAlignModePicker: true,
+      ),
+      dialogSize: const Size(325, 400),
+      value: [controller.selectedDate],
+      // Current date value
+      borderRadius: BorderRadius.circular(15),
+    );
+  }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,
@@ -259,18 +239,22 @@ class AddAllergyScreen extends GetView<ProfileController> {
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 14.0,
+                ),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide.none
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
                 ),
                 filled: true,
                 fillColor: Colors.white,
               ),
               isExpanded: true,
-              icon:  Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items: items.map<DropdownMenuItem<String>>((String value) {
+              items:
+              items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

@@ -13,10 +13,9 @@ import '../../utils/app_fonts.dart';
 import '../../widgets/profile_widgets/health_space_card.dart';
 import '../notifications_screens/notifications_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends GetView<ProfileController> {
   ProfileScreen({super.key});
 
-  ProfileController controller = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {

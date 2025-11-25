@@ -3,12 +3,11 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 
-class LanguageDialog extends StatelessWidget {
+class LanguageDialog extends GetView<ProfileController> {
   const LanguageDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final ProfileController controller = Get.find();
 
     const List<String> availableLanguages = ['French', 'English'];
 

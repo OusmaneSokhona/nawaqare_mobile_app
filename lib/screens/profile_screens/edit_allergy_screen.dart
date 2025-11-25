@@ -10,9 +10,8 @@ import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
 import '../../widgets/custom_button.dart';
 
-class EditAllergyScreen extends StatelessWidget {
+class EditAllergyScreen extends GetView<ProfileController> {
   EditAllergyScreen({super.key});
-  ProfileController controller =Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -9,11 +9,8 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
 
-class AllergiesScreen extends StatelessWidget {
+class AllergiesScreen extends GetView<ProfileController> {
   AllergiesScreen({super.key});
-
-  ProfileController profileController = Get.find();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,12 +63,12 @@ class AllergiesScreen extends StatelessWidget {
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: profileController.allergiesData.length,
+                        itemCount: controller.allergiesData.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding:  EdgeInsets.only(bottom: 18.sp),
                             child: MedicationAllergyCard(
-                              data: profileController.allergiesData[index],
+                              data: controller.allergiesData[index],
                             ),
                           );
                         },

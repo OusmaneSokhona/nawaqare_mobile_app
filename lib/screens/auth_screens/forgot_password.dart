@@ -7,7 +7,7 @@ import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_images.dart';
 import 'package:patient_app/widgets/verification_via_widget.dart';
 
-import '../../controllers/patient_controllers/auth_controllers/forget_password_contorller.dart';
+import '../../controllers/auth_controllers/forget_password_contorller.dart';
 
 class ForgotPassword extends StatelessWidget {
    ForgotPassword({super.key});

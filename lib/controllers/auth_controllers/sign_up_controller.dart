@@ -5,12 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:patient_app/controllers/patient_controllers/auth_controllers/sign_in_controller.dart';
+import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../widgets/validation_check_list.dart';
 
 class SignUpController extends GetxController {
-  RxBool isDoctor = true.obs;
+  RxBool isDoctor = false.obs;
   SignInController signInController = Get.find();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();

@@ -5,8 +5,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/medical_vitals.dart';
 import 'package:patient_app/widgets/display_field.dart';
 import 'package:patient_app/widgets/profile_picture_widget.dart';
-
-import '../../controllers/patient_controllers/auth_controllers/sign_up_controller.dart';
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../widgets/custom_button.dart';

@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dialog.dart';
-
-import '../../controllers/patient_controllers/auth_controllers/sign_up_controller.dart';
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../widgets/custom_button.dart';

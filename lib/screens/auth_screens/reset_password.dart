@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../controllers/patient_controllers/auth_controllers/forget_password_contorller.dart';
+import '../../controllers/auth_controllers/forget_password_contorller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../widgets/custom_button.dart';

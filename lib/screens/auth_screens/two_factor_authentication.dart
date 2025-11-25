@@ -8,7 +8,7 @@ import 'package:patient_app/utils/app_images.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/verification_via_widget.dart';
 
-import '../../controllers/patient_controllers/auth_controllers/sign_up_controller.dart';
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 
 class TwoFactorAuthentication extends StatelessWidget {
   TwoFactorAuthentication({super.key});

@@ -5,8 +5,7 @@ import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
-
-import '../../controllers/patient_controllers/auth_controllers/sign_in_controller.dart';
+import '../../controllers/auth_controllers/sign_in_controller.dart';
 import '../../widgets/validation_check_list.dart';
 
 class SignInScreen extends StatelessWidget {

@@ -6,8 +6,7 @@ import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_radio_tile.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/progress_stepper.dart';
-
-import '../../controllers/patient_controllers/auth_controllers/sign_up_controller.dart';
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../widgets/validation_check_list.dart';

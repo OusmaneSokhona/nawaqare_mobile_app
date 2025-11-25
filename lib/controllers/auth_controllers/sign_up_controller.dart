@@ -164,7 +164,7 @@ class SignUpController extends GetxController {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
-  TextEditingController dateController=TextEditingController();
+  TextEditingController dateController = TextEditingController();
   Rxn<File> pickedImage = Rxn<File>();
   final ImagePicker _picker = ImagePicker();
 
@@ -202,6 +202,7 @@ class SignUpController extends GetxController {
       backgroundColor: Colors.white,
     );
   }
+
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
 
   DateTime? get selectedDate => _selectedDate.value;
@@ -212,8 +213,18 @@ class SignUpController extends GetxController {
     }
     final date = _selectedDate.value!;
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
@@ -221,10 +232,23 @@ class SignUpController extends GetxController {
   void updateDate(DateTime? newDate) {
     _selectedDate.value = newDate;
   }
+
   final List<String> genderList = ['Male', 'Female', 'Other'];
   final List<String> countryList = ['Pakistan', 'India', 'USA', 'UK', 'Canada'];
-  final List<String> religionList = ['Islam', 'Christianity', 'Hinduism', 'Buddhism', 'Other'];
-  final List<String> departmentList = ['Medical', 'Engineering', 'Arts', 'Business', 'Science'];
+  final List<String> religionList = [
+    'Islam',
+    'Christianity',
+    'Hinduism',
+    'Buddhism',
+    'Other',
+  ];
+  final List<String> departmentList = [
+    'Medical',
+    'Engineering',
+    'Arts',
+    'Business',
+    'Science',
+  ];
 
   final selectedGender = Rx<String?>('Female');
   final selectedCountry = Rx<String?>('Pakistan');
@@ -246,29 +270,78 @@ class SignUpController extends GetxController {
   void updateSelectedDepartment(String? newValue) {
     selectedDepartment.value = newValue;
   }
+
   //..............Documents and Reports
   final selectedFileName = Rx<String?>('No file selected');
+  final selectedFileIdCard = Rx<String?>('No file selected');
+  final selectedFilePassport = Rx<String?>('No file selected');
+  final selectedFileMedicalLicense = Rx<String?>('No file selected');
+  final selectedFileDiploma = Rx<String?>('No file selected');
+  final selectedFileInsuranceProof = Rx<String?>('No file selected');
+  final selectedFileCnpd = Rx<String?>('No file selected');
+  final selectedFileBankVerification = Rx<String?>('No file selected');
+  final selectedFileBankPaymentAuthorization = Rx<String?>('No file selected');
 
-  void pickFile() async {
+  void pickFile(Rx<String?> file) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpeg', 'jpg'],
     );
 
     if (result != null && result.files.single.name != null) {
-      selectedFileName.value = result.files.single.name!;
+      file.value = result.files.single.name!;
     } else {
-      selectedFileName.value = 'File selection cancelled';
+      file.value = 'File selection cancelled';
     }
   }
-void moveToSignInScreen(){
+
+  void moveToSignInScreen() {
     nameController.clear();
     emailController.clear();
     passwordController.clear();
     phoneNumberController.clear();
     controllers.clear();
-  Get.to(SignInScreen());
-}
+    Get.to(SignInScreen());
+  }
+
+  //............ Professional Info...........//
+  final List<String> medicalSpecialityList = [
+    'Cardiology',
+    'Dermatology',
+    'Neurology',
+    'Oncology',
+    'Pediatrics',
+    'Gastroenterology',
+    'Orthopedics',
+    'Ophthalmology',
+    'Pulmonology',
+    'Endocrinology',
+    'Nephrology',
+  ];
+  RxString selectedSpecialist="Cardiology".obs;
+  void updateSpecialization(String? newValue) {
+    selectedSpecialist.value = newValue!;
+  }
+  final List<String> feeList = [
+    '\$25/ 30 mint45',
+    '\$50/ 60 mint75',
+    '\$125/ 90 mint',
+  ];
+  RxString selectedFee="\$25/ 30 mint45".obs;
+  void updateFee(String? newValue) {
+    selectedFee.value = newValue!;
+  }
+  //........review and submission.........//
+  final isPersonalDataChecked = false.obs;
+  final isSubmissionConsentChecked = false.obs;
+
+  void togglePersonalData(bool? value) {
+    isPersonalDataChecked.value = value ?? false;
+  }
+
+  void toggleSubmissionConsent(bool? value) {
+    isSubmissionConsentChecked.value = value ?? false;
+  }
   // ............On Close Function..............
 
   @override

@@ -77,7 +77,9 @@ class DocumentsReports extends StatelessWidget {
                   ),
                   3.verticalSpace,
                   InkWell(
-                    onTap: signUpController.pickFile,
+                    onTap: (){
+                      signUpController.pickFile(signUpController.selectedFileName);
+                    },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       width: double.infinity,

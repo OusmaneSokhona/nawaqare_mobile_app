@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/auth_screens/demographic_info.dart';
 import 'package:patient_app/screens/auth_screens/two_factor_authentication.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_radio_tile.dart';
@@ -103,7 +104,7 @@ class SignUpScreen extends StatelessWidget {
                           ),
                         ),
                         15.verticalSpace,
-                        ProgressStepper(currentStep: 1, totalSteps: 4),
+                        Obx(()=> ProgressStepper(currentStep: 1, totalSteps: signUpController.isDoctor.value?5:4)),
                         15.verticalSpace,
                         CustomTextField(
                           labelText: "Full Name",
@@ -162,7 +163,10 @@ class SignUpScreen extends StatelessWidget {
                           onTap: () {
                             if (signUpController.formKey.currentState!.validate()) {
                               if (signUpController.isPasswordValid()) {
-                                Get.to(TwoFactorAuthentication());
+                                if(signUpController.isDoctor.value){
+                                  Get.to(DemographicInfo());
+                                 }else{
+                                Get.to(TwoFactorAuthentication());}
                                 print("Validation passed!");
                               } else {
                                 signUpController.markPasswordInteracted();

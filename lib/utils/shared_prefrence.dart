@@ -127,4 +127,8 @@ class LocalStorageUtils {
     }
     return _preferences!.getKeys();
   }
+  static deleteUser(){
+    remove("setLogined");
+    remove("setLoginedDoctor");
+  }
 }

@@ -127,7 +127,7 @@ class SignInController extends GetxController {
   }
 
   void goToSignUpScreen() {
-    Get.to(SignUpScreen());
+    Get.to(SignUpScreen(),binding: AppBinding());
   }
 
   void goToMainScreen() {

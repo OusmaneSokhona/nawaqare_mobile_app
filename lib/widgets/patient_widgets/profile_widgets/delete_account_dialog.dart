@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
+import 'package:patient_app/utils/shared_prefrence.dart';
 
 class DeleteAccountDialog extends StatelessWidget {
   const DeleteAccountDialog({super.key});
@@ -85,6 +86,7 @@ class DeleteAccountDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
+                      LocalStorageUtils.deleteUser();
                       Get.offAll(SignInScreen(),binding: AppBinding()); // Use Get.back instead of Navigator.pop
                     },
                     style: ElevatedButton.styleFrom(

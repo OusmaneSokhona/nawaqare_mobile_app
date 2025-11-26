@@ -11,7 +11,7 @@ import '../../../widgets/validation_check_list.dart';
 
 class SignUpController extends GetxController {
   RxBool isDoctor = false.obs;
-  SignInController signInController = Get.find();
+  SignInController signInController = Get.put(SignInController());
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();

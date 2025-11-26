@@ -54,7 +54,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text('Upload now', style: TextStyle(fontSize: 16)),
+              child:  Text('Upload now', style: TextStyle(fontSize: 14.sp)),
             ),
           ),
          15.verticalSpace,

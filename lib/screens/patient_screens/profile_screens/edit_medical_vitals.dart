@@ -77,7 +77,7 @@ class EditMedicalVitals extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(borderRadius: 15, text: "Update", onTap: (){}),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
                       40.verticalSpace,
                     ],
                   ),

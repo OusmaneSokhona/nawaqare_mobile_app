@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 
@@ -77,7 +78,7 @@ class SubmitForVerificationDialog extends StatelessWidget {
             right: 15,
             child: InkWell(
               onTap: () {
-                Get.offAll(SignInScreen());
+                Get.offAll(SignInScreen(),binding: AppBinding());
               },
               child: Container(
                 height: 30.h,

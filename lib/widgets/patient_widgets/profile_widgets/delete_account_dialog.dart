@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 
 class DeleteAccountDialog extends StatelessWidget {
   const DeleteAccountDialog({super.key});
@@ -83,7 +85,7 @@ class DeleteAccountDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.back(result: true); // Use Get.back instead of Navigator.pop
+                      Get.offAll(SignInScreen(),binding: AppBinding()); // Use Get.back instead of Navigator.pop
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],

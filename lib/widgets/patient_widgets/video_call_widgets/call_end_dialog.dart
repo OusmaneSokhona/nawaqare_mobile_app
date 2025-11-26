@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 
 import '../../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
@@ -109,7 +110,7 @@ class CallEndDialog extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                          Get.back();
-                         Get.to(ConsultaionFinishedScreen());
+                         Get.to(ConsultaionFinishedScreen(),binding: AppBinding());
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,

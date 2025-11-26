@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
 import 'package:patient_app/screens/patient_screens/main_screen.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -365,7 +366,7 @@ class PaymentScreen extends StatelessWidget {
                         text: "Confirm & Pay",
                         onTap: () {
                           Get.dialog(barrierDismissible: false,AppointmentConfirmationDialog(doctorName: "Dr Daniel", date: "12/02/26", time: "10:30", onDone: (){
-                            Get.offAll(MainScreen());
+                            Get.offAll(MainScreen(),binding: AppBinding());
                           }, onViewDetails: (){}));
                         },
                       ),

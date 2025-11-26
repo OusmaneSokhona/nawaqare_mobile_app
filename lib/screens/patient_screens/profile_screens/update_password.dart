@@ -43,7 +43,7 @@ class UpdatePassword extends GetView<ForgetPasswordController> {
                       child: Text("Update Password",style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
-                        fontSize: 32.sp,
+                        fontSize: 27.sp,
                         fontWeight: FontWeight.w700,
                       ),),
                     ),

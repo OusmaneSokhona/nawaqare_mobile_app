@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/patient_screens/main_screen.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 
 class FeedbackController extends GetxController {
   var selectedRating = 0.obs;
@@ -17,7 +18,7 @@ class FeedbackController extends GetxController {
   bool get isSendButtonEnabled => selectedRating.value > 0;
 
   void sendFeedback() {
-    Get.offAll(MainScreen());
+    Get.offAll(MainScreen(),binding: AppBinding());
   }
 
   void viewPrescription() {

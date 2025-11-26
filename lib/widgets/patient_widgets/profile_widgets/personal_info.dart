@@ -59,7 +59,7 @@ class PersonalInfo extends StatelessWidget{
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: const Text('Edit Personal Info', style: TextStyle(fontSize: 16)),
+                  child:  Text('Edit Personal Info', style: TextStyle(fontSize: 14.sp)),
                 ),
               ),
               const SizedBox(height: 30),

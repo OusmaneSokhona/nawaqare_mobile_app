@@ -6,6 +6,7 @@ import 'package:patient_app/screens/auth_screens/forgot_password.dart';
 import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
 import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/screens/patient_screens/main_screen.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
 
@@ -130,11 +131,11 @@ class SignInController extends GetxController {
   }
 
   void goToMainScreen() {
-    Get.offAll(MainScreen());
+    Get.offAll(MainScreen(),binding: AppBinding());
   }
 
   void goToMainScreenDocotor() {
-    Get.offAll(MainScreenDoctor());
+    Get.offAll(MainScreenDoctor(),binding: AppBinding());
   }
 
   void signInTap() {

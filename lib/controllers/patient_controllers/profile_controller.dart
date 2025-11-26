@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/models/allergy_model.dart';
 import 'package:patient_app/models/medical_history_model.dart';
 import 'package:patient_app/models/vaccination_history_model.dart';
+import 'package:patient_app/utils/app_bindings.dart';
 import '../../models/profile_models.dart';
 import '../../screens/patient_screens/profile_screens/edit_medical_vitals.dart';
 import '../../screens/patient_screens/profile_screens/edit_personal_info.dart';
@@ -49,11 +50,11 @@ class ProfileController extends GetxController {
       ].obs;
 
   void editPersonalInfo() {
-    Get.to(EditPersonalInfo());
+    Get.to(EditPersonalInfo(),binding: AppBinding());
   }
 
   void editMedicalVitals() {
-    Get.to(EditMedicalVitals());
+    Get.to(EditMedicalVitals(),binding: AppBinding());
   }
 
   void uploadNewDocument() {

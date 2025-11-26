@@ -6,7 +6,8 @@ import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/onBoarding_widgets.dart';
 import 'package:patient_app/widgets/custom_small_button.dart';
 
-import '../../controllers/patient_controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
+import '../../controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
+
 
 class OnBoardingScreen extends StatelessWidget {
   OnBoardingScreen({super.key});

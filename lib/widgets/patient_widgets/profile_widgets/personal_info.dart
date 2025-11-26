@@ -7,8 +7,9 @@ import 'heatlh_space_grid.dart';
 import 'info_row.dart';
 
 
-class PersonalInfo extends GetView<ProfileController> {
+class PersonalInfo extends StatelessWidget{
    PersonalInfo({super.key});
+   ProfileController controller=Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     return Obx(

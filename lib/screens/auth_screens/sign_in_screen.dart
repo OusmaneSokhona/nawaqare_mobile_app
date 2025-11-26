@@ -55,6 +55,7 @@ class SignInScreen extends StatelessWidget {
                 Padding(
                   padding:  EdgeInsets.symmetric(horizontal:20.w),
                   child: CustomTextField(
+                    maxLength: 30,
                     labelText: "Email",
                     controller: signInController.emailController,
                     hintText: 'Saira@gmail.com',
@@ -68,6 +69,7 @@ class SignInScreen extends StatelessWidget {
                       () => Padding(
                     padding:  EdgeInsets.symmetric(horizontal: 20.w),
                     child: CustomTextField(
+                      maxLength: 30,
                       labelText: 'Password',
                       hintText: '********',
                       controller: signInController.passwordController,

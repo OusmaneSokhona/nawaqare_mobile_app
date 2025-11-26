@@ -19,7 +19,10 @@ class SubmitForVerificationDialog extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset("assets/images/verification_dialog_image.png",height: 110.h,),
+                Image.asset(
+                  "assets/images/verification_dialog_image.png",
+                  height: 110.h,
+                ),
                 SizedBox(height: 20.0),
                 Text(
                   'Submit For Verification',
@@ -28,17 +31,14 @@ class SubmitForVerificationDialog extends StatelessWidget {
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w800,
                     color: Colors.black,
-                    fontFamily: AppFonts.jakartaBold
+                    fontFamily: AppFonts.jakartaBold,
                   ),
                 ),
                 SizedBox(height: 10.0),
                 Text(
                   '“Your verification request has been received. Expected verification time: 48–72 hours. You’ll receive an an email confirmation and can track your status in your profile.”',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Color(0xFF757575),
-                  ),
+                  style: TextStyle(fontSize: 15.0, color: Color(0xFF757575)),
                 ),
                 SizedBox(height: 30.0),
                 SizedBox(
@@ -51,7 +51,9 @@ class SubmitForVerificationDialog extends StatelessWidget {
                         width: 90,
                         height: 90,
                         child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.primaryColor,
+                          ),
                           strokeWidth: 5.0,
                           backgroundColor: AppColors.onboardingBackground,
                         ),
@@ -61,7 +63,7 @@ class SubmitForVerificationDialog extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
-                          color:Colors.black,
+                          color: Colors.black,
                         ),
                       ),
                     ],
@@ -73,7 +75,21 @@ class SubmitForVerificationDialog extends StatelessWidget {
           Positioned(
             top: 15,
             right: 15,
-            child:InkWell(onTap: (){Get.offAll(SignInScreen());},child: Container(height: 30.h,width: 30.w,decoration: BoxDecoration(shape: BoxShape.circle,color: AppColors.primaryColor),alignment: Alignment.center,child: Icon(Icons.close,color: Colors.white,),))
+            child: InkWell(
+              onTap: () {
+                Get.offAll(SignInScreen());
+              },
+              child: Container(
+                height: 30.h,
+                width: 30.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primaryColor,
+                ),
+                alignment: Alignment.center,
+                child: Icon(Icons.close, color: Colors.white),
+              ),
+            ),
           ),
         ],
       ),

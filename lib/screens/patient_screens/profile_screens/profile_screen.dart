@@ -12,10 +12,9 @@ import '../../../widgets/patient_widgets/profile_widgets/personal_info.dart';
 import '../notifications_screens/notifications_screen.dart';
 import '../video_call_screens/help_center_screen.dart';
 
-class ProfileScreen extends GetView<ProfileController> {
+class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
-
-
+  ProfileController controller=Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();

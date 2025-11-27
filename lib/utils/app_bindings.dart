@@ -1,4 +1,6 @@
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/chat_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
@@ -17,5 +19,7 @@ class AppBinding implements Bindings {
     Get.lazyPut(()=>HomeController());
     Get.lazyPut(()=>ChatController());
     Get.lazyPut(()=>SearchControllerCustom());
+    Get.lazyPut(()=>DoctorHomeController());
+    Get.lazyPut(()=>DoctorAppointmentController());
   }
 }

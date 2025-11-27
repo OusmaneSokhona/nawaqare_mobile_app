@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/main_controller_doctor.dart';
 
@@ -19,17 +20,17 @@ class MainScreenDoctor extends StatelessWidget {
           backgroundColor:Colors.white,
           currentIndex: mainController.currentIndex.value,
           onTap: mainController.changePage,
-          items: const [
+          items:  [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.home,size: 22.h,),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon:Icon(Icons.chat),
+              icon:ImageIcon(AssetImage("assets/images/chat_icon.png"),size: 22.h,),
               label: 'Chat',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
+              icon: ImageIcon(AssetImage("assets/images/consultation_icon.png"),size: 22.h,),
               label: 'Consultation',
             ),
             BottomNavigationBarItem(

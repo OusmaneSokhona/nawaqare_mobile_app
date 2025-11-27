@@ -9,6 +9,7 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
   final TextInputType keyboardType;
   final IconData? prefixIcon;
+  final IconData? suffixIcon;
   final void Function(String)? onChanged;
   final void Function()? onTapEye;
   final bool isPasswordField;
@@ -25,6 +26,7 @@ class CustomTextField extends StatelessWidget {
     this.controller,
     this.keyboardType = TextInputType.text,
     this.prefixIcon,
+    this.suffixIcon,
     this.onChanged,
     this.isEnabled = false,
     this.onTapEye ,
@@ -102,8 +104,18 @@ class CustomTextField extends StatelessWidget {
                   ),
                 )
                     : null,
-                suffixIcon: isPasswordField
-                    ? Padding(
+                suffixIcon: (isPasswordField||suffixIcon != null)
+                    ? suffixIcon != null?
+                Padding(
+                  padding:  EdgeInsets.only(left: 0.0, right: 20.w),
+                  child: Icon(
+                    suffixIcon,
+                    color:Colors.black54,
+                    size: 24.sp,
+                  ),
+                )
+                    :
+                Padding(
                   padding:  EdgeInsets.only(right: 15.w),
                   child: InkWell(
                     onTap: () {

@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/chat_controller.dart';
-import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
-import 'package:patient_app/controllers/patient_controllers/search_controller.dart';
-import 'package:patient_app/screens/patient_screens/home_screen.dart';
-
+import 'package:patient_app/screens/doctor_screens/doctor_home_screen.dart';
 import '../../screens/patient_screens/chat_screens/chat_screen.dart';
-import '../../screens/patient_screens/profile_screens/profile_screen.dart';
-import '../../screens/patient_screens/search_screens/search_screen.dart';
+
 
 class MainControllerDoctor extends GetxController{
-  ProfileController profileController=Get.find();
   ChatController chatController=Get.find();
-  HomeController homeController=Get.find();
-  SearchControllerCustom searchController=Get.find();
+  DoctorHomeController homeController=Get.find();
   var currentIndex = 0.obs;
   var currentTitle = 'Home'.obs;
   final List<Widget> screens = [
-    Scaffold(body: Center(child: Text("Home"),),),
+   DoctorHomeScreen(),
     ChatScreen(),
-    SearchScreen(),
-    ProfileScreen(),
+    Scaffold(body: Center(child: Text("Consultation"),),),
+    Scaffold(body: Center(child: Text("Profile"),),),
   ];
   final List<String> titles = [
     'Home',
@@ -32,9 +26,7 @@ class MainControllerDoctor extends GetxController{
 
   void changePage(int index) {
     currentIndex.value = index;
-    profileController.scrollValue.value=0.0;
     homeController.scrollValue.value=0.0;
     chatController.scrollValue.value=0.0;
-    searchController.scrollValue.value=0.0;
   }
 }

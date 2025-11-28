@@ -338,7 +338,8 @@ class MedicalReportCard extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16.0),
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(13.0),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,12 +8,11 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
-import 'order_summary.dart';
 
-class PrescriptionDetails extends StatelessWidget {
+class DoctorPrescriptionDetailScreen extends StatelessWidget {
   PrescriptionModel prescriptionModel;
 
-  PrescriptionDetails({super.key, required this.prescriptionModel});
+  DoctorPrescriptionDetailScreen({super.key, required this.prescriptionModel});
 
   Color _getStatusColor(PrescriptionStatus status) {
     switch (status) {
@@ -93,7 +93,7 @@ class PrescriptionDetails extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Prescription Details",
+                    "Prescription Detail",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -164,9 +164,9 @@ class PrescriptionDetails extends StatelessWidget {
                           "Prescription Info",
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 18.sp,
                             color: Colors.black,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -176,10 +176,18 @@ class PrescriptionDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
+                              "Prescription id",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13.sp,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
                               "Date of issue",
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 13.sp,
                                 color: Colors.black,
                               ),
                             ),
@@ -187,7 +195,7 @@ class PrescriptionDetails extends StatelessWidget {
                               "Valid Untill",
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 13.sp,
                                 color: Colors.black,
                               ),
                             ),
@@ -201,10 +209,18 @@ class PrescriptionDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
+                              "#12345678678",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 13.sp,
+                                color: AppColors.lightGrey,
+                              ),
+                            ),
+                            Text(
                               "12/Sep/2025",
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 13.sp,
                                 color: AppColors.lightGrey,
                               ),
                             ),
@@ -212,7 +228,7 @@ class PrescriptionDetails extends StatelessWidget {
                               "12/Nov/2025",
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 13.sp,
                                 color: AppColors.lightGrey,
                               ),
                             ),
@@ -220,95 +236,35 @@ class PrescriptionDetails extends StatelessWidget {
                         ),
                       ),
                       5.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Eligible Till:",
-                            style: TextStyle(
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          5.horizontalSpace,
-                          Text(
-                            "Next 20 days",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16.sp,
-                              color: AppColors.lightGrey,
-                            ),
-                          ),
-                        ],
-                      ),
-                      15.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Diagnosis History",
+                          "Diagnosis",
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 18.sp,
                             color: Colors.black,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      Card(
-                        elevation: 2.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
+                      Container(
+                        width: 1.sw,
+                        padding: EdgeInsets.all(12.sp),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(
+                            color: AppColors.lightGrey.withOpacity(0.2),
+                          ),
                         ),
-                        color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Diagnosis',
-                                style:TextStyle(
-                                  fontSize: 17.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              4.verticalSpace,
-                              const Text(
-                                'Migraine without aura',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              16.verticalSpace,
-                              Text(
-                                'Notes',
-                                style: TextStyle(
-                                  fontSize: 17.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,),
-                              ),
-                              8.verticalSpace,
-                              Text(
-                                'Symptoms improving, headache frequency reduced from 5 to 2 times per week.',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              4.verticalSpace,
-                              Text(
-                                'Advised patient to continue current regimen and maintain sleep hygiene',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ],
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Migraine without aura',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.lightGrey,
                           ),
                         ),
                       ),
@@ -316,12 +272,12 @@ class PrescriptionDetails extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Prescription History",
+                          "Notes",
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 18.sp,
                             color: Colors.black,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
@@ -333,65 +289,97 @@ class PrescriptionDetails extends StatelessWidget {
                         color: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
+                          child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Prescriptions',
-                                    style: TextStyle(
-                                      fontSize: 17.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
-                                    ),
+                              SizedBox(
+                                width: 0.65.sw,
+                                height: 100.h,
+                                child: Text(
+                                  'Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.lightGrey,
                                   ),
-                                  const Icon(
-                                    Icons.chat_bubble_outline,
-                                    color: Colors.blue,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Amoxicillin 500mg',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
                                 ),
                               ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Morning & Evening – 7 Days',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              const Row(
-                                children: [
-                                  Icon(
-                                    Icons.lock,
-                                    size: 18,
-                                    color: Colors.black54,
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Encrypted & compliant with GDPR/HDS',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
+                              Image.asset(
+                                "assets/images/edit_icon.png",
+                                height: 20.h,
+                                color: Colors.blue,
                               ),
                             ],
                           ),
+                        ),
+                      ),
+                      10.verticalSpace,
+                      Row(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Prescriptions",
+                              style: TextStyle(
+                                fontFamily: AppFonts.jakartaBold,
+                                fontSize: 18.sp,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          Spacer(),
+                          Image.asset(
+                            "assets/images/chat_icon.png",
+                            height: 25.sp,
+                            color: AppColors.primaryColor,
+                          ),
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Amoxicillin 500mg',
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                             Row(
+                               children: [
+                                 Text(
+                                  'Dosage instruction:',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                                             ),
+                                 Text(
+                                  ' 1 tablet, twice daily after meals',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: AppColors.lightGrey,
+                                  ),
+                                                             ),
+                               ],
+                             ),
+                            8.verticalSpace,
+                            Text(
+                              'Refill until Oct 15,2025',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       10.verticalSpace,
@@ -399,12 +387,11 @@ class PrescriptionDetails extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Electronique Sign',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: TextStyle(
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 19.sp,
                             color: Colors.black,
-                          ),
+                            fontWeight: FontWeight.w600,),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -442,7 +429,7 @@ class PrescriptionDetails extends StatelessWidget {
                                 'This digital prescription is generated and signed by a verified practitioner',
                                 maxLines: 2,
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14.sp,
                                   color: Colors.black87,
                                 ),
                               ),
@@ -453,10 +440,8 @@ class PrescriptionDetails extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Get Medicine",
-                        onTap: () {
-                          Get.to(OrderSummaryScreen());
-                        },
+                        text: "Send To Patient",
+                        onTap: () {},
                       ),
                       15.verticalSpace,
                       CustomButton(

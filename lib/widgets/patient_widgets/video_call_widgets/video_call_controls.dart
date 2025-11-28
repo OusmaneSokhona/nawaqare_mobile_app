@@ -37,7 +37,9 @@ class VideoCallControls extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ElevatedButton(
-              onPressed: () => _showEndCallDialog(),
+              onPressed: () {
+                _showEndCallDialog();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[700],
                 shape: RoundedRectangleBorder(
@@ -188,6 +190,7 @@ class VideoCallControls extends StatelessWidget {
   }
 
   void _showEndCallDialog() {
+
    Get.dialog(barrierDismissible: false,CallEndDialog());
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_detail.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_widget.dart';
@@ -148,7 +149,17 @@ class DoctorAppointmentScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      Obx(()=> controller.appointmentType.value == "upcoming"?SchedulerWidget():CustomTextField(labelText: "",hintText: "Search by patient name...",prefixIcon: Icons.search,suffixIcon: Icons.filter_list,)),
+                      Obx(
+                        () =>
+                            controller.appointmentType.value == "upcoming"
+                                ? SchedulerWidget()
+                                : CustomTextField(
+                                  labelText: "",
+                                  hintText: "Search by patient name...",
+                                  prefixIcon: Icons.search,
+                                  suffixIcon: Icons.filter_list,
+                                ),
+                      ),
                       Obx(
                         () =>
                             controller.appointmentType.value == "upcoming"
@@ -163,12 +174,12 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                   itemBuilder: (context, index) {
                                     return DoctorAppoinmentWidget(
                                       onTap: () {
-                                        // Get.to(
-                                        //   AppointmentDetailScreen(
-                                        //     appointmentModel:
-                                        //         controller.patientList[index],
-                                        //   ),
-                                        // );
+                                        Get.to(
+                                          DoctorAppointmentDetail(
+                                            appointmentModel:
+                                                controller.patientList[index],
+                                          ),
+                                        );
                                       },
                                       appointmentModel:
                                           controller.patientList[index],
@@ -187,13 +198,13 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                     return DoctorAppoinmentWidget(
                                       isCompleted: true,
                                       onTap: () {
-                                        // Get.to(
-                                        //   AppointmentDetailScreen(
-                                        //     isCompleted: true,
-                                        //     appointmentModel:
-                                        //         controller.patientList[index],
-                                        //   ),
-                                        // );
+                                        Get.to(
+                                          DoctorAppointmentDetail(
+                                            isCompleted: true,
+                                            appointmentModel:
+                                                controller.patientList[index],
+                                          ),
+                                        );
                                       },
                                       appointmentModel:
                                           controller.postPatientList[index],
@@ -201,11 +212,15 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                   },
                                 ),
                       ),
-                      Obx(()=>
-                        controller.appointmentType.value == "upcoming"
-                            ? CustomButton(borderRadius: 15, text: "Add Appointment", onTap: (){
-                        })
-                            : SizedBox(),
+                      Obx(
+                        () =>
+                            controller.appointmentType.value == "upcoming"
+                                ? CustomButton(
+                                  borderRadius: 15,
+                                  text: "Add Appointment",
+                                  onTap: () {},
+                                )
+                                : SizedBox(),
                       ),
                       20.verticalSpace,
                     ],

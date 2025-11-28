@@ -2,17 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/patient_controllers/prescription_controller.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 import '../../../models/prscription_model.dart';
 
-class PrescriptionCard extends StatelessWidget {
+class DoctorPrescriptionCard extends StatelessWidget {
   Function onTap;
   final PrescriptionModel prescription;
-final bool isActive;
-   PrescriptionCard({required this.prescription, super.key,this.isActive=true,required this.onTap});
-PrescriptionController controller=Get.find();
+  final bool isActive;
+  DoctorPrescriptionCard({required this.prescription, super.key,this.isActive=true,required this.onTap});
+  DoctorPrescriptionController controller=Get.find();
   Color _getStatusColor(PrescriptionStatus status) {
     switch (status) {
       case PrescriptionStatus.active:
@@ -124,12 +124,22 @@ PrescriptionController controller=Get.find();
                       color: const Color(0xFF333333),
                     ),
                   ),
-                  Text(
-                    prescription.specialization,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF666666),
-                    ),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 14.sp,
+                        color: AppColors.primaryColor,
+                      ),
+                      5.horizontalSpace,
+                      Text(
+                        "Elite Ortho Clinic, USA",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: const Color(0xFF666666),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -137,7 +147,13 @@ PrescriptionController controller=Get.find();
               _buildStatusChip(prescription.status),
             ],
           ),
-          16.verticalSpace,
+          8.verticalSpace,
+          Divider(
+            thickness: 1,
+            height: 1,
+            color: AppColors.lightGrey.withOpacity(0.2),
+          ),
+          8.verticalSpace,
           Text(
             prescription.medicationName,
             style: TextStyle(
@@ -155,41 +171,27 @@ PrescriptionController controller=Get.find();
             ),
           ),
           8.verticalSpace,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                prescription.dateInfo,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: const Color(0xFF999999),
-                ),
-              ),
-              if (prescription.refillsLeft != null)
-                Text(
-                  'Refills left: ${prescription.refillsLeft}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: primaryColor,
-                  ),
-                ),
-            ],
+          Text(
+            prescription.dateInfo,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: const Color(0xFF999999),
+            ),
           ),
           16.verticalSpace,
           Row(
             children: [
               if (showRefillButton)
                 _buildActionChip(
-                  'Request Refill',
-                  const Color(0xFFE0E0E0),
-                      () => controller.requestRefill(prescription),Colors.black
+                    'Modify',
+                    const Color(0xFFE0E0E0),
+                        () => controller.modify(),Colors.black
                 ),
               if (showRefillButton) 10.horizontalSpace,
               _buildActionChip(
-                'View Detail',
-                AppColors.primaryColor,
-                    () {onTap();},Colors.white
+                  'View Detail',
+                  AppColors.primaryColor,
+                      () {onTap();},Colors.white
               ),
             ],
           ),

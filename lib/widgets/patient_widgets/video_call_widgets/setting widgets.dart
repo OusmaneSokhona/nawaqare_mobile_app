@@ -53,7 +53,7 @@ class CustomDropdown extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontSize: 15, color: Colors.black87)),
+            Text(label, style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w500, color: Colors.black87)),
             if (trailing != null) trailing!,
           ],
         ),

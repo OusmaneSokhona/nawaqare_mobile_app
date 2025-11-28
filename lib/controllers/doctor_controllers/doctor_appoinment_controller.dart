@@ -1,3 +1,5 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 import '../../models/appointment_model.dart';
@@ -139,5 +141,31 @@ class DoctorAppointmentController extends GetxController{
 
   void applyFilters() {
     Get.back();
+  }
+  RxString notesText="Symptoms improving, headache frequency reduced from 5 to 2 times per week.  Advised patient to continue current regimen and maintain sleep hygiene".obs;
+  TextEditingController notesController=TextEditingController();
+  void saveNotes(){
+    notesText.value=notesController.text;
+  }
+  List<String> reportTypes=[
+    "Blood Test Report",
+    "X-Ray Report",
+    "MRI Scan Report",
+    "CT Scan Report",
+    "Ultrasound Report",
+  ];
+  RxString selectedReportType="Blood Test Report".obs;
+  final selectedFileName = Rx<String?>('No file selected');
+  void pickFile(Rx<String?> file) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpeg', 'jpg'],
+    );
+
+    if (result != null && result.files.single.name != null) {
+      file.value = result.files.single.name!;
+    } else {
+      file.value = 'File selection cancelled';
+    }
   }
 }

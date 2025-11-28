@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class CustomTextField extends StatelessWidget {
-  final String labelText;
+  final String? labelText;
   final String hintText;
   final TextEditingController? controller;
   final TextInputType keyboardType;
@@ -12,16 +12,19 @@ class CustomTextField extends StatelessWidget {
   final IconData? suffixIcon;
   final void Function(String)? onChanged;
   final void Function()? onTapEye;
+  final void Function()? onSuffixIconTap;
   final bool isPasswordField;
   final bool isEnabled;
   final Widget? validationView;
   final void Function(bool)? onFocusChange;
   final int maxLength;
   final String? Function(String?)? validator;
+  final Color suffixIconColor;
+  final Color prefixIconColor;
 
   const CustomTextField({
     super.key,
-    required this.labelText,
+     this.labelText,
     this.hintText = '',
     this.controller,
     this.keyboardType = TextInputType.text,
@@ -30,11 +33,14 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.isEnabled = false,
     this.onTapEye ,
+    this.onSuffixIconTap,
     this.maxLength=14,
     this.isPasswordField = false,
     this.validationView,
     this.onFocusChange,
     this.validator,
+    this.suffixIconColor=Colors.black54,
+    this.prefixIconColor=AppColors.primaryColor,
   });
 
   @override
@@ -46,17 +52,17 @@ class CustomTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
+        labelText!=null?Padding(
           padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
           child: Text(
-            labelText,
+            labelText!,
             style: const TextStyle(
           fontSize: 16.0,
           fontWeight: FontWeight.w600,
           color: Colors.black87,
           ),
           ),
-        ),
+        ):SizedBox(),
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -99,7 +105,7 @@ class CustomTextField extends StatelessWidget {
                   padding:  EdgeInsets.only(left: 15.0, right: 5.w),
                   child: Icon(
                     prefixIcon,
-                    color: primaryColor,
+                    color: prefixIconColor,
                     size: 24.sp,
                   ),
                 )
@@ -108,10 +114,15 @@ class CustomTextField extends StatelessWidget {
                     ? suffixIcon != null?
                 Padding(
                   padding:  EdgeInsets.only(left: 0.0, right: 20.w),
-                  child: Icon(
-                    suffixIcon,
-                    color:Colors.black54,
-                    size: 24.sp,
+                  child: InkWell(
+                    onTap: () {
+                      onSuffixIconTap!=null?onSuffixIconTap!():(){};
+                    },
+                    child: Icon(
+                      suffixIcon,
+                      color:suffixIconColor,
+                      size: 24.sp,
+                    ),
                   ),
                 )
                     :

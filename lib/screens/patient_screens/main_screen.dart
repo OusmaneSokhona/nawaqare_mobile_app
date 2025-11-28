@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/main_controller.dart';
-
 import '../../utils/app_colors.dart';
 
 class MainScreen extends StatelessWidget {

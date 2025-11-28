@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/shared_prefrence.dart';
 
 import '../../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
 import '../../../utils/app_colors.dart';
-
 
 class CallEndDialog extends StatelessWidget {
   const CallEndDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       elevation: 0,
@@ -27,9 +27,12 @@ class CallEndDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 const SizedBox(height: 10),
-                Image.asset("assets/images/call_end_dialog_image.png",height: 130.h,),
+                Image.asset(
+                  "assets/images/call_end_dialog_image.png",
+                  height: 130.h,
+                ),
                 const SizedBox(height: 20),
-                 Text(
+                Text(
                   'Ending Call',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -43,10 +46,7 @@ class CallEndDialog extends StatelessWidget {
                 Text(
                   'End call for both participants?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 20),
                 Container(
@@ -54,27 +54,26 @@ class CallEndDialog extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.orange.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color:AppColors.orange.withOpacity(0.3),),
+                    border: Border.all(
+                      color: AppColors.orange.withOpacity(0.3),
+                    ),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                       Padding(
-                         padding:  EdgeInsets.only(top: 4.h),
-                         child: Icon(
+                      Padding(
+                        padding: EdgeInsets.only(top: 4.h),
+                        child: Icon(
                           Icons.error_outline,
                           color: AppColors.orange,
                           size: 24,
-                                               ),
-                       ),
+                        ),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           'Your feedback is anonymous and helps improve service quality',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 13,
-                          ),
+                          style: TextStyle(color: Colors.black, fontSize: 13),
                         ),
                       ),
                     ],
@@ -108,9 +107,17 @@ class CallEndDialog extends StatelessWidget {
                     const SizedBox(width: 15),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                         Get.back();
-                         Get.to(ConsultaionFinishedScreen(),binding: AppBinding());
+                        onPressed: () async {
+                          Get.back();
+                          await LocalStorageUtils.getLoginedDoctor()
+                              ? Get.offAll(
+                                MainScreenDoctor(),
+                                binding: AppBinding(),
+                              )
+                              : Get.to(
+                                ConsultaionFinishedScreen(),
+                                binding: AppBinding(),
+                              );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,

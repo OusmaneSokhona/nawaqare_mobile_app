@@ -3,20 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_documents.dart';
+import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_personal_info.dart';
+import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_professional_info.dart';
+import 'package:patient_app/widgets/doctor_widgets/profile_widgets/revalidation.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../widgets/patient_widgets/profile_widgets/delete_account_dialog.dart';
-import '../../../widgets/patient_widgets/profile_widgets/documents_and_reports.dart';
 import '../../../widgets/patient_widgets/profile_widgets/health_space_card.dart';
-import '../../../widgets/patient_widgets/profile_widgets/medical_vitals.dart';
-import '../../../widgets/patient_widgets/profile_widgets/personal_info.dart';
-import '../notifications_screens/notifications_screen.dart';
-import '../video_call_screens/help_center_screen.dart';
+import '../../patient_screens/notifications_screens/notifications_screen.dart';
+import '../../patient_screens/video_call_screens/help_center_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
-  ProfileScreen({super.key});
-  ProfileController controller=Get.put(ProfileController());
-  DoctorProfileController profileController=Get.put(DoctorProfileController());
+class DoctorProfileScreen extends StatelessWidget {
+  DoctorProfileScreen({super.key});
+  DoctorProfileController controller=Get.put(DoctorProfileController());
+  ProfileController profileController=Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
@@ -44,9 +45,9 @@ class ProfileScreen extends StatelessWidget {
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
               final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -63,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
                       radius: 20.h,
                       backgroundColor: Colors.white,
                       foregroundImage: AssetImage(
-                        "assets/demo_images/home_demo_image.png",
+                        "assets/demo_images/doctor_1.png",
                       ),
                     ),
                     20.horizontalSpace,
@@ -106,7 +107,7 @@ class ProfileScreen extends StatelessWidget {
                             radius: 35.h,
                             backgroundColor: Colors.white,
                             foregroundImage: AssetImage(
-                              "assets/demo_images/home_demo_image.png",
+                              "assets/demo_images/doctor_1.png",
                             ),
                           ),
                           Spacer(),
@@ -158,24 +159,32 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       15.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          profileType("Personal Info", 80.w),
-                          9.horizontalSpace,
-                          profileType("Medical Vitals", 100.w),
-                          9.horizontalSpace,
-                          profileType("Documents & Reports", 130.w),
-                        ],
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              profileType("Personal Info", 65.w),
+                              9.horizontalSpace,
+                              profileType("Professional Info", 80.w),
+                              9.horizontalSpace,
+                              profileType("Documents", 55.w),
+                              9.horizontalSpace,
+                              profileType("Revalidation", 60.w),
+                            ],
+                          ),
+                        ),
                       ),
                       15.verticalSpace,
                       Obx(
-                        () =>
-                            controller.type.value == "Personal Info"
-                                ? PersonalInfo()
-                                : controller.type.value == "Medical Vitals"
-                                ? MedicalVitalsProfile()
-                                : DocumentsAndReportsProfile(),
+                            () =>
+                        controller.type.value == "Personal Info"
+                            ? DoctorPersonalInfo()
+                            : controller.type.value == "Professional Info"
+                            ? DoctorProfessionalInfo()
+                            : controller.type.value=="Documents"?DoctorDocuments():Revalidation(),
                       ),
                       10.verticalSpace,
                       HealthSpaceCard(
@@ -201,7 +210,7 @@ class ProfileScreen extends StatelessWidget {
 
   Widget profileType(String title, double width) {
     return Obx(
-      () => InkWell(
+          () => InkWell(
         onTap: () {
           controller.type.value = title;
         },
@@ -214,23 +223,23 @@ class ProfileScreen extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color:
-                    controller.type.value == title
-                        ? AppColors.primaryColor
-                        : AppColors.lightGrey,
-                fontSize: 13.sp,
+                controller.type.value == title
+                    ? AppColors.primaryColor
+                    : AppColors.lightGrey,
+                fontSize: 10.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
             2.verticalSpace,
             controller.type.value == title
                 ? Container(
-                  width: width.w,
-                  height: 3.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(7.sp),
-                  ),
-                )
+              width: width.w,
+              height: 3.h,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(7.sp),
+              ),
+            )
                 : SizedBox(),
           ],
         ),

@@ -177,6 +177,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                           bgColor: AppColors.inACtiveButtonColor,
                           fontColor: Colors.black,
                         ),
+                        30.verticalSpace,
                       },
                     ],
                   ),

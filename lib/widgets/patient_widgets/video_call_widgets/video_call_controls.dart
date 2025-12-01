@@ -68,7 +68,7 @@ class VideoCallControls extends StatelessWidget {
 
           _buildSpeakerButton(),
 
-          _buildMoreMenuButton(context),
+        controller.isDoctor.value?_buildMoreMenuButtonDoctor(context):_buildMoreMenuButton(context),
         ],
       ),
     );
@@ -188,6 +188,72 @@ class VideoCallControls extends StatelessWidget {
       ),
     );
   }
+  Widget _buildMoreMenuButtonDoctor(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Material(
+        color: Colors.grey[800],
+        shape: const CircleBorder(),
+        elevation: 5,
+        child: PopupMenuButton<String>(
+          icon: const Icon(
+            Icons.more_vert,
+            color: Colors.white,
+            size: 28,
+          ),
+          onSelected: (String result) {
+            print('Selected: $result');
+            if(result=="messages"){
+              Get.to(ChatDetailScreen());
+            }else if(result=="setting"){
+              Get.to(SettingScreen());
+            }else if(result=="note"){
+            controller.scaffoldKey.currentState?.openEndDrawer();
+            }else if(result=="addPrescription"){
+
+            }else if(result=="viewReports"){
+             }
+          },
+          offset: const Offset(0, -200),
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+            const PopupMenuItem<String>(
+              value: 'note',
+              child: Text('Add Doctor Note', style: TextStyle(fontSize: 16)),
+            ),
+            const PopupMenuItem<String>(
+              value: 'addPrescription',
+              child: Text('Add Prescription ', style: TextStyle(fontSize: 16)),
+            ),
+            const PopupMenuItem<String>(
+              value: 'viewReports',
+              child: Text('View Reports', style: TextStyle(fontSize: 16)),
+            ),
+            const PopupMenuItem<String>(
+              value: 'patientHistory',
+              child: Text('Patient History', style: TextStyle(fontSize: 16)),
+            ),
+            const PopupMenuItem<String>(
+              value: 'messages',
+              child: Text('In-video messages', style: TextStyle(fontSize: 16)),
+            ),
+            const PopupMenuItem<String>(
+              value: 'captions',
+              child: Text('Captions off', style: TextStyle(fontSize: 16)),
+            ),
+            const PopupMenuItem<String>(
+              value: 'setting',
+              child: Text('Setting', style: TextStyle(fontSize: 16)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   void _showEndCallDialog() {
 

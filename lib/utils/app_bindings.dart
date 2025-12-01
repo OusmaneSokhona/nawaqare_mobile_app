@@ -8,6 +8,7 @@ import 'package:patient_app/controllers/patient_controllers/search_controller.da
 import '../controllers/auth_controllers/forget_password_contorller.dart';
 import '../controllers/auth_controllers/sign_in_controller.dart';
 import '../controllers/auth_controllers/sign_up_controller.dart';
+import '../controllers/doctor_controllers/doctor_profile_controller.dart';
 
 class AppBinding implements Bindings {
   @override
@@ -21,5 +22,6 @@ class AppBinding implements Bindings {
     Get.lazyPut(()=>SearchControllerCustom());
     Get.lazyPut(()=>DoctorHomeController());
     Get.lazyPut(()=>DoctorAppointmentController());
+    Get.lazyPut(()=>DoctorProfileController());
   }
 }

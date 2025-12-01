@@ -118,8 +118,11 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
 
 class CardHeader extends StatelessWidget {
   final String title;
+  final double fontSize;
+  final FontWeight fontWeight;
+  final Color color;
 
-  const CardHeader({required this.title, super.key});
+  const CardHeader({required this.title, super.key, this.fontSize = 20, this.fontWeight = FontWeight.w700,this.color=Colors.black});
 
   @override
   Widget build(BuildContext context) {
@@ -128,9 +131,9 @@ class CardHeader extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          color: Colors.black,
-          fontSize: 20.sp,
-          fontWeight: FontWeight.w700,
+          color: color,
+          fontSize: fontSize.sp,
+          fontWeight: fontWeight,
           fontFamily: AppFonts.jakartaBold,
         ),
       ),

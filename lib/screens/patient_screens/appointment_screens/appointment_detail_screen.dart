@@ -121,8 +121,8 @@ class AppointmentDetailScreen extends StatelessWidget {
                           Get.to(PreviewScreen(appointmentModel: appointmentModel));
                         }),
                         10.verticalSpace,
-                       CustomButton(borderRadius: 15, text: "Reschedule", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,)
-                      }
+                       CustomButton(borderRadius: 15, text: "Reschedule", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      },
                     ],
                   ),
                 ),

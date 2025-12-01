@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 
+import '../../../widgets/doctor_widgets/profile_widgets/doctor_notes_drawer.dart';
 import '../../../widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
 
 class VideoCallScreen extends StatelessWidget {
-  const VideoCallScreen({super.key});
-
+   VideoCallScreen({super.key});
+VideoCallController controller=Get.put(VideoCallController());
   @override
   Widget build(BuildContext context) {
+    controller.checkDoctor();
     return Scaffold(
+      key: controller.scaffoldKey,
+      endDrawer: DoctorNotesDrawer(),
 body: Container(
   height: 1.sh,
   width: 1.sw,color: Colors.black87,

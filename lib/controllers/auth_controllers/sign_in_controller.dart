@@ -21,7 +21,10 @@ class SignInController extends GetxController {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
+void clearControllers(){
+  emailController.clear();
+  passwordController.clear();
+}
   String? emailValidator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required.';
@@ -143,9 +146,11 @@ class SignInController extends GetxController {
       if (isPasswordValid()) {
         if (emailController.text == "patient@gmail.com") {
           goToMainScreen();
+          clearControllers();
           LocalStorageUtils.setLogined();
         } else if (emailController.text == "doctor@gmail.com") {
           goToMainScreenDocotor();
+          clearControllers();
           LocalStorageUtils.setLoginedDoctor();
         } else {
           Get.snackbar(

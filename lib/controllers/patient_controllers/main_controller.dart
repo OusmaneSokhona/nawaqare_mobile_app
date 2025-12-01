@@ -11,7 +11,7 @@ import '../../screens/patient_screens/profile_screens/profile_screen.dart';
 import '../../screens/patient_screens/search_screens/search_screen.dart';
 
 class MainController extends GetxController{
-  ProfileController profileController=Get.find();
+  ProfileController profileController=Get.put(ProfileController());
   ChatController chatController=Get.find();
   HomeController homeController=Get.find();
   SearchControllerCustom searchController=Get.find();

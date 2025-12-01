@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:patient_app/utils/app_colors.dart';
 
 class InfoRow extends StatelessWidget {
   final String label;
   final String value;
   final bool showDivider;
+  final double labelTextSize;
+  final double valueTextSize;
 
   const InfoRow({
     required this.label,
     required this.value,
+    this.labelTextSize=16,
+    this.valueTextSize=16,
      this.showDivider=true,
     super.key,
   });
@@ -24,18 +30,20 @@ class InfoRow extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey.shade600,
+                  fontSize: labelTextSize.sp,
                   fontWeight: FontWeight.w500,
+                  color: AppColors.darkGrey,
                 ),
               ),
               Flexible(
                 child: Text(
                   value,
                   textAlign: TextAlign.right,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                  style:  TextStyle(
+                    fontSize: valueTextSize.sp,
+                    color: AppColors.lightGrey,
+                    fontWeight: FontWeight.w500,
+
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

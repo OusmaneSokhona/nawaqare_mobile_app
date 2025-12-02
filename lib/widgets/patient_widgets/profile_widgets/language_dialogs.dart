@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 
-class LanguageDialog extends GetView<ProfileController> {
-  const LanguageDialog({super.key});
-
+class LanguageDialog extends StatelessWidget {
+   LanguageDialog({super.key});
+ProfileController controller=Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
 

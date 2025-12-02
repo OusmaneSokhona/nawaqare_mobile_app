@@ -9,9 +9,9 @@ import '../../../utils/app_images.dart';
 import '../../../widgets/patient_widgets/profile_widgets/privacy_toggle_item.dart';
 
 
-class PrivacySecurity extends GetView<ProfileController> {
+class PrivacySecurity extends StatelessWidget{
   PrivacySecurity({super.key});
-
+ProfileController controller=Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -12,7 +12,7 @@ class DeleteAccountDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Instantiate the controller for this widget's scope
-    final ProfileController controller = Get.find();
+    final ProfileController controller = Get.put(ProfileController());
 
     return Dialog(
       backgroundColor: Colors.white,

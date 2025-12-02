@@ -8,9 +8,9 @@ import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/validation_check_list.dart';
 
-class UpdatePassword extends GetView<ForgetPasswordController> {
+class UpdatePassword extends StatelessWidget {
   UpdatePassword({super.key});
-
+ForgetPasswordController controller=Get.put(ForgetPasswordController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
+import 'package:patient_app/widgets/doctor_widgets/profile_widgets/add_prescription_drawer.dart';
+import 'package:patient_app/widgets/doctor_widgets/profile_widgets/recent_projects_drawer.dart';
 
 import '../../../widgets/doctor_widgets/profile_widgets/doctor_notes_drawer.dart';
 import '../../../widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
@@ -14,7 +16,7 @@ VideoCallController controller=Get.put(VideoCallController());
     controller.checkDoctor();
     return Scaffold(
       key: controller.scaffoldKey,
-      endDrawer: DoctorNotesDrawer(),
+      endDrawer: Obx(()=> controller.drawerValue.value=="doctorNotes"?DoctorNotesDrawer():controller.drawerValue.value=="addPrescription"?AddPrescriptionDrawer():RecentProjectsDrawer()),
 body: Container(
   height: 1.sh,
   width: 1.sw,color: Colors.black87,

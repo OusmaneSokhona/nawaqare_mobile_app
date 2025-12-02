@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_screen.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/patient_screen.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_screen.dart';
 import 'package:patient_app/screens/patient_screens/appointment_screens/appointment_screen.dart';
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
@@ -250,9 +251,9 @@ class DoctorHomeScreen extends StatelessWidget {
                           ),
                           CategoryButton(
                             onTap: () {
-                              Get.to(DoctorPrescriptionScreen());
+                              Get.to(PatientScreen());
                             },
-                            title: "Prescription",
+                            title: "Patients",
                             icon: "assets/images/pateint_button_icon.png",
                             color: AppColors.green,
                           ),

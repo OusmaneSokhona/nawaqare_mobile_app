@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/widgets/custom_button.dart';
 
 class DoctorNotesDrawer extends GetView<VideoCallController> {
   const DoctorNotesDrawer({super.key});
@@ -26,13 +27,13 @@ class DoctorNotesDrawer extends GetView<VideoCallController> {
                 end: Alignment.bottomCenter,
               ),
             ),
-            child: Column(
+            child: Padding(
+              padding:  EdgeInsets.only(top:60.h,left:18.w,right:10.w),
+              child: Column(
 
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 60.0, left: 16.0, right: 16.0),
-                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,6 +46,7 @@ class DoctorNotesDrawer extends GetView<VideoCallController> {
                               color: Colors.black87,
                             ),
                           ),
+                          15.verticalSpace,
                           SizedBox(
                             width: 0.6.sw,
                             child: Text(
@@ -60,10 +62,8 @@ class DoctorNotesDrawer extends GetView<VideoCallController> {
                       ),
                     ],
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 20.0, top: 20.0, bottom: 8.0),
-                  child: Text(
+                  20.verticalSpace,
+                  Text(
                     'Add Note',
                     style: TextStyle(
                       fontSize: 16,
@@ -71,10 +71,8 @@ class DoctorNotesDrawer extends GetView<VideoCallController> {
                       color: Colors.black87,
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Obx(() => Container(
+                  10.verticalSpace,
+                  Container(
                     height: 150,
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -83,45 +81,19 @@ class DoctorNotesDrawer extends GetView<VideoCallController> {
                     ),
                     child: TextField(
                       onChanged: controller.onNoteChanged,
-                      controller: TextEditingController(text: controller.noteText.value),
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
+                      maxLines: 5,
                       decoration: const InputDecoration(
                         hintText: 'Write observations during the consultation',
                         contentPadding: EdgeInsets.all(12),
                         border: InputBorder.none,
                       ),
                     ),
-                  )),
-                ),
-                const Spacer(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: controller.saveNote,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 5,
-                      ),
-                      child: const Text(
-                        'Note save',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
                   ),
-                ),
-              ],
+                  const Spacer(),
+                  CustomButton(borderRadius: 15, text: "Note Save", onTap: (){}),
+                  30.verticalSpace,
+                ],
+              ),
             ),
           ),
           Positioned(

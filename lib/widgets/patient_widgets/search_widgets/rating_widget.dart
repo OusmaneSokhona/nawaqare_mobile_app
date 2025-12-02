@@ -5,11 +5,13 @@ class RatingWidget extends StatelessWidget {
   final Color iconCircleColor;
   final String metricText;
   final String labelText;
+  final double width;
 
   const RatingWidget({
     super.key,
     required this.icon,
     required this.iconCircleColor,
+    this.width=80,
     required this.metricText,
     required this.labelText,
   });
@@ -17,7 +19,7 @@ class RatingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 80,
+      width: width,
       child: Column(
         children: [
           CircleAvatar(
@@ -33,6 +35,8 @@ class RatingWidget extends StatelessWidget {
           Text(
             metricText,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -42,8 +46,10 @@ class RatingWidget extends StatelessWidget {
           Text(
             labelText,
             textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 12,
               color: Colors.grey,
             ),
           ),

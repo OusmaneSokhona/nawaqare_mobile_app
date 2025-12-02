@@ -7,6 +7,7 @@ class VideoCallController extends GetxController {
   RxBool cameraOff = false.obs;
   RxBool speakerMuted = false.obs;
   RxBool isDoctor = false.obs;
+  RxString drawerValue = "doctorNotes".obs;
   Future<void> checkDoctor() async {
     isDoctor.value=await LocalStorageUtils.getLoginedDoctor();
   }

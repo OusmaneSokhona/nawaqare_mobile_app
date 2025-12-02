@@ -68,7 +68,7 @@ class VideoCallControls extends StatelessWidget {
 
           _buildSpeakerButton(),
 
-        controller.isDoctor.value?_buildMoreMenuButtonDoctor(context):_buildMoreMenuButton(context),
+        Obx(()=> controller.isDoctor.value?_buildMoreMenuButtonDoctor(context):_buildMoreMenuButton(context)),
         ],
       ),
     );
@@ -208,11 +208,18 @@ class VideoCallControls extends StatelessWidget {
             }else if(result=="setting"){
               Get.to(SettingScreen());
             }else if(result=="note"){
+              controller.drawerValue.value="doctorNotes";
             controller.scaffoldKey.currentState?.openEndDrawer();
             }else if(result=="addPrescription"){
-
+              controller.drawerValue.value="addPrescription";
+              controller.scaffoldKey.currentState?.openEndDrawer();
             }else if(result=="viewReports"){
-             }
+              controller.drawerValue.value="viewReports";
+              controller.scaffoldKey.currentState?.openEndDrawer();
+             }else if(result=="patientHistory"){
+              controller.drawerValue.value="viewReports";
+              controller.scaffoldKey.currentState?.openEndDrawer();
+            }
           },
           offset: const Offset(0, -200),
           color: Colors.white,

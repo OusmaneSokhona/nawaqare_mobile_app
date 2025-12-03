@@ -5,6 +5,7 @@ import 'package:patient_app/controllers/doctor_controllers/doctor_home_controlle
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_screen.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_screen.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_screen.dart';
+import 'package:patient_app/screens/doctor_screens/statics_screen/statics_screen.dart';
 import 'package:patient_app/screens/patient_screens/appointment_screens/appointment_screen.dart';
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
 import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
@@ -259,6 +260,15 @@ class DoctorHomeScreen extends StatelessWidget {
                           ),
                           CategoryButton(
                             onTap: () {
+                              Get.to(PrescriptionScreen());
+                            },
+                            title: "Prescription",
+                            icon: "assets/images/prescription_icon.png",
+                            color: AppColors.secondryColor,
+                          ),
+                          CategoryButton(
+                            onTap: () {
+                              Get.to(StaticsScreen());
                             },
                             title: "Statistics",
                             icon: "assets/images/statistics_button_icon.png",

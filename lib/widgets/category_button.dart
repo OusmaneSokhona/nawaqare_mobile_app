@@ -27,8 +27,8 @@ class CategoryButton extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            width: 90.w,
-            height: 75.h,
+            width: 80.w,
+            height: 70.h,
             padding: EdgeInsets.all(18.sp),
             decoration: BoxDecoration(
               color: color,
@@ -50,7 +50,7 @@ class CategoryButton extends StatelessWidget {
           Text(
             title,
             style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 12.sp,
               fontWeight: FontWeight.w600,
               color: Colors.black,
               fontFamily: AppFonts.jakartaMedium

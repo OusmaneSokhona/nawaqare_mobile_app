@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/patient_controller.dart';
 import 'package:patient_app/models/patient_model.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_detail_screen.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/doctor_widgets/patient_widgets/patient_filter_bottom_sheet.dart';
@@ -118,7 +119,9 @@ class PatientScreen extends StatelessWidget {
                         ),
                       ),
                       ListView.builder(padding: EdgeInsets.zero,itemBuilder: (context,index){
-                        return PatientCardWidget(patientModel: samplePatients[index],onAddNoteTap: (){},onFollowUpTap: (){},onScheduleTap: (){
+                        return PatientCardWidget(patientModel: samplePatients[index],onAddNoteTap: (){
+                          Get.to(AddNotesScreen());
+                        },onFollowUpTap: (){},onScheduleTap: (){
                           Get.to(PatientDetailScreen());
                         },);
                       },itemCount: samplePatients.length,shrinkWrap: true,physics: const NeverScrollableScrollPhysics(),

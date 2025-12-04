@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class PatientDetailCard extends StatelessWidget {
@@ -138,7 +140,9 @@ class PatientDetailCard extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(AddNotesScreen());
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4285F4),
                     foregroundColor: Colors.white,

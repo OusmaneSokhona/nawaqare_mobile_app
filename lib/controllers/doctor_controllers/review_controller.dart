@@ -44,13 +44,41 @@ class ReviewsController extends GetxController {
     "30 days",
     "60 days",
   ];
-  List<String> ratingList=[
-    "5 stars",
-    "3 stars",
-    "1 star",
-    "2 stars",
-    "4 stars",
+  List<String> activityList=[
+    "Activity",
+    "Performance",
+    "Compliance",
+    "Engagement",
   ];
+
+  final Rx<String> activePillTitle = 'Export'.obs;
+
+  // Initial values must match one of the items in the respective lists.
+  final Rx<String> selectedTimeValue = '7 days'.obs; // Changed from '7d'
+  final Rx<String> selectedActivityValue = 'Activity'.obs; // Changed from 'all'
+
+  // Renaming to match usage and remove redundant/unused fields
   RxString selectedPeriod="7 days".obs;
-  RxString selectedRating="5 stars".obs;
+
+  void setActivePill(String title) {
+    activePillTitle.value = title;
+  }
+
+  void setTimeValue(String? newValue) {
+    if (newValue != null) {
+      selectedTimeValue.value = newValue;
+      selectedPeriod.value = newValue;
+    }
+  }
+
+  void setActivityValue(String? newValue) {
+    if (newValue != null) {
+      selectedActivityValue.value = newValue;
+    }
+  }
+
+  void handleExportTap(String title) {
+    setActivePill(title);
+    print('$title button tapped!');
+  }
 }

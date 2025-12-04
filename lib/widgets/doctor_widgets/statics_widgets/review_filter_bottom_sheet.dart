@@ -44,7 +44,7 @@ class ReviewFilterBottomSheet extends StatelessWidget {
           const SizedBox(height: 16),
           CustomDropdown(label: "Period", options: reviewsController.periodList, currentValue: reviewsController.selectedPeriod.value, onChanged: (_){}),
           10.verticalSpace,
-          CustomDropdown(label: "Rating", options: reviewsController.ratingList, currentValue: reviewsController.selectedRating.value, onChanged: (_){}),
+          CustomDropdown(label: "Rating", options: reviewsController.activityList, currentValue: reviewsController.selectedActivityValue.value, onChanged: (_){}),
 
 
 

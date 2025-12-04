@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/review_controller.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
+import 'package:patient_app/widgets/doctor_widgets/patient_widgets/filter_dopdown_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/statics_widgets/review_filter_bottom_sheet.dart';
 
 import '../../../models/review_models.dart';
@@ -65,46 +66,77 @@ ReviewsController controller=Get.put(ReviewsController());
                     children: [
                       _buildSegmentedControl(),
                       const SizedBox(height: 24),
-                      Text(
-                        'Patient Reviews',
-                        style: TextStyle(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      Obx(
+                        ()=> controller.selectedTab.value==0?Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Patient Reviews',
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Feedback From Your Recent Consultations',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: AppColors.lightGrey,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            CustomTextField(
+                              prefixIcon: Icons.search,
+                              suffixIcon: Icons.filter_list,
+                              prefixIconColor: AppColors.lightGrey,
+                              suffixIconColor: AppColors.primaryColor,
+                              hintText: "Search by patient name...",
+                              onSuffixIconTap: (){
+                                Get.bottomSheet(backgroundColor: Colors.white,ReviewFilterBottomSheet( onApply: (){}, onReset: (){}));
+                              },
+                            ),
+                            const SizedBox(height: 24),
+                            _buildSummaryAndCriteria(),
+                            const SizedBox(height: 20),
+                            Obx(() => ListView.builder(
+                              padding: EdgeInsets.zero,
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: controller.reviews.length,
+                              itemBuilder: (context, index) {
+                                return _buildReviewCard(controller.reviews[index]);
+                              },
+                            )),
+                            30.verticalSpace,
+                          ],
+                        ):Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Performance Statistics',
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Feedback From Your Recent Consultations',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: AppColors.lightGrey,
+                              ),
+                            ),
+                            10.verticalSpace,
+                            FilterControlBar(),
+                            10.verticalSpace,
+                            Obx(()=> controller.selectedActivityValue.value=="Activity"?Image.asset("assets/demo_images/demo1.png"):controller.selectedActivityValue.value=="Performance"?Image.asset("assets/demo_images/demo2.png"):controller.selectedActivityValue.value=="Compliance"?Image.asset("assets/demo_images/demo3.png"):Image.asset("assets/demo_images/demo4.png")),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Feedback From Your Recent Consultations',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: AppColors.lightGrey,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      CustomTextField(
-                        prefixIcon: Icons.search,
-                        suffixIcon: Icons.filter_list,
-                        prefixIconColor: AppColors.lightGrey,
-                        suffixIconColor: AppColors.primaryColor,
-                        hintText: "Search by patient name...",
-                        onSuffixIconTap: (){
-                          Get.bottomSheet(backgroundColor: Colors.white,ReviewFilterBottomSheet( onApply: (){}, onReset: (){}));
-                        },
-                      ),
-                      const SizedBox(height: 24),
-                      _buildSummaryAndCriteria(),
-                      const SizedBox(height: 20),
-                      Obx(() => ListView.builder(
-                        padding: EdgeInsets.zero,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: controller.reviews.length,
-                        itemBuilder: (context, index) {
-                          return _buildReviewCard(controller.reviews[index]);
-                        },
-                      )),
-                      30.verticalSpace,
                     ],
                   ),
                 ),

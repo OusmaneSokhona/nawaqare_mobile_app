@@ -5,6 +5,7 @@ import 'package:patient_app/controllers/doctor_controllers/doctor_profile_contro
 import 'package:patient_app/controllers/patient_controllers/chat_controller.dart';
 import 'package:patient_app/screens/doctor_screens/doctor_home_screen.dart';
 import 'package:patient_app/screens/doctor_screens/profile_screens/doctor_profile_screen.dart';
+import 'package:patient_app/screens/doctor_screens/reception_screens/reception_screen.dart';
 import '../../screens/patient_screens/chat_screens/chat_screen.dart';
 import '../../screens/patient_screens/profile_screens/profile_screen.dart';
 
@@ -18,14 +19,8 @@ class MainControllerDoctor extends GetxController{
   final List<Widget> screens = [
    DoctorHomeScreen(),
     ChatScreen(),
-    Scaffold(body: Center(child: Text("Consultation"),),),
+    ReceptionScreen(),
     DoctorProfileScreen(),
-  ];
-  final List<String> titles = [
-    'Home',
-    'Chat',
-    'Search',
-    'Profile',
   ];
 
   void changePage(int index) {

@@ -1,31 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
-import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_screen.dart';
-import 'package:patient_app/screens/doctor_screens/patient_screens/patient_screen.dart';
-import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_screen.dart';
-import 'package:patient_app/screens/doctor_screens/statics_screen/statics_screen.dart';
-import 'package:patient_app/screens/patient_screens/appointment_screens/appointment_screen.dart';
-import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
-import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
-import 'package:patient_app/utils/app_colors.dart';
-import 'package:patient_app/utils/app_fonts.dart';
-import 'package:patient_app/widgets/category_button.dart';
-import 'package:patient_app/widgets/doctor_widgets/home_widgets/quick_statistics_card.dart';
-import 'package:patient_app/widgets/doctor_widgets/home_widgets/recent_activity_card.dart';
+import 'package:patient_app/controllers/doctor_controllers/reception_controller.dart';
+import 'package:patient_app/screens/doctor_screens/reception_screens/calender_screen.dart';
+import 'package:patient_app/widgets/doctor_widgets/reception_widgets/feautre_card_widget.dart';
+import 'package:patient_app/widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
 
-import '../../widgets/patient_widgets/appointment_widgets/appointment_card.dart';
-import '../patient_screens/notifications_screens/notifications_screen.dart';
+import '../../../utils/app_colors.dart';
+import '../../../utils/app_fonts.dart';
+import '../../patient_screens/notifications_screens/notifications_screen.dart';
+import '../../patient_screens/video_call_screens/help_center_screen.dart';
 
-class DoctorHomeScreen extends StatelessWidget {
-  DoctorHomeScreen({super.key});
-
-  DoctorHomeController homeController = Get.put(DoctorHomeController());
-
+class ReceptionScreen extends StatelessWidget {
+   ReceptionScreen({super.key});
+ReceptionController controller=Get.put(ReceptionController());
   @override
   Widget build(BuildContext context) {
-    homeController.scrollChange();
+    controller.scrollChange();
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -45,14 +36,14 @@ class DoctorHomeScreen extends StatelessWidget {
           children: [
             Obx(() {
               final bool isScrolledPastThreshold =
-                  homeController.scrollValue.value >= 280;
+                  controller.scrollValue.value >= 280;
 
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
               final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -108,7 +99,7 @@ class DoctorHomeScreen extends StatelessWidget {
             }),
             Expanded(
               child: SingleChildScrollView(
-                controller: homeController.scrollController,
+                controller: controller.scrollController,
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 18.sp),
                   child: Column(
@@ -151,7 +142,7 @@ class DoctorHomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Hello,\nDr. Alex",
+                          "Reception",
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 35.sp,
@@ -163,24 +154,11 @@ class DoctorHomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Tomorrow at 10:30 AM",
+                          "Manage your schedules, services, and absences from this space",
                           style: TextStyle(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
-                            color: AppColors.darkGrey,
-                          ),
-                        ),
-                      ),
-                      5.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Mr Dupuis",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 14.sp,
                             color: AppColors.lightGrey,
                           ),
                         ),
@@ -200,16 +178,17 @@ class DoctorHomeScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             Image.asset(
-                              "assets/images/offline_mode_icon.png",
+                              "assets/images/calender_icon.png",
                               height: 20.h,
+                              color: AppColors.primaryColor,
                               fit: BoxFit.fill,
                             ),
                             10.horizontalSpace,
                             Text(
-                              "Offline mode activated",
+                              "Last syn: 12/Sep/2025",
                               style: TextStyle(
                                 fontSize: 16.sp,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
                                 fontFamily: AppFonts.jakartaMedium,
                                 color: Colors.black,
                               ),
@@ -218,97 +197,46 @@ class DoctorHomeScreen extends StatelessWidget {
                         ),
                       ),
                       15.verticalSpace,
-                      AppointmentCard(
-                        title: "Ongoing  Appointment",
-                        imagePath: "assets/demo_images/home_demo_image.png",
-                        name: "Mr. Waston",
-                        type: 'Patient',
-                        showGreenDot: false,
-                        showRating: false,
-                        onTap: (){},
-                      ),
-                      15.verticalSpace,
-                      AppointmentCard(
-                        onTap: (){},
-                        title: "Upcoming Appointment",
-                        imagePath: "assets/demo_images/home_demo_image.png",
-                        name: "Mr. Waston",
-                        type: 'Patient',
-                        buttonText: "Detail",
-                        showGreenDot: false,
-                        showRating: false,
-                        consultationTypeIcon: Icons.home_work_outlined,
-                        consultationTypeText: "In-Person Consultation",
-                      ),
-                      20.verticalSpace,
+                      CardHeader(title: "Weekly Summary"),
+                      10.verticalSpace,
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CategoryButton(
-                            onTap: () {
-                              Get.to(DoctorAppointmentScreen());
-                            },
-                            title: "Appointments",
-                            icon: "assets/images/calender_icon.png",
-                            color: AppColors.primaryColor,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: _buildCard(
+                              Icons.check_circle,
+                              'Available',
+                              '15h',
+                            ),
                           ),
-                          CategoryButton(
-                            onTap: () {
-                              Get.to(PatientScreen());
-                            },
-                            title: "Patients",
-                            icon: "assets/images/pateint_button_icon.png",
-                            color: AppColors.green,
-                          ),
-                          CategoryButton(
-                            onTap: () {
-                              Get.to(PrescriptionScreen());
-                            },
-                            title: "Prescription",
-                            icon: "assets/images/prescription_icon.png",
-                            color: AppColors.secondryColor,
-                          ),
-                          CategoryButton(
-                            onTap: () {
-                              Get.to(StaticsScreen());
-                            },
-                            title: "Statistics",
-                            icon: "assets/images/statistics_button_icon.png",
-                            color: AppColors.orange,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildCard(
+                              Icons.calendar_today,
+                              'Slots Booked',
+                              '20',
+                            ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: _buildCard(
+                          Icons.bookmark,
+                          'Planned Absences',
+                          '2',
+                        ),
+                      ),
                       15.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Quick Statistics",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontFamily: AppFonts.jakartaBold,
-                            fontSize: 19.sp,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
+                      CardHeader(title: "Quick Access"),
                       10.verticalSpace,
-                      QuickStatisticsCard(),
-                      10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Recent Activity",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontFamily: AppFonts.jakartaBold,
-                            fontSize: 19.sp,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      10.verticalSpace,
-                      RecentActivityCard(),
-                      25.verticalSpace,
+                      FeatureCard(onTap: (){
+                        Get.to(CalenderScreen());
+                      },icon: Icons.calendar_today, title: "Calendar", subtitle: "View & manage appointment", hasButton:true),
+                      FeatureCard(onTap: (){},icon: Icons.monetization_on_outlined, title: "Services & Pricing", subtitle: "Edit your services,duration& fees", hasButton:false),
+                      FeatureCard(onTap: (){},icon: Icons.do_not_disturb_on_outlined, title: "Absences & exceptions", subtitle: "Declare an absence or mark unavailable", hasButton:false),
+
                     ],
                   ),
                 ),
@@ -319,4 +247,43 @@ class DoctorHomeScreen extends StatelessWidget {
       ),
     );
   }
+   Widget _buildCard(IconData icon, String title, String value) {
+     return Container(
+       decoration: BoxDecoration(
+         color: Colors.white,
+         border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
+         borderRadius: BorderRadius.circular(18.sp)
+       ),
+       child: Padding(
+         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+         child: Column(
+           mainAxisSize: MainAxisSize.min,
+           crossAxisAlignment: CrossAxisAlignment.center,
+           children: <Widget>[
+             Icon(icon, color:  Color(0xFF1E88E5), size: 24.sp),
+             const SizedBox(height: 10),
+             Text(
+               title,
+               style: TextStyle(
+                 fontSize: 12.sp,
+                 fontWeight: FontWeight.w600,
+                 color:Colors.black,
+               ),
+               textAlign: TextAlign.center,
+             ),
+             const SizedBox(height: 5),
+             Text(
+               value,
+               style: TextStyle(
+                 fontSize: 14.sp,
+                 fontWeight: FontWeight.w400,
+                 color: AppColors.lightGrey,
+               ),
+               textAlign: TextAlign.center,
+             ),
+           ],
+         ),
+       ),
+     );
+   }
 }

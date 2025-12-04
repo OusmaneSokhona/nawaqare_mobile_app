@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/doctor_screens/statics_screen/report_screen.dart';
 import 'package:patient_app/screens/doctor_screens/statics_screen/review_screen.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/doctor_widgets/statics_widgets/engagement_card.dart';
 
 class StaticsScreen extends StatelessWidget {
   const StaticsScreen({super.key});
@@ -67,9 +69,84 @@ class StaticsScreen extends StatelessWidget {
                       20.verticalSpace,
                       Image.asset("assets/demo_images/d_5.png"),
                       20.verticalSpace,
-                      Image.asset("assets/demo_images/d_6.png"),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Patient Engagement',
+                          style: TextStyle(
+                            fontSize: 19.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      EngagementCard(
+                        onTap: (){},
+                        icon: Icons.access_time,
+                        title: 'Average Response Time',
+                        value: '2h 14m',
+                        showLink: false,
+                      ),
+                      EngagementCard(
+                        icon: Icons.star_border,
+                        title: 'Average Satisfaction',
+                        value: '4.7 ⭐',
+                        linkText: 'View Patient Reviews',
+                        showLink: true,
+                        onTap:(){
+                          Get.to(ReviewScreen());
+                        },
+                      ),
+                      EngagementCard(
+                        onTap: (){},
+                        icon: Icons.message,
+                        title: 'Number Of Messages Received / Sent',
+                        value: '120 / 98',
+                        showLink: false,
+                      ),
+                      EngagementCard(
+                        onTap: (){},
+                        icon: Icons.checklist,
+                        title: 'List Of Patients Without Follow-Up',
+                        value: '5',
+                        linkText: 'View Patient List',
+                        showLink: true,
+                      ),
+                      SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Compliance & Records',
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 12),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: ComplianceCard(
+                              icon: Icons.description,
+                              title: 'DMP Documents',
+                              value: '04',
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Expanded(
+                            child: ComplianceCard(
+                              icon: Icons.edit,
+                              title: 'Valid Signatures',
+                              value: '02',
+                            ),
+                          ),
+                        ],
+                      ),
                       20.verticalSpace,
-                      Image.asset("assets/demo_images/d_1.png"),
+                      Image.asset("assets/demo_images/d_7.png"),
                       Container(
                         height: 40.h,
                         width: 1.sw,
@@ -94,7 +171,7 @@ class StaticsScreen extends StatelessWidget {
                         borderRadius: 15,
                         text: "Export Monthly Report",
                         onTap: () {
-                          Get.to(ReviewScreen());
+                          Get.to(ReportScreen());
                         },
                       ),
                       30.verticalSpace,

@@ -31,8 +31,8 @@ class MainScreenDoctor extends StatelessWidget {
               label: 'Chat',
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage("assets/images/consultation_icon.png"),size: 22.h,),
-              label: 'Consultation',
+              icon: ImageIcon(AssetImage("assets/images/reception_icon.png"),size: 22.h,),
+              label: 'Reception',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline_outlined),

@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/calender_controller.dart';
+import 'package:patient_app/screens/doctor_screens/reception_screens/view_as_patient.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:patient_app/widgets/doctor_widgets/reception_widgets/edit_day_drawer.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 
@@ -15,6 +17,8 @@ class CalenderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: controller.scaffoldKey,
+      endDrawer: EditDayDrawer(),
       body: Container(
         height: 1.sh,
         width: 1.sw,
@@ -147,12 +151,17 @@ class CalenderScreen extends StatelessWidget {
                             return _buildTimeSlot(controller.availableTimes[index]);
                           }),
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Edit Day", onTap: () {}),
+                      CustomButton(borderRadius: 15, text: "Edit Day", onTap: () {
+                        controller.scaffoldKey.currentState!.openEndDrawer();
+
+                      }),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
                         text: "View as Patient",
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(ViewAsPatient());
+                        },
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                       ),

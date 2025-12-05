@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
-import 'package:patient_app/widgets/doctor_widgets/profile_widgets/add_prescription_drawer.dart';
-import 'package:patient_app/widgets/doctor_widgets/profile_widgets/recent_projects_drawer.dart';
-
-import '../../../widgets/doctor_widgets/profile_widgets/doctor_notes_drawer.dart';
+import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/add_prescription_drawer.dart';
+import '../../../widgets/doctor_widgets/video_call_widgets/doctor_notes_drawer.dart';
+import '../../../widgets/doctor_widgets/video_call_widgets/recent_projects_drawer.dart';
 import '../../../widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
 
 class VideoCallScreen extends StatelessWidget {

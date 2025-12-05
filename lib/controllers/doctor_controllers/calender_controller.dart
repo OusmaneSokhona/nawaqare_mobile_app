@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CalenderController extends GetxController {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final DateTime initialDate = DateTime.now();
   final selectedDate = DateTime.now().obs;
   final selectedTime = '10.00 AM'.obs;
@@ -28,4 +30,10 @@ class CalenderController extends GetxController {
     '04.00 PM',
     '04.30 PM',
   ];
+  RxBool inPerson=true.obs;
+  RxBool teleConsultation=false.obs;
+  RxBool mixed=false.obs;
+  RxBool consultation=true.obs;
+  RxBool followUp=false.obs;
+  RxBool physiotherapy=false.obs;
 }

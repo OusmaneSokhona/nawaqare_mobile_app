@@ -21,69 +21,74 @@ class FeatureCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.sp),
-         border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
-        ),
-        padding: EdgeInsets.all(15.sp),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: AppColors.primaryColor,
-              size: 32.0,
-            ),
-            SizedBox(width: 10.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: (){
+          onTap();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.sp),
+           border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+          ),
+          padding: EdgeInsets.all(15.sp),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                color: AppColors.primaryColor,
+                size: 32.0,
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    const SizedBox(height: 4.0),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: AppColors.lightGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (hasButton)
+                ElevatedButton(
+                  onPressed: () {
+                    onTap();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0, vertical: 10.0),
+                    minimumSize: Size.zero,
                   ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    subtitle,
+                  child: const Text(
+                    'Open',
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: AppColors.lightGrey,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
-              ),
-            ),
-            if (hasButton)
-              ElevatedButton(
-                onPressed: () {
-                  onTap();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 10.0),
-                  minimumSize: Size.zero,
                 ),
-                child: const Text(
-                  'Open',
-                  style: TextStyle(
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/reception_controller.dart';
+import 'package:patient_app/screens/doctor_screens/reception_screens/absence_and_exception.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/calender_screen.dart';
 import 'package:patient_app/widgets/doctor_widgets/reception_widgets/feautre_card_widget.dart';
 import 'package:patient_app/widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
@@ -235,7 +236,9 @@ ReceptionController controller=Get.put(ReceptionController());
                         Get.to(CalenderScreen());
                       },icon: Icons.calendar_today, title: "Calendar", subtitle: "View & manage appointment", hasButton:true),
                       FeatureCard(onTap: (){},icon: Icons.monetization_on_outlined, title: "Services & Pricing", subtitle: "Edit your services,duration& fees", hasButton:false),
-                      FeatureCard(onTap: (){},icon: Icons.do_not_disturb_on_outlined, title: "Absences & exceptions", subtitle: "Declare an absence or mark unavailable", hasButton:false),
+                      FeatureCard(onTap: (){
+                        Get.to(AbsenceAndException());
+                      },icon: Icons.do_not_disturb_on_outlined, title: "Absences & exceptions", subtitle: "Declare an absence or mark unavailable", hasButton:false),
 
                     ],
                   ),

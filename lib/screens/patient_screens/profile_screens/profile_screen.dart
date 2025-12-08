@@ -165,7 +165,7 @@ class ProfileScreen extends StatelessWidget {
                           9.horizontalSpace,
                           profileType("Medical Vitals", 100.w),
                           9.horizontalSpace,
-                          profileType("Documents & Reports", 130.w),
+                          profileType("Documents & Reports", 120.w),
                         ],
                       ),
                       15.verticalSpace,
@@ -176,16 +176,6 @@ class ProfileScreen extends StatelessWidget {
                                 : controller.type.value == "Medical Vitals"
                                 ? MedicalVitalsProfile()
                                 : DocumentsAndReportsProfile(),
-                      ),
-                      10.verticalSpace,
-                      HealthSpaceCard(
-                        icon: Icons.person_remove_alt_1,
-                        title: 'Delete Account',
-                        onTap: () {
-                          Get.dialog(DeleteAccountDialog());
-                        },
-                        color: AppColors.red,
-                        textColor: AppColors.red,
                       ),
                       10.verticalSpace,
                     ],
@@ -217,7 +207,7 @@ class ProfileScreen extends StatelessWidget {
                     controller.type.value == title
                         ? AppColors.primaryColor
                         : AppColors.lightGrey,
-                fontSize: 13.sp,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),

@@ -57,6 +57,58 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             ],
           ),
         ),
+        10.verticalSpace,
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: Text(
+            "Covered by patient’s prepaid plan",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: AppFonts.jakartaBold,
+            ),
+          ),
+        ),
+        10.verticalSpace,
+        Container(
+          width: 1.sw,
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Plan: Silver 4-Consultation Plan",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFonts.jakartaBold,
+                ),
+              ),
+              10.verticalSpace,
+              Text(
+                "Remaining credits:2 consultations",
+                style: TextStyle(color: AppColors.darkGrey, fontSize: 14.sp),
+              ),
+              10.verticalSpace,
+              Text(
+                "Expires: 14 Feb 2026",
+                style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+              ),
+              10.verticalSpace,
+              Text(
+                "Plan_status: \"OK\"",
+                style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
         15.verticalSpace,
         const CardHeader(title: "Clinical Summary"),
         10.verticalSpace,

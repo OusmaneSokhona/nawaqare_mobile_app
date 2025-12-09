@@ -22,7 +22,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             "Symptoms History",
             style: TextStyle(
               color: Colors.black,
-              fontSize: 20.sp,
+              fontSize: 18.sp,
               fontWeight: FontWeight.w700,
               fontFamily: AppFonts.jakartaBold,
             ),
@@ -44,7 +44,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
                 "Patient Symptoms",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppFonts.jakartaBold,
                 ),
@@ -64,7 +64,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             "Covered by patient’s prepaid plan",
             style: TextStyle(
               color: Colors.black,
-              fontSize: 18.sp,
+              fontSize: 17.sp,
               fontWeight: FontWeight.w700,
               fontFamily: AppFonts.jakartaBold,
             ),
@@ -86,7 +86,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
                 "Plan: Silver 4-Consultation Plan",
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppFonts.jakartaBold,
                 ),
@@ -174,7 +174,7 @@ class CardHeader extends StatelessWidget {
   final FontWeight fontWeight;
   final Color color;
 
-  const CardHeader({required this.title, super.key, this.fontSize = 20, this.fontWeight = FontWeight.w700,this.color=Colors.black});
+  const CardHeader({required this.title, super.key, this.fontSize = 18, this.fontWeight = FontWeight.w700,this.color=Colors.black});
 
   @override
   Widget build(BuildContext context) {

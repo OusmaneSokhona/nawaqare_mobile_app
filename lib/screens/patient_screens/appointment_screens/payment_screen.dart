@@ -197,46 +197,6 @@ class PaymentScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      Obx(
-                        () =>
-                            paymentController.isCardSelected.value
-                                ? Container(
-                                  height: 0.25.sh,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: paymentController.cards.length,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(right: 18.sp),
-                                        child: CreditCardWidget(
-                                          baseColor:
-                                              paymentController
-                                                  .cards[index]
-                                                  .cardColor,
-                                          textColor: Colors.white,
-                                          waveColor: Colors.black,
-                                          cardLogo:
-                                              "assets/images/mastercard_logo_white.png",
-                                          cardHolder:
-                                              paymentController
-                                                  .cards[index]
-                                                  .cardHolderName,
-                                          cardNumber:
-                                              paymentController
-                                                  .cards[index]
-                                                  .cardNumber,
-                                          expiryDate:
-                                              paymentController
-                                                  .cards[index]
-                                                  .expiryDate,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                                : SizedBox(),
-                      ),
-                      10.verticalSpace,
                       InkWell(
                         onTap: () {
                           paymentController.isPayPalSelected.value =
@@ -319,46 +279,6 @@ class PaymentScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ),
-                      10.verticalSpace,
-                      Obx(
-                        () =>
-                            paymentController.isPayPalSelected.value
-                                ? Container(
-                                  height: 0.25.sh,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: paymentController.cards.length,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(right: 18.sp),
-                                        child: CreditCardWidget(
-                                          baseColor:
-                                              paymentController
-                                                  .cards[index]
-                                                  .cardColor,
-                                          textColor: Colors.white,
-                                          waveColor: Colors.black,
-                                          cardLogo:
-                                              "assets/images/logos_paypal.png",
-                                          cardHolder:
-                                              paymentController
-                                                  .cards[index]
-                                                  .cardHolderName,
-                                          cardNumber:
-                                              paymentController
-                                                  .cards[index]
-                                                  .cardNumber,
-                                          expiryDate:
-                                              paymentController
-                                                  .cards[index]
-                                                  .expiryDate,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                )
-                                : SizedBox(),
                       ),
                       30.verticalSpace,
                       CustomButton(

@@ -23,28 +23,28 @@ class DoctorHealthSpaceGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         HealthSpaceCard(
-          icon: Icons.waving_hand,
+          icon: "assets/images/my_services_icon.png",
           title: 'My Services',
           onTap: () {
             profileController.handleHealthSpaceTap(MyServicesScreen());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.security,
+          icon: "assets/images/privacy_security_icon.png",
           title: 'Privacy & Security',
           onTap: () {
             profileController.handleHealthSpaceTap(PrivacySecurity());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.update,
+          icon: "assets/images/update_password_icon.png",
           title: 'Update Password',
           onTap: () {
             profileController.handleHealthSpaceTap(UpdatePassword());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.translate,
+          icon: "assets/images/language_icon.png",
           title: 'Change Language',
           onTap: (){
             Get.dialog(LanguageDialog());

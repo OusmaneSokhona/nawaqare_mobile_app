@@ -139,7 +139,7 @@ class DoctorProfileScreen extends StatelessWidget {
                           "Profile",
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 35.sp,
+                            fontSize: 32.sp,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
@@ -188,7 +188,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       HealthSpaceCard(
-                        icon: Icons.person_remove_alt_1,
+                        icon: "assets/images/delete_account_icon.png",
                         title: 'Delete Account',
                         onTap: () {
                           Get.dialog(DeleteAccountDialog());

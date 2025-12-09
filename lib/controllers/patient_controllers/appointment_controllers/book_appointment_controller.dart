@@ -14,6 +14,7 @@ class BookAppointmentController extends GetxController{
   final appointmentOptions = [
     'inPerson',
     'remote',
+    "homeVisit",
   ];
 
   final availableTimes = [

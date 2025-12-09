@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/main_controller.dart';
 import '../../utils/app_colors.dart';
@@ -19,21 +20,21 @@ MainController mainController=Get.put(MainController());
           backgroundColor:Colors.white,
           currentIndex: mainController.currentIndex.value,
           onTap: mainController.changePage,
-          items: const [
+          items:  [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: ImageIcon(AssetImage("assets/images/home_icon.png"),size: 22.h,),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon:Icon(Icons.chat),
+              icon:ImageIcon(AssetImage("assets/images/chat_icon.png"),size: 22.h,),
               label: 'Chat',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
+              icon: ImageIcon(AssetImage("assets/images/search_icon.png"),size: 22.h,),
               label: 'Search',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_outlined),
+              icon: ImageIcon(AssetImage("assets/images/profile_icon.png"),size: 22.h,),
               label: 'Profile',
             ),
           ],

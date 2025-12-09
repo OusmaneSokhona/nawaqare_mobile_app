@@ -65,7 +65,7 @@ class CardHeader extends StatelessWidget {
       child: Text(title,
           style: TextStyle(
             color: Colors.black,
-            fontSize: 20.sp,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
             fontFamily: AppFonts.jakartaBold,
           )),
@@ -105,10 +105,10 @@ class DiagnosisHistoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+               Text(
                 'Diagnosis/Notes',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
                   color: _primaryColor,
                 ),
@@ -116,8 +116,8 @@ class DiagnosisHistoryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 notes,
-                style: const TextStyle(
-                  fontSize: 14,
+                style:  TextStyle(
+                  fontSize: 13.sp,
                   color: _secondaryColor,
                 ),
               ),
@@ -163,7 +163,6 @@ class PrescriptionHistoryCard extends StatelessWidget {
   static const Color _primaryColor = Color(0xFF1F2937);
   static const Color _secondaryColor = Color(0xFF6B7280);
   static const Color _blueColor = Color(0xFF4C86F7);
-  static const Color _notificationColor = Color(0xFFF59E0B);
   static const Color _buttonBgColor = Color(0xFFE5E7EB);
 
   @override
@@ -197,19 +196,19 @@ class PrescriptionHistoryCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                         Text(
                           'Prescriptions',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 15.sp,
                             fontWeight: FontWeight.bold,
                             color: _primaryColor,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                         SizedBox(height: 4),
                         Text(
                           medication,
-                          style: const TextStyle(
-                            fontSize: 18,
+                          style:  TextStyle(
+                            fontSize: 15.sp,
                             fontWeight: FontWeight.w600,
                             color: _primaryColor,
                           ),
@@ -217,50 +216,43 @@ class PrescriptionHistoryCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           dosage,
-                          style: const TextStyle(
-                            fontSize: 14,
+                          style:  TextStyle(
+                            fontSize: 13.sp,
                             color: _secondaryColor,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: _notificationColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.notifications_none,
-                            color: _notificationColor, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$daysRemaining- Days\nRemaining',
-                          textAlign: TextAlign.right,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: _notificationColor,
-                          ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.notifications_none,
+                          color: AppColors.primaryColor, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        '$daysRemaining- Days\nRemaining',
+                        textAlign: TextAlign.start,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.lightGrey,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
               const SizedBox(height: 8),
               const Row(
                 children: [
-                  Icon(Icons.lock, color: _secondaryColor, size: 16),
+                  Icon(Icons.lock, color: AppColors.primaryColor, size: 16),
                   SizedBox(width: 4),
                   Text(
                     'Encrypted & compliant with GDPR/HDS',
                     style: TextStyle(
                       fontSize: 12,
-                      color: _secondaryColor,
+                      color: AppColors.lightGrey,
                     ),
                   ),
                 ],
@@ -497,7 +489,7 @@ class ReviewCard extends StatelessWidget {
   });
 
   static const Color _primaryColor = Color(0xFF1F2937);
-  static const Color _starColor = Color(0xFFF59E0B);
+  static const Color _starColor = AppColors.orange;
 
   @override
   Widget build(BuildContext context) {
@@ -534,9 +526,9 @@ class ReviewCard extends StatelessWidget {
                         Text(
                           rating.toStringAsFixed(1),
                           style: const TextStyle(
-                            fontSize: 14,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: _starColor,
+                            color: Colors.black,
                           ),
                         ),
                         const SizedBox(width: 4),

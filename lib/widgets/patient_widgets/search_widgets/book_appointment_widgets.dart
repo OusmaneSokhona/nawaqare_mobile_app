@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
-
+import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';
-
 
 class ConsultationDetailsCard extends StatelessWidget {
   final BookAppointmentController controller;
@@ -15,61 +14,110 @@ class ConsultationDetailsCard extends StatelessWidget {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
       ),
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: EdgeInsets.all(20.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Text(
+            Text(
               'Consultation Details',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF333333),
+                color: const Color(0xFF333333),
               ),
             ),
-            const SizedBox(height: 16),
-            const Text('Type of Appointment', style: TextStyle(color: Color(0xFF666666))),
-            const SizedBox(height: 8),
-            Obx(
-                  () => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: controller.appointmentType.value,
-                    icon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF666666)),
-                    onChanged: controller.selectAppointmentType,
-                    items: controller.appointmentOptions.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value, style: const TextStyle(color: Color(0xFF333333))),
-                      );
-                    }).toList(),
+            SizedBox(height: 16.h),
+              Obx(
+                  ()=> controller.appointmentType.value!="homeVisit"?
+                Text('Type of Appointment',
+                    style: TextStyle(
+                        color: const Color(0xFF666666), fontSize: 14.sp)):SizedBox(),
+              ),
+              Obx(()=>controller.appointmentType.value!="homeVisit"?SizedBox(height: 8.h):SizedBox()),
+              Obx(
+                    () => controller.appointmentType.value!="homeVisit"?Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: const Color(0xFFE5E5E5), width: 1.w),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: controller.appointmentType.value,
+                      icon: Icon(Icons.keyboard_arrow_down,
+                          size: 24.sp, color: const Color(0xFF666666)),
+                      onChanged: controller.selectAppointmentType,
+                      items: controller.appointmentOptions
+                          .map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value,
+                              style: TextStyle(
+                                  color: const Color(0xFF333333),
+                                  fontSize: 14.sp)),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ):SizedBox(),
               ),
+            Obx(
+              ()=> controller.appointmentType.value=="homeVisit"?CustomTextField(labelText: "Consultation Address",hintText: "Xyz street",):
+              SizedBox(),
             ),
-            const SizedBox(height: 16),
-            const Text('Duration', style: TextStyle(color: Color(0xFF666666))),
-            const SizedBox(height: 8),
+            SizedBox(height: 16.h),
+            Text('Duration',
+                style:
+                TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
+            SizedBox(height: 8.h),
             InputField(
               text: controller.duration.value,
               readOnly: true,
             ),
-            const SizedBox(height: 16),
-            const Text('Fee', style: TextStyle(color: Color(0xFF666666))),
-            const SizedBox(height: 8),
+            SizedBox(height: 16.h),
+            Text('Fee',
+                style:
+                TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
+            SizedBox(height: 8.h),
             InputField(
               text: controller.fee.value,
               readOnly: true,
+            ),
+            10.verticalSpace,
+            Text(
+              'Note',
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.lightGrey,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade300, width: 1),
+              ),
+              child: TextField(
+                maxLines: 5,
+                onTapOutside: (_){
+                  FocusManager.instance.primaryFocus!.unfocus();
+                },
+                decoration: InputDecoration(
+                  hintText: 'Write a note to your doctor',
+                  hintStyle: TextStyle(color: Colors.grey.shade500),
+                  border: InputBorder.none,
+                  contentPadding:
+                  EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                ),
+              ),
             ),
           ],
         ),
@@ -86,19 +134,19 @@ class InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
-        borderRadius: BorderRadius.circular(10),
-        color: readOnly ? const Color(0xFFF7F9FC) : Colors.white,
+        border: Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
+        borderRadius: BorderRadius.circular(10.r),
+        color: readOnly ? const Color(0xFFFFFFFF) : Colors.white,
       ),
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: const TextStyle(
-          color: Color(0xFF333333),
-          fontSize: 16,
+        style: TextStyle(
+          color: const Color(0xFF333333),
+          fontSize: 16.sp,
         ),
       ),
     );
@@ -112,16 +160,16 @@ class CalendarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.05),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: const Offset(0, 3),
+            offset: Offset(0, 3.h),
           ),
         ],
       ),
@@ -130,25 +178,27 @@ class CalendarWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-               Text(
+              Text(
                 'June 2025',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   color: AppColors.primaryColor,
                 ),
               ),
               Row(
                 children: [
-                  _CalendarArrowButton(icon: Icons.arrow_back_ios_new, onTap: () {}),
-                  _CalendarArrowButton(icon: Icons.arrow_forward_ios, onTap: () {}),
+                  _CalendarArrowButton(
+                      icon: Icons.arrow_back_ios_new, onTap: () {}),
+                  _CalendarArrowButton(
+                      icon: Icons.arrow_forward_ios, onTap: () {}),
                 ],
               )
             ],
           ),
           5.verticalSpace,
           const _DayLabels(),
-         5.verticalSpace,
+          5.verticalSpace,
           _DateGrid(controller: controller),
         ],
       ),
@@ -165,12 +215,12 @@ class _CalendarArrowButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(8.r),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
         child: Icon(
           icon,
-          size: 16,
+          size: 16.sp,
           color: const Color(0xFF999999),
         ),
       ),
@@ -180,7 +230,15 @@ class _CalendarArrowButton extends StatelessWidget {
 
 class _DayLabels extends StatelessWidget {
   const _DayLabels();
-  final List<String> days = const ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  final List<String> days = const [
+    'Sun',
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -191,10 +249,10 @@ class _DayLabels extends StatelessWidget {
         child: Text(
           day,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.w600,
-            fontSize: 13,
-            color: Color(0xFF666666),
+            fontSize: 13.sp,
+            color: const Color(0xFF666666),
           ),
         ),
       ))
@@ -218,10 +276,10 @@ class _DateGrid extends StatelessWidget {
       padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
         childAspectRatio: 1.0,
-        mainAxisSpacing: 8,
+        mainAxisSpacing: 8.h,
         crossAxisSpacing: 0,
       ),
       itemCount: dates.length,
@@ -231,15 +289,13 @@ class _DateGrid extends StatelessWidget {
         final date = DateTime(2023, 6, dayNumber);
 
         return Obx(() {
-          final isSelected = controller.selectedDate.value.day == dayNumber &&
-              !isNextMonth;
+          final isSelected =
+              controller.selectedDate.value.day == dayNumber && !isNextMonth;
           return _DateTile(
             dayNumber: dayNumber,
             isSelected: isSelected,
             isNextMonth: isNextMonth,
-            onTap: isNextMonth
-                ? () {}
-                : () => controller.selectDate(date),
+            onTap: isNextMonth ? () {} : () => controller.selectDate(date),
           );
         });
       },
@@ -265,10 +321,10 @@ class _DateTile extends StatelessWidget {
       onTap: onTap,
       child: Container(
         alignment: Alignment.center,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF4285F4) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(8.r),
         ),
         child: Text(
           '$dayNumber',
@@ -279,7 +335,7 @@ class _DateTile extends StatelessWidget {
                 ? const Color(0xFFCCCCCC)
                 : const Color(0xFF333333),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14,
+            fontSize: 14.sp,
           ),
         ),
       ),
@@ -295,8 +351,8 @@ class TimeSlotsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
           () => Wrap(
-        spacing: 10.0,
-        runSpacing: 10.0,
+        spacing: 10.w,
+        runSpacing: 10.h,
         children: controller.availableTimes.map((time) {
           final isSelected = controller.selectedTime.value == time;
           return _TimeSlotButton(
@@ -325,20 +381,20 @@ class _TimeSlotButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF4285F4) : Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10.r),
           border: isSelected
               ? null
-              : Border.all(color: const Color(0xFFE5E5E5), width: 1),
+              : Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
           boxShadow: isSelected
               ? [
             BoxShadow(
               color: const Color(0xFF4285F4).withOpacity(0.3),
               spreadRadius: 1,
               blurRadius: 5,
-              offset: const Offset(0, 2),
+              offset: Offset(0, 2.h),
             ),
           ]
               : null,
@@ -348,7 +404,7 @@ class _TimeSlotButton extends StatelessWidget {
           style: TextStyle(
             color: isSelected ? Colors.white : const Color(0xFF333333),
             fontWeight: FontWeight.w500,
-            fontSize: 14,
+            fontSize: 14.sp,
           ),
         ),
       ),

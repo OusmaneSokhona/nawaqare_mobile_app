@@ -23,7 +23,7 @@ class MainScreenDoctor extends StatelessWidget {
           onTap: mainController.changePage,
           items:  [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home,size: 22.h,),
+              icon: ImageIcon(AssetImage("assets/images/home_icon.png"),size: 22.h,),
               label: 'Home',
             ),
             BottomNavigationBarItem(
@@ -35,7 +35,7 @@ class MainScreenDoctor extends StatelessWidget {
               label: 'Reception',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_outlined),
+              icon: ImageIcon(AssetImage("assets/images/profile_icon.png"),size: 22.h,),
               label: 'Profile',
             ),
           ],

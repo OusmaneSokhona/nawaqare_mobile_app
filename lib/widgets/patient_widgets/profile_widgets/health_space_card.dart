@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class HealthSpaceCard extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String title;
   final VoidCallback onTap;
   final Color color;
@@ -39,7 +39,7 @@ class HealthSpaceCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: 30.sp),
+            Image.asset(icon, color: color, height: 30.sp),
             10.horizontalSpace,
             Expanded(
               child: Text(

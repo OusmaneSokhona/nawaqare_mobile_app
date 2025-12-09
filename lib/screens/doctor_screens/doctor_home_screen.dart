@@ -154,7 +154,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           "Hello,\nDr. Alex",
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 35.sp,
+                            fontSize: 32.sp,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
@@ -237,7 +237,7 @@ class DoctorHomeScreen extends StatelessWidget {
                         buttonText: "Detail",
                         showGreenDot: false,
                         showRating: false,
-                        consultationTypeIcon: Icons.home_work_outlined,
+                        consultationTypeIcon: "assets/images/in_person_icon.png",
                         consultationTypeText: "In-Person Consultation",
                       ),
                       20.verticalSpace,

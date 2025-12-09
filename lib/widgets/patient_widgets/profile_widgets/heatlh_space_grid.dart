@@ -27,52 +27,52 @@ class HeatlhSpaceGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         HealthSpaceCard(
-          icon: Icons.waving_hand,
+          icon: "assets/images/allergies_icon.png",
           title: 'Allergies',
           onTap: () {profileController.handleHealthSpaceTap(AllergiesScreen());},
         ),
         HealthSpaceCard(
-          icon: Icons.medical_services_outlined,
+          icon: "assets/images/medical_history_icon.png",
           title: 'Medical History',
           onTap: () {profileController.handleHealthSpaceTap(MedicalHistory());},
         ),
         HealthSpaceCard(
-          icon: Icons.update,
+          icon: "assets/images/update_password_icon.png",
           title: 'Update Password',
           onTap: () {
             profileController.handleHealthSpaceTap(UpdatePassword());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.water_drop_outlined,
+          icon: "assets/images/blood_type.png",
           title: 'Blood Type',
           onTap: () {
             profileController.handleHealthSpaceTap(BloodType());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.security,
+          icon: "assets/images/privacy_security_icon.png",
           title: 'Privacy & Security',
           onTap: () {
             profileController.handleHealthSpaceTap(PrivacySecurity());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.translate,
+          icon: "assets/images/language_icon.png",
           title: 'Change Language',
           onTap: (){
             Get.dialog(LanguageDialog());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.calendar_today,
+          icon: "assets/images/consultation_plan_icon.png",
           title: 'Consultation Plan',
           onTap: (){
             profileController.handleHealthSpaceTap(ConsultationScreen());
           },
         ),
         HealthSpaceCard(
-          icon: Icons.person_remove_alt_1,
+          icon: "assets/images/delete_account_icon.png",
           title: 'Delete Account',
           onTap: () {
 Get.dialog(DeleteAccountDialog());

@@ -121,7 +121,8 @@ class HomeScreen extends StatelessWidget {
                           "Hello,\nMr. Alex",
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 35.sp,
+                            fontSize: 32.sp,
+                            color: Colors.black87,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
@@ -158,6 +159,7 @@ class HomeScreen extends StatelessWidget {
                         imagePath: "assets/demo_images/doctor_2.png",
                         name: "Dr. Maria Waston",
                         type: 'Heart Surgeon',
+                        onTap: (){},
                       ),
                       15.verticalSpace,
                       AppointmentCard(
@@ -165,6 +167,7 @@ class HomeScreen extends StatelessWidget {
                         imagePath: "assets/demo_images/doctor_1.png",
                         name: "Dr. Daniel Lee",
                         type: 'Gastroenterologist',
+                        onTap: (){},
                       ),
                       15.verticalSpace,
                       OrderTrackingCard(currentStep: 2),

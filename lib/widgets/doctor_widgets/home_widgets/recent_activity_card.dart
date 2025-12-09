@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class RecentActivityCard extends StatelessWidget {
   const RecentActivityCard({super.key});
 
   static const Color primaryIconColor = Color(0xFF4285F4);
-  static const Color primaryTextColor = Colors.black87;
+  static const Color primaryTextColor = AppColors.darkGrey;
   static const Color timeTextColor = Color(0xFF9E9E9E);
-  static const double iconSize = 20.0;
+  static const double iconSize = 19.0;
 
-  Widget _buildLogItem(IconData icon, String description, String time) {
+  Widget _buildLogItem(String icon, String description, String time) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
-          Icon(
-            icon,
+          ImageIcon(
+            AssetImage(icon),
             size: iconSize,
             color: primaryIconColor,
           ),
@@ -23,8 +24,8 @@ class RecentActivityCard extends StatelessWidget {
           Expanded(
             child: Text(
               description,
-              style: const TextStyle(
-                fontSize: 16.0,
+              style:  TextStyle(
+                fontSize: 13.sp,
                 color: primaryTextColor,
                 fontWeight: FontWeight.w500,
               ),
@@ -63,17 +64,17 @@ class RecentActivityCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildLogItem(
-            Icons.phone_outlined,
+            "assets/images/call_icon.png",
             'Mr. Alex joined call',
             '09:15 AM',
           ),
           _buildLogItem(
-            Icons.receipt_long_outlined,
+            "assets/images/sent_to_pharmacy_icon.png",
             'Prescription sent to pharmacy',
             '09:15 AM',
           ),
           _buildLogItem(
-            Icons.credit_card_outlined,
+            "assets/images/payment_confirmed_icon.png",
             'Payment confirmed by patient',
             '09:15 AM',
           ),

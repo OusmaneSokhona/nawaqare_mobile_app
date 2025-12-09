@@ -7,14 +7,14 @@ class QuickStatisticsCard extends StatelessWidget {
 
   static const Color primaryIconColor = Color(0xFF4285F4);
 
-  Widget _buildStatItem(IconData icon, String label) {
+  Widget _buildStatItem(String icon, String label) {
     return Expanded(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 32.0,
+          ImageIcon(
+            AssetImage(icon),
+            size: 26.sp,
             color: primaryIconColor,
           ),
           const SizedBox(height: 8.0),
@@ -52,15 +52,15 @@ class QuickStatisticsCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatItem(
-            Icons.medical_services_outlined,
+            "assets/images/consultation_plan_icon.png",
             'Today : 05',
           ),
           _buildStatItem(
-            Icons.chat_outlined,
+            "assets/images/chat_icon.png",
             'Messages : 02',
           ),
           _buildStatItem(
-            Icons.star_border,
+            "assets/images/star_icon.png",
             'Rating : 4.3/5',
           ),
         ],

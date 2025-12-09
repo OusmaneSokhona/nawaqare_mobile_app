@@ -146,7 +146,7 @@ ReceptionController controller=Get.put(ReceptionController());
                           "Reception",
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 35.sp,
+                            fontSize: 32.sp,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),

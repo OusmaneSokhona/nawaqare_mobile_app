@@ -126,7 +126,7 @@ BookAppointmentController controller =Get.put(BookAppointmentController());
                                 },
                                 child: Container(
                                   height: 55.h,
-                                  width: 0.405.sw,
+                                  width: 0.280.sw,
                                   decoration: BoxDecoration(
                                     color:
                                     controller.appointmentType.value ==
@@ -144,7 +144,7 @@ BookAppointmentController controller =Get.put(BookAppointmentController());
                                           "inPerson"
                                           ? Colors.white
                                           : Colors.black,
-                                      fontSize: 18.sp,
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: AppFonts.jakartaMedium,
                                     ),
@@ -159,7 +159,7 @@ BookAppointmentController controller =Get.put(BookAppointmentController());
                                 },
                                 child: Container(
                                   height: 55.h,
-                                  width: 0.405.sw,
+                                  width: 0.280.sw,
                                   decoration: BoxDecoration(
                                     color:
                                     controller.appointmentType.value ==
@@ -177,7 +177,40 @@ BookAppointmentController controller =Get.put(BookAppointmentController());
                                           "remote"
                                           ? Colors.white
                                           : Colors.black,
-                                      fontSize: 18.sp,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: AppFonts.jakartaMedium,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Obx(
+                                  () => InkWell(
+                                onTap: () {
+                                  controller.appointmentType.value = "homeVisit";
+                                },
+                                child: Container(
+                                  height: 55.h,
+                                  width: 0.280.sw,
+                                  decoration: BoxDecoration(
+                                    color:
+                                    controller.appointmentType.value ==
+                                        "homeVisit"
+                                        ? AppColors.primaryColor
+                                        : Colors.white,
+                                    borderRadius: BorderRadius.circular(14.sp),
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    "Home Visit",
+                                    style: TextStyle(
+                                      color:
+                                      controller.appointmentType.value ==
+                                          "homeVisit"
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 14.sp,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: AppFonts.jakartaMedium,
                                     ),
@@ -218,10 +251,30 @@ BookAppointmentController controller =Get.put(BookAppointmentController());
                        ),
                      5.verticalSpace,
                       TimeSlotsGrid(controller: controller),
-                      30.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Confirm Appointment", onTap: (){
-                        Get.to(MyAppointmentScreens(model: model));
-                      }),
+                      15.verticalSpace,
+                      Obx(
+                        ()=>controller.appointmentType.value=="homeVisit"?Container(
+                          height: 60.h,
+                          width: 1.sw,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15.sp),
+                            border: Border.all(color:AppColors.lightGrey.withOpacity(0.2)),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.h),
+                          child: Row(crossAxisAlignment: CrossAxisAlignment.start,children: [
+                        Image.asset("assets/images/alert_icon.png",height: 25.sp,),
+                            5.horizontalSpace,
+                            Text("This service is only available for practitioners\noffering home visits.",style: TextStyle(fontSize: 12.sp,color: AppColors.lightGrey,fontWeight: FontWeight.w500),)
+                          ],),
+                        ):SizedBox(),
+                      ),
+                      15.verticalSpace,
+                      Obx(
+                          ()=> CustomButton(borderRadius: 15, text: controller.appointmentType.value!="homeVisit"?"Confirm Appointment":"Submit Request", onTap: (){
+                          Get.to(MyAppointmentScreens(model: model));
+                        }),
+                      ),
                       30.verticalSpace,
                     ],
                   ),

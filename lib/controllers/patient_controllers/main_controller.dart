@@ -12,9 +12,9 @@ import '../../screens/patient_screens/search_screens/search_screen.dart';
 
 class MainController extends GetxController{
   ProfileController profileController=Get.put(ProfileController());
-  ChatController chatController=Get.find();
-  HomeController homeController=Get.find();
-  SearchControllerCustom searchController=Get.find();
+  ChatController chatController=Get.put(ChatController());
+  HomeController homeController=Get.put(HomeController());
+  SearchControllerCustom searchController=Get.put(SearchControllerCustom());
   var currentIndex = 0.obs;
   var currentTitle = 'Home'.obs;
   final List<Widget> screens = [

@@ -21,7 +21,7 @@ class PaymentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    showHomeVisitStatusDialog();
+    // showHomeVisitStatusDialog();
     return Scaffold(
       body: Container(
         height: 1.sh,

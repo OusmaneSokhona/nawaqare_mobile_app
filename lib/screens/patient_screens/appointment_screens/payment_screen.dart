@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
 import 'package:patient_app/screens/patient_screens/main_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
+import 'package:patient_app/widgets/patient_widgets/search_widgets/home_visit_status_dialog.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -20,6 +21,7 @@ class PaymentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    showHomeVisitStatusDialog();
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -113,180 +115,103 @@ class PaymentScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      InkWell(
-                        onTap: () {
-                          paymentController.isCardSelected.value =
-                              !paymentController.isCardSelected.value;
-                          paymentController.isPayPalSelected.value = false;
-                        },
-                        child: Obx(
-                          () => Container(
-                            height: 70.h,
-                            width: 1.sw,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              border: Border.all(
-                                color:
-                                    paymentController.isCardSelected.value
+                      ListView.builder(padding: EdgeInsets.zero,shrinkWrap: true,physics: NeverScrollableScrollPhysics(),itemCount: paymentController.payments.length,itemBuilder: (context,index){
+                        return  Padding(
+                          padding:  EdgeInsets.only(bottom: 12.h),
+                          child: InkWell(
+                            onTap: () {
+                              if(paymentController.payments[index]=="Cash"){
+                                if(paymentController.bookAppointmentController.appointmentType.value=="homeVisit"){
+                                  paymentController.selectedPayment.value=paymentController.payments[index];
+                                }else{
+                                  Get.snackbar("Warning", "Only For Home Visit",colorText: Colors.white,backgroundColor: AppColors.red.withOpacity(0.6),snackPosition: SnackPosition.BOTTOM);
+                                }
+                              }else{
+                              paymentController.selectedPayment.value=paymentController.payments[index];}
+                            },
+                            child: Obx(
+                                  () => Container(
+                                height: 70.h,
+                                width: 1.sw,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  border: Border.all(
+                                    color:
+                                    paymentController.selectedPayment.value==paymentController.payments[index]
                                         ? AppColors.primaryColor
                                         : AppColors.lightGrey.withOpacity(0.5),
-                              ),
-                              color: Colors.white,
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 11.w),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 55.h,
-                                  width: 55.w,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.lightGrey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10.r),
                                   ),
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(10.r),
-                                  child: Image.asset(
-                                    "assets/images/logos_mastercard.png",
-                                  ),
+                                  color: Colors.white,
                                 ),
-                                20.horizontalSpace,
-                                Text(
-                                  "Credit/Debit Card",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16.sp,
-                                    fontFamily: AppFonts.jakartaMedium,
-                                  ),
-                                ),
-                                Spacer(),
-                                Obx(() {
-                                  return Container(
-                                    height: 20.h,
-                                    width: 20.w,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.transparent,
-                                      border: Border.all(
-                                        color:
+                                padding: EdgeInsets.symmetric(horizontal: 11.w),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      height: 55.h,
+                                      width: 55.w,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.lightGrey.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(10.r),
+                                      ),
+                                      alignment: Alignment.center,
+                                      padding: EdgeInsets.all(10.r),
+                                      child: Image.asset(
+                                        paymentController.paymentIcons[index],
+                                      ),
+                                    ),
+                                    20.horizontalSpace,
+                                    Text(paymentController.payments[index],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16.sp,
+                                        fontFamily: AppFonts.jakartaMedium,
+                                      ),
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                        height: 20.h,
+                                        width: 20.w,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.transparent,
+                                          border: Border.all(
+                                            color:
                                             paymentController
-                                                    .isCardSelected
-                                                    .value
+                                                .selectedPayment
+                                                .value==paymentController.payments[index]
                                                 ? AppColors.primaryColor
                                                 : AppColors.lightGrey,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.all(3.sp),
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color:
+                                            width: 2,
+                                          ),
+                                        ),
+                                        padding: EdgeInsets.all(3.sp),
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color:
                                             paymentController
-                                                    .isCardSelected
-                                                    .value
+                                                .selectedPayment
+                                                .value==paymentController.payments[index]
                                                 ? AppColors.primaryColor
                                                 : Colors.transparent,
-                                        shape: BoxShape.circle,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                }),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      10.verticalSpace,
-                      InkWell(
-                        onTap: () {
-                          paymentController.isPayPalSelected.value =
-                              !paymentController.isPayPalSelected.value;
-                          paymentController.isCardSelected.value = false;
-                        },
-                        child: Obx(
-                          () => Container(
-                            height: 70.h,
-                            width: 1.sw,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              border: Border.all(
-                                color:
-                                    paymentController.isPayPalSelected.value
-                                        ? AppColors.primaryColor
-                                        : AppColors.lightGrey.withOpacity(0.5),
+                                  ],
+                                ),
                               ),
-                              color: Colors.white,
-                            ),
-                            padding: EdgeInsets.symmetric(horizontal: 11.w),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 55.h,
-                                  width: 55.w,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.lightGrey.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(10.r),
-                                  ),
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.all(10.r),
-                                  child: Image.asset(
-                                    "assets/images/logos_paypal.png",
-                                  ),
-                                ),
-                                20.horizontalSpace,
-                                Text(
-                                  "Paypal",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16.sp,
-                                    fontFamily: AppFonts.jakartaMedium,
-                                  ),
-                                ),
-                                Spacer(),
-                                Obx(() {
-                                  return Container(
-                                    height: 20.h,
-                                    width: 20.w,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.transparent,
-                                      border: Border.all(
-                                        color:
-                                            paymentController
-                                                    .isPayPalSelected
-                                                    .value
-                                                ? AppColors.primaryColor
-                                                : AppColors.lightGrey,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    padding: EdgeInsets.all(3.sp),
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color:
-                                            paymentController
-                                                    .isPayPalSelected
-                                                    .value
-                                                ? AppColors.primaryColor
-                                                : Colors.transparent,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ],
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
                         text: "Confirm & Pay",
                         onTap: () {
                           Get.dialog(barrierDismissible: false,AppointmentConfirmationDialog(doctorName: "Dr Daniel", date: "12/02/26", time: "10:30", onDone: (){
-                            Get.offAll(MainScreen(),binding: AppBinding());
+                            Get.offAll(MainScreen());
                           }, onViewDetails: (){}));
                         },
                       ),
@@ -310,5 +235,12 @@ class PaymentScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+  Future<void> showHomeVisitStatusDialog() async {
+    if(paymentController.bookAppointmentController.appointmentType.value=="homeVisit"){
+      await Future.delayed(Duration(seconds: 3),(){
+        Get.dialog(HomeVisitStatusDialog(status: false,));
+      });
+    }
   }
 }

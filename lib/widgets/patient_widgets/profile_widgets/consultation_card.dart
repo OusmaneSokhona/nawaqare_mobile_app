@@ -6,10 +6,12 @@ import 'package:patient_app/utils/app_colors.dart';
 class ConsultationCard extends StatelessWidget {
   final ConsultationModel plan;
   final Function onTap;
+  final bool isCompleted;
 
   const ConsultationCard({
     required this.plan,
     required this.onTap,
+    required this.isCompleted,
   });
 Color getStatusColor(){
   if(plan.status=="Active"){
@@ -106,7 +108,7 @@ Color getStatusColor(){
                   ),
                 ),
                 child: Text(
-                  'Renew Plan',
+                  isCompleted?"View Details":'Renew Plan',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white,

@@ -49,7 +49,7 @@ class ConsultationDetailsWidget extends StatelessWidget {
            Text(
             'Premium Tele-Consultation\nPlan',
             style: TextStyle(
-              fontSize: 17.sp,
+              fontSize: 15.sp,
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
@@ -65,7 +65,7 @@ class ConsultationDetailsWidget extends StatelessWidget {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
-                fontSize: 12.sp,
+                fontSize: 11.sp,
               ),
             ),
           ),

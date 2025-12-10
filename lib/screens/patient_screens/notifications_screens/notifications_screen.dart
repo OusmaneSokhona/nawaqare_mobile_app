@@ -95,12 +95,12 @@ NotificationController notificationController=Get.put(NotificationController());
           ),
           GestureDetector(
             onTap: () {},
-            child: const Text(
+            child:  Text(
               'Mark all as read',
               style: TextStyle(
                 fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.blue,
+                fontWeight: FontWeight.w600,
+                color:AppColors.darkGrey,
               ),
             ),
           ),

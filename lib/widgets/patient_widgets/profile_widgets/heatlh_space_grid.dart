@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/patient_screens/profile_screens/consultation_screen.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
+import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../screens/patient_screens/profile_screens/allergies_screen.dart';
 import '../../../screens/patient_screens/profile_screens/blood_type.dart';
 import '../../../screens/patient_screens/profile_screens/medical_history.dart';
 import '../../../screens/patient_screens/profile_screens/privacy_security.dart';
 import '../../../screens/patient_screens/profile_screens/update_password.dart';
+import '../../../utils/app_bindings.dart';
 import '../../../utils/app_colors.dart';
-import 'delete_account_dialog.dart';
+import '../../../utils/shared_prefrence.dart';
 import 'health_space_card.dart';
 import 'language_dialogs.dart';
 class HeatlhSpaceGrid extends StatelessWidget {
@@ -72,13 +74,14 @@ class HeatlhSpaceGrid extends StatelessWidget {
           },
         ),
         HealthSpaceCard(
-          icon: "assets/images/delete_account_icon.png",
-          title: 'Delete Account',
-          onTap: () {
-Get.dialog(DeleteAccountDialog());
-          },
+          icon: "assets/images/log_out_icon.png",
+          title: 'Log Out',
           color: AppColors.red,
           textColor: AppColors.red,
+          onTap: (){
+            LocalStorageUtils.deleteUser();
+            Get.offAll(SignInScreen(),binding: AppBinding());
+          },
         ),
       ],
     );

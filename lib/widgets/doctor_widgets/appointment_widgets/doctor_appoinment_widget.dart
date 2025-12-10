@@ -55,7 +55,7 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.calendar_today_outlined,
-                      size: 16,
+                      size: 14,
                       color: AppColors.primaryColor,
                     ),
                     const SizedBox(width: 6),
@@ -71,7 +71,7 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                         8.horizontalSpace,
                         Icon(
                           Icons.watch_later_outlined,
-                          size: 16,
+                          size: 14,
                           color: AppColors.primaryColor,
                         ),
                         4.horizontalSpace,

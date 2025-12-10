@@ -187,16 +187,6 @@ class DoctorProfileScreen extends StatelessWidget {
                             : controller.type.value=="Documents"?DoctorDocuments():Revalidation(),
                       ),
                       10.verticalSpace,
-                      HealthSpaceCard(
-                        icon: "assets/images/delete_account_icon.png",
-                        title: 'Delete Account',
-                        onTap: () {
-                          Get.dialog(DeleteAccountDialog());
-                        },
-                        color: AppColors.red,
-                        textColor: AppColors.red,
-                      ),
-                      10.verticalSpace,
                     ],
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppointmentConfirmationDialog extends StatelessWidget {
   final String doctorName;
@@ -29,19 +30,7 @@ class AppointmentConfirmationDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.green.shade600,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check_rounded,
-                color: Colors.white,
-                size: 48,
-              ),
-            ),
+           Image.asset("assets/images/appointment_confirm.png",height: 130.h,),
             const SizedBox(height: 24.0),
 
             const Text(

@@ -203,6 +203,7 @@ class ConsultationScreen extends StatelessWidget {
                       itemCount: filteredList.length,
                       itemBuilder: (context, index) {
                         return ConsultationCard(
+                          isCompleted: consultationController.orderType.value=="Active Plan(2)"?false:true,
                           onTap: () {
                             Get.to(() => const ConsultationDetailsScreen());
                           },

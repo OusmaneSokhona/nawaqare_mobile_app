@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/confirmation_dialog.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_detail_widget.dart';
+import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_home_visit_status_dialog.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
@@ -21,7 +22,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
   });
 
   final AppointmentModel appointmentModel;
-
+RxBool statusSetedHomeVisit=false.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,7 +161,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                         MedicalReportCard(title: "Blood Test Report", date: "200/Sep/2025"),
 
                         30.verticalSpace,
-                        CustomButton(
+                        Obx(()=>statusSetedHomeVisit.value?CustomButton(
                           borderRadius: 15,
                           text: "Join Consultation",
                           onTap: () {
@@ -168,15 +169,31 @@ class DoctorAppointmentDetail extends StatelessWidget {
                               PreviewScreen(appointmentModel: appointmentModel),
                             );
                           },
-                        ),
+                        ):CustomButton(
+                          borderRadius: 15,
+                          text: "Accept",
+                          onTap: () {
+                            Get.dialog(DoctorHomeVisitStatusDialog(status: true));
+                            statusSetedHomeVisit.value=true;
+                          },
+                        ),),
                         10.verticalSpace,
-                        CustomButton(
+                        Obx(()=>statusSetedHomeVisit.value?CustomButton(
                           borderRadius: 15,
                           text: "Reschedule",
                           onTap: () {},
                           bgColor: AppColors.inACtiveButtonColor,
                           fontColor: Colors.black,
-                        ),
+                        ):CustomButton(
+                          borderRadius: 15,
+                          text: "Decline",
+                          onTap: () {
+                            Get.dialog(DoctorHomeVisitStatusDialog(status: false));
+                            statusSetedHomeVisit.value=true;
+                          },
+                          bgColor: AppColors.inACtiveButtonColor,
+                          fontColor: Colors.black,
+                        ),),
                         30.verticalSpace,
                       },
                     ],

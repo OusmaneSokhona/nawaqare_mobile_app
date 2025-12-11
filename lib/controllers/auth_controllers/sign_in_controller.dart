@@ -6,6 +6,7 @@ import 'package:patient_app/screens/auth_screens/forgot_password.dart';
 import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
 import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/screens/patient_screens/main_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/main_screen_pharmacy.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
@@ -140,6 +141,9 @@ void clearControllers(){
   void goToMainScreenDocotor() {
     Get.offAll(MainScreenDoctor(),binding: AppBinding());
   }
+  void goToMainScreenPharmacist() {
+    Get.offAll(MainScreenPharmacy(),binding: AppBinding());
+  }
 
   void signInTap() {
     if (formKey.currentState!.validate()) {
@@ -152,6 +156,11 @@ void clearControllers(){
           goToMainScreenDocotor();
           clearControllers();
           LocalStorageUtils.setLoginedDoctor();
+        }else if(emailController.text == "pharmacy@gmail.com"){
+goToMainScreenPharmacist();
+clearControllers();
+LocalStorageUtils.setLoginedPharmacy();
+
         } else {
           Get.snackbar(
             "Invalid Credentials",

@@ -50,6 +50,14 @@ class LocalStorageUtils {
     if (_preferences == null) await init();
     return await _preferences!.getBool("setLoginedDoctor") ?? false; // Default to true if not set
   }
+  static Future<void> setLoginedPharmacy() async {
+    if (_preferences == null) await init();
+    _preferences!.setBool("setLoginedPharmacy", true);
+  }
+  static Future<bool> getLoginedPharmacy() async {
+    if (_preferences == null) await init();
+    return await _preferences!.getBool("setLoginedPharmacy") ?? false; // Default to true if not set
+  }
   static Future<bool> getBool(String key) async {
     if (_preferences == null) await init();
     return _preferences!.getBool(key)?? false;

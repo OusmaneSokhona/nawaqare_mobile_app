@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_prescription_detail_screen.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 import '../../utils/app_colors.dart';
@@ -64,7 +65,9 @@ class UploadPrescriptionScreen extends StatelessWidget {
             orDivider(),
             uploadPrescriptionArea(),
             30.verticalSpace,
-           CustomButton(borderRadius: 15, text: "Continue", onTap: (){}),
+           CustomButton(borderRadius: 15, text: "Continue", onTap: (){
+             Get.to(PharmacyPrescriptionDetailScreen());
+           }),
           ]),
         ),
       ),
@@ -111,7 +114,6 @@ class UploadPrescriptionScreen extends StatelessWidget {
     );
   }
 
-// Widget function for the OR divider
   Widget orDivider() {
     return const Padding(
       padding: EdgeInsets.symmetric(vertical: 20.0),
@@ -126,7 +128,6 @@ class UploadPrescriptionScreen extends StatelessWidget {
     );
   }
 
-// Widget function for the Upload area
   Widget uploadPrescriptionArea() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

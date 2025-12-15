@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/auth_screens/basic_info_screen.dart';
 import 'package:patient_app/screens/auth_screens/demographic_info.dart';
 import 'package:patient_app/screens/auth_screens/two_factor_authentication.dart';
 import 'package:patient_app/widgets/custom_button.dart';
@@ -85,10 +86,9 @@ class SignUpScreen extends StatelessWidget {
                         Obx(
                           () => CustomRadioTile(
                             text: "You are a doctor",
-                            isSelected: signUpController.isDoctor.value,
+                            isSelected: signUpController.type.value=="doctor",
                             onTap: () {
-                              signUpController.isDoctor.value =
-                                  !signUpController.isDoctor.value;
+                              signUpController.type.value ="doctor";
                             },
                           ),
                         ),
@@ -96,15 +96,24 @@ class SignUpScreen extends StatelessWidget {
                         Obx(
                           () => CustomRadioTile(
                             text: "You are a patient",
-                            isSelected: !signUpController.isDoctor.value,
+                            isSelected: signUpController.type.value=="patient",
                             onTap: () {
-                              signUpController.isDoctor.value =
-                                  !signUpController.isDoctor.value;
+                              signUpController.type.value ="patient";
+                            },
+                          ),
+                        ),
+                        5.verticalSpace,
+                        Obx(
+                              () => CustomRadioTile(
+                            text: "You are a pharmacist",
+                            isSelected: signUpController.type.value=="pharmacist",
+                            onTap: () {
+                              signUpController.type.value ="pharmacist";
                             },
                           ),
                         ),
                         15.verticalSpace,
-                        Obx(()=> ProgressStepper(currentStep: 1, totalSteps: signUpController.isDoctor.value?5:4)),
+                        Obx(()=> ProgressStepper(currentStep: 1, totalSteps: signUpController.type.value=="patient"?4:5)),
                         15.verticalSpace,
                         CustomTextField(
                           labelText: "Full Name",
@@ -163,10 +172,13 @@ class SignUpScreen extends StatelessWidget {
                           onTap: () {
                             if (signUpController.formKey.currentState!.validate()) {
                               if (signUpController.isPasswordValid()) {
-                                if(signUpController.isDoctor.value){
+                                if(signUpController.type.value=="doctor"){
                                   Get.to(DemographicInfo());
-                                 }else{
-                                Get.to(TwoFactorAuthentication());}
+                                 }else if(signUpController.type.value=="pharmacist"){
+                                  Get.to(BasicInfoScreen());
+                                }else{
+                                  Get.to(TwoFactorAuthentication());
+                                }
                                 print("Validation passed!");
                               } else {
                                 signUpController.markPasswordInteracted();

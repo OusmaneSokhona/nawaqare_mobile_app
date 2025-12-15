@@ -10,7 +10,7 @@ import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../widgets/validation_check_list.dart';
 
 class SignUpController extends GetxController {
-  RxBool isDoctor = false.obs;
+  RxString type = "doctor".obs;
   SignInController signInController = Get.put(SignInController());
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -281,6 +281,11 @@ class SignUpController extends GetxController {
   final selectedFileCnpd = Rx<String?>('No file selected');
   final selectedFileBankVerification = Rx<String?>('No file selected');
   final selectedFileBankPaymentAuthorization = Rx<String?>('No file selected');
+  final selectedLicenseCertificate = Rx<String?>('No file selected');
+  final selectedTaxClearance = Rx<String?>('No file selected');
+  final selectedNocCertificate = Rx<String?>('No file selected');
+  final selectedPharmacyBankVerificationLetter = Rx<String?>('No file selected');
+  final selectedPharmacyBankPaymentAuthorization = Rx<String?>('No file selected');
 
   void pickFile(Rx<String?> file) async {
     final result = await FilePicker.platform.pickFiles(

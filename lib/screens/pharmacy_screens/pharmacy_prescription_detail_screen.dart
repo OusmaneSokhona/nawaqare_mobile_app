@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/pharmacy_controllers/pharmacy_prescription_controller.dart';
 import 'package:patient_app/screens/pharmacy_screens/partial_fulfilment_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/prescription_screens/prepartion_and_delivery_screen.dart';
 import 'package:patient_app/screens/pharmacy_screens/reject_prescription_screen.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/share_for_delivery_dialog.dart';
@@ -79,7 +80,9 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
                       CustomButton(
                         borderRadius: 15,
                         text: "Validate Prescription",
-                        onTap: () {},
+                        onTap: () {
+                          Get.to(PrepartionAndDeliveryScreen());
+                        },
                       ),
                       10.verticalSpace,
                       CustomButton(

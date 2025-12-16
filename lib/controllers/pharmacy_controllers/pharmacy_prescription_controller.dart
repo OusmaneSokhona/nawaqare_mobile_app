@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/pharmacy_prescription_model.dart';
 
@@ -106,13 +107,41 @@ RxString type="myPrescription".obs;
       hasDoc: true,
     ),
   ].obs;
+  final List<Map<String, dynamic>> demoData = const [
+    {
+      "id": "#RX-20391",
+      "date": "Oct 25, 2025",
+      "amount": "PKR 1,250",
+      "pharmacist": "PH-021",
+      "status": "Pending",
+      "statusColor": Color(0xFFE69B59),
+    },
+    {
+      "id": "#RX-20391",
+      "date": "Oct 25, 2025",
+      "amount": "PKR 1,250",
+      "pharmacist": "PH-021",
+      "status": "Validated",
+      "statusColor": Color(0xFF64B5F6),
+    },
+    {
+      "id": "#RX-20391",
+      "date": "Oct 25, 2025",
+      "amount": "PKR 1,250",
+      "pharmacist": "PH-021",
+      "status": "Rejected",
+      "statusColor": Color(0xFFE5533D),
+    },
+    {
+      "id": "#RX-20391",
+      "date": "Oct 25, 2025",
+      "amount": "PKR 1,250",
+      "pharmacist": "PH-021",
+      "status": "Delivered",
+      "statusColor": Color(0xFF63AB67),
+    },
+  ];
 
-  List<PharmacyPrescriptionModel> get activePrescriptions => prescriptions.where((p) => p.status != "Archived").toList();
-  List<PharmacyPrescriptionModel> get archivedPrescriptions => prescriptions.where((p) => p.status == "Archived").toList();
-
-  List<PharmacyPrescriptionModel> get currentList {
-    return type.value == "myPrescription" ? activePrescriptions : archivedPrescriptions;
-  }
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
 
   DateTime? get selectedDate => _selectedDate.value;

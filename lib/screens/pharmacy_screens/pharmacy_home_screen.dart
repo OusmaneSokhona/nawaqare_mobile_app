@@ -75,7 +75,6 @@ class PharmacyHomeScreen extends StatelessWidget {
                     const Spacer(),
                     InkWell(
                       onTap: () {
-                        Get.to(() => ChatScreen());
                       },
                       child: Image.asset(
                         "assets/images/chat_icon.png",
@@ -129,7 +128,6 @@ class PharmacyHomeScreen extends StatelessWidget {
                           const Spacer(),
                           InkWell(
                             onTap: () {
-                              Get.to(() => ChatScreen());
                             },
                             child: Image.asset(
                               "assets/images/chat_icon.png",

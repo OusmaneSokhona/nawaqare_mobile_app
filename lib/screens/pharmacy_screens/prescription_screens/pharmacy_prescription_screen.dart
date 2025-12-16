@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_prescription_detail_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/prescription_screens/pharmacy_prescription_record.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_prescription_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_prescription_filter_bottom_sheet.dart';
 import '../../../controllers/pharmacy_controllers/pharmacy_prescription_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-
+import '../../../widgets/custom_text_field.dart';
 
 class PharmacyPrescriptionScreen extends StatelessWidget {
   PharmacyPrescriptionScreen({super.key});
@@ -70,21 +72,57 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Obx(
-                            () => Align(
+                        () => Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(
-                            "My Prescriptions (${pharmacyPrescriptionController.activePrescriptions.length})",
-                            style: TextStyle(
-                              color: AppColors.darkGrey,
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: AppFonts.jakartaBold,
-                            ),
-                          ),
+                          child:
+                              pharmacyPrescriptionController.type.value ==
+                                      "myPrescription"
+                                  ? Text(
+                                    "My Prescriptions (${pharmacyPrescriptionController.prescriptions.length})",
+                                    style: TextStyle(
+                                      color: AppColors.darkGrey,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: AppFonts.jakartaBold,
+                                    ),
+                                  )
+                                  : Text(
+                                    "Archives (${pharmacyPrescriptionController.demoData.length})",
+                                    style: TextStyle(
+                                      color: AppColors.darkGrey,
+                                      fontSize: 15.sp,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: AppFonts.jakartaBold,
+                                    ),
+                                  ),
                         ),
                       ),
                       10.verticalSpace,
-                      _buildPrescriptionList(),
+                      Obx(
+                        () =>
+                            pharmacyPrescriptionController.type ==
+                                    "myPrescription"
+                                ? _buildPrescriptionList()
+                                : ListView.builder(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount:
+                                      pharmacyPrescriptionController
+                                          .demoData
+                                          .length,
+                                  itemBuilder: (context, index) {
+                                    final item =
+                                        pharmacyPrescriptionController
+                                            .demoData[index];
+                                    return _buildPrescriptionCard(
+                                      id: item['id'],
+                                      status: item['status'],
+                                      statusColor: item['statusColor'],
+                                    );
+                                  },
+                                ),
+                      ),
                       30.verticalSpace,
                     ],
                   ),
@@ -109,7 +147,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Obx(
-                () => InkWell(
+            () => InkWell(
               onTap: () {
                 pharmacyPrescriptionController.type.value = "myPrescription";
               },
@@ -118,21 +156,21 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                 width: 0.455.sw,
                 decoration: BoxDecoration(
                   color:
-                  pharmacyPrescriptionController.type.value ==
-                      "myPrescription"
-                      ? AppColors.primaryColor
-                      : Colors.white,
+                      pharmacyPrescriptionController.type.value ==
+                              "myPrescription"
+                          ? AppColors.primaryColor
+                          : Colors.white,
                   borderRadius: BorderRadius.circular(14.sp),
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  "My Prescriptions(${pharmacyPrescriptionController.activePrescriptions.length})",
+                  "My Prescriptions(${pharmacyPrescriptionController.prescriptions.length})",
                   style: TextStyle(
                     color:
-                    pharmacyPrescriptionController.type.value ==
-                        "myPrescription"
-                        ? Colors.white
-                        : Colors.black,
+                        pharmacyPrescriptionController.type.value ==
+                                "myPrescription"
+                            ? Colors.white
+                            : Colors.black,
                     fontSize: 11.5.sp,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppFonts.jakartaBold,
@@ -142,7 +180,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
             ),
           ),
           Obx(
-                () => InkWell(
+            () => InkWell(
               onTap: () {
                 pharmacyPrescriptionController.type.value = "archive";
               },
@@ -151,10 +189,9 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                 width: 0.455.sw,
                 decoration: BoxDecoration(
                   color:
-                  pharmacyPrescriptionController.type.value ==
-                      "archive"
-                      ? AppColors.primaryColor
-                      : Colors.white,
+                      pharmacyPrescriptionController.type.value == "archive"
+                          ? AppColors.primaryColor
+                          : Colors.white,
                   borderRadius: BorderRadius.circular(14.sp),
                 ),
                 alignment: Alignment.center,
@@ -162,10 +199,9 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                   "Archive",
                   style: TextStyle(
                     color:
-                    pharmacyPrescriptionController.type.value ==
-                        "archive"
-                        ? Colors.white
-                        : Colors.black,
+                        pharmacyPrescriptionController.type.value == "archive"
+                            ? Colors.white
+                            : Colors.black,
                     fontSize: 11.5.sp,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppFonts.jakartaBold,
@@ -194,20 +230,17 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
 
   Widget _buildPrescriptionList() {
     return Obx(
-          () => ListView.builder(
+      () => ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.only(
-          bottom: 20.h,
-        ),
-        itemCount:
-        pharmacyPrescriptionController.currentList.length,
+        padding: EdgeInsets.only(bottom: 20.h),
+        itemCount: pharmacyPrescriptionController.prescriptions.length,
         itemBuilder: (context, index) {
           return PharmacyPrescriptionCard(
             onTap: () {
+              Get.to(PharmacyPrescriptionDetailScreen());
             },
-            prescription:
-            pharmacyPrescriptionController.currentList[index],
+            prescription: pharmacyPrescriptionController.prescriptions[index],
           );
         },
       ),
@@ -231,93 +264,118 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
       },
     );
   }
-}
 
-class CustomTextField extends StatelessWidget {
-  final String hintText;
-  final IconData prefixIcon;
-  final IconData? suffixIcon;
-  final Color suffixIconColor;
-  final Color prefixIconColor;
-  final VoidCallback? onSuffixIconTap;
-
-  const CustomTextField({
-    required this.hintText,
-    required this.prefixIcon,
-    this.suffixIcon,
-    this.suffixIconColor = Colors.blue,
-    this.prefixIconColor = Colors.grey,
-    this.onSuffixIconTap,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildPrescriptionCard({
+    required String id,
+    required String status,
+    required Color statusColor,
+  }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14.sp),
-        border: Border.all(color: AppColors.onboardingBackground),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
-      child: TextField(
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
-          prefixIcon: Icon(prefixIcon, color: prefixIconColor, size: 20.sp),
-          suffixIcon: suffixIcon != null
-              ? InkWell(
-            onTap: onSuffixIconTap,
-            child: Icon(suffixIcon, color: suffixIconColor, size: 22.sp),
-          )
-              : null,
-          border: InputBorder.none,
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 15.h),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                id,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            "Oct 25, 2025  |  PKR 1,250",
+            style: TextStyle(color: Colors.grey, fontSize: 14),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            "Pharmacist: PH-021",
+            style: TextStyle(color: Colors.grey, fontSize: 14),
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1, thickness: 1, color: Color(0xFFF5F5F5)),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: _buildButton(
+                  "Export PDF/CSV",
+                  const Color(0xFFF0F2F5),
+                  Colors.black87,
+                    (){
+
+                    },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildButton(
+                  "View",
+                  const Color(0xFF4A80E1),
+                  Colors.white,
+                    (){
+                      Get.to(PharmacyPrescriptionRecord());
+                    }
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
-}
 
-class CustomButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onTap;
-  final double borderRadius;
-  final Color backgroundColor;
-  final Color textColor;
-
-  const CustomButton({
-    required this.text,
-    required this.onTap,
-    this.borderRadius = 10,
-    this.backgroundColor = AppColors.primaryColor,
-    this.textColor = Colors.white,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildButton(String text, Color bgColor, Color textColor,Function onTap) {
     return SizedBox(
-      height: 50.h,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
+      height: 48,
+      child: TextButton(
+        onPressed: () {
+          onTap();
+        },
+        style: TextButton.styleFrom(
+          backgroundColor: bgColor,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius.sp),
+            borderRadius: BorderRadius.circular(10),
           ),
-          elevation: 0,
-          padding: EdgeInsets.zero,
         ),
         child: Text(
           text,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w700,
-            fontFamily: AppFonts.jakartaBold,
-          ),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
         ),
       ),
     );

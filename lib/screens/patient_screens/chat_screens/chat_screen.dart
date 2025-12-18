@@ -9,7 +9,8 @@ import '../notifications_screens/notifications_screen.dart';
 import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
+  bool showBackIcon;
+  ChatScreen({super.key,this.showBackIcon=false});
 
   ChatController chatController = Get.find();
 
@@ -114,9 +115,14 @@ class ChatScreen extends StatelessWidget {
                     children: [
                       60.verticalSpace,
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                         if (showBackIcon) Padding(
+                            padding:  EdgeInsets.only(top: 12.0),
+                            child: InkWell(onTap:(){Get.back();},child: Image.asset("assets/images/back_icon.png",color: Colors.white,height: 33.sp,)),
+                          ) else SizedBox(),
+                          showBackIcon?5.horizontalSpace:SizedBox(),
                           CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
@@ -124,6 +130,7 @@ class ChatScreen extends StatelessWidget {
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
+                          Spacer(),
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());

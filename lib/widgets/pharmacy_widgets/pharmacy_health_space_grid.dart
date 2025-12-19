@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/patient_screens/profile_screens/consultation_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_access_log_screen.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../screens/patient_screens/profile_screens/allergies_screen.dart';
@@ -31,7 +32,9 @@ class PharmacyHealthSpaceGrid extends StatelessWidget {
         HealthSpaceCard(
           icon: "assets/images/allergies_icon.png",
           title: 'Access Log',
-          onTap: () {},
+          onTap: () {
+            Get.to(PharmacyAccessLogScreen());
+          },
         ),
         HealthSpaceCard(
           icon: "assets/images/privacy_security_icon.png",

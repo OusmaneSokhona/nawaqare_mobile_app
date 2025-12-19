@@ -10,7 +10,6 @@ class MainScreenPharmacy extends StatelessWidget {
   MainControllerPharmacy mainController=Get.put(MainControllerPharmacy());
   @override
   Widget build(BuildContext context) {
-    mainController.currentIndex.value=0;
     return Scaffold(
       bottomNavigationBar: Obx(
             () => BottomNavigationBar(

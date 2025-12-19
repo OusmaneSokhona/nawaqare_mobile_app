@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class LanguageDialog extends StatelessWidget {
-   LanguageDialog({super.key});
-ProfileController controller=Get.put(ProfileController());
+  LanguageDialog({super.key});
+  final ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
-
-    const List<String> availableLanguages = ['French', 'English'];
+    final List<String> availableLanguages = [AppStrings.french, AppStrings.english];
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -21,46 +22,44 @@ ProfileController controller=Get.put(ProfileController());
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Title
-            const Text(
-              'Language Support',
-              style: TextStyle(
+            Text(
+              AppStrings.langSupport.tr,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
-
-            // Subtitle
             Text(
-              'Ensure accessibility and usability of the application across multiple language',
+              AppStrings.langDescription.tr,
               style: TextStyle(color: Colors.grey[700]),
             ),
             const SizedBox(height: 14),
-
-           Text("Language",style: TextStyle(fontWeight: FontWeight.w600,fontFamily: AppFonts.jakartaMedium),),
+            Text(
+              AppStrings.language.tr,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontFamily: AppFonts.jakartaMedium,
+              ),
+            ),
             Obx(
                   () => Column(
                 children: availableLanguages.map((language) {
                   return _buildLanguageOption(
                     context,
                     controller: controller,
-                    language: language,
+                    languageKey: language,
                   );
                 }).toList(),
               ),
             ),
             const SizedBox(height: 4),
-
-            // Action Buttons
             Row(
               children: <Widget>[
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {
-                      Get.back(result: false);
-                    },
+                    onPressed: () => Get.back(result: false),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -68,10 +67,12 @@ ProfileController controller=Get.put(ProfileController());
                       ),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text(
-                      'Cancle',
-                      style: TextStyle(
-                          color: Colors.black54, fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.cancel.tr,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -79,7 +80,11 @@ ProfileController controller=Get.put(ProfileController());
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Pass back the selected language on confirmation
+                      if (controller.selectedLanguage.value == AppStrings.french) {
+                        Get.updateLocale(const Locale('fr', 'FR'));
+                      } else {
+                        Get.updateLocale(const Locale('en', 'US'));
+                      }
                       Get.back(result: controller.selectedLanguage.value);
                     },
                     style: ElevatedButton.styleFrom(
@@ -91,9 +96,9 @@ ProfileController controller=Get.put(ProfileController());
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.confirm.tr,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -108,26 +113,23 @@ ProfileController controller=Get.put(ProfileController());
   Widget _buildLanguageOption(
       BuildContext context, {
         required ProfileController controller,
-        required String language,
+        required String languageKey,
       }) {
     return InkWell(
-      onTap: () => controller.setLanguage(language),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 0.0),
-        child: Row(
-          children: [
-            Radio<String>(
-              value: language,
-              groupValue: controller.selectedLanguage.value,
-              onChanged: controller.setLanguage,
-              activeColor: Colors.blue[600],
-            ),
-            Text(
-              language,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ],
-        ),
+      onTap: () => controller.setLanguage(languageKey),
+      child: Row(
+        children: [
+          Radio<String>(
+            value: languageKey,
+            groupValue: controller.selectedLanguage.value,
+            onChanged: (val) => controller.setLanguage(val!),
+            activeColor: Colors.blue[600],
+          ),
+          Text(
+            languageKey.tr,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:patient_app/utils/app_bindings.dart';
 import '../../models/profile_models.dart';
 import '../../screens/patient_screens/profile_screens/edit_medical_vitals.dart';
 import '../../screens/patient_screens/profile_screens/edit_personal_info.dart';
+import '../../utils/app_strings.dart';
 
 class ProfileController extends GetxController {
   ScrollController scrollController = ScrollController();
@@ -239,11 +240,16 @@ class ProfileController extends GetxController {
     }
   }
 
-  final selectedLanguage = 'French'.obs;
+  final selectedLanguage = AppStrings.english.obs;
 
   void setLanguage(String? language) {
     if (language != null) {
       selectedLanguage.value = language;
+      if (selectedLanguage.value == AppStrings.english) {
+        Get.updateLocale(const Locale('en', 'US'));
+      } else if (selectedLanguage.value == AppStrings.french) {
+        Get.updateLocale(const Locale('fr', 'FR'));
+      }
     }
   }
 

@@ -21,6 +21,7 @@ class CustomTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final Color suffixIconColor;
   final Color prefixIconColor;
+  final String? prefixImageIcon;
 
   const CustomTextField({
     super.key,
@@ -41,6 +42,7 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.suffixIconColor=Colors.black54,
     this.prefixIconColor=AppColors.primaryColor,
+    this.prefixImageIcon,
   });
 
   @override
@@ -100,10 +102,13 @@ class CustomTextField extends StatelessWidget {
                   color: Colors.grey.shade400,
                   fontWeight: FontWeight.w400,
                 ),
-                prefixIcon: prefixIcon != null
+                prefixIcon: (prefixIcon != null||prefixImageIcon!=null)
                     ? Padding(
                   padding:  EdgeInsets.only(left: 15.0, right: 5.w),
-                  child: Icon(
+                  child: prefixImageIcon!=null?Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(prefixImageIcon!,height: 15.h,),
+                  ):Icon(
                     prefixIcon,
                     color: prefixIconColor,
                     size: 24.sp,

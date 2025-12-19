@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_edit_legal_information.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_health_space_grid.dart';
 
@@ -52,7 +53,9 @@ class LegalInformation extends StatelessWidget{
           Padding(
             padding:  EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
-              onPressed: controller.editPersonalInfo,
+              onPressed: (){
+                Get.to(PharmacyEditLegalInformation());
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,

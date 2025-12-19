@@ -5,6 +5,8 @@ import 'package:patient_app/controllers/doctor_controllers/doctor_profile_contro
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/controllers/pharmacy_controllers/pharmacy_profile_controller.dart';
 import 'package:patient_app/screens/pharmacy_screens/legal_information.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_document_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_renewal_status.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_personal_info.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -183,17 +185,20 @@ class PharmacyProfileScreen extends StatelessWidget {
                         ),
                       ),
                       15.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          profileType("Personal Info", 80.w),
-                          5.horizontalSpace,
-                          profileType("Legal Information", 100.w),
-                          5.horizontalSpace,
-                          profileType("Documents", 70.w),
-                          5.horizontalSpace,
-                          profileType("Renewal Status", 90),
-                        ],
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            profileType("Personal Info", 80.w),
+                            7.horizontalSpace,
+                            profileType("Legal Information", 100.w),
+                            7.horizontalSpace,
+                            profileType("Documents", 70.w),
+                            7.horizontalSpace,
+                            profileType("Renewal Status", 90),
+                          ],
+                        ),
                       ),
                       15.verticalSpace,
                       Obx(
@@ -202,7 +207,7 @@ class PharmacyProfileScreen extends StatelessWidget {
                             ? PharmacyPersonalInfo()
                             : controller.type.value == "Legal Information"
                             ? LegalInformation()
-                            : controller.type.value == "Documents"?DocumentsAndReportsProfile():SizedBox(),
+                            : controller.type.value == "Documents"?PharmacyDocumentScreen():PharmacyRenewalStatus(),
                       ),
                       10.verticalSpace,
                     ],

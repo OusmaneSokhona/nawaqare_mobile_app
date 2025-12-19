@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_edit_personal_info.dart';
+import 'package:patient_app/screens/pharmacy_screens/pharmacy_payment_setting_screen.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_health_space_grid.dart';
 
@@ -53,7 +55,9 @@ class PharmacyPersonalInfo extends StatelessWidget{
           Padding(
             padding:  EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
-              onPressed: controller.editPersonalInfo,
+              onPressed: (){
+                Get.to(PharmacyEditPersonalInfo());
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
@@ -106,7 +110,9 @@ class PharmacyPersonalInfo extends StatelessWidget{
           SizedBox(height: 10.h),
           PharmacyHealthSpaceGrid(profileController: controller),
           10.verticalSpace,
-          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: "Payment Setting", onTap: (){}),
+          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: "Payment Setting", onTap: (){
+Get.to(PharmacyPaymentSettingScreen());
+          }),
           10.verticalSpace,
           buildSecuritySection(),
           const SizedBox(height: 20),

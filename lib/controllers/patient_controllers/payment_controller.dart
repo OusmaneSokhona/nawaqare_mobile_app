@@ -6,7 +6,7 @@ import 'package:patient_app/utils/app_colors.dart';
 import 'package:intl/intl.dart';
 class PaymentController extends GetxController{
   RxString selectedPayment="".obs;
-  BookAppointmentController bookAppointmentController=Get.find();
+  BookAppointmentController bookAppointmentController=Get.put(BookAppointmentController());
   List<String> payments=["Credit/Debit Card","Paypal","Orange Money","Wave","Cash"];
   List<String> paymentIcons=["assets/images/logos_mastercard.png","assets/images/logos_paypal.png","assets/images/orange_money.png","assets/images/wave_icon.png","assets/images/cash_icon.png"];
   final selectedDate = DateTime(DateTime.now().year + 2, 1).obs;

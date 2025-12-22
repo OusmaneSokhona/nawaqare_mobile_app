@@ -7,6 +7,7 @@ import 'package:patient_app/screens/auth_screens/supporting_documents.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/display_field.dart';
@@ -17,7 +18,7 @@ import 'medical_vitals.dart';
 class ProfessionalInfo extends StatelessWidget {
   ProfessionalInfo({super.key});
 
-  SignUpController signUpController = Get.find();
+  final SignUpController signUpController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +54,11 @@ class ProfessionalInfo extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Professional info",
+                      AppStrings.professionalInfo.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
-                        fontSize: 22.sp,
+                        fontSize: 19.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -72,22 +73,22 @@ class ProfessionalInfo extends StatelessWidget {
                       ProgressStepper(currentStep: 3, totalSteps: 5),
                       15.verticalSpace,
                       CustomTextField(
-                        labelText: "National Identity Document",
+                        labelText: AppStrings.nationalIdDoc.tr,
                         hintText: "MA-PK-451271",
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: 'Medical Speciality',
+                        title: AppStrings.medicalSpeciality.tr,
                         items: signUpController.medicalSpecialityList,
                         selectedValue: signUpController.selectedSpecialist,
                         onChanged: signUpController.updateSpecialization,
                       ),
                       CustomTextField(
-                        labelText: "Experience (in years)",
+                        labelText: AppStrings.experienceYears.tr,
                         hintText: "7",
                       ),
                       buildDropdownField(
-                        title: 'Fee',
+                        title: AppStrings.fee.tr,
                         items: signUpController.feeList,
                         selectedValue: signUpController.selectedFee,
                         onChanged: signUpController.updateFee,
@@ -99,14 +100,11 @@ class ProfessionalInfo extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Date of Registration",
+                                AppStrings.dateOfRegistration.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -125,17 +123,13 @@ class ProfessionalInfo extends StatelessWidget {
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color:
-                                        signUpController.selectedDate ==
-                                            null
+                                        color: signUpController.selectedDate == null
                                             ? Colors.grey
                                             : Colors.black,
                                         fontWeight: FontWeight.w500,
@@ -154,18 +148,23 @@ class ProfessionalInfo extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Place of Practice",hintText: "Allied Hospital, Faisalabad",),
+                      CustomTextField(
+                        labelText: AppStrings.placeOfPractice.tr,
+                        hintText: "Allied Hospital, Faisalabad",
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Year",hintText: "2008",),
+                      CustomTextField(
+                        labelText: AppStrings.year.tr,
+                        hintText: "2008",
+                      ),
                     ],
                   ),
                 ),
               ),
-
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Continue",
+                text: AppStrings.continueText.tr,
                 onTap: () {
                   Get.to(SupportingDocuments());
                 },
@@ -179,7 +178,7 @@ class ProfessionalInfo extends StatelessWidget {
   }
 
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -188,7 +187,6 @@ class ProfessionalInfo extends StatelessWidget {
       ),
       dialogSize: const Size(325, 400),
       value: [signUpController.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
@@ -219,7 +217,7 @@ class ProfessionalInfo extends StatelessWidget {
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 14.0,
                 ),
@@ -231,10 +229,9 @@ class ProfessionalInfo extends StatelessWidget {
                 fillColor: Colors.white,
               ),
               isExpanded: true,
-              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+              icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items:
-              items.map<DropdownMenuItem<String>>((String value) {
+              items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

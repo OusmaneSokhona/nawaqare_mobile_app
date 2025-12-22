@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/review_and_submission.dart';
-import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dialog.dart';
 import 'package:patient_app/widgets/upload_document_widget.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/progress_stepper.dart';
 
 class PharmacySupportingDocuments extends StatelessWidget {
   PharmacySupportingDocuments({super.key});
 
-  SignUpController signUpController = Get.find();
+  final SignUpController signUpController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +36,7 @@ class PharmacySupportingDocuments extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       "assets/images/back_icon.png",
                       height: 32.h,
@@ -49,7 +47,7 @@ class PharmacySupportingDocuments extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Documents & Reports",
+                      AppStrings.docsAndReports.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -60,7 +58,10 @@ class PharmacySupportingDocuments extends StatelessWidget {
                   ),
                 ],
               ),
-              Text("Upload valid, clear documents for verification. Only PDF/JPEG are accepted.",style: TextStyle(color: AppColors.lightGrey),),
+              Text(
+                AppStrings.uploadInstruction.tr,
+                style: TextStyle(color: AppColors.lightGrey),
+              ),
               20.verticalSpace,
               ProgressStepper(currentStep: 4, totalSteps: 5),
               15.verticalSpace,
@@ -71,35 +72,35 @@ class PharmacySupportingDocuments extends StatelessWidget {
                     children: [
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedLicenseCertificate,
-                        pickFile: (){
+                        pickFile: () {
                           signUpController.pickFile(signUpController.selectedLicenseCertificate);
                         },
-                        title: "License Certificate",
-                        centerText: "Upload your License Certificate",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        title: AppStrings.licenseCertificate.tr,
+                        centerText: AppStrings.uploadLicense.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedTaxClearance,
-                        pickFile: (){
+                        pickFile: () {
                           signUpController.pickFile(signUpController.selectedTaxClearance);
                         },
-                        title: "Tax Clearance",
-                        centerText: "Upload Tax Clearance",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        title: AppStrings.taxClearance.tr,
+                        centerText: AppStrings.uploadTax.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedNocCertificate,
-                        pickFile: (){
+                        pickFile: () {
                           signUpController.pickFile(signUpController.selectedNocCertificate);
                         },
-                        title: "Noc Certificate",
-                        centerText: "Upload your Noc Certificate",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        title: AppStrings.nocCertificate.tr,
+                        centerText: AppStrings.uploadNoc.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Payment',
+                          AppStrings.payment.tr,
                           style: TextStyle(
                             fontSize: 19.sp,
                             fontWeight: FontWeight.w700,
@@ -110,32 +111,31 @@ class PharmacySupportingDocuments extends StatelessWidget {
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedPharmacyBankVerificationLetter,
-                        pickFile: (){
+                        pickFile: () {
                           signUpController.pickFile(signUpController.selectedPharmacyBankVerificationLetter);
                         },
-                        title: "Bank Verification Letter",
-                        centerText: "Upload bank confirmation",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        title: AppStrings.bankVerificationLetter.tr,
+                        centerText: AppStrings.uploadBankConfirmation.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileBankPaymentAuthorization,
-                        pickFile: (){
+                        pickFile: () {
                           signUpController.pickFile(signUpController.selectedFileBankPaymentAuthorization);
                         },
-                        title: "Payment Authorization",
-                        centerText: "Attach signed form",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        title: AppStrings.paymentAuthorization.tr,
+                        centerText: AppStrings.attachSignedForm.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                     ],
                   ),
                 ),
               ),
-
               40.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Continue",
-                onTap: (){
+                text: AppStrings.continueText.tr,
+                onTap: () {
                   Get.to(ReviewAndSubmission());
                 },
               ),

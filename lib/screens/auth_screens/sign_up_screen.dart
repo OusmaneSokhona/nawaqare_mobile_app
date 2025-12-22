@@ -11,12 +11,13 @@ import 'package:patient_app/widgets/progress_stepper.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/validation_check_list.dart';
 
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({super.key});
 
-  SignUpController signUpController = Get.put(SignUpController());
+  final SignUpController signUpController = Get.put(SignUpController());
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +53,7 @@ class SignUpScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Sign Up",
+                      AppStrings.signUp.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -73,7 +74,7 @@ class SignUpScreen extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "Create your secure medical account",
+                            AppStrings.createAccountSub.tr,
                             style: TextStyle(
                               color: AppColors.darkGrey,
                               fontSize: 16.sp,
@@ -84,39 +85,41 @@ class SignUpScreen extends StatelessWidget {
                         5.verticalSpace,
 
                         Obx(
-                          () => CustomRadioTile(
-                            text: "You are a doctor",
-                            isSelected: signUpController.type.value=="doctor",
+                              () => CustomRadioTile(
+                            text: AppStrings.iAmDoctor.tr,
+                            isSelected: signUpController.type.value == "doctor",
                             onTap: () {
-                              signUpController.type.value ="doctor";
-                            },
-                          ),
-                        ),
-                        5.verticalSpace,
-                        Obx(
-                          () => CustomRadioTile(
-                            text: "You are a patient",
-                            isSelected: signUpController.type.value=="patient",
-                            onTap: () {
-                              signUpController.type.value ="patient";
+                              signUpController.type.value = "doctor";
                             },
                           ),
                         ),
                         5.verticalSpace,
                         Obx(
                               () => CustomRadioTile(
-                            text: "You are a pharmacist",
-                            isSelected: signUpController.type.value=="pharmacist",
+                            text: AppStrings.iAmPatient.tr,
+                            isSelected: signUpController.type.value == "patient",
                             onTap: () {
-                              signUpController.type.value ="pharmacist";
+                              signUpController.type.value = "patient";
+                            },
+                          ),
+                        ),
+                        5.verticalSpace,
+                        Obx(
+                              () => CustomRadioTile(
+                            text: AppStrings.iAmPharmacist.tr,
+                            isSelected: signUpController.type.value == "pharmacist",
+                            onTap: () {
+                              signUpController.type.value = "pharmacist";
                             },
                           ),
                         ),
                         15.verticalSpace,
-                        Obx(()=> ProgressStepper(currentStep: 1, totalSteps: signUpController.type.value=="patient"?4:5)),
+                        Obx(() => ProgressStepper(
+                            currentStep: 1,
+                            totalSteps: signUpController.type.value == "patient" ? 4 : 5)),
                         15.verticalSpace,
                         CustomTextField(
-                          labelText: "Full Name",
+                          labelText: AppStrings.fullName.tr,
                           prefixIcon: Icons.person_outline_outlined,
                           hintText: "Saira Tahir",
                           controller: signUpController.nameController,
@@ -124,7 +127,7 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         10.verticalSpace,
                         CustomTextField(
-                          labelText: "Email",
+                          labelText: AppStrings.email.tr,
                           controller: signUpController.emailController,
                           hintText: 'Saira@gmail.com',
                           prefixIcon: Icons.mail_outline,
@@ -133,17 +136,16 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         10.verticalSpace,
                         CustomTextField(
-                          labelText: "Phone Number",
+                          labelText: AppStrings.phoneNumber.tr,
                           hintText: "+33 3 6 12 34 56 78",
                           prefixIcon: Icons.phone,
                           controller: signUpController.phoneNumberController,
-                          validator:
-                              signUpController.signInController.phoneNumberValidator,
+                          validator: signUpController.signInController.phoneNumberValidator,
                         ),
                         10.verticalSpace,
                         Obx(
-                          () => CustomTextField(
-                            labelText: 'Password',
+                              () => CustomTextField(
+                            labelText: AppStrings.password.tr,
                             hintText: '********',
                             controller: signUpController.passwordController,
                             prefixIcon: Icons.lock,
@@ -155,39 +157,35 @@ class SignUpScreen extends StatelessWidget {
                             onTapEye: signUpController.toggleVisibility,
                             onFocusChange: signUpController.setPasswordActive,
                             validator: signUpController.validatePassword,
-                            validationView:
-                                signUpController.isPasswordActive.value
-                                    ? Obx(
-                                      () => ValidationChecklist(
-                                        rules: signUpController.getValidationRules(),
-                                      ),
-                                    )
-                                    : null,
+                            validationView: signUpController.isPasswordActive.value
+                                ? Obx(
+                                  () => ValidationChecklist(
+                                rules: signUpController.getValidationRules(),
+                              ),
+                            )
+                                : null,
                           ),
                         ),
                         40.verticalSpace,
                         CustomButton(
                           borderRadius: 15,
-                          text: "Continue",
+                          text: AppStrings.continueText.tr,
                           onTap: () {
                             if (signUpController.formKey.currentState!.validate()) {
                               if (signUpController.isPasswordValid()) {
-                                if(signUpController.type.value=="doctor"){
+                                if (signUpController.type.value == "doctor") {
                                   Get.to(DemographicInfo());
-                                 }else if(signUpController.type.value=="pharmacist"){
+                                } else if (signUpController.type.value == "pharmacist") {
                                   Get.to(BasicInfoScreen());
-                                }else{
+                                } else {
                                   Get.to(TwoFactorAuthentication());
                                 }
-                                print("Validation passed!");
                               } else {
                                 signUpController.markPasswordInteracted();
                                 FocusScope.of(context).unfocus();
-                                print("Password validation failed.");
                               }
                             } else {
                               signUpController.markPasswordInteracted();
-                              print("Form validation failed.");
                             }
                           },
                         ),
@@ -196,7 +194,7 @@ class SignUpScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Already have an account?",
+                              AppStrings.alreadyHaveAccount.tr,
                               style: TextStyle(
                                 color: AppColors.darkGrey,
                                 fontSize: 15.sp,
@@ -209,7 +207,7 @@ class SignUpScreen extends StatelessWidget {
                                 Get.back();
                               },
                               child: Text(
-                                "Sign in",
+                                AppStrings.signIn.tr,
                                 style: TextStyle(
                                   color: AppColors.primaryColor,
                                   fontSize: 15.sp,

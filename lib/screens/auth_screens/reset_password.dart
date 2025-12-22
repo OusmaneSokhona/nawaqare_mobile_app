@@ -4,13 +4,14 @@ import 'package:get/get.dart';
 import '../../controllers/auth_controllers/forget_password_contorller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/validation_check_list.dart';
 
 class ResetPassword extends StatelessWidget {
-   ResetPassword({super.key});
-  ForgetPasswordController authController=Get.find();
+  ResetPassword({super.key});
+  final ForgetPasswordController authController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +42,21 @@ class ResetPassword extends StatelessWidget {
                     7.horizontalSpace,
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text("Reset Password",style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: AppFonts.jakartaBold,
-                        fontSize: 32.sp,
-                        fontWeight: FontWeight.w700,
-                      ),),
+                      child: SizedBox(
+                        width: 0.7.sw,
+                        child: Text(AppStrings.resetPassword.tr,maxLines:1,overflow:TextOverflow.ellipsis,style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: AppFonts.jakartaBold,
+                          fontSize: 23.sp,
+                          fontWeight: FontWeight.w700,
+                        ),),
+                      ),
                     ),
                   ],
                 ),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("Access Your Secure Medical Account",style: TextStyle(
+                  child: Text(AppStrings.resetPasswordSub.tr,style: TextStyle(
                     color: AppColors.darkGrey,
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
@@ -61,8 +65,8 @@ class ResetPassword extends StatelessWidget {
                 20.verticalSpace,
                 Obx(
                       ()=> CustomTextField(
-                    labelText: 'New Password',
-                    hintText: 'Enter your password',
+                    labelText: AppStrings.newPassword.tr,
+                    hintText: AppStrings.enterPasswordHint.tr,
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
                     controller: authController.newPassword,
@@ -85,13 +89,13 @@ class ResetPassword extends StatelessWidget {
                 20.verticalSpace,
                 Obx(
                       ()=> CustomTextField(
-                    labelText: 'Confirm Password',
-                    hintText: 'Enter your password',
+                    labelText: AppStrings.confirmPassword.tr,
+                    hintText: AppStrings.enterPasswordHint.tr,
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
                     controller: authController.confrimNewPassword,
                     isEnabled: authController.confirmNewPasswordVisibility.value,
-                    validator: authController.validateConfirmPassword, // Use the new method
+                    validator: authController.validateConfirmPassword,
                     onTapEye: (){
                       authController.confirmNewPasswordVisibility.value = !authController.confirmNewPasswordVisibility.value;
                     },
@@ -99,19 +103,20 @@ class ResetPassword extends StatelessWidget {
                 ),
                 10.verticalSpace,
                 40.verticalSpace,
-                CustomButton(borderRadius: 15, text: "Reset Password", onTap: (){
-                  if (authController.formKeyForget.currentState!.validate()) {
-                   authController.moveToSignInScreen();
-                    print("Validation passed!");
-                  } else {
-                    print("Validation failed.");
-                  }
-                },fontSize: 18),
+                CustomButton(
+                    borderRadius: 15,
+                    text: AppStrings.resetPassword.tr,
+                    onTap: (){
+                      if (authController.formKeyForget.currentState!.validate()) {
+                        authController.moveToSignInScreen();
+                      }
+                    },
+                    fontSize: 18
+                ),
               ],),
             ),
           ),
         ),
-
       ),
     );
   }

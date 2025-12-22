@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/review_and_submission.dart';
-import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dialog.dart';
 import 'package:patient_app/widgets/upload_document_widget.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/progress_stepper.dart';
 
 class SupportingDocuments extends StatelessWidget {
   SupportingDocuments({super.key});
 
-  SignUpController signUpController = Get.find();
+  final SignUpController signUpController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +36,7 @@ class SupportingDocuments extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       "assets/images/back_icon.png",
                       height: 32.h,
@@ -49,7 +47,7 @@ class SupportingDocuments extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Documents & Reports",
+                      AppStrings.docsAndReports.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -69,125 +67,68 @@ class SupportingDocuments extends StatelessWidget {
                   child: Column(
                     spacing: 10,
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Identity Documents',
-                          style: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFonts.jakartaBold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
+                      _buildSectionTitle(AppStrings.identityDocuments.tr),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileIdCard,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileIdCard);
-                        },
-                        title: "National Identity Document",
-                        centerText: "Upload your Document",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileIdCard),
+                        title: AppStrings.nationalIdDoc.tr,
+                        centerText: AppStrings.uploadDocument.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFilePassport,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFilePassport);
-                        },
-                        title: "Passport or ID Front",
-                        centerText: "Upload front side",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFilePassport),
+                        title: AppStrings.passportIdFront.tr,
+                        centerText: AppStrings.uploadFrontSide.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Credentials',
-                          style: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFonts.jakartaBold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
+
+                      _buildSectionTitle(AppStrings.credentials.tr),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileMedicalLicense,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileMedicalLicense);
-                        },
-                        title: "Medical License",
-                        centerText: "Upload your valid license",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileMedicalLicense),
+                        title: AppStrings.medicalLicense.tr,
+                        centerText: AppStrings.uploadValidLicense.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileDiploma,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileDiploma);
-                        },
-                        title: "Diploma / Certification",
-                        centerText: "Upload diploma or transcript",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileDiploma),
+                        title: AppStrings.diplomaCertification.tr,
+                        centerText: AppStrings.uploadDiplomaTranscript.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Legal',
-                          style: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFonts.jakartaBold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
+
+                      _buildSectionTitle(AppStrings.legal.tr),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileInsuranceProof,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileInsuranceProof);
-                        },
-                        title: "Liability Insurance Proof",
-                        centerText: "Upload insurance document",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileInsuranceProof),
+                        title: AppStrings.liabilityInsuranceProof.tr,
+                        centerText: AppStrings.uploadInsuranceDoc.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileCnpd,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileCnpd);
-                        },
-                        title: "CNPD / GDPR Form",
-                        centerText: "Attach compliance form",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileCnpd),
+                        title: AppStrings.cnpdGdprForm.tr,
+                        centerText: AppStrings.attachComplianceForm.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Payment',
-                          style: TextStyle(
-                            fontSize: 19.sp,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFonts.jakartaBold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
+
+                      _buildSectionTitle(AppStrings.payment.tr),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileBankVerification,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileBankVerification);
-                        },
-                        title: "Bank Verification Letter",
-                        centerText: "Upload bank confirmation",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileBankVerification),
+                        title: AppStrings.bankVerificationLetter.tr,
+                        centerText: AppStrings.uploadBankConfirmation.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileBankPaymentAuthorization,
-                        pickFile: (){
-                          signUpController.pickFile(signUpController.selectedFileBankPaymentAuthorization);
-                        },
-                        title: "Payment Authorization",
-                        centerText: "Attach signed form",
-                        acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
+                        pickFile: () => signUpController.pickFile(signUpController.selectedFileBankPaymentAuthorization),
+                        title: AppStrings.paymentAuthorization.tr,
+                        centerText: AppStrings.attachSignedForm.tr,
+                        acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                     ],
                   ),
@@ -197,14 +138,27 @@ class SupportingDocuments extends StatelessWidget {
               40.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Continue",
-                onTap: (){
-                  Get.to(ReviewAndSubmission());
-                },
+                text: AppStrings.continueText.tr,
+                onTap: () => Get.to(ReviewAndSubmission()),
               ),
               50.verticalSpace,
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 19.sp,
+          fontWeight: FontWeight.w700,
+          fontFamily: AppFonts.jakartaBold,
+          color: Colors.black87,
         ),
       ),
     );

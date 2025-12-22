@@ -8,6 +8,7 @@ import 'package:patient_app/screens/auth_screens/supporting_documents.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/display_field.dart';
@@ -54,11 +55,11 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Professional info",
+                      AppStrings.professionalInfo.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
-                        fontSize: 22.sp,
+                        fontSize: 18.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -73,12 +74,12 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                       ProgressStepper(currentStep: 3, totalSteps: 5),
                       15.verticalSpace,
                       CustomTextField(
-                        labelText: "License Number",
+                        labelText: AppStrings.licenseNumber.tr,
                         hintText: "LIC-20493",
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Issuing Authority",
+                        labelText: AppStrings.issuingAuthority.tr,
                         hintText: "Punjab Pharmacy Council",
                       ),
                       10.verticalSpace,
@@ -89,14 +90,11 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Issue Date",
+                                AppStrings.issueDate.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -120,7 +118,6 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
@@ -151,14 +148,11 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Expiry Date",
+                                AppStrings.expiryDate.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -182,7 +176,6 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
@@ -206,9 +199,9 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Business Reg. No.",hintText: "BRN-99821",),
+                      CustomTextField(labelText: AppStrings.businessRegNo.tr,hintText: "BRN-99821",),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Registered Name",hintText: "Alex Martin Healthcare (Pvt) Ltd",),
+                      CustomTextField(labelText: AppStrings.registeredName.tr,hintText: "Alex Martin Healthcare (Pvt) Ltd",),
                     ],
                   ),
                 ),
@@ -217,7 +210,7 @@ class PharmacyProfessionalScreen extends StatelessWidget {
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Continue",
+                text: AppStrings.continueText.tr,
                 onTap: () {
                   Get.to(PharmacySupportingDocuments());
                 },
@@ -240,7 +233,6 @@ class PharmacyProfessionalScreen extends StatelessWidget {
       ),
       dialogSize: const Size(325, 400),
       value: [signUpController.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }

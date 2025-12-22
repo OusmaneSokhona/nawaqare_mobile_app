@@ -10,60 +10,54 @@ import 'package:patient_app/screens/pharmacy_screens/main_screen_pharmacy.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
+import '../../utils/app_strings.dart';
 
 import '../../../widgets/validation_check_list.dart';
 
 class SignInController extends GetxController {
   RxString signInType = "doctor".obs;
   RxBool passwordVisibility = false.obs;
-
   RxBool isPasswordActive = false.obs;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-void clearControllers(){
-  emailController.clear();
-  passwordController.clear();
-}
+
+  void clearControllers() {
+    emailController.clear();
+    passwordController.clear();
+  }
+
   String? emailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required.';
+      return AppStrings.email.tr;
     }
     const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
     final regExp = RegExp(pattern);
     if (!regExp.hasMatch(value)) {
-      return 'Please enter a valid email address.';
+      return AppStrings.email.tr;
     }
     return null;
   }
 
   String? nameValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Name is required and cannot be empty.';
+      return AppStrings.fullName.tr;
     }
     return null;
   }
 
   String? phoneNumberValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Phone number is required.';
+      return AppStrings.phoneNumber.tr;
     }
 
-    // 1. Clean the input: Remove common non-digit characters (spaces, dashes, parens, dots)
     final cleanedValue = value.replaceAll(RegExp(r'[^\d+]'), '');
-
-    // 2. Define a flexible pattern.
-    // This pattern matches:
-    // - Optional leading '+' (for international format)
-    // - Followed by 7 to 15 digits (a reasonable range for most international and domestic numbers)
     const pattern = r'^\+?\d{7,15}$';
     final regExp = RegExp(pattern);
 
     if (!regExp.hasMatch(cleanedValue)) {
-      // If you need to enforce a specific 10-digit US/Canadian format,
-      // you would change the pattern to r'^\+?1?\d{10}$' and adjust the error message.
-      return 'Please enter a valid phone number (7-15 digits, optional leading +).';
+      return AppStrings.phoneNumber.tr;
     }
 
     return null;
@@ -72,11 +66,8 @@ void clearControllers(){
   final RxString currentPassword = ''.obs;
 
   bool get hasMinLength => currentPassword.value.length >= 8;
-
   bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
-
   bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
-
   bool get hasSpecialChar =>
       currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
@@ -105,10 +96,10 @@ void clearControllers(){
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required.';
+      return AppStrings.password.tr;
     }
     if (!isPasswordValid()) {
-      return 'Password does not meet all requirements.';
+      return AppStrings.incompleteCodeMsg.tr;
     }
     return null;
   }
@@ -131,18 +122,19 @@ void clearControllers(){
   }
 
   void goToSignUpScreen() {
-    Get.to(SignUpScreen(),binding: AppBinding());
+    Get.to(SignUpScreen(), binding: AppBinding());
   }
 
   void goToMainScreen() {
-    Get.offAll(MainScreen(),binding: AppBinding());
+    Get.offAll(MainScreen(), binding: AppBinding());
   }
 
   void goToMainScreenDocotor() {
-    Get.offAll(MainScreenDoctor(),binding: AppBinding());
+    Get.offAll(MainScreenDoctor(), binding: AppBinding());
   }
+
   void goToMainScreenPharmacist() {
-    Get.offAll(MainScreenPharmacy(),binding: AppBinding());
+    Get.offAll(MainScreenPharmacy(), binding: AppBinding());
   }
 
   void signInTap() {
@@ -156,25 +148,22 @@ void clearControllers(){
           goToMainScreenDocotor();
           clearControllers();
           LocalStorageUtils.setLoginedDoctor();
-        }else if(emailController.text == "pharmacy@gmail.com"){
-goToMainScreenPharmacist();
-clearControllers();
-LocalStorageUtils.setLoginedPharmacy();
-
+        } else if (emailController.text == "pharmacy@gmail.com") {
+          goToMainScreenPharmacist();
+          clearControllers();
+          LocalStorageUtils.setLoginedPharmacy();
         } else {
           Get.snackbar(
-            "Invalid Credentials",
-            "Wrong Email or Password",
+            AppStrings.signIn.tr,
+            AppStrings.incompleteCodeMsg.tr,
           );
         }
       } else {
         markPasswordInteracted();
         FocusManager.instance.primaryFocus!.unfocus();
-        print("Password validation failed.");
       }
     } else {
       markPasswordInteracted();
-      print("Form validation failed.");
     }
   }
 }

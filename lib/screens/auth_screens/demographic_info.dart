@@ -7,6 +7,7 @@ import 'package:patient_app/screens/auth_screens/professional_info.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/display_field.dart';
@@ -53,11 +54,11 @@ class DemographicInfo extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Demographic info",
+                      AppStrings.demographicInfo.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
-                        fontSize: 22.sp,
+                        fontSize: 19.sp,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -77,25 +78,23 @@ class DemographicInfo extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Full Name",
+                        label: AppStrings.fullName.tr,
                         value: signUpController.nameController.text,
                       ),
                       10.verticalSpace,
                       Obx(
-                        () => Column(
+                            () => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Date of Birth",
+                                AppStrings.dob.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  // Medium boldness
                                   color:
-                                      Colors
-                                          .black87, // Darker text for the label
+                                  Colors.black87,
                                 ),
                               ),
                             ),
@@ -115,18 +114,17 @@ class DemographicInfo extends StatelessWidget {
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
-                                            signUpController.selectedDate ==
-                                                    null
-                                                ? Colors.grey
-                                                : Colors.black,
+                                        signUpController.selectedDate ==
+                                            null
+                                            ? Colors.grey
+                                            : Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -144,40 +142,40 @@ class DemographicInfo extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Email",
+                        label: AppStrings.email.tr,
                         value: signUpController.emailController.text,
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Phone Number",
+                        label: AppStrings.phoneNumber.tr,
                         value: signUpController.phoneNumberController.text,
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: 'Gender',
+                        title: AppStrings.gender.tr,
                         items: signUpController.genderList,
                         selectedValue: signUpController.selectedGender,
                         onChanged: signUpController.updateSelectedGender,
                       ),
                       buildDropdownField(
-                        title: 'Country of Residence',
+                        title: AppStrings.countryResidence.tr,
                         items: signUpController.countryList,
                         selectedValue: signUpController.selectedCountry,
                         onChanged: signUpController.updateSelectedCountry,
                       ),
                       buildDropdownField(
-                        title: 'Religion',
+                        title: AppStrings.religion.tr,
                         items: signUpController.religionList,
                         selectedValue: signUpController.selectedReligion,
                         onChanged: signUpController.updateSelectedReligion,
                       ),
                       CustomTextField(
-                        labelText: "ID Number",
+                        labelText: AppStrings.idNumber.tr,
                         prefixIcon: Icons.badge_outlined,
                         hintText: "31101-5678-9876",
                       ),
                       CustomTextField(
-                        labelText: "Clinic Address",
+                        labelText: AppStrings.clinicAddress.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
                       ),
@@ -185,7 +183,7 @@ class DemographicInfo extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'About Me',
+                          AppStrings.aboutMe.tr,
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -206,7 +204,7 @@ class DemographicInfo extends StatelessWidget {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
-                            hintText: 'Write something about you',
+                            hintText: AppStrings.aboutMeHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
                             contentPadding:
@@ -222,7 +220,7 @@ class DemographicInfo extends StatelessWidget {
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Continue",
+                text: AppStrings.continueText.tr,
                 onTap: () {
                   Get.to(ProfessionalInfo());
                 },
@@ -245,7 +243,6 @@ class DemographicInfo extends StatelessWidget {
       ),
       dialogSize: const Size(325, 400),
       value: [signUpController.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
@@ -273,7 +270,7 @@ class DemographicInfo extends StatelessWidget {
             ),
           ),
           Obx(
-            () => DropdownButtonFormField<String>(
+                () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
@@ -291,12 +288,12 @@ class DemographicInfo extends StatelessWidget {
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
               items:
-                  items.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+              items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               onChanged: onChanged,
             ),
           ),

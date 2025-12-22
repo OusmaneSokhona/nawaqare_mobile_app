@@ -5,6 +5,7 @@ import 'package:patient_app/screens/auth_screens/complete_profile.dart';
 import 'package:patient_app/screens/auth_screens/reset_password.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_images.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/verification_code_widget.dart';
 import '../../controllers/auth_controllers/forget_password_contorller.dart';
@@ -45,20 +46,19 @@ class VerificationScreen extends StatelessWidget {
     final isCodeComplete = verifiedController.isCodeComplete?.value ?? false;
 
     if (isCodeComplete) {
-
       if (verifiedController.timer != null) {
         verifiedController.timer?.cancel();
       }
 
       if (authController is ForgetPasswordController) {
-        Get.off(() =>  ResetPassword());
+        Get.off(() => ResetPassword());
       } else if (authController is SignUpController) {
-       Get.to(CompleteProfile());
+        Get.to(CompleteProfile());
       }
     } else {
       Get.snackbar(
-        "Incomplete Code",
-        "Please enter the complete 6-digit verification code.",
+        AppStrings.incompleteCode.tr,
+        AppStrings.incompleteCodeMsg.tr,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red.shade100,
         colorText: Colors.red.shade800,
@@ -96,7 +96,7 @@ class VerificationScreen extends StatelessWidget {
                       Get.back();
                     },
                     child: Image.asset(
-                      AppImages.backIcon, // Assuming AppImages.backIcon points to "assets/images/back_icon.png"
+                      AppImages.backIcon,
                       height: 32.h,
                       width: 32.w,
                     ),
@@ -105,7 +105,7 @@ class VerificationScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Verification",
+                      AppStrings.verification.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -153,14 +153,13 @@ class VerificationScreen extends StatelessWidget {
                               ? verifiedController.formatTime(
                             verifiedController.timerCount.value,
                           )
-                              : 'You can request a new code now.',
+                              : AppStrings.requestNewCode.tr,
+                          textAlign: TextAlign.center,
                           style: TextStyle(
-                            color:
-                            verifiedController.isTimerActive.value
+                            color: verifiedController.isTimerActive.value
                                 ? Colors.black
                                 : Colors.red,
-                            fontSize:
-                            verifiedController.isTimerActive.value ? 24.sp : 15.sp,
+                            fontSize: verifiedController.isTimerActive.value ? 24.sp : 15.sp,
                             fontWeight: FontWeight.w700,
                             fontFamily: AppFonts.jakartaBold,
                           ),
@@ -168,11 +167,10 @@ class VerificationScreen extends StatelessWidget {
                       ),
                       5.verticalSpace,
                       Obx(
-                            () =>
-                        !verifiedController.isTimerActive.value
+                            () => !verifiedController.isTimerActive.value
                             ? const SizedBox.shrink()
                             : Text(
-                          "Code expires soon.",
+                          AppStrings.codeExpiresSoon.tr,
                           style: TextStyle(
                             color: AppColors.red,
                             fontSize: 15.sp,
@@ -183,18 +181,19 @@ class VerificationScreen extends StatelessWidget {
                       60.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Confirm",
+                        text: AppStrings.confirm.tr,
                         onTap: _confirmAction,
                       ),
                       20.verticalSpace,
                       InkWell(
-                        onTap:  _startTimer, // Disable resend if timer is active
+                        onTap: _startTimer,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset(AppImages.whatsAppGreenIcon, height: 27.sp),
+                            5.horizontalSpace,
                             Text(
-                              "Re-send To Whatsapp",
+                              AppStrings.resendToWhatsapp.tr,
                               style: TextStyle(
                                 color: AppColors.darkGrey,
                                 fontSize: 17.sp,

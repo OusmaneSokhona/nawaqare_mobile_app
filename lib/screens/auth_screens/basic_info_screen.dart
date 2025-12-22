@@ -8,6 +8,7 @@ import 'package:patient_app/screens/auth_screens/professional_info.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/display_field.dart';
@@ -54,7 +55,7 @@ class BasicInfoScreen extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Basic info",
+                      AppStrings.basicInfo.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -78,33 +79,33 @@ class BasicInfoScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Full Name",
+                        label: AppStrings.fullName.tr,
                         value: signUpController.nameController.text,
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Registration ID",
+                        labelText: AppStrings.registrationId.tr,
                         hintText: "#123RT56",
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Phone Number",
+                        label: AppStrings.phoneNumber.tr,
                         value: signUpController.phoneNumberController.text,
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Pharmacy  Address",
+                        labelText: AppStrings.pharmacyAddress.tr,
                         prefixIcon: Icons.location_on_outlined,
                         hintText: "32 Examaple St",
                       ),
                       CustomTextField(
-                        labelText: "City",
+                        labelText: AppStrings.city.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Area / Locality",
+                        labelText: AppStrings.areaLocality.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
                       ),
@@ -116,7 +117,7 @@ class BasicInfoScreen extends StatelessWidget {
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Continue",
+                text: AppStrings.continueText.tr,
                 onTap: () {
                   Get.to(PharmacyProfessionalScreen());
                 },

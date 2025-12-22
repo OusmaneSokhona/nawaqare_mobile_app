@@ -138,5 +138,6 @@ class LocalStorageUtils {
   static deleteUser(){
     remove("setLogined");
     remove("setLoginedDoctor");
+    remove("setLoginedPharmacy");
   }
 }

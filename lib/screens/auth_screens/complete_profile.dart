@@ -8,6 +8,7 @@ import 'package:patient_app/widgets/profile_picture_widget.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/progress_stepper.dart';
@@ -52,7 +53,7 @@ class CompleteProfile extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Complete Your Profile",
+                      AppStrings.completeProfile.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -76,7 +77,7 @@ class CompleteProfile extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Full Name",
+                        label: AppStrings.fullName.tr,
                         value: signUpController.nameController.text,
                       ),
                       10.verticalSpace,
@@ -87,11 +88,11 @@ class CompleteProfile extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Date of Birth",
+                                AppStrings.dob.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w500, // Medium boldness
-                                  color: Colors.black87, // Darker text for the label
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -112,7 +113,6 @@ class CompleteProfile extends StatelessWidget {
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
@@ -135,42 +135,42 @@ class CompleteProfile extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      DisplayFieldContainer(label: "Email", value: signUpController.emailController.text),
+                      DisplayFieldContainer(label: AppStrings.email.tr, value: signUpController.emailController.text),
                       10.verticalSpace,
-                      DisplayFieldContainer(label: "Phone Number", value: signUpController.phoneNumberController.text),
+                      DisplayFieldContainer(label: AppStrings.phoneNumber.tr, value: signUpController.phoneNumberController.text),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: 'Gender',
+                        title: AppStrings.gender.tr,
                         items: signUpController.genderList,
                         selectedValue: signUpController.selectedGender,
                         onChanged: signUpController.updateSelectedGender,
                       ),
                       buildDropdownField(
-                        title: 'Country of Residence',
+                        title: AppStrings.countryResidence.tr,
                         items: signUpController.countryList,
                         selectedValue: signUpController.selectedCountry,
                         onChanged: signUpController.updateSelectedCountry,
                       ),
                       buildDropdownField(
-                        title: 'Religion',
+                        title: AppStrings.religion.tr,
                         items: signUpController.religionList,
                         selectedValue: signUpController.selectedReligion,
                         onChanged: signUpController.updateSelectedReligion,
                       ),
                       buildDropdownField(
-                        title: 'Department',
+                        title: AppStrings.department.tr,
                         items: signUpController.departmentList,
                         selectedValue: signUpController.selectedDepartment,
                         onChanged: signUpController.updateSelectedDepartment,
                       ),
-                      CustomTextField(labelText: "Address",hintText: "32 Examaple St",)
+                      CustomTextField(labelText: AppStrings.address.tr, hintText: "32 Examaple St",)
                     ],
                   ),
                 ),
               ),
 
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Continue", onTap: () {
+              CustomButton(borderRadius: 15, text: AppStrings.continueText.tr, onTap: () {
                 Get.to(MedicalVitals());
               }),
               50.verticalSpace,
@@ -191,7 +191,6 @@ class CompleteProfile extends StatelessWidget {
       ),
       dialogSize: const Size(325, 400),
       value: [signUpController.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
@@ -223,8 +222,8 @@ class CompleteProfile extends StatelessWidget {
               decoration: InputDecoration(
                 contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none
                 ),
                 filled: true,
                 fillColor: Colors.white,

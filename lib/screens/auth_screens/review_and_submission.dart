@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/submit_for_verification_dialog.dart';
 
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/progress_stepper.dart';
 
@@ -46,7 +47,7 @@ class ReviewAndSubmission extends GetView<SignUpController> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Review & Submission",
+                      AppStrings.reviewAndSubmission.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -65,17 +66,16 @@ class ReviewAndSubmission extends GetView<SignUpController> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      InfoCard(title: 'Personal Info'),
-                      InfoCard(title: 'Professional Info'),
-                      InfoCard(title: 'Supporting Documents'),
+                      InfoCard(title: AppStrings.personalInfo.tr),
+                      InfoCard(title: AppStrings.professionalInfo.tr),
+                      InfoCard(title: AppStrings.supportingDocuments.tr),
                       ConsentCheckbox(
-                        text: 'I consent to the processing of my personal data',
+                        text: AppStrings.consentDataProcessing.tr,
                         state: controller.isPersonalDataChecked,
                         onChanged: controller.togglePersonalData,
                       ),
                       ConsentCheckbox(
-                        text:
-                        'By submitting, you consent to the processing of your data for professional verification purposes. Your information is securely handled under GDPR and HDS standards.',
+                        text: AppStrings.submissionConsentDetails.tr,
                         state: controller.isSubmissionConsentChecked,
                         onChanged: controller.toggleSubmissionConsent,
                       ),
@@ -87,7 +87,7 @@ class ReviewAndSubmission extends GetView<SignUpController> {
               40.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Submit for Verification",
+                text: AppStrings.submitForVerification.tr,
                 onTap: (){
                   Get.dialog(SubmitForVerificationDialog());
                 },
@@ -104,17 +104,17 @@ class ReviewAndSubmission extends GetView<SignUpController> {
 class InfoCard extends StatelessWidget {
   final String title;
 
-  const InfoCard({required this.title});
+  const InfoCard({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 1.0,
-      shadowColor: Color(0x20000000),
+      shadowColor: const Color(0x20000000),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      margin: EdgeInsets.only(bottom: 16.0),
+      margin: const EdgeInsets.only(bottom: 16.0),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12.0),
@@ -124,13 +124,13 @@ class InfoCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 17.0,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF333333),
               ),
             ),
-            Icon(
+            const Icon(
               Icons.keyboard_arrow_down,
               color: Color(0xFF757575),
               size: 24.0,
@@ -141,17 +141,18 @@ class InfoCard extends StatelessWidget {
     );
   }
 }
+
 class ConsentCheckbox extends StatelessWidget {
   final String text;
   final RxBool state;
   final Function(bool?) onChanged;
 
-  const ConsentCheckbox({required this.text, required this.state, required this.onChanged});
+  const ConsentCheckbox({super.key, required this.text, required this.state, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 16.0),
+      padding: const EdgeInsets.only(top: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -162,15 +163,15 @@ class ConsentCheckbox extends StatelessWidget {
                   () => Checkbox(
                 value: state.value,
                 onChanged: onChanged,
-                    activeColor: AppColors.primaryColor,
+                activeColor: AppColors.primaryColor,
               ),
             ),
           ),
-          SizedBox(width: 12.0),
+          const SizedBox(width: 12.0),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14.0,
                 color: Color(0xFF4C4C4C),
                 height: 1.4,

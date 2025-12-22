@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../widgets/validation_check_list.dart';
+import '../../utils/app_strings.dart';
 
 class SignUpController extends GetxController {
   RxString type = "doctor".obs;
@@ -22,11 +23,8 @@ class SignUpController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   bool get hasMinLength => currentPassword.value.length >= 8;
-
   bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
-
   bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
-
   bool get hasSpecialChar =>
       currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
@@ -55,10 +53,11 @@ class SignUpController extends GetxController {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required.';
+      return
+        AppStrings.password.tr;
     }
     if (!isPasswordValid()) {
-      return 'Password does not meet all requirements.';
+      return AppStrings.incompleteCodeMsg.tr;
     }
     return null;
   }
@@ -93,8 +92,8 @@ class SignUpController extends GetxController {
         timer.cancel();
         isTimerActive.value = false;
         Get.snackbar(
-          'Time Up!',
-          'The 1-minute timer has finished.',
+          AppStrings.verification.tr,
+          AppStrings.requestNewCode.tr,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: const Color(0xFFF44336),
           colorText: const Color(0xFFFFFFFF),
@@ -105,7 +104,7 @@ class SignUpController extends GetxController {
 
   final List<TextEditingController> controllers = List.generate(
     6,
-    (index) => TextEditingController(),
+        (index) => TextEditingController(),
   );
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
 
@@ -117,7 +116,6 @@ class SignUpController extends GetxController {
   void handleCodeChange(int index, String value) {
     if (value.isNotEmpty) {
       _currentCode[index] = value;
-
       isCodeComplete.value = completeCode.length == 6;
 
       if (index < controllers.length - 1) {
@@ -140,8 +138,8 @@ class SignUpController extends GetxController {
       print('Verification Code Ready: $completeCode');
     } else {
       Get.snackbar(
-        'Error',
-        'Please enter all 6 digits.',
+        AppStrings.incompleteCode.tr,
+        AppStrings.incompleteCodeMsg.tr,
         snackPosition: SnackPosition.BOTTOM,
       );
     }
@@ -182,7 +180,7 @@ class SignUpController extends GetxController {
           children: <Widget>[
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
+              title: Text(AppStrings.tapToSelectNew.tr),
               onTap: () {
                 pickImage(ImageSource.gallery);
                 Get.back();
@@ -204,29 +202,14 @@ class SignUpController extends GetxController {
   }
 
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
-
   DateTime? get selectedDate => _selectedDate.value;
 
   String get formattedDate {
     if (_selectedDate.value == null) {
-      return 'Select a Date';
+      return AppStrings.dob.tr;
     }
     final date = _selectedDate.value!;
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   void updateDate(DateTime? newDate) {
@@ -235,57 +218,33 @@ class SignUpController extends GetxController {
 
   final List<String> genderList = ['Male', 'Female', 'Other'];
   final List<String> countryList = ['Pakistan', 'India', 'USA', 'UK', 'Canada'];
-  final List<String> religionList = [
-    'Islam',
-    'Christianity',
-    'Hinduism',
-    'Buddhism',
-    'Other',
-  ];
-  final List<String> departmentList = [
-    'Medical',
-    'Engineering',
-    'Arts',
-    'Business',
-    'Science',
-  ];
+  final List<String> religionList = ['Islam', 'Christianity', 'Hinduism', 'Buddhism', 'Other'];
+  final List<String> departmentList = ['Medical', 'Engineering', 'Arts', 'Business', 'Science'];
 
   final selectedGender = Rx<String?>('Female');
   final selectedCountry = Rx<String?>('Pakistan');
   final selectedReligion = Rx<String?>('Islam');
   final selectedDepartment = Rx<String?>('Medical');
 
-  void updateSelectedGender(String? newValue) {
-    selectedGender.value = newValue;
-  }
+  void updateSelectedGender(String? newValue) { selectedGender.value = newValue; }
+  void updateSelectedCountry(String? newValue) { selectedCountry.value = newValue; }
+  void updateSelectedReligion(String? newValue) { selectedReligion.value = newValue; }
+  void updateSelectedDepartment(String? newValue) { selectedDepartment.value = newValue; }
 
-  void updateSelectedCountry(String? newValue) {
-    selectedCountry.value = newValue;
-  }
-
-  void updateSelectedReligion(String? newValue) {
-    selectedReligion.value = newValue;
-  }
-
-  void updateSelectedDepartment(String? newValue) {
-    selectedDepartment.value = newValue;
-  }
-
-  //..............Documents and Reports
-  final selectedFileName = Rx<String?>('No file selected');
-  final selectedFileIdCard = Rx<String?>('No file selected');
-  final selectedFilePassport = Rx<String?>('No file selected');
-  final selectedFileMedicalLicense = Rx<String?>('No file selected');
-  final selectedFileDiploma = Rx<String?>('No file selected');
-  final selectedFileInsuranceProof = Rx<String?>('No file selected');
-  final selectedFileCnpd = Rx<String?>('No file selected');
-  final selectedFileBankVerification = Rx<String?>('No file selected');
-  final selectedFileBankPaymentAuthorization = Rx<String?>('No file selected');
-  final selectedLicenseCertificate = Rx<String?>('No file selected');
-  final selectedTaxClearance = Rx<String?>('No file selected');
-  final selectedNocCertificate = Rx<String?>('No file selected');
-  final selectedPharmacyBankVerificationLetter = Rx<String?>('No file selected');
-  final selectedPharmacyBankPaymentAuthorization = Rx<String?>('No file selected');
+  final selectedFileName = Rx<String?>(null);
+  final selectedFileIdCard = Rx<String?>(null);
+  final selectedFilePassport = Rx<String?>(null);
+  final selectedFileMedicalLicense = Rx<String?>(null);
+  final selectedFileDiploma = Rx<String?>(null);
+  final selectedFileInsuranceProof = Rx<String?>(null);
+  final selectedFileCnpd = Rx<String?>(null);
+  final selectedFileBankVerification = Rx<String?>(null);
+  final selectedFileBankPaymentAuthorization = Rx<String?>(null);
+  final selectedLicenseCertificate = Rx<String?>(null);
+  final selectedTaxClearance = Rx<String?>(null);
+  final selectedNocCertificate = Rx<String?>(null);
+  final selectedPharmacyBankVerificationLetter = Rx<String?>(null);
+  final selectedPharmacyBankPaymentAuthorization = Rx<String?>(null);
 
   void pickFile(Rx<String?> file) async {
     final result = await FilePicker.platform.pickFiles(
@@ -295,8 +254,6 @@ class SignUpController extends GetxController {
 
     if (result != null && result.files.single.name != null) {
       file.value = result.files.single.name!;
-    } else {
-      file.value = 'File selection cancelled';
     }
   }
 
@@ -309,55 +266,25 @@ class SignUpController extends GetxController {
     Get.to(SignInScreen());
   }
 
-  //............ Professional Info...........//
-  final List<String> medicalSpecialityList = [
-    'Cardiology',
-    'Dermatology',
-    'Neurology',
-    'Oncology',
-    'Pediatrics',
-    'Gastroenterology',
-    'Orthopedics',
-    'Ophthalmology',
-    'Pulmonology',
-    'Endocrinology',
-    'Nephrology',
-  ];
-  RxString selectedSpecialist="Cardiology".obs;
-  void updateSpecialization(String? newValue) {
-    selectedSpecialist.value = newValue!;
-  }
-  final List<String> feeList = [
-    '\$25/ 30 mint45',
-    '\$50/ 60 mint75',
-    '\$125/ 90 mint',
-  ];
-  RxString selectedFee="\$25/ 30 mint45".obs;
-  void updateFee(String? newValue) {
-    selectedFee.value = newValue!;
-  }
-  //........review and submission.........//
+  final List<String> medicalSpecialityList = ['Cardiology', 'Dermatology', 'Neurology', 'Oncology', 'Pediatrics', 'Gastroenterology', 'Orthopedics', 'Ophthalmology', 'Pulmonology', 'Endocrinology', 'Nephrology'];
+  RxString selectedSpecialist = "Cardiology".obs;
+  void updateSpecialization(String? newValue) { selectedSpecialist.value = newValue!; }
+
+  final List<String> feeList = ['\$25/ 30 mint45', '\$50/ 60 mint75', '\$125/ 90 mint'];
+  RxString selectedFee = "\$25/ 30 mint45".obs;
+  void updateFee(String? newValue) { selectedFee.value = newValue!; }
+
   final isPersonalDataChecked = false.obs;
   final isSubmissionConsentChecked = false.obs;
 
-  void togglePersonalData(bool? value) {
-    isPersonalDataChecked.value = value ?? false;
-  }
-
-  void toggleSubmissionConsent(bool? value) {
-    isSubmissionConsentChecked.value = value ?? false;
-  }
-  // ............On Close Function..............
+  void togglePersonalData(bool? value) { isPersonalDataChecked.value = value ?? false; }
+  void toggleSubmissionConsent(bool? value) { isSubmissionConsentChecked.value = value ?? false; }
 
   @override
   void onClose() {
     timer?.cancel();
-    for (var controller in controllers) {
-      controller.dispose();
-    }
-    for (var node in focusNodes) {
-      node.dispose();
-    }
+    for (var controller in controllers) { controller.dispose(); }
+    for (var node in focusNodes) { node.dispose(); }
     super.onClose();
   }
 }

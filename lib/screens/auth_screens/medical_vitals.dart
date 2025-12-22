@@ -5,6 +5,7 @@ import 'package:patient_app/screens/auth_screens/documents_reports.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/progress_stepper.dart';
@@ -48,7 +49,7 @@ class MedicalVitals extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Medical Vitals",
+                      AppStrings.medicalVitals.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -66,19 +67,19 @@ class MedicalVitals extends StatelessWidget {
                       20.verticalSpace,
                       ProgressStepper(currentStep: 3, totalSteps: 4),
                       15.verticalSpace,
-                      CustomTextField(labelText: "Height", hintText: "165cm"),
+                      CustomTextField(labelText: AppStrings.height.tr, hintText: "165cm"),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Weight", hintText: "60kg"),
+                      CustomTextField(labelText: AppStrings.weight.tr, hintText: "60kg"),
                       10.verticalSpace,
-                      CustomTextField(labelText: "BMI", hintText: "22.0"),
+                      CustomTextField(labelText: AppStrings.bmi.tr, hintText: "22.0"),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Blood Pressure",
+                        labelText: AppStrings.bloodPressure.tr,
                         hintText: "120/80 mmHg",
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Heart Rate",
+                        labelText: AppStrings.heartRate.tr,
                         hintText: "72bpm",
                       ),
                     ],
@@ -87,7 +88,7 @@ class MedicalVitals extends StatelessWidget {
               ),
 
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Continue", onTap: () {
+              CustomButton(borderRadius: 15, text: AppStrings.continueText.tr, onTap: () {
                 Get.to(DocumentsReports());
               }),
               50.verticalSpace,

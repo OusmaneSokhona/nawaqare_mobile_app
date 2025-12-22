@@ -5,6 +5,7 @@ import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dial
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/progress_stepper.dart';
 
@@ -47,7 +48,7 @@ class DocumentsReports extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Documents & Reports",
+                      AppStrings.docsAndReports.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -59,15 +60,15 @@ class DocumentsReports extends StatelessWidget {
                 ],
               ),
 
-                  20.verticalSpace,
-                  ProgressStepper(currentStep:4, totalSteps: 4),
-                  15.verticalSpace,
+              20.verticalSpace,
+              ProgressStepper(currentStep:4, totalSteps: 4),
+              15.verticalSpace,
               Column(
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Upload Document/Test Report',
+                      AppStrings.uploadLabel.tr,
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
@@ -109,7 +110,7 @@ class DocumentsReports extends StatelessWidget {
                             const SizedBox(height: 12),
                             Text(
                               signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'
-                                  ? 'Upload PDF/JPEG'
+                                  ? AppStrings.uploadFormat.tr
                                   : signUpController.selectedFileName.value!,
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -119,9 +120,9 @@ class DocumentsReports extends StatelessWidget {
                               ),
                             ),
                             if (signUpController.selectedFileName.value != 'No file selected' && signUpController.selectedFileName.value != 'File selection cancelled')
-                              const Text(
-                                'Tap to select a new file',
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              Text(
+                                AppStrings.tapToSelectNew.tr,
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                           ],
                         ),
@@ -132,14 +133,14 @@ class DocumentsReports extends StatelessWidget {
               ),
 
               40.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Submit", onTap: () async {
+              CustomButton(borderRadius: 15, text: AppStrings.submit.tr, onTap: () async {
                 Get.dialog(SuccessDialog());
                 await Future.delayed(Duration(seconds: 3),(){
                   signUpController.moveToSignInScreen();
                 });
               }),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Skip", onTap: () {
+              CustomButton(borderRadius: 15, text: AppStrings.skip.tr, onTap: () {
                 signUpController.moveToSignInScreen();
               },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
               50.verticalSpace,

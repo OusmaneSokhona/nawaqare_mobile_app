@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/profile_models.dart';
 import 'heatlh_space_grid.dart';
 
-
 class DocumentsAndReportsProfile extends GetView<ProfileController> {
-  DocumentsAndReportsProfile({super.key});
-
+  const DocumentsAndReportsProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Column(
+          () => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
@@ -30,7 +29,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
           const SizedBox(height: 16),
           Center(
             child: Text(
-              'Hello, ${controller.user.value.name.split(' ').first}',
+              '${"hello".tr}, ${controller.user.value.name.split(' ').first}',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -54,23 +53,24 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:  Text('Upload now', style: TextStyle(fontSize: 14.sp)),
+              child: Text(AppStrings.uploadLabel.tr,
+                  style: TextStyle(fontSize: 14.sp)),
             ),
           ),
-         15.verticalSpace,
+          15.verticalSpace,
           ListView.builder(
             shrinkWrap: true,
             padding: EdgeInsets.zero,
-            itemCount:controller.documents.length,
-            physics: NeverScrollableScrollPhysics(),
+            itemCount: controller.documents.length,
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return _buildDocumentItem(controller.documents[index]);
             },
           ),
           const SizedBox(height: 30),
-          const Text(
-            'Health Space',
-            style: TextStyle(
+          Text(
+            AppStrings.docsAndReports.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
@@ -78,7 +78,6 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
           ),
           const SizedBox(height: 16),
           HeatlhSpaceGrid(profileController: controller),
-
         ],
       ),
     );
@@ -142,11 +141,13 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
               Icons.remove_red_eye_outlined,
               color: Colors.grey.shade600,
             ),
-            onPressed: () => Get.snackbar('Action', 'Viewing ${doc.type}'),
+            onPressed: () => Get.snackbar(
+                "action".tr, '${"viewing".tr} ${doc.type}'),
           ),
           IconButton(
             icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
-            onPressed: () => Get.snackbar('Action', 'Deleting ${doc.type}'),
+            onPressed: () => Get.snackbar(
+                "action".tr, '${"deleting".tr} ${doc.type}'),
           ),
         ],
       ),

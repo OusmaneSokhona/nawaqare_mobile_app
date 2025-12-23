@@ -4,17 +4,17 @@ import 'package:get/get.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/order_widgets/order_detail_card.dart';
-
 
 class OrderDetailScreen extends StatelessWidget {
   final String status;
-  const OrderDetailScreen({super.key,required this.status});
+  const OrderDetailScreen({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Container(
+      body: Container(
         height: 1.sh,
         width: 1.sw,
         decoration: BoxDecoration(
@@ -31,7 +31,7 @@ class OrderDetailScreen extends StatelessWidget {
             Row(
               children: [
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Get.back();
                   },
                   child: Image.asset(
@@ -42,7 +42,7 @@ class OrderDetailScreen extends StatelessWidget {
                 ),
                 10.horizontalSpace,
                 Text(
-                  "Order Details",
+                  AppStrings.orderDetails.tr,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 23.sp,
@@ -53,7 +53,9 @@ class OrderDetailScreen extends StatelessWidget {
               ],
             ),
             20.verticalSpace,
-            OrderDetailCard(status: status,),
+            OrderDetailCard(
+              status: status,
+            ),
           ]),
         ),
       ),

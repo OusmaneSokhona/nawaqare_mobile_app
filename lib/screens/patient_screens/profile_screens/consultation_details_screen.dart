@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/patient_widgets/profile_widgets/consultation
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class ConsultationDetailsScreen extends StatelessWidget {
   const ConsultationDetailsScreen({super.key});
@@ -42,10 +43,10 @@ class ConsultationDetailsScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Consultation Plan  Detail",
+                    AppStrings.consultationPlanDetail.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 19.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),

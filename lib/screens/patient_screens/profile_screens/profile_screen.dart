@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../widgets/patient_widgets/profile_widgets/delete_account_dialog.dart';
@@ -15,8 +16,9 @@ import '../video_call_screens/help_center_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
-  ProfileController controller=Get.put(ProfileController());
-  DoctorProfileController profileController=Get.put(DoctorProfileController());
+  final ProfileController controller = Get.put(ProfileController());
+  final DoctorProfileController profileController = Get.put(DoctorProfileController());
+
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
@@ -40,13 +42,10 @@ class ProfileScreen extends StatelessWidget {
             Obx(() {
               final bool isScrolledPastThreshold =
                   controller.scrollValue.value >= 280;
-
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
-
-              final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              final Color targetColor = isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -62,13 +61,13 @@ class ProfileScreen extends StatelessWidget {
                     CircleAvatar(
                       radius: 20.h,
                       backgroundColor: Colors.white,
-                      foregroundImage: AssetImage(
+                      foregroundImage: const AssetImage(
                         "assets/demo_images/home_demo_image.png",
                       ),
                     ),
                     20.horizontalSpace,
                     Text(
-                      "Mr Alex",
+                      "Mr Alex", // Usually comes from a User model
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: AppFonts.jakartaBold,
@@ -76,11 +75,9 @@ class ProfileScreen extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     InkWell(
-                      onTap: () {
-                        Get.to(NotificationScreen());
-                      },
+                      onTap: () => Get.to(NotificationScreen()),
                       child: Image.asset(
                         "assets/images/bell_icon.png",
                         height: 25.h,
@@ -102,18 +99,16 @@ class ProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
+                           CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
                             foregroundImage: AssetImage(
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           InkWell(
-                            onTap: () {
-                              Get.to(HelpCenterScreen());
-                            },
+                            onTap: () => Get.to(HelpCenterScreen()),
                             child: Image.asset(
                               "assets/images/help_center_icon.png",
                               height: 30.h,
@@ -121,9 +116,7 @@ class ProfileScreen extends StatelessWidget {
                           ),
                           10.horizontalSpace,
                           InkWell(
-                            onTap: () {
-                              Get.to(NotificationScreen());
-                            },
+                            onTap: () => Get.to(NotificationScreen()),
                             child: Image.asset(
                               "assets/images/bell_icon.png",
                               height: 30.h,
@@ -135,7 +128,7 @@ class ProfileScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Profile",
+                          AppStrings.profile.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -147,7 +140,7 @@ class ProfileScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Real-Time Messaging For Consultations.",
+                          AppStrings.profileSub.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 16.sp,
@@ -158,29 +151,32 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                       15.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          profileType("Personal Info", 80.w),
-                          9.horizontalSpace,
-                          profileType("Medical Vitals", 100.w),
-                          9.horizontalSpace,
-                          profileType("Documents & Reports", 120.w),
-                        ],
+                      SingleChildScrollView(
+                        padding: EdgeInsets.only(right: 35.w),
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            profileType(AppStrings.personalInfo.tr, 80.w, "Personal Info"),
+                            9.horizontalSpace,
+                            profileType(AppStrings.medicalVitals.tr, 100.w, "Medical Vitals"),
+                            9.horizontalSpace,
+                            profileType(AppStrings.documentsAndReports.tr, 120.w, "Documents & Reports"),
+                          ],
+                        ),
                       ),
                       15.verticalSpace,
                       Obx(
-                        () =>
-                            controller.type.value == "Personal Info"
-                                ? PersonalInfo()
-                                : controller.type.value == "Medical Vitals"
-                                ? MedicalVitalsProfile()
-                                : DocumentsAndReportsProfile(),
+                            () => controller.type.value == "Personal Info"
+                            ? PersonalInfo()
+                            : controller.type.value == "Medical Vitals"
+                            ? MedicalVitalsProfile()
+                            : DocumentsAndReportsProfile(),
                       ),
                       10.verticalSpace,
                       HealthSpaceCard(
                         icon: "assets/images/delete_account_icon.png",
-                        title: 'Delete Account',
+                        title: AppStrings.deleteAccount.tr,
                         onTap: () {
                           Get.dialog(DeleteAccountDialog());
                         },
@@ -199,11 +195,12 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget profileType(String title, double width) {
+  // Updated profileType to accept both a display title and a logic key
+  Widget profileType(String title, double width, String logicKey) {
     return Obx(
-      () => InkWell(
+          () => InkWell(
         onTap: () {
-          controller.type.value = title;
+          controller.type.value = logicKey;
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -213,25 +210,24 @@ class ProfileScreen extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color:
-                    controller.type.value == title
-                        ? AppColors.primaryColor
-                        : AppColors.lightGrey,
+                color: controller.type.value == logicKey
+                    ? AppColors.primaryColor
+                    : AppColors.lightGrey,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
             ),
             2.verticalSpace,
-            controller.type.value == title
+            controller.type.value == logicKey
                 ? Container(
-                  width: width.w,
-                  height: 3.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(7.sp),
-                  ),
-                )
-                : SizedBox(),
+              width: width.w,
+              height: 3.h,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(7.sp),
+              ),
+            )
+                : const SizedBox(),
           ],
         ),
       ),

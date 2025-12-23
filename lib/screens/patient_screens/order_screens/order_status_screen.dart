@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/order_widgets/order_status_card.dart';
 
 class OrderStatusScreen extends StatelessWidget {
@@ -32,7 +33,7 @@ class OrderStatusScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Image.asset(
@@ -43,7 +44,7 @@ class OrderStatusScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Order Status",
+                    AppStrings.orderStatus.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -57,15 +58,31 @@ class OrderStatusScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(children: [
                     20.verticalSpace,
-                    OrderStatusCard(),
+                    const OrderStatusCard(),
                     12.verticalSpace,
-                    Image.asset("assets/demo_images/map_demo.png",width: 1.sw,height: 170.h,fit: BoxFit.fill,),
+                    Image.asset(
+                      "assets/demo_images/map_demo.png",
+                      width: 1.sw,
+                      height: 170.h,
+                      fit: BoxFit.fill,
+                    ),
                     15.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Contact Pharmacy", onTap: (){},icon: Icons.local_phone_outlined,),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.contactPharmacy.tr,
+                      onTap: () {},
+                      icon: Icons.local_phone_outlined,
+                    ),
                     10.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Report an issue", onTap: (){
-                      Get.to(ReportIssueScreen());
-                    },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.reportAnIssue.tr,
+                      onTap: () {
+                        Get.to(const ReportIssueScreen());
+                      },
+                      bgColor: AppColors.inACtiveButtonColor,
+                      fontColor: Colors.black,
+                    ),
                     30.verticalSpace,
                   ]),
                 ),

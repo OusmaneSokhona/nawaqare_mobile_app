@@ -6,11 +6,12 @@ import 'package:patient_app/models/prscription_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 import 'order_summary.dart';
 
 class PrescriptionDetails extends StatelessWidget {
-  PrescriptionModel prescriptionModel;
+  final PrescriptionModel prescriptionModel;
 
   PrescriptionDetails({super.key, required this.prescriptionModel});
 
@@ -31,16 +32,16 @@ class PrescriptionDetails extends StatelessWidget {
     String text;
     switch (status) {
       case PrescriptionStatus.active:
-        text = 'Active';
+        text = AppStrings.active.tr;
         break;
       case PrescriptionStatus.expirySoon:
-        text = 'Expiry Soon';
+        text = AppStrings.expirySoon.tr;
         break;
       case PrescriptionStatus.expired:
-        text = 'Expired';
+        text = AppStrings.expired.tr;
         break;
       case PrescriptionStatus.completed:
-        text = 'Completed';
+        text = AppStrings.completed.tr;
         break;
     }
 
@@ -93,7 +94,7 @@ class PrescriptionDetails extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Prescription Details",
+                    AppStrings.prescriptionDetails.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -161,7 +162,7 @@ class PrescriptionDetails extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Prescription Info",
+                          AppStrings.prescriptionInfo.tr,
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
                             fontSize: 20.sp,
@@ -176,7 +177,7 @@ class PrescriptionDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Date of issue",
+                              AppStrings.dateOfIssue.tr,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16.sp,
@@ -184,7 +185,7 @@ class PrescriptionDetails extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "Valid Untill",
+                              AppStrings.validUntil.tr,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16.sp,
@@ -224,7 +225,7 @@ class PrescriptionDetails extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            "Eligible Till:",
+                            AppStrings.eligibleTill.tr,
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontWeight: FontWeight.w500,
@@ -245,7 +246,7 @@ class PrescriptionDetails extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Diagnosis History",
+                          AppStrings.diagnosisHistory.tr,
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
                             fontSize: 20.sp,
@@ -267,7 +268,7 @@ class PrescriptionDetails extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Diagnosis',
+                                AppStrings.diagnosis.tr,
                                 style:TextStyle(
                                   fontSize: 17.sp,
                                   fontWeight: FontWeight.w600,
@@ -284,7 +285,7 @@ class PrescriptionDetails extends StatelessWidget {
                               ),
                               16.verticalSpace,
                               Text(
-                                'Notes',
+                                AppStrings.notes.tr,
                                 style: TextStyle(
                                   fontSize: 17.sp,
                                   fontWeight: FontWeight.w600,
@@ -316,7 +317,7 @@ class PrescriptionDetails extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Prescription History",
+                          AppStrings.prescriptionHistory.tr,
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
                             fontSize: 20.sp,
@@ -339,10 +340,10 @@ class PrescriptionDetails extends StatelessWidget {
                             children: [
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Prescriptions',
+                                    AppStrings.prescriptions.tr,
                                     style: TextStyle(
                                       fontSize: 17.sp,
                                       fontWeight: FontWeight.w600,
@@ -373,17 +374,17 @@ class PrescriptionDetails extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              const Row(
+                              Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.lock,
                                     size: 18,
                                     color: Colors.black54,
                                   ),
-                                  SizedBox(width: 8),
+                                  const SizedBox(width: 8),
                                   Text(
-                                    'Encrypted & compliant with GDPR/HDS',
-                                    style: TextStyle(
+                                    AppStrings.encryptionNote.tr,
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.black54,
                                     ),
@@ -398,7 +399,7 @@ class PrescriptionDetails extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Electronique Sign',
+                          AppStrings.electronicSign.tr,
                           style: Theme.of(
                             context,
                           ).textTheme.headlineSmall?.copyWith(
@@ -429,7 +430,7 @@ class PrescriptionDetails extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Note:',
+                              AppStrings.note.tr,
                               style: Theme.of(
                                 context,
                               ).textTheme.titleMedium?.copyWith(
@@ -439,9 +440,9 @@ class PrescriptionDetails extends StatelessWidget {
                             ),
                             Expanded(
                               child: Text(
-                                'This digital prescription is generated and signed by a verified practitioner',
+                                AppStrings.digitalSignNote.tr,
                                 maxLines: 2,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.black87,
                                 ),
@@ -453,7 +454,7 @@ class PrescriptionDetails extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Get Medicine",
+                        text: AppStrings.getMedicine.tr,
                         onTap: () {
                           Get.to(OrderSummaryScreen());
                         },
@@ -461,7 +462,7 @@ class PrescriptionDetails extends StatelessWidget {
                       15.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Download PDF",
+                        text: AppStrings.downloadPdf.tr,
                         onTap: () {},
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,

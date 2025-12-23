@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class ConsultationDetailsWidget extends StatelessWidget {
   const ConsultationDetailsWidget({super.key});
@@ -14,7 +16,7 @@ class ConsultationDetailsWidget extends StatelessWidget {
         _buildPlanHeader(),
         10.verticalSpace,
         Text(
-          'Plan Info',
+          AppStrings.planInfo.tr,
           style: TextStyle(
             fontSize: 19.sp,
             fontWeight: FontWeight.bold,
@@ -26,9 +28,15 @@ class ConsultationDetailsWidget extends StatelessWidget {
         15.verticalSpace,
         _buildUsageLog(),
         20.verticalSpace,
-        CustomButton(borderRadius: 15, text: "Renew Plan", onTap: (){}),
+        CustomButton(borderRadius: 15, text: AppStrings.renewPlan.tr, onTap: (){}),
         10.verticalSpace,
-        CustomButton(borderRadius: 15, text: "Download Invoice", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+        CustomButton(
+          borderRadius: 15,
+          text: AppStrings.downloadInvoice.tr,
+          onTap: (){},
+          bgColor: AppColors.inACtiveButtonColor,
+          fontColor: Colors.black,
+        ),
         20.verticalSpace,
       ],
     );
@@ -36,7 +44,7 @@ class ConsultationDetailsWidget extends StatelessWidget {
 
   Widget _buildPlanHeader() {
     return Container(
-      padding:  EdgeInsets.symmetric(horizontal: 15.w,vertical: 15.h),
+      padding:  EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
       decoration:  BoxDecoration(
         color: Colors.white,
         border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
@@ -46,8 +54,8 @@ class ConsultationDetailsWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
-            'Premium Tele-Consultation\nPlan',
+          Text(
+            AppStrings.premiumTelePlan.tr,
             style: TextStyle(
               fontSize: 15.sp,
               fontWeight: FontWeight.bold,
@@ -61,7 +69,7 @@ class ConsultationDetailsWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.0),
             ),
             child:  Text(
-              'Active',
+              AppStrings.active.tr,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
@@ -76,16 +84,16 @@ class ConsultationDetailsWidget extends StatelessWidget {
 
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical: 4.0),
+      padding:  const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Icon(icon, size: 20, color:AppColors.primaryColor),
+          Icon(icon, size: 20, color: AppColors.primaryColor),
           const SizedBox(width: 10),
           Text(
             text,
-            style:  TextStyle(
+            style:  const TextStyle(
               fontSize: 16,
-              color:Colors.black,
+              color: Colors.black,
             ),
           ),
         ],
@@ -97,12 +105,12 @@ class ConsultationDetailsWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoRow(Icons.videocam_outlined, 'Video Consultation'),
-        _buildInfoRow(Icons.calendar_today_outlined, 'Expires on 21 Feb 2025'),
+        _buildInfoRow(Icons.videocam_outlined, AppStrings.videoConsultation.tr),
+        _buildInfoRow(Icons.calendar_today_outlined, '${AppStrings.expiresOn.tr} 21 Feb 2025'),
         _buildInfoRow(Icons.monetization_on_outlined, '\$45'),
         const Divider(height: 10, color: Colors.transparent),
-        const Text('Duration: 30 days', style: TextStyle(fontSize: 16, color: Colors.black)),
-        const Text('12 credits', style: TextStyle(fontSize: 16, color: Colors.black)),
+        Text(AppStrings.durationDays.trParams({'days': '30'}), style: const TextStyle(fontSize: 16, color: Colors.black)),
+        Text(AppStrings.credits.trParams({'count': '12'}), style: const TextStyle(fontSize: 16, color: Colors.black)),
       ],
     );
   }
@@ -113,16 +121,16 @@ class ConsultationDetailsWidget extends StatelessWidget {
       children: [
         10.verticalSpace,
         Text(
-          'Description',
+          AppStrings.description.tr,
           style: TextStyle(
             fontSize: 19.sp,
             fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Text(
-          'Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene',
+          AppStrings.planDescriptionText.tr,
           style: TextStyle(
             fontSize: 16.sp,
             color: AppColors.lightGrey,
@@ -137,14 +145,15 @@ class ConsultationDetailsWidget extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20.0),
       decoration:  BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15.sp),border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.sp),
+          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
-            'Usage Log',
+          Text(
+            AppStrings.usageLog.tr,
             style: TextStyle(
               fontSize: 19.sp,
               fontWeight: FontWeight.bold,
@@ -152,9 +161,9 @@ class ConsultationDetailsWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5),
-          const Text(
-            'Track Who Viewed Or Modified Your Records',
-            style: TextStyle(
+          Text(
+            AppStrings.usageLogSubtitle.tr,
+            style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF6E6E6E),
             ),
@@ -169,10 +178,10 @@ class ConsultationDetailsWidget extends StatelessWidget {
 
   Widget _buildUsageLogTable() {
     final List<Map<String, String>> logData = [
-      {'date': '03 Feb 2025', 'type': 'Video', 'doctor': 'Dr. C.A.', 'status': 'COMPLETED', 'color': '0xFF5ABF77'},
-      {'date': '03 Feb 2025', 'type': 'In-person', 'doctor': 'Dr. C.A.', 'status': 'Missed', 'color': '0xFFE74C3C'},
-      {'date': '03 Feb 2025', 'type': 'In-person', 'doctor': 'Dr. C.A.', 'status': 'Missed', 'color': '0xFFE74C3C'},
-      {'date': '03 Feb 2025', 'type': 'In-person', 'doctor': 'Dr. C.A.', 'status': 'Missed', 'color': '0xFFE74C3C'},
+      {'date': '03 Feb 2025', 'type': 'Video', 'doctor': 'Dr. C.A.', 'status': AppStrings.completed.tr, 'color': '0xFF5ABF77'},
+      {'date': '03 Feb 2025', 'type': 'In-person', 'doctor': 'Dr. C.A.', 'status': AppStrings.missed.tr, 'color': '0xFFE74C3C'},
+      {'date': '03 Feb 2025', 'type': 'In-person', 'doctor': 'Dr. C.A.', 'status': AppStrings.missed.tr, 'color': '0xFFE74C3C'},
+      {'date': '03 Feb 2025', 'type': 'In-person', 'doctor': 'Dr. C.A.', 'status': AppStrings.missed.tr, 'color': '0xFFE74C3C'},
     ];
 
     return Column(
@@ -180,10 +189,10 @@ class ConsultationDetailsWidget extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children:  [
-            Expanded(child: Text('Consultation Date', style: TextStyle(fontSize: 9.sp,fontWeight: FontWeight.bold, color: Colors.black))),
-            Expanded(child: Text('Type', style: TextStyle(fontSize: 11.sp,fontWeight: FontWeight.bold, color: Colors.black))),
-            Expanded(child: Text('Doctor', style: TextStyle(fontSize: 11.sp,fontWeight: FontWeight.bold, color: Colors.black))),
-            Expanded(child: Text('Status', style: TextStyle(fontSize: 11.sp,fontWeight: FontWeight.bold, color: Colors.black))),
+            Expanded(child: Text(AppStrings.consultationDate.tr, style: TextStyle(fontSize: 9.sp, fontWeight: FontWeight.bold, color: Colors.black))),
+            Expanded(child: Text(AppStrings.type.tr, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold, color: Colors.black))),
+            Expanded(child: Text(AppStrings.doctor.tr, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold, color: Colors.black))),
+            Expanded(child: Text(AppStrings.status.tr, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.bold, color: Colors.black))),
           ],
         ),
         const Divider(height: 10, color: Colors.transparent),
@@ -195,23 +204,23 @@ class ConsultationDetailsWidget extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(child: Text(data['date']!, style:TextStyle(fontSize: 11.sp,color:AppColors.lightGrey))),
-                    Expanded(child: Text(data['type']!, style: TextStyle(fontSize: 11.sp,color:AppColors.lightGrey))),
-                    Expanded(child: Text(data['doctor']!, style:  TextStyle(fontSize: 11.sp,color:AppColors.lightGrey))),
+                    Expanded(child: Text(data['date']!, style: TextStyle(fontSize: 11.sp, color: AppColors.lightGrey))),
+                    Expanded(child: Text(data['type']!, style: TextStyle(fontSize: 11.sp, color: AppColors.lightGrey))),
+                    Expanded(child: Text(data['doctor']!, style:  TextStyle(fontSize: 11.sp, color: AppColors.lightGrey))),
                     Expanded(
                       child: Text(
                         data['status']!,
                         style: TextStyle(
-                          color: Color(int.parse(data['color']!)),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 11.sp
+                            color: Color(int.parse(data['color']!)),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11.sp
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              Divider(height: 8.h,color: AppColors.lightGrey.withOpacity(0.2),),
+              Divider(height: 8.h, color: AppColors.lightGrey.withOpacity(0.2),),
             ],
           );
         }).toList(),

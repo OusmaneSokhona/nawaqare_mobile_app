@@ -7,11 +7,12 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/patient_widgets/profile_widgets/privacy_toggle_item.dart';
-
+import '../../../utils/app_strings.dart';
 
 class PrivacySecurity extends StatelessWidget{
   PrivacySecurity({super.key});
-ProfileController controller=Get.put(ProfileController());
+  final ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,10 +45,10 @@ ProfileController controller=Get.put(ProfileController());
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Privacy & Security",
+                    AppStrings.privacySecurity.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 23.sp,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),
@@ -62,7 +63,7 @@ ProfileController controller=Get.put(ProfileController());
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Data Sharing Preferences",
+                          AppStrings.dataSharingPrefs.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 17.sp,
@@ -73,7 +74,7 @@ ProfileController controller=Get.put(ProfileController());
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Control How Your Medical Data Is Shared And Used",
+                          AppStrings.dataSharingControl.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 12.sp,
@@ -106,7 +107,7 @@ ProfileController controller=Get.put(ProfileController());
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Your Data is Protected',
+                                  AppStrings.dataProtected.tr,
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
@@ -115,7 +116,7 @@ ProfileController controller=Get.put(ProfileController());
                                 ),
                                 SizedBox(height: 4),
                                 Text(
-                                  'Control How Your Medical Data Is Shared And Used',
+                                  AppStrings.dataSharingControl.tr,
                                   style: TextStyle(
                                     fontSize: 12.sp,
                                     fontWeight: FontWeight.w600,
@@ -126,11 +127,9 @@ ProfileController controller=Get.put(ProfileController());
                             ),
 
                             Obx(
-                              () => PrivacyToggleItem(
-                                title:
-                                    'Allow Data Sharing With Other Healthcare Professionals',
-                                subtitle:
-                                    'Enable to share medical history for coordinated care',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.allowSharingHealthcare.tr,
+                                subtitle: AppStrings.allowSharingSubtitle.tr,
                                 value: controller.allowSharing.value,
                                 onChanged: controller.toggleSharing,
                                 activeColor: AppColors.primaryColor,
@@ -145,10 +144,9 @@ ProfileController controller=Get.put(ProfileController());
                             ),
 
                             Obx(
-                              () => PrivacyToggleItem(
-                                title: 'Allow Anonymized Data For Research',
-                                subtitle:
-                                    'Used only for aggregated medical insights',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.allowResearchData.tr,
+                                subtitle: AppStrings.allowResearchSubtitle.tr,
                                 value: controller.allowResearch.value,
                                 onChanged: controller.toggleResearch,
                                 activeColor: AppColors.primaryColor,
@@ -160,10 +158,9 @@ ProfileController controller=Get.put(ProfileController());
                             ),
 
                             Obx(
-                              () => PrivacyToggleItem(
-                                title: 'Receive Data-Related Notifications',
-                                subtitle:
-                                    'Get alerts when your data is accessed or shared',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.receiveDataNotifications.tr,
+                                subtitle: AppStrings.receiveNotificationsSubtitle.tr,
                                 value: controller.receiveNotifications.value,
                                 onChanged: controller.toggleNotifications,
                                 activeColor: AppColors.primaryColor,
@@ -199,7 +196,7 @@ ProfileController controller=Get.put(ProfileController());
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Who Can Access My Data?',
+                                  AppStrings.whoCanAccessData.tr,
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
@@ -210,9 +207,9 @@ ProfileController controller=Get.put(ProfileController());
                             ),
 
                             Obx(
-                              () => PrivacyToggleItem(
-                                title: 'Who Can Access My Data?',
-                                subtitle: 'Always has access by default',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.whoCanAccessData.tr,
+                                subtitle: AppStrings.alwaysAccessDefault.tr,
                                 value: controller.accessMyData.value,
                                 onChanged: controller.toggleAccessMyData,
                                 activeColor: AppColors.primaryColor,
@@ -227,9 +224,9 @@ ProfileController controller=Get.put(ProfileController());
                             ),
 
                             Obx(
-                              () => PrivacyToggleItem(
-                                title: 'Specialists',
-                                subtitle: 'Can view upon your authorization',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.specialist.tr,
+                                subtitle: AppStrings.specialistSubtitle.tr,
                                 value: controller.specialist.value,
                                 onChanged: controller.toggleSpeacialist,
                                 activeColor: AppColors.primaryColor,
@@ -241,9 +238,9 @@ ProfileController controller=Get.put(ProfileController());
                             ),
 
                             Obx(
-                              () => PrivacyToggleItem(
-                                title: 'Emergency Services',
-                                subtitle: 'Temporary 30-day access possible',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.emergencyServices.tr,
+                                subtitle: AppStrings.emergencySubtitle.tr,
                                 value: controller.emergencyServices.value,
                                 onChanged: controller.toggleEmergencyServices,
                                 activeColor: AppColors.primaryColor,
@@ -254,10 +251,9 @@ ProfileController controller=Get.put(ProfileController());
                               color: Color(0xFFE0E0E0),
                             ),
                             Obx(
-                              () => PrivacyToggleItem(
-                                title: 'Pharmacy',
-                                subtitle:
-                                    'Only for prescriptions or test uploads',
+                                  () => PrivacyToggleItem(
+                                title: AppStrings.pharmacy.tr,
+                                subtitle: AppStrings.pharmacySubtitle.tr,
                                 value: controller.pharmacy.value,
                                 onChanged: controller.togglePharmacy,
                                 activeColor: AppColors.primaryColor,
@@ -288,7 +284,7 @@ ProfileController controller=Get.put(ProfileController());
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Access History',
+                                AppStrings.accessHistory.tr,
                                 style: TextStyle(
                                   fontSize: 19.sp,
                                   fontWeight: FontWeight.w800,
@@ -297,7 +293,7 @@ ProfileController controller=Get.put(ProfileController());
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Track Who Viewed Or Modified Your Records',
+                                AppStrings.trackHistorySubtitle.tr,
                                 style: TextStyle(
                                   fontSize: 13.sp,
                                   color: Colors.grey,
@@ -317,10 +313,10 @@ ProfileController controller=Get.put(ProfileController());
                                 itemCount: controller.records.length,
                                 separatorBuilder:
                                     (context, index) => const Divider(
-                                      height: 1,
-                                      thickness: 1,
-                                      color: Color(0xFFF0F0F0),
-                                    ),
+                                  height: 1,
+                                  thickness: 1,
+                                  color: Color(0xFFF0F0F0),
+                                ),
                                 itemBuilder: (context, index) {
                                   return _buildRecordRow(
                                     context,
@@ -332,7 +328,7 @@ ProfileController controller=Get.put(ProfileController());
                           ),
                         ),
                       ),
-                      10.verticalSpace,
+                      20.verticalSpace,
                       Container(
                         padding: EdgeInsets.all(15.sp),
                         width: 1.sw,
@@ -346,7 +342,7 @@ ProfileController controller=Get.put(ProfileController());
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Export My Data",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w600,fontFamily: AppFonts.jakartaBold),),
+                            Text(AppStrings.exportMyData.tr, style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.w600, fontFamily: AppFonts.jakartaBold),),
                             InkWell(
                               onTap: (){
                                 controller.isPdf.value=!controller.isPdf.value;
@@ -362,12 +358,7 @@ ProfileController controller=Get.put(ProfileController());
                                         shape: BoxShape.circle,
                                         color: Colors.transparent,
                                         border: Border.all(
-                                          color:
-                                          controller
-                                              .isPdf
-                                              .value
-                                              ? AppColors.primaryColor
-                                              : AppColors.lightGrey,
+                                          color: controller.isPdf.value ? AppColors.primaryColor : AppColors.lightGrey,
                                           width: 2,
                                         ),
                                       ),
@@ -375,19 +366,14 @@ ProfileController controller=Get.put(ProfileController());
                                       alignment: Alignment.center,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          color:
-                                          controller
-                                              .isPdf
-                                              .value
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
+                                          color: controller.isPdf.value ? AppColors.primaryColor : Colors.transparent,
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     );
                                   }),
                                   8.horizontalSpace,
-                                  Text("PDF",style: TextStyle(fontSize: 18.sp,fontFamily: AppFonts.jakartaMedium,fontWeight: FontWeight.w600),)
+                                  Text(AppStrings.pdf.tr, style: TextStyle(fontSize: 18.sp, fontFamily: AppFonts.jakartaMedium, fontWeight: FontWeight.w600),)
                                 ],
                               ),
                             ),
@@ -406,12 +392,7 @@ ProfileController controller=Get.put(ProfileController());
                                         shape: BoxShape.circle,
                                         color: Colors.transparent,
                                         border: Border.all(
-                                          color:
-                                          controller
-                                              .isEmail
-                                              .value
-                                              ? AppColors.primaryColor
-                                              : AppColors.lightGrey,
+                                          color: controller.isEmail.value ? AppColors.primaryColor : AppColors.lightGrey,
                                           width: 2,
                                         ),
                                       ),
@@ -419,23 +400,18 @@ ProfileController controller=Get.put(ProfileController());
                                       alignment: Alignment.center,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          color:
-                                          controller
-                                              .isEmail
-                                              .value
-                                              ? AppColors.primaryColor
-                                              : Colors.transparent,
+                                          color: controller.isEmail.value ? AppColors.primaryColor : Colors.transparent,
                                           shape: BoxShape.circle,
                                         ),
                                       ),
                                     );
                                   }),
                                   8.horizontalSpace,
-                                  Text("Email",style: TextStyle(fontSize: 18.sp,fontFamily: AppFonts.jakartaMedium,fontWeight: FontWeight.w600),)
+                                  Text(AppStrings.email.tr, style: TextStyle(fontSize: 18.sp, fontFamily: AppFonts.jakartaMedium, fontWeight: FontWeight.w600),)
                                 ],
                               ),
                             ),
-                            buildDropdownField(title: "Select data type", items: controller.dataTypeList, selectedValue: controller.dataType, onChanged: (_){}),
+                            buildDropdownField(title: AppStrings.selectDataType.tr, items: controller.dataTypeList, selectedValue: controller.dataType, onChanged: (_){}),
                             10.verticalSpace,
                             Row(
                               children: [
@@ -451,7 +427,7 @@ ProfileController controller=Get.put(ProfileController());
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    child: Text('Cancel', style: TextStyle(fontSize: 16)),
+                                    child: Text(AppStrings.cancel.tr, style: TextStyle(fontSize: 16)),
                                   ),
                                 ),
                                 SizedBox(width: 15),
@@ -466,7 +442,7 @@ ProfileController controller=Get.put(ProfileController());
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                     ),
-                                    child: Text('Confirm', style: TextStyle(fontSize: 16)),
+                                    child: Text(AppStrings.confirm.tr, style: TextStyle(fontSize: 16)),
                                   ),
                                 ),
                               ],
@@ -475,60 +451,60 @@ ProfileController controller=Get.put(ProfileController());
                         ),
                       ),
                       10.verticalSpace,
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4.0,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            const Text(
-                              'Data Controller',
-                              style: TextStyle(
-                                fontSize: 24.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 16.0),
-                             buildInfoRow(
-                              'Data Controller',
-                               'Nawa Care Digital Health (EU)',
-                            ),
-                            const Divider(height: 1.0, thickness: 1.0),
-                             buildInfoRow('DPO Contact',
-                               'dpo@nawecare.eu',
-                            ),
-                            const Divider(height: 1.0, thickness: 1.0),
-                            buildInfoRow(
-                              'Hosting:',
-                              'HDS-certified cloud',
-                            ),
-                            const Divider(height: 1.0, thickness: 1.0),
-                            const SizedBox(height: 16.0),
-                            const Text(
-                              'All operations comply with GDPR, CNPD, and HDS standards.',
-                              style: TextStyle(
-                                fontSize: 14.0,
-                                color: Color(0xFF333333),
-                                height: 1.4,
-                              ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.0),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4.0,
+                              offset: Offset(0, 2),
                             ),
                           ],
                         ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                AppStrings.dataController.tr,
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 16.0),
+                              buildInfoRow(
+                                AppStrings.dataController.tr,
+                                'Nawa Care Digital Health (EU)',
+                              ),
+                              const Divider(height: 1.0, thickness: 1.0),
+                              buildInfoRow(AppStrings.dpoContact.tr,
+                                'dpo@nawecare.eu',
+                              ),
+                              const Divider(height: 1.0, thickness: 1.0),
+                              buildInfoRow(
+                                AppStrings.hosting.tr,
+                                'HDS-certified cloud',
+                              ),
+                              const Divider(height: 1.0, thickness: 1.0),
+                              const SizedBox(height: 16.0),
+                              Text(
+                                AppStrings.gdprCompliance.tr,
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  color: Color(0xFF333333),
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
                       30.verticalSpace,
                     ],
                   ),
@@ -540,6 +516,7 @@ ProfileController controller=Get.put(ProfileController());
       ),
     );
   }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,
@@ -565,19 +542,19 @@ ProfileController controller=Get.put(ProfileController());
           Obx(
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
-                  decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide:  BorderSide(color: AppColors.lightGrey.withOpacity(0.2), width: 1.0),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                      borderSide:  BorderSide(color:AppColors.lightGrey.withOpacity(0.2) , width: 2.0),
-                    ),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide:  BorderSide(color: AppColors.lightGrey.withOpacity(0.2), width: 1.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide:  BorderSide(color:AppColors.lightGrey.withOpacity(0.2) , width: 2.0),
+                ),
                 filled: true,
                 fillColor: Colors.white,
               ),
@@ -597,6 +574,7 @@ ProfileController controller=Get.put(ProfileController());
       ),
     );
   }
+
   Widget _buildHeaderRow(BuildContext context) {
     final headerStyle = TextStyle(
       fontSize: 12.sp,
@@ -607,11 +585,11 @@ ProfileController controller=Get.put(ProfileController());
       padding: const EdgeInsets.symmetric(vertical: 5.0),
       child: Row(
         children: [
-          Expanded(flex: 2, child: Text('Name', style: headerStyle)),
-          Expanded(flex: 2, child: Text('Role', style: headerStyle)),
-          Expanded(flex: 2, child: Text('Data', style: headerStyle)),
-          Expanded(flex: 3, child: Text('Date & Time', style: headerStyle)),
-          Expanded(flex: 2, child: Text('Action', style: headerStyle)),
+          Expanded(flex: 2, child: Text(AppStrings.name.tr, style: headerStyle)),
+          Expanded(flex: 2, child: Text(AppStrings.role.tr, style: headerStyle)),
+          Expanded(flex: 2, child: Text(AppStrings.data.tr, style: headerStyle)),
+          Expanded(flex: 3, child: Text(AppStrings.dateTime.tr, style: headerStyle)),
+          Expanded(flex: 2, child: Text(AppStrings.action.tr, style: headerStyle)),
         ],
       ),
     );
@@ -650,6 +628,7 @@ ProfileController controller=Get.put(ProfileController());
       child: Icon(icon, color: AppColors.primaryColor, size: 15),
     );
   }
+
   Widget buildInfoRow(String label,String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),

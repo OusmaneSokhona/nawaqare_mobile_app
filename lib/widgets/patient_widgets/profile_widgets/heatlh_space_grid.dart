@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/patient_screens/profile_screens/consultation_screen.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../screens/patient_screens/profile_screens/allergies_screen.dart';
@@ -13,9 +14,10 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/shared_prefrence.dart';
 import 'health_space_card.dart';
 import 'language_dialogs.dart';
+
 class HeatlhSpaceGrid extends StatelessWidget {
   final ProfileController profileController;
-  const HeatlhSpaceGrid({super.key,required this.profileController});
+  const HeatlhSpaceGrid({super.key, required this.profileController});
 
   @override
   Widget build(BuildContext context) {
@@ -30,57 +32,61 @@ class HeatlhSpaceGrid extends StatelessWidget {
       children: [
         HealthSpaceCard(
           icon: "assets/images/allergies_icon.png",
-          title: 'Allergies',
-          onTap: () {profileController.handleHealthSpaceTap(AllergiesScreen());},
+          title: AppStrings.allergies.tr,
+          onTap: () {
+            profileController.handleHealthSpaceTap( AllergiesScreen());
+          },
         ),
         HealthSpaceCard(
           icon: "assets/images/medical_history_icon.png",
-          title: 'Medical History',
-          onTap: () {profileController.handleHealthSpaceTap(MedicalHistory());},
+          title: AppStrings.medicalHistory.tr,
+          onTap: () {
+            profileController.handleHealthSpaceTap(const MedicalHistory());
+          },
         ),
         HealthSpaceCard(
           icon: "assets/images/update_password_icon.png",
-          title: 'Update Password',
+          title: AppStrings.updatePassword.tr,
           onTap: () {
             profileController.handleHealthSpaceTap(UpdatePassword());
           },
         ),
         HealthSpaceCard(
           icon: "assets/images/blood_type.png",
-          title: 'Blood Type',
+          title: AppStrings.bloodType.tr,
           onTap: () {
-            profileController.handleHealthSpaceTap(BloodType());
+            profileController.handleHealthSpaceTap( BloodType());
           },
         ),
         HealthSpaceCard(
           icon: "assets/images/privacy_security_icon.png",
-          title: 'Privacy & Security',
+          title: AppStrings.privacySecurity.tr,
           onTap: () {
-            profileController.handleHealthSpaceTap(PrivacySecurity());
+            profileController.handleHealthSpaceTap( PrivacySecurity());
           },
         ),
         HealthSpaceCard(
           icon: "assets/images/language_icon.png",
-          title: 'Change Language',
-          onTap: (){
+          title: AppStrings.changeLanguage.tr,
+          onTap: () {
             Get.dialog(LanguageDialog());
           },
         ),
         HealthSpaceCard(
           icon: "assets/images/consultation_plan_icon.png",
-          title: 'Consultation Plan',
-          onTap: (){
-            profileController.handleHealthSpaceTap(ConsultationScreen());
+          title: AppStrings.consultationPlan.tr,
+          onTap: () {
+            profileController.handleHealthSpaceTap( ConsultationScreen());
           },
         ),
         HealthSpaceCard(
           icon: "assets/images/log_out_icon.png",
-          title: 'Log Out',
+          title: AppStrings.logOut.tr,
           color: AppColors.red,
           textColor: AppColors.red,
-          onTap: (){
+          onTap: () {
             LocalStorageUtils.deleteUser();
-            Get.offAll(SignInScreen(),binding: AppBinding());
+            Get.offAll( SignInScreen(), binding: AppBinding());
           },
         ),
       ],

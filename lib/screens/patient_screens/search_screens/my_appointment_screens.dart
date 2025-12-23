@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/widgets/progress_stepper.dart';
-import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';import '../../../utils/app_colors.dart';
+import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';
+import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart'; // Added import
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/patient_widgets/search_widgets/my_appointment_doctor_card.dart';
 import '../../../widgets/patient_widgets/search_widgets/summary_card.dart';
@@ -16,7 +18,7 @@ class MyAppointmentScreens extends StatelessWidget {
 
   MyAppointmentScreens({super.key, required this.model});
 
-  BookAppointmentController controller = Get.put(BookAppointmentController());
+  final BookAppointmentController controller = Get.put(BookAppointmentController());
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class MyAppointmentScreens extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "My Appointment",
+                    AppStrings.myAppointment.tr, // Localized
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -68,14 +70,14 @@ class MyAppointmentScreens extends StatelessWidget {
                       30.verticalSpace,
                       Padding(
                         padding: EdgeInsets.only(right: 13.sp),
-                        child: ProgressStepper(currentStep: 2, totalSteps: 3),
+                        child: const ProgressStepper(currentStep: 2, totalSteps: 3),
                       ),
                       5.verticalSpace,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            "Section",
+                            AppStrings.section.tr, // Localized
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
@@ -83,15 +85,15 @@ class MyAppointmentScreens extends StatelessWidget {
                           ),
                           100.horizontalSpace,
                           Text(
-                            "Details",
+                            AppStrings.details.tr, // Localized
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Text(
-                            "Confirmation",
+                            AppStrings.confirmation.tr, // Localized
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
@@ -102,17 +104,28 @@ class MyAppointmentScreens extends StatelessWidget {
                       MyAppointmentDoctorCard(
                         doctorName: model.name,
                         specialization: model.specialty,
-                        consultationDuration: "1 Hour Consultation",
+                        consultationDuration: AppStrings.consultationDuration.tr, // Localized
                         imageUrl: model.imageUrl,
-                      ),10.verticalSpace,
-                      Align(alignment:Alignment.centerLeft,child: Text("Appointment Summary",style: TextStyle(fontSize: 20.sp,fontWeight: FontWeight.w700,fontFamily: AppFonts.jakartaBold),)),
-                      AppointmentSummaryCard(),
+                      ),
+                      10.verticalSpace,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppStrings.appointmentSummary.tr, // Localized
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: AppFonts.jakartaBold,
+                          ),
+                        ),
+                      ),
+                      const AppointmentSummaryCard(), // Note: Ensure this widget and its children use .tr internally
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Next",
+                        text: AppStrings.next.tr, // Localized
                         onTap: () {
-                          Get.to(PaymentScreen());
+                          Get.to( PaymentScreen());
                         },
                       ),
                       30.verticalSpace,

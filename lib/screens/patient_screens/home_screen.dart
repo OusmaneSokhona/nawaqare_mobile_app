@@ -5,6 +5,7 @@ import 'package:patient_app/controllers/patient_controllers/home_controller.dart
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/category_button.dart';
 import 'package:patient_app/widgets/patient_widgets/prescription_widgets/next_action_row.dart';
 import 'package:patient_app/widgets/patient_widgets/order_widgets/order_tracking_card.dart';
@@ -46,9 +47,9 @@ class HomeScreen extends StatelessWidget {
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
               final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -56,7 +57,7 @@ class HomeScreen extends StatelessWidget {
                 height: targetHeight,
                 width: 1.sw,
                 color: targetColor,
-                padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
@@ -69,10 +70,18 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     20.horizontalSpace,
-                    Text("Mr Alex",style: TextStyle(color: Colors.white,fontFamily:AppFonts.jakartaBold,fontSize: 22.h,fontWeight: FontWeight.w700),),
+                    Text(
+                      "Mr Alex",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: AppFonts.jakartaBold,
+                        fontSize: 22.h,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     Spacer(),
                     InkWell(
-                      onTap: (){
+                      onTap: () {
                         Get.to(NotificationScreen());
                       },
                       child: Image.asset(
@@ -104,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           InkWell(
-                            onTap: (){
+                            onTap: () {
                               Get.to(NotificationScreen());
                             },
                             child: Image.asset(
@@ -118,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Hello,\nMr. Alex",
+                          "${AppStrings.hello.tr}\nMr. Alex",
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -131,7 +140,7 @@ class HomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Tomorrow at 10:30 AM",
+                          "${AppStrings.tomorrowAt.tr} 10:30 AM",
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
@@ -155,19 +164,19 @@ class HomeScreen extends StatelessWidget {
                       ),
                       15.verticalSpace,
                       AppointmentCard(
-                        title: "Ongoing  Appointment",
+                        title: AppStrings.ongoingAppointment.tr,
                         imagePath: "assets/demo_images/doctor_2.png",
                         name: "Dr. Maria Waston",
-                        type: 'Heart Surgeon',
-                        onTap: (){},
+                        type: AppStrings.heartSurgeon.tr,
+                        onTap: () {},
                       ),
                       15.verticalSpace,
                       AppointmentCard(
-                        title: "Upcoming Appointment",
+                        title: AppStrings.upcomingAppointment.tr,
                         imagePath: "assets/demo_images/doctor_1.png",
                         name: "Dr. Daniel Lee",
-                        type: 'Gastroenterologist',
-                        onTap: (){},
+                        type: AppStrings.gastroenterologist.tr,
+                        onTap: () {},
                       ),
                       15.verticalSpace,
                       OrderTrackingCard(currentStep: 2),
@@ -179,23 +188,23 @@ class HomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(AppointmentScreen());
                             },
-                            title: "Appointments",
+                            title: AppStrings.appointments.tr,
                             icon: "assets/images/calender_icon.png",
                             color: AppColors.primaryColor,
                           ),
                           CategoryButton(
-                            onTap: (){
+                            onTap: () {
                               Get.to(PrescriptionScreen());
                             },
-                            title: "Prescription",
+                            title: AppStrings.prescription.tr,
                             icon: "assets/images/prescription_icon.png",
                             color: AppColors.green,
                           ),
                           CategoryButton(
-                            onTap: (){
+                            onTap: () {
                               Get.to(OrderScreen());
                             },
-                            title: "Orders",
+                            title: AppStrings.orders.tr,
                             icon: "assets/images/box_icon.png",
                             color: AppColors.orange,
                           ),

@@ -3,10 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/custom_text_field.dart';
-
-import '../../../utils/app_fonts.dart';
 
 class RecentProjectsDrawer extends GetView<VideoCallController> {
   const RecentProjectsDrawer({super.key});
@@ -36,7 +34,7 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Recent Projects',
+                      AppStrings.recentProjects.tr,
                       style: TextStyle(
                         fontSize: 25.sp,
                         fontWeight: FontWeight.w800,
@@ -46,7 +44,11 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
                     20.verticalSpace,
                     _buildMedicalRecordsCard(context),
                     30.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Upload New Report", onTap: (){}),
+                    CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.uploadNewReport.tr,
+                        onTap: () {}
+                    ),
                     30.verticalSpace,
                   ],
                 ),
@@ -79,6 +81,7 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
       ),
     );
   }
+
   Widget _buildRecordTile(BuildContext context, IconData iconData, String title, String date) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,11 +95,10 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
                 Icon(iconData, color: Colors.blue.shade700, size: 19.sp),
                 const SizedBox(width: 8),
                 Text(
-                  title,
-                  style: TextStyle(
+                  title.tr, // Localized
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    decorationColor: Colors.blue.shade700,
                   ),
                 ),
               ],
@@ -104,13 +106,13 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
             Icon(Icons.visibility_outlined, color: Colors.blue.shade500, size: 21.sp),
           ],
         ),
-         SizedBox(height: 2.h),
+        SizedBox(height: 2.h),
         Row(
           children: [
             Icon(Icons.check, color: Colors.green.shade600, size: 20),
             const SizedBox(width: 8),
             Text(
-              date,
+              date.tr, // Localized
               style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
             ),
           ],
@@ -140,8 +142,8 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
             _buildRecordTile(
               context,
               Icons.science_outlined,
-              'Blood Test',
-              'Jan 2025',
+              AppStrings.bloodTest,
+              AppStrings.jan2025,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -154,8 +156,8 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
             _buildRecordTile(
               context,
               Icons.description_outlined,
-              'Chest X-ray',
-              'Jan 2025',
+              AppStrings.chestXray,
+              AppStrings.jan2025,
             ),
             40.verticalSpace,
           ],

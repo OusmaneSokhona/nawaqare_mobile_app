@@ -7,10 +7,13 @@ import '../../../utils/app_fonts.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/validation_check_list.dart';
+import '../../../utils/app_strings.dart';
+import '../../../utils/app_images.dart';
 
 class UpdatePassword extends StatelessWidget {
   UpdatePassword({super.key});
-ForgetPasswordController controller=Get.put(ForgetPasswordController());
+  final ForgetPasswordController controller = Get.put(ForgetPasswordController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,28 +39,31 @@ ForgetPasswordController controller=Get.put(ForgetPasswordController());
                         onTap: (){
                           Get.back();
                         },
-                        child: Image.asset("assets/images/back_icon.png",height: 32.h,width: 32.w,)),
+                        child: Image.asset(AppImages.backIcon, height: 32.h, width: 32.w,)),
                     7.horizontalSpace,
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text("Update Password",style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: AppFonts.jakartaBold,
-                        fontSize: 27.sp,
-                        fontWeight: FontWeight.w700,
-                      ),),
+                      child: Text(
+                        AppStrings.updatePassword.tr,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: AppFonts.jakartaBold,
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ),
                   ],
                 ),
                 20.verticalSpace,
                 Obx(
                       ()=> CustomTextField(
-                    labelText: 'Old Password',
-                    hintText: 'Enter your password',
+                    labelText: AppStrings.oldPassword.tr,
+                    hintText: AppStrings.enterPasswordHint.tr,
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
                     isEnabled: controller.confirmNewPasswordVisibility.value,
-                    validator: controller.validateConfirmPassword, // Use the new method
+                    validator: controller.validateConfirmPassword,
                     onTapEye: (){
                       controller.confirmNewPasswordVisibility.value = !controller.confirmNewPasswordVisibility.value;
                     },
@@ -66,8 +72,8 @@ ForgetPasswordController controller=Get.put(ForgetPasswordController());
                 20.verticalSpace,
                 Obx(
                       ()=> CustomTextField(
-                    labelText: 'New Password',
-                    hintText: 'Enter your password',
+                    labelText: AppStrings.newPassword.tr,
+                    hintText: AppStrings.enterPasswordHint.tr,
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
                     controller: controller.newPassword,
@@ -90,13 +96,13 @@ ForgetPasswordController controller=Get.put(ForgetPasswordController());
                 20.verticalSpace,
                 Obx(
                       ()=> CustomTextField(
-                    labelText: 'Confirm Password',
-                    hintText: 'Enter your password',
+                    labelText: AppStrings.confirmPassword.tr,
+                    hintText: AppStrings.enterPasswordHint.tr,
                     prefixIcon: Icons.lock_outline,
                     isPasswordField: true,
                     controller: controller.confrimNewPassword,
                     isEnabled: controller.confirmNewPasswordVisibility.value,
-                    validator: controller.validateConfirmPassword, // Use the new method
+                    validator: controller.validateConfirmPassword,
                     onTapEye: (){
                       controller.confirmNewPasswordVisibility.value = !controller.confirmNewPasswordVisibility.value;
                     },
@@ -104,20 +110,30 @@ ForgetPasswordController controller=Get.put(ForgetPasswordController());
                 ),
                 10.verticalSpace,
                 40.verticalSpace,
-                CustomButton(borderRadius: 15, text: "Update", onTap: (){
-                  if (controller.formKeyForget.currentState!.validate()) {
-                    print("Validation passed!");
-                  } else {
-                    print("Validation failed.");
-                  }
-                },fontSize: 18),
+                CustomButton(
+                    borderRadius: 15,
+                    text: AppStrings.update.tr,
+                    onTap: (){
+                      if (controller.formKeyForget.currentState!.validate()) {
+                        print("Validation passed!");
+                      } else {
+                        print("Validation failed.");
+                      }
+                    },
+                    fontSize: 18
+                ),
                 10.verticalSpace,
-                CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.cancel.tr,
+                  onTap: (){Get.back();},
+                  bgColor: AppColors.inACtiveButtonColor,
+                  fontColor: Colors.black,
+                ),
               ],),
             ),
           ),
         ),
-
       ),
     );
   }

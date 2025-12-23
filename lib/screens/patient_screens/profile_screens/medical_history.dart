@@ -14,6 +14,8 @@ import 'add_family_history.dart';
 import 'add_life_style_screen.dart';
 import 'add_medication_screen.dart';
 import 'add_vaccination_screen.dart';
+import '../../../utils/app_strings.dart';
+
 class MedicalHistory extends GetView<ProfileController> {
   const MedicalHistory({super.key});
 
@@ -50,7 +52,7 @@ class MedicalHistory extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Medical History",
+                    AppStrings.medicalHistory.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -71,22 +73,26 @@ class MedicalHistory extends GetView<ProfileController> {
                           spacing: 7.w,
                           children: [
                             historyType(
-                              "Current Medication",
+                              AppStrings.currentMedication.tr,
+                              AppStrings.currentMedication,
                               100,
                               "assets/images/medicine_icon.png",
                             ),
                             historyType(
-                              "Vaccination History",
+                              AppStrings.vaccinationHistory.tr,
+                              AppStrings.vaccinationHistory,
                               100,
                               "assets/images/injection_icon.png",
                             ),
                             historyType(
-                              "Family History",
+                              AppStrings.familyHistory.tr,
+                              AppStrings.familyHistory,
                               90,
                               "assets/images/family_icon.png",
                             ),
                             historyType(
-                              "Lifestyle",
+                              AppStrings.lifestyle.tr,
+                              AppStrings.lifestyle,
                               50,
                               "assets/images/heart_icon.png",
                             ),
@@ -95,38 +101,42 @@ class MedicalHistory extends GetView<ProfileController> {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () =>
-                            controller.historyType.value == "Current Medication"
-                                ? CurrentMedicineList(
-                                  list: controller.medicalHistoryList,
-                                )
-                                : controller.historyType.value ==
-                                    "Vaccination History"
-                                ? VaccinationHistoryList(
-                                  list: controller.vaccinationHistoryList,
-                                )
-                                : controller.historyType.value ==
-                                    "Family History"
-                                ? FamilyHistoryList()
-                                : LifestyleCard(),
+                            () =>
+                        controller.historyType.value == AppStrings.currentMedication
+                            ? CurrentMedicineList(
+                          list: controller.medicalHistoryList,
+                        )
+                            : controller.historyType.value ==
+                            AppStrings.vaccinationHistory
+                            ? VaccinationHistoryList(
+                          list: controller.vaccinationHistoryList,
+                        )
+                            : controller.historyType.value ==
+                            AppStrings.familyHistory
+                            ? FamilyHistoryList()
+                            : LifestyleCard(),
                       ),
                       15.verticalSpace,
                       Obx(
-                        ()=> CustomButton(
+                            ()=> CustomButton(
                           borderRadius: 15,
-                          text: controller.historyType=="Current Medication"?"Add Medication":controller.historyType=="Vaccination History"?"Add Vaccination History":controller.historyType.value ==
-                              "Family History"?"Add Family History":"Add Life Style",
+                          text: controller.historyType.value == AppStrings.currentMedication
+                              ? AppStrings.addMedication.tr
+                              : controller.historyType.value == AppStrings.vaccinationHistory
+                              ? AppStrings.addVaccinationHistory.tr
+                              : controller.historyType.value == AppStrings.familyHistory
+                              ? AppStrings.addFamilyHistory.tr
+                              : AppStrings.addLifeStyle.tr,
                           onTap: () {
-                        if(controller.historyType=="Current Medication"){
-                          Get.to(AddMedicationScreen());
-                        }else if(controller.historyType=="Vaccination History"){
-                          Get.to(AddVaccinationScreen());
-                        }else if(controller.historyType.value ==
-                            "Family History"){
-                          Get.to(AddFamilyHistory());
-                        }else{
-                          Get.to(AddLifeStyleScreen());
-                        };
+                            if(controller.historyType.value == AppStrings.currentMedication){
+                              Get.to(AddMedicationScreen());
+                            }else if(controller.historyType.value == AppStrings.vaccinationHistory){
+                              Get.to(AddVaccinationScreen());
+                            }else if(controller.historyType.value == AppStrings.familyHistory){
+                              Get.to(AddFamilyHistory());
+                            }else{
+                              Get.to(AddLifeStyleScreen());
+                            }
                           },
                         ),
                       ),
@@ -140,11 +150,12 @@ class MedicalHistory extends GetView<ProfileController> {
       ),
     );
   }
-  Widget historyType(String title, double width, String icon) {
+
+  Widget historyType(String title, String value, double width, String icon) {
     return Obx(
-      () => InkWell(
+          () => InkWell(
         onTap: () {
-          controller.historyType.value = title;
+          controller.historyType.value = value;
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -156,9 +167,9 @@ class MedicalHistory extends GetView<ProfileController> {
                   height: 10.h,
                   fit: BoxFit.fill,
                   color:
-                      controller.historyType.value == title
-                          ? AppColors.primaryColor
-                          : AppColors.lightGrey,
+                  controller.historyType.value == value
+                      ? AppColors.primaryColor
+                      : AppColors.lightGrey,
                 ),
                 2.horizontalSpace,
                 Text(
@@ -167,9 +178,9 @@ class MedicalHistory extends GetView<ProfileController> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color:
-                        controller.historyType.value == title
-                            ? AppColors.primaryColor
-                            : AppColors.lightGrey,
+                    controller.historyType.value == value
+                        ? AppColors.primaryColor
+                        : AppColors.lightGrey,
                     fontSize: 9.sp,
                     fontWeight: FontWeight.w700,
                   ),
@@ -177,15 +188,15 @@ class MedicalHistory extends GetView<ProfileController> {
               ],
             ),
             2.verticalSpace,
-            controller.historyType.value == title
+            controller.historyType.value == value
                 ? Container(
-                  width: width.w,
-                  height: 3.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(7.sp),
-                  ),
-                )
+              width: width.w,
+              height: 3.h,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(7.sp),
+              ),
+            )
                 : SizedBox(),
           ],
         ),

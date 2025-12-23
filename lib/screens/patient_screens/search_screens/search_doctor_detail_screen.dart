@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart'; // Added import
 import '../../../widgets/patient_widgets/search_widgets/doctor_detail_widget.dart';
 import '../../../widgets/patient_widgets/search_widgets/rating_widget.dart';
 import 'book_appointment_screen.dart';
@@ -36,9 +37,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -47,7 +46,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Doctor Details",
+                    AppStrings.doctorDetails.tr, // Localized
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -62,7 +61,6 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-
                       30.verticalSpace,
                       CircleAvatar(
                         radius: 50.r,
@@ -109,7 +107,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "Show Number",
+                          AppStrings.showNumber.tr, // Localized
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w600,
@@ -120,18 +118,42 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          RatingWidget(icon: Icons.person_outline_outlined, iconCircleColor: AppColors.primaryColor, metricText: "2000+", labelText: "patients"),
-                          RatingWidget(icon: Icons.ac_unit, iconCircleColor: AppColors.green, metricText: "10+", labelText: "experience"),
-                          RatingWidget(icon: Icons.star_border, iconCircleColor: AppColors.orange, metricText: "5", labelText: "rating"),
-                          RatingWidget(icon: Icons.mark_chat_unread_outlined, iconCircleColor: AppColors.primaryColor.withOpacity(0.9), metricText: "1872", labelText: "reviews"),
+                          RatingWidget(
+                            icon: Icons.person_outline_outlined,
+                            iconCircleColor: AppColors.primaryColor,
+                            metricText: "2000+",
+                            labelText: AppStrings.patients.tr, // Localized
+                          ),
+                          RatingWidget(
+                            icon: Icons.ac_unit,
+                            iconCircleColor: AppColors.green,
+                            metricText: "10+",
+                            labelText: AppStrings.experience.tr, // Localized
+                          ),
+                          RatingWidget(
+                            icon: Icons.star_border,
+                            iconCircleColor: AppColors.orange,
+                            metricText: "5",
+                            labelText: AppStrings.rating.tr, // Localized
+                          ),
+                          RatingWidget(
+                            icon: Icons.mark_chat_unread_outlined,
+                            iconCircleColor: AppColors.primaryColor.withOpacity(0.9),
+                            metricText: "1872",
+                            labelText: AppStrings.reviews.tr, // Localized
+                          ),
                         ],
                       ),
                       10.verticalSpace,
-                      DoctorDetailWidget(),
+                      const DoctorDetailWidget(), // Ensure this widget uses .tr for bio headers
                       15.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Book  Appointment", onTap: (){
-                        Get.to(BookAppointmentScreen(model: model));
-                      }),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.bookAppointment.tr, // Localized
+                        onTap: () {
+                          Get.to(BookAppointmentScreen(model: model));
+                        },
+                      ),
                       30.verticalSpace,
                     ],
                   ),

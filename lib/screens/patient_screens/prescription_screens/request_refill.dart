@@ -6,11 +6,13 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/prescription_widgets/refill_indicator.dart';
 
 class RequestRefill extends StatelessWidget {
-   RequestRefill({super.key});
-PrescriptionController prescriptionController=Get.find();
+  RequestRefill({super.key});
+  final PrescriptionController prescriptionController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,13 +21,13 @@ PrescriptionController prescriptionController=Get.find();
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.onboardingBackground, Colors.white,],
+            colors: [AppColors.onboardingBackground, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -33,7 +35,7 @@ PrescriptionController prescriptionController=Get.find();
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       prescriptionController.noteController.clear();
                       Get.back();
                     },
@@ -45,7 +47,7 @@ PrescriptionController prescriptionController=Get.find();
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Request Refill",
+                    AppStrings.requestRefill.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -57,7 +59,7 @@ PrescriptionController prescriptionController=Get.find();
               ),
               20.verticalSpace,
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -66,7 +68,7 @@ PrescriptionController prescriptionController=Get.find();
                       color: Colors.grey.withOpacity(0.1),
                       spreadRadius: 1,
                       blurRadius: 10,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
@@ -76,13 +78,13 @@ PrescriptionController prescriptionController=Get.find();
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Prescriptions',
+                          AppStrings.prescriptions.tr,
                           style: TextStyle(
                             fontSize: 17.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Amoxicillin 500mg',
                           style: TextStyle(
@@ -90,7 +92,7 @@ PrescriptionController prescriptionController=Get.find();
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           '1 tablet, twice daily after meals',
                           style: TextStyle(
@@ -98,7 +100,7 @@ PrescriptionController prescriptionController=Get.find();
                             color: AppColors.darkGrey,
                           ),
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Text(
                           'Dr. Camille Dupont',
                           style: TextStyle(
@@ -108,8 +110,8 @@ PrescriptionController prescriptionController=Get.find();
                         ),
                       ],
                     ),
-                    Spacer(),
-                    RefillIndicator(
+                    const Spacer(),
+                    const RefillIndicator(
                       progress: 0.6,
                       label: 'Refill 2',
                     ),
@@ -117,18 +119,18 @@ PrescriptionController prescriptionController=Get.find();
                   ],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Text(
-                'Refill cycles',
-                style: TextStyle(
+                AppStrings.refillCycles.tr,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -138,9 +140,9 @@ PrescriptionController prescriptionController=Get.find();
                       () => DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: prescriptionController.selectedCycle.value,
-                      icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+                      icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                       isExpanded: true,
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
+                      style: const TextStyle(fontSize: 16, color: Colors.black87),
                       onChanged: prescriptionController.setCycle,
                       items: prescriptionController.refillCycles
                           .map<DropdownMenuItem<String>>((String value) {
@@ -153,16 +155,16 @@ PrescriptionController prescriptionController=Get.find();
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Text(
-                'Note',
-                style: TextStyle(
+                AppStrings.noteLabel.tr,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -172,27 +174,35 @@ PrescriptionController prescriptionController=Get.find();
                 child: TextField(
                   maxLines: 5,
                   controller: prescriptionController.noteController,
-                  onTapOutside: (_){
+                  onTapOutside: (_) {
                     FocusManager.instance.primaryFocus!.unfocus();
                   },
                   decoration: InputDecoration(
-                    hintText: 'Write a note to your doctor',
+                    hintText: AppStrings.writeNoteHint.tr,
                     hintStyle: TextStyle(color: Colors.grey.shade500),
                     border: InputBorder.none,
-                    contentPadding:
-                    EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                   ),
                 ),
               ),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Send Request", onTap: (){
-                prescriptionController.sendRequest();
-              }),
+              CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.sendRequest.tr,
+                  onTap: () {
+                    prescriptionController.sendRequest();
+                  }),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Cancel", onTap: (){
-                prescriptionController.noteController.clear();
-                Get.back();
-              },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+              CustomButton(
+                borderRadius: 15,
+                text: AppStrings.cancel.tr,
+                onTap: () {
+                  prescriptionController.noteController.clear();
+                  Get.back();
+                },
+                bgColor: AppColors.inACtiveButtonColor,
+                fontColor: Colors.black,
+              ),
             ],
           ),
         ),

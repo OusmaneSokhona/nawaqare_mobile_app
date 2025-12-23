@@ -8,6 +8,7 @@ import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class AddMedicationScreen extends GetView<ProfileController> {
   const AddMedicationScreen({super.key});
@@ -45,7 +46,7 @@ class AddMedicationScreen extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add Medication",
+                    AppStrings.addMedication.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -61,24 +62,24 @@ class AddMedicationScreen extends GetView<ProfileController> {
                     children: [
                       30.verticalSpace,
                       CustomTextField(
-                        labelText: "Medication Name",
-                        hintText: "Metformin 500mg",
+                        labelText: AppStrings.medicationName.tr,
+                        hintText: AppStrings.metforminHint.tr,
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Dosage",
-                        hintText: "1 tablet twice daily",
+                        labelText: AppStrings.dosage.tr,
+                        hintText: AppStrings.dosageHint.tr,
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Doctor",
-                        hintText: "Dr. Maria Waston",
+                        labelText: AppStrings.doctor.tr,
+                        hintText: AppStrings.doctorHint.tr,
                       ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Refill",
+                          AppStrings.refill.tr,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
@@ -103,13 +104,11 @@ class AddMedicationScreen extends GetView<ProfileController> {
                             children: [
                               Text(
                                 controller.formattedDate,
-                                // Display the formatted date
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color:
-                                      controller.selectedDate == null
-                                          ? Colors.grey
-                                          : Colors.black,
+                                  color: controller.selectedDate == null
+                                      ? Colors.grey
+                                      : Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -124,15 +123,25 @@ class AddMedicationScreen extends GetView<ProfileController> {
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: "Status",
+                        title: AppStrings.status.tr,
                         items: controller.medicationStatusList,
                         selectedValue: controller.medicationStatus,
                         onChanged: (_) {},
                       ),
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Add & Save", onTap: (){}),
+                      CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.addAndSave.tr,
+                          onTap: () {}
+                      ),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.cancel.tr,
+                        onTap: () { Get.back(); },
+                        bgColor: AppColors.inACtiveButtonColor,
+                        fontColor: Colors.black,
+                      ),
                     ],
                   ),
                 ),
@@ -145,7 +154,7 @@ class AddMedicationScreen extends GetView<ProfileController> {
   }
 
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -154,7 +163,6 @@ class AddMedicationScreen extends GetView<ProfileController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
@@ -182,10 +190,10 @@ class AddMedicationScreen extends GetView<ProfileController> {
             ),
           ),
           Obx(
-            () => DropdownButtonFormField<String>(
+                () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 14.0,
                 ),
@@ -199,13 +207,12 @@ class AddMedicationScreen extends GetView<ProfileController> {
               isExpanded: true,
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items:
-                  items.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               onChanged: onChanged,
             ),
           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class CreditCardWidget extends StatelessWidget {
   final Color baseColor;
@@ -91,7 +93,7 @@ class CreditCardWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'CARD HOLDER',
+                              AppStrings.cardHolderLabel.tr,
                               style: TextStyle(
                                 color: textColor,
                                 fontSize: 9,

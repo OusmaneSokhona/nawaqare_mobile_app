@@ -1,18 +1,18 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/patient_controllers/appointment_controllers/feedback_controller.dart';
 import '../../../utils/app_colors.dart';
-
+import '../../../utils/app_strings.dart'; // Added import
 
 class ConsultaionFinishedScreen extends StatelessWidget {
   ConsultaionFinishedScreen({super.key});
 
   @override
-  FeedbackController controller = Get.put(FeedbackController());
+  // Note: Standard practice is to use Get.find if it's already injected,
+  // or put it inside the build method/binding.
+  final FeedbackController controller = Get.put(FeedbackController());
 
   @override
   Widget build(BuildContext context) {
@@ -28,37 +28,39 @@ class ConsultaionFinishedScreen extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.sp),
+          padding: EdgeInsets.symmetric(horizontal: 20.sp),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 70.verticalSpace,
+                70.verticalSpace,
                 Row(
-                  children: const [
-                    Icon(Icons.check_circle, color: Colors.green, size: 36),
-                    SizedBox(width: 10),
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.green, size: 36),
+                    const SizedBox(width: 10),
                     Text(
-                      'Consultation Finished',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      AppStrings.consultationFinished.tr,
+                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'Thank You For Visiting Dr. Maria Waston',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Text(
+                  AppStrings.thankYouDoctor.trParams({'name': 'Dr. Maria Waston'}),
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 50),
-                const Text(
-                  'How would you rate this\nvisit?',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, height: 1.2),
-                  textAlign: TextAlign.center,
+                Center(
+                  child: Text(
+                    AppStrings.visitRatingTitle.tr,
+                    style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, height: 1.2),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Obx(() => Center(child: _buildStarRating())),
                 const SizedBox(height: 40),
-                Container(
+                SizedBox(
                   height: 250.h,
                   child: TextField(
                     onChanged: controller.updateReviewText,
@@ -66,8 +68,8 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                     expands: true,
                     textAlignVertical: TextAlignVertical.top,
                     decoration: InputDecoration(
-                      hintText: 'Tell us about your experience......',
-                      hintStyle:  TextStyle(color:AppColors.darkGrey),
+                      hintText: AppStrings.feedbackHint.tr,
+                      hintStyle: TextStyle(color: AppColors.darkGrey),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide.none,
@@ -122,8 +124,8 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child:  Text(
-                'View Prescription',
+              child: Text(
+                AppStrings.viewPrescription.tr,
                 style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: Colors.black87),
               ),
             ),
@@ -143,8 +145,8 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child:  Text(
-                'Send',
+              child: Text(
+                AppStrings.send.tr,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
               ),
             ),

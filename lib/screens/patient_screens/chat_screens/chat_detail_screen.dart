@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_images.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../controllers/patient_controllers/chat_controller.dart';
 import '../../../models/chat_model.dart';
@@ -20,9 +20,15 @@ class ChatDetailScreen extends StatelessWidget {
       body: Container(
         height: 1.sh,
         width: 1.sw,
-        decoration: BoxDecoration(gradient: LinearGradient(colors: [AppColors.onboardingBackground,Colors.white],begin: Alignment.topCenter,end: Alignment.bottomCenter)),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.onboardingBackground, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(vertical: 12.h,horizontal: 5.w),
+          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w),
           child: Column(
             children: [
               60.verticalSpace,
@@ -57,16 +63,16 @@ class ChatDetailScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                       Text(
-                        'Online',
+                      Text(
+                        AppStrings.online.tr,
                         style: TextStyle(
-                          color:AppColors.lightGrey ,
+                          color: AppColors.lightGrey,
                           fontSize: 12,
                         ),
                       ),
                     ],
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Icon(Icons.more_vert, color: AppColors.primaryColor),
                   10.horizontalSpace,
                 ],
@@ -75,14 +81,18 @@ class ChatDetailScreen extends StatelessWidget {
                 child: Obx(
                       () => ListView.builder(
                     reverse: true,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
                     itemCount: controller.messages.length,
                     itemBuilder: (context, index) {
-                      final reversedMessages = controller.messages.reversed.toList();
+                      final reversedMessages =
+                      controller.messages.reversed.toList();
                       final message = reversedMessages[index];
 
-                      final showDateSeparator = index == reversedMessages.length - 1 ||
-                          message.time.day != reversedMessages[index + 1].time.day;
+                      final showDateSeparator =
+                          index == reversedMessages.length - 1 ||
+                              message.time.day !=
+                                  reversedMessages[index + 1].time.day;
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,12 +102,16 @@ class ChatDetailScreen extends StatelessWidget {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 reversedMessages.last.text,
-                                style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                                style: TextStyle(
+                                    color: Colors.grey.shade600, fontSize: 12),
                                 textAlign: TextAlign.center,
                               ),
                             ),
-                          if (showDateSeparator) DateSeparator(date: message.time),
-                          MessageBubble(message: message, doctorImageUrl: doctor.imageUrl),
+                          if (showDateSeparator)
+                            DateSeparator(date: message.time),
+                          MessageBubble(
+                              message: message,
+                              doctorImageUrl: doctor.imageUrl),
                         ],
                       );
                     },
@@ -114,10 +128,10 @@ class ChatDetailScreen extends StatelessWidget {
 }
 
 class DateSeparator extends StatelessWidget {
-  ChatController chatController=Get.find();
+  final ChatController chatController = Get.find();
   final DateTime date;
 
-   DateSeparator({required this.date, super.key});
+  DateSeparator({required this.date, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -144,19 +158,23 @@ class MessageBubble extends StatelessWidget {
   final Message message;
   final String doctorImageUrl;
 
-   MessageBubble({
+  MessageBubble({
     required this.message,
     required this.doctorImageUrl,
     super.key,
   });
-  ChatController chatController=Get.find();
+
+  final ChatController chatController = Get.find();
+
   @override
   Widget build(BuildContext context) {
-    if (message.text.contains('Encrypted Messaging') || message.text.contains('....')) {
+    if (message.text.contains('Encrypted Messaging') ||
+        message.text.contains('....')) {
       return Container();
     }
 
-    final alignment = message.isMe ? Alignment.centerRight : Alignment.centerLeft;
+    final alignment =
+    message.isMe ? Alignment.centerRight : Alignment.centerLeft;
     final color = message.isMe ? Colors.blue.shade600 : Colors.white;
     final textColor = message.isMe ? Colors.white : Colors.black;
     final radius = message.isMe
@@ -201,23 +219,11 @@ class MessageBubble extends StatelessWidget {
           style: const TextStyle(fontSize: 10, color: Colors.grey),
         ),
         const SizedBox(width: 4),
-        if (message.isMe && message.isSeen)
-          const Icon(
-            Icons.done_all,
+        if (message.isMe)
+          Icon(
+            message.isSeen ? Icons.done_all : Icons.done,
             size: 14,
-            color: Colors.blue,
-          ),
-        if (message.isMe && !message.isSeen)
-          const Icon(
-            Icons.done,
-            size: 14,
-            color: Colors.grey,
-          ),
-        if (!message.isMe && message.isSeen)
-          const Icon(
-            Icons.done_all,
-            size: 14,
-            color: Colors.blue,
+            color: message.isSeen ? Colors.blue : Colors.grey,
           ),
       ],
     );
@@ -225,10 +231,12 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: Column(
-        crossAxisAlignment: message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment:
+        message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment:
+            message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (!message.isMe)
@@ -243,9 +251,8 @@ class MessageBubble extends StatelessWidget {
                     ),
                   ),
                 ),
-              if (!message.isMe) bubble else const SizedBox(),
-              if (message.isMe) bubble else const SizedBox(),
-              if (message.isMe) const SizedBox(width: 8) else const SizedBox(),
+              bubble,
+              if (message.isMe) const SizedBox(width: 8),
             ],
           ),
           Padding(
@@ -291,14 +298,15 @@ class ChatInputField extends StatelessWidget {
               child: TextField(
                 controller: controller.messageInputController,
                 decoration: InputDecoration(
-                  hintText: 'Message',
+                  hintText: AppStrings.typeAMessage.tr,
                   hintStyle: TextStyle(color: Colors.grey.shade600),
                   border: InputBorder.none,
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.sentiment_satisfied_alt_outlined, color: Colors.grey),
+                        icon: const Icon(Icons.sentiment_satisfied_alt_outlined,
+                            color: Colors.grey),
                         onPressed: () {},
                       ),
                       IconButton(
@@ -306,7 +314,8 @@ class ChatInputField extends StatelessWidget {
                         onPressed: () {},
                       ),
                       IconButton(
-                        icon: const Icon(Icons.camera_alt_outlined, color: Colors.grey),
+                        icon: const Icon(Icons.camera_alt_outlined,
+                            color: Colors.grey),
                         onPressed: () {},
                       ),
                     ],

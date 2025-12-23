@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:get/get.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
+import '../../../utils/app_strings.dart';
 
 class OrderStatusCard extends StatelessWidget {
-
-  const OrderStatusCard({super.key,});
+  const OrderStatusCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const List<String> progressStages = [
-      'Order',
-      'Preparing',
-      'Ready',
-      'Pick up',
+    final List<String> progressStages = [
+      AppStrings.stepOrder.tr,
+      AppStrings.stepPreparing.tr,
+      AppStrings.stepReady.tr,
+      AppStrings.stepPickup.tr,
     ];
 
     return Container(
@@ -37,7 +37,7 @@ class OrderStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Central Pharmacy",
+            AppStrings.centralPharmacy.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -47,7 +47,7 @@ class OrderStatusCard extends StatelessWidget {
           ),
           5.verticalSpace,
           Text(
-            "12 Health St,75000 Paris",
+            AppStrings.pharmacyAddress.tr,
             style: TextStyle(
               color: Colors.grey.shade600,
               fontSize: 14.sp,
@@ -63,26 +63,24 @@ class OrderStatusCard extends StatelessWidget {
           // 3. Progress Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: progressStages
-                .map(
-                  (stage) => Text(
+            children: progressStages.asMap().entries.map((entry) {
+              int idx = entry.key;
+              String stage = entry.value;
+              return Text(
                 stage,
                 style: TextStyle(
-                  color: progressStages.indexOf(stage) <= 2
-                      ? AppColors.primaryColor
-                      : Colors.grey.shade500,
+                  color: idx <= 2 ? AppColors.primaryColor : Colors.grey.shade500,
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppFonts.jakartaMedium,
                 ),
-              ),
-            )
-                .toList(),
+              );
+            }).toList(),
           ),
           10.verticalSpace,
           const Divider(color: AppColors.lightGrey, thickness: 1),
           Text(
-            'Order Summary',
+            AppStrings.orderSummary.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -100,15 +98,15 @@ class OrderStatusCard extends StatelessWidget {
             ),
           ),
           5.verticalSpace,
-          _buildInfoRow('Order ID: ', '#${12134}'),
+          _buildInfoRow('${AppStrings.orderIdLabel.tr} ', '#${12134}'),
           5.verticalSpace,
-          _buildInfoRow('Expected By: ',"Sep 30, 2025"),
+          _buildInfoRow('${AppStrings.expectedBy.tr} ', "Sep 30, 2025"),
           10.verticalSpace,
           const Divider(color: AppColors.lightGrey, thickness: 1),
           10.verticalSpace,
 
           Text(
-            'Pick up Address',
+            AppStrings.pickupAddress.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -132,7 +130,7 @@ class OrderStatusCard extends StatelessWidget {
 
   Widget _buildProgressBar(BuildContext context) {
     double totalStages = 4.0;
-    double progressValue = (3) / totalStages;
+    double progressValue = 3 / totalStages;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.sp),

@@ -1,5 +1,6 @@
-
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../../../utils/app_strings.dart';
 
 class FamilyHistoryCard extends StatelessWidget {
   const FamilyHistoryCard({super.key});
@@ -18,34 +19,35 @@ class FamilyHistoryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Text(
-              'Relation Father',
-              style: TextStyle(
+            Text(
+              // Using trParams for dynamic relation name
+              AppStrings.relationLabel.trParams({'relation': 'Father'}),
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1F2937),
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Diabete',
-              style: TextStyle(
+            Text(
+              AppStrings.diabetes.tr,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
                 height: 1.5,
               ),
             ),
-            const Text(
-              'Age: 60 year',
-              style: TextStyle(
+            Text(
+              AppStrings.ageLabel.trParams({'age': '60'}),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
                 height: 1.5,
               ),
             ),
-            const Text(
-              'Severity: Mild',
-              style: TextStyle(
+            Text(
+              AppStrings.severityLabel.trParams({'severity': AppStrings.mild.tr}),
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
                 height: 1.5,
@@ -53,21 +55,21 @@ class FamilyHistoryCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             RichText(
-              text: const TextSpan(
-                style: TextStyle(
+              text: TextSpan(
+                style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black,
                   height: 1.5,
                 ),
                 children: <TextSpan>[
                   TextSpan(
-                    text: 'Note: ',
-                    style: TextStyle(
+                    text: AppStrings.note.tr,
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   TextSpan(
-                    text: 'Avoid antibiotics in same family',
+                    text: AppStrings.antibioticWarning.tr,
                   ),
                 ],
               ),
@@ -78,9 +80,9 @@ class FamilyHistoryCard extends StatelessWidget {
               thickness: 1,
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Last updated: 12 Sept 2025',
-              style: TextStyle(
+            Text(
+              AppStrings.lastUpdated.trParams({'date': '12 Sept 2025'}),
+              style: const TextStyle(
                 fontSize: 14,
                 color: Color(0xFF6B7280),
               ),

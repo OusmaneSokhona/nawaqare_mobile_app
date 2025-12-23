@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/patient_screens/order_screens/track_order_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
-import 'package:patient_app/widgets/patient_widgets/order_widgets/track_order_card.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../utils/app_fonts.dart';
 
@@ -16,10 +16,21 @@ class OrderTrackingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Align(alignment:Alignment.centerLeft,child: Text("Current Order",style: TextStyle(fontSize:18.sp,fontFamily:AppFonts.jakartaMedium,fontWeight: FontWeight.w700,color: Colors.black),)),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            AppStrings.currentOrder.tr,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontFamily: AppFonts.jakartaMedium,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
+          ),
+        ),
         5.verticalSpace,
         InkWell(
-          onTap: (){
+          onTap: () {
             Get.to(TrackOrderScreen());
           },
           child: Container(
@@ -42,8 +53,8 @@ class OrderTrackingCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                     Text(
-                      'Track Order',
+                    Text(
+                      AppStrings.trackOrder.tr,
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
@@ -55,31 +66,33 @@ class OrderTrackingCard extends StatelessWidget {
                         Get.to(TrackOrderScreen());
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:  AppColors.primaryColor,
+                        backgroundColor: AppColors.primaryColor,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                         elevation: 0,
                         minimumSize: Size.zero,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
-                      child: const Text('Detail', style: TextStyle(fontSize: 14)),
+                      child: Text(AppStrings.detail.tr,
+                          style: TextStyle(fontSize: 14)),
                     ),
                   ],
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Package ID:1234566',
+                Text(
+                  '${AppStrings.packageId.tr}:1234566',
                   style: TextStyle(
                     fontSize: 14,
                     color: Color(0xFF6B7280),
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'From: Pharmacie Centrale de paris',
+                Text(
+                  '${AppStrings.from.tr}: Pharmacie Centrale de paris',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -92,7 +105,7 @@ class OrderTrackingCard extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    'Estimated: 45 mint',
+                    '${AppStrings.estimated.tr}: 45 ${AppStrings.mint.tr}',
                     style: TextStyle(
                       fontSize: 14,
                       color: Color(0xFF6B7280),
@@ -111,9 +124,14 @@ class OrderTrackingCard extends StatelessWidget {
 class OrderProgressStepper extends StatelessWidget {
   final int currentStep;
 
-  const OrderProgressStepper({required this.currentStep, super.key});
+  OrderProgressStepper({required this.currentStep, super.key});
 
-  static const List<String> stepTitles = ['Order', 'Preparing', 'In Delivery', 'Delivered'];
+  final List<String> stepTitles = [
+    AppStrings.orderStep.tr,
+    AppStrings.preparingStep.tr,
+    AppStrings.inDeliveryStep.tr,
+    AppStrings.deliveredStep.tr
+  ];
   static const Color activeColor = Color(0xFF4C86F7);
   static const Color completedColor = Color(0xFF10B981);
   static const Color inactiveColor = Color(0xFFE5E7EB);
@@ -149,8 +167,12 @@ class OrderProgressStepper extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: isCompleted || isActive ? FontWeight.w600 : FontWeight.normal,
-                  color: isCompleted || isActive ? Color(0xFF1F2937) : Color(0xFF6B7280),
+                  fontWeight: isCompleted || isActive
+                      ? FontWeight.w600
+                      : FontWeight.normal,
+                  color: isCompleted || isActive
+                      ? Color(0xFF1F2937)
+                      : Color(0xFF6B7280),
                 ),
               ),
             ],
@@ -171,13 +193,17 @@ class OrderProgressStepper extends StatelessWidget {
       circleColor = activeColor;
       child = Text(
         '$step',
-        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+            color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
       );
     } else {
       circleColor = inactiveColor;
       child = Text(
         '$step',
-        style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13, fontWeight: FontWeight.w500),
+        style: const TextStyle(
+            color: Color(0xFF6B7280),
+            fontSize: 13,
+            fontWeight: FontWeight.w500),
       );
     }
 
@@ -187,7 +213,9 @@ class OrderProgressStepper extends StatelessWidget {
       decoration: BoxDecoration(
         color: circleColor,
         shape: BoxShape.circle,
-        border: isActive || isCompleted ? null : Border.all(color: inactiveColor, width: 1.5),
+        border: isActive || isCompleted
+            ? null
+            : Border.all(color: inactiveColor, width: 1.5),
       ),
       alignment: Alignment.center,
       child: child,

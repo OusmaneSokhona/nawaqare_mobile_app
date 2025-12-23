@@ -8,6 +8,7 @@ import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/patient_widgets/profile_widgets/medication_allergy_card.dart';
 import 'add_allergy_screen.dart';
+import '../../../utils/app_strings.dart';
 
 class AllergiesScreen extends GetView<ProfileController> {
   AllergiesScreen({super.key});
@@ -44,7 +45,7 @@ class AllergiesScreen extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Allergies",
+                    AppStrings.allergies.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -73,7 +74,13 @@ class AllergiesScreen extends GetView<ProfileController> {
                           );
                         },
                       ),
-                      CustomButton(borderRadius: 15, text: "Add Allergy", onTap: (){Get.to(AddAllergyScreen());}),
+                      CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.addAllergy.tr,
+                          onTap: (){
+                            Get.to(AddAllergyScreen());
+                          }
+                      ),
                       30.verticalSpace,
                     ],
                   ),

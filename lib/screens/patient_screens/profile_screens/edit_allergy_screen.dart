@@ -7,10 +7,12 @@ import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 
 class EditAllergyScreen extends GetView<ProfileController> {
-  EditAllergyScreen({super.key});
+  const EditAllergyScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +46,7 @@ class EditAllergyScreen extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Allergy",
+                    AppStrings.editAllergy.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -59,19 +61,19 @@ class EditAllergyScreen extends GetView<ProfileController> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      buildDropdownField(title: "Medical", items: controller.allergyTypeList, selectedValue: controller.selectedAllergy, onChanged: (_){}),
+                      buildDropdownField(title: AppStrings.medical.tr, items: controller.allergyTypeList, selectedValue: controller.selectedAllergy, onChanged: (_){}),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Allergen name",hintText: "Penicillin",),
+                      CustomTextField(labelText: AppStrings.allergenName.tr, hintText: AppStrings.penicillin.tr,),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Reaction",hintText: "Rash",),
+                      CustomTextField(labelText: AppStrings.reaction.tr, hintText: AppStrings.rash.tr,),
                       10.verticalSpace,
-                      buildDropdownField(title: "Severity", items: controller.severityList, selectedValue: controller.selectedSeverity, onChanged: (_){}),
+                      buildDropdownField(title: AppStrings.severity.tr, items: controller.severityList, selectedValue: controller.selectedSeverity, onChanged: (_){}),
                       10.verticalSpace,
-                      buildDropdownField(title: "Allergy Status", items: controller.statusList, selectedValue: controller.selectedAllergyStatus, onChanged: (_){}),
+                      buildDropdownField(title: AppStrings.allergyStatus.tr, items: controller.statusList, selectedValue: controller.selectedAllergyStatus, onChanged: (_){}),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text("Date Identified",style: TextStyle(color: AppColors.darkGrey,fontWeight: FontWeight.w600,fontSize: 15.sp),),
+                        child: Text(AppStrings.dateIdentified.tr, style: TextStyle(color: AppColors.darkGrey, fontWeight: FontWeight.w600, fontSize: 15.sp),),
                       ),
                       InkWell(
                         onTap: () => _showDatePicker(context),
@@ -90,13 +92,9 @@ class EditAllergyScreen extends GetView<ProfileController> {
                             children: [
                               Text(
                                 controller.formattedDate,
-                                // Display the formatted date
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color:
-                                  controller.selectedDate == null
-                                      ? Colors.grey
-                                      : Colors.black,
+                                  color: controller.selectedDate == null ? Colors.grey : Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -113,8 +111,8 @@ class EditAllergyScreen extends GetView<ProfileController> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Upload Document/Photo',
-                          style: TextStyle(
+                          AppStrings.uploadDocPhoto.tr,
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
@@ -152,20 +150,18 @@ class EditAllergyScreen extends GetView<ProfileController> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  controller.selectedFileName.value == 'No file selected' || controller.selectedFileName.value == 'File selection cancelled'
-                                      ? 'Upload PDF/JPEG'
-                                      : controller.selectedFileName.value!,
+                                  _getFileNameText(controller.selectedFileName.value),
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                     color: Colors.black,
                                   ),
                                 ),
                                 if (controller.selectedFileName.value != 'No file selected' && controller.selectedFileName.value != 'File selection cancelled')
-                                  const Text(
-                                    'Tap to select a new file',
-                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  Text(
+                                    AppStrings.tapToSelectNewFile.tr,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                                   ),
                               ],
                             ),
@@ -176,8 +172,8 @@ class EditAllergyScreen extends GetView<ProfileController> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Note',
-                          style: TextStyle(
+                          AppStrings.note.tr,
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
@@ -197,18 +193,18 @@ class EditAllergyScreen extends GetView<ProfileController> {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
-                            hintText: 'Write a note to your doctor',
+                            hintText: AppStrings.writeNoteToDoctor.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
                             contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
                         ),
                       ),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Save", onTap: (){}),
+                      CustomButton(borderRadius: 15, text: AppStrings.save.tr, onTap: (){}),
                       15.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(borderRadius: 15, text: AppStrings.cancel.tr, onTap: (){Get.back();}, bgColor: AppColors.inACtiveButtonColor, fontColor: Colors.black,),
                       30.verticalSpace,
                     ],
                   ),
@@ -220,8 +216,16 @@ class EditAllergyScreen extends GetView<ProfileController> {
       ),
     );
   }
+
+  // Helper method to translate file status
+  String _getFileNameText(String? value) {
+    if (value == 'No file selected') return AppStrings.uploadPdfJpeg.tr;
+    if (value == 'File selection cancelled') return AppStrings.selectionCancelled.tr;
+    return value ?? AppStrings.uploadPdfJpeg.tr;
+  }
+
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -230,10 +234,10 @@ class EditAllergyScreen extends GetView<ProfileController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,
@@ -260,7 +264,7 @@ class EditAllergyScreen extends GetView<ProfileController> {
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.0),
                     borderSide: BorderSide.none
@@ -269,7 +273,7 @@ class EditAllergyScreen extends GetView<ProfileController> {
                 fillColor: Colors.white,
               ),
               isExpanded: true,
-              icon:  Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
               items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(

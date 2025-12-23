@@ -5,11 +5,13 @@ import 'package:patient_app/controllers/patient_controllers/order_controller.dar
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/order_widgets/order_widget.dart';
 
 class OrderScreen extends StatelessWidget {
   OrderScreen({super.key});
-  OrderController orderController=Get.put(OrderController());
+  final OrderController orderController = Get.put(OrderController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +20,7 @@ class OrderScreen extends StatelessWidget {
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.onboardingBackground, Colors.white,],
+            colors: [AppColors.onboardingBackground, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -31,7 +33,7 @@ class OrderScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Image.asset(
@@ -42,7 +44,7 @@ class OrderScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Orders",
+                    AppStrings.orders.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -66,28 +68,23 @@ class OrderScreen extends StatelessWidget {
                     Obx(
                           () => InkWell(
                         onTap: () {
-                          orderController.orderType.value =
-                          "ongoingOrders";
+                          orderController.orderType.value = "ongoingOrders";
                           orderController.searchQuery.value = '';
                         },
                         child: Container(
                           height: 55.h,
                           width: 0.455.sw,
                           decoration: BoxDecoration(
-                            color:
-                            orderController.orderType.value ==
-                                "ongoingOrders"
+                            color: orderController.orderType.value == "ongoingOrders"
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Ongoing Orders",
+                            AppStrings.ongoingOrders.tr,
                             style: TextStyle(
-                              color:
-                              orderController.orderType.value ==
-                                  "ongoingOrders"
+                              color: orderController.orderType.value == "ongoingOrders"
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 14.5.sp,
@@ -108,18 +105,16 @@ class OrderScreen extends StatelessWidget {
                           height: 55.h,
                           width: 0.455.sw,
                           decoration: BoxDecoration(
-                            color:
-                            orderController.orderType.value == "deliveryHistory"
+                            color: orderController.orderType.value == "deliveryHistory"
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Delivery History",
+                            AppStrings.deliveryHistory.tr,
                             style: TextStyle(
-                              color:
-                              orderController.orderType.value == "deliveryHistory"
+                              color: orderController.orderType.value == "deliveryHistory"
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 14.5.sp,
@@ -141,14 +136,14 @@ class OrderScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14.sp),
                 ),
                 child: TextField(
-                  onTapOutside: (_){
+                  onTapOutside: (_) {
                     FocusManager.instance.primaryFocus!.unfocus();
                   },
                   onChanged: (value) {
                     orderController.searchQuery.value = value;
                   },
                   decoration: InputDecoration(
-                    hintText: "Search by date,status...",
+                    hintText: AppStrings.searchOrderHint.tr,
                     hintStyle: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 15.sp,
@@ -178,7 +173,7 @@ class OrderScreen extends StatelessWidget {
                     return Expanded(
                       child: Center(
                         child: Text(
-                          "No orders found.",
+                          AppStrings.noOrdersFound.tr,
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: Colors.grey,
@@ -190,7 +185,7 @@ class OrderScreen extends StatelessWidget {
 
                   return Expanded(
                     child: ListView.builder(
-                      padding: EdgeInsets.only(top: 20.h,bottom: 20.h,left: 0,right: 0),
+                      padding: EdgeInsets.only(top: 20.h, bottom: 20.h, left: 0, right: 0),
                       itemCount: filteredList.length,
                       itemBuilder: (context, index) {
                         return OrderWidget(

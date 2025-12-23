@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/setting_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-import '../../../utils/app_images.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   HelpCenterScreen({super.key});
 
-  SettingsController controller = Get.put(SettingsController());
+  final SettingsController controller = Get.put(SettingsController());
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +32,7 @@ class HelpCenterScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       "assets/images/back_icon.png",
                       height: 22.h,
@@ -42,7 +40,7 @@ class HelpCenterScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Help Center",
+                    AppStrings.helpCenter.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -54,7 +52,7 @@ class HelpCenterScreen extends StatelessWidget {
               ),
               20.verticalSpace,
               Container(
-               padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 15.h),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
                   color: Colors.white,
@@ -67,13 +65,13 @@ class HelpCenterScreen extends StatelessWidget {
                       10.verticalSpace,
                       _buildContactCard(
                         icon: Icons.phone,
-                        title: 'Phone',
+                        title: AppStrings.phone.tr,
                         subtitle: '03 5432 1234',
                       ),
                       10.verticalSpace,
                       _buildContactCard(
                         icon: Icons.email,
-                        title: 'Email',
+                        title: AppStrings.email.tr,
                         subtitle: 'Abc@gmail.com',
                       ),
                       const SizedBox(height: 15),
@@ -111,7 +109,7 @@ class HelpCenterScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: const Color(0xFF4285F4), size: 30),
+           Icon(icon, color: Color(0xFF4285F4), size: 30),
           const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +125,7 @@ class HelpCenterScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style:  TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: AppColors.primaryColor,
@@ -162,15 +160,15 @@ class HelpCenterScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.live_help_outlined,
-                    color: const Color(0xFF4285F4),
+                    color: Color(0xFF4285F4),
                     size: 30,
                   ),
                   const SizedBox(width: 20),
-                  const Text(
-                    'FAQ\'S',
-                    style: TextStyle(
+                  Text(
+                    AppStrings.faqs.tr,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
@@ -197,18 +195,18 @@ class HelpCenterScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    '1. Are certificates internationally recognized?',
-                    style: TextStyle(fontSize: 16, height: 1.8),
+                    AppStrings.faqQuestion1.tr,
+                    style: const TextStyle(fontSize: 16, height: 1.8),
                   ),
                   Text(
-                    '2. Do I need to renew my membership manually?',
-                    style: TextStyle(fontSize: 16, height: 1.8),
+                    AppStrings.faqQuestion2.tr,
+                    style: const TextStyle(fontSize: 16, height: 1.8),
                   ),
                   Text(
-                    '3. Do I get CME credits with all plans?',
-                    style: TextStyle(fontSize: 16, height: 1.8),
+                    AppStrings.faqQuestion3.tr,
+                    style: const TextStyle(fontSize: 16, height: 1.8),
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/search_controller.dart';
 import 'package:patient_app/screens/patient_screens/search_screens/search_doctor_detail_screen.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../widgets/patient_widgets/search_widgets/doctor_widget.dart';
@@ -12,11 +13,10 @@ import '../notifications_screens/notifications_screen.dart';
 class SearchScreen extends StatelessWidget {
   SearchScreen({super.key});
 
-  SearchControllerCustom searchController = Get.put(SearchControllerCustom());
+  final SearchControllerCustom searchController = Get.put(SearchControllerCustom());
 
   @override
   Widget build(BuildContext context) {
-    // searchController.scrollChange(); // No longer needed here as it's in onInit
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -40,90 +40,89 @@ class SearchScreen extends StatelessWidget {
 
               final double targetHeight = isScrolledPastThreshold ? 120.0 : 0.0;
 
-              final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              final Color targetColor = isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return isScrolledPastThreshold
                   ? AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    height: targetHeight,
-                    width: 1.sw,
-                    color: targetColor,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 8.h,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+                height: targetHeight,
+                width: 1.sw,
+                color: targetColor,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                  vertical: 8.h,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(13.sp),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(13.sp),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 1,
-                                  blurRadius: 5,
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              onTapOutside: (_) {
-                                FocusManager.instance.primaryFocus!.unfocus();
-                              },
-                              onChanged: searchController.updateSearchQuery,
-                              // Use controller method
-                              decoration: InputDecoration(
-                                hintText: 'Search',
-                                border: InputBorder.none,
-                                suffixIcon: InkWell(
-                                  onTap: () {
-                                    Get.bottomSheet(
-                                      SearchBottomSheet(),
-                                      isScrollControlled: true,
-                                      shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Icon(
-                                    Icons.filter_list_outlined,
-                                    size: 20.sp,
+                          ],
+                        ),
+                        child: TextField(
+                          onTapOutside: (_) {
+                            FocusManager.instance.primaryFocus!.unfocus();
+                          },
+                          onChanged: searchController.updateSearchQuery,
+                          decoration: InputDecoration(
+                            hintText: AppStrings.searchHint.tr,
+                            border: InputBorder.none,
+                            suffixIcon: InkWell(
+                              onTap: () {
+                                Get.bottomSheet(
+                                  SearchBottomSheet(),
+                                  isScrollControlled: true,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
                                   ),
-                                ),
-                                icon: Icon(Icons.search, color: Colors.grey),
+                                );
+                              },
+                              child: Icon(
+                                Icons.filter_list_outlined,
+                                size: 20.sp,
                               ),
                             ),
+                            icon: const Icon(Icons.search,
+                                color: Colors.grey),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(NotificationScreen());
-                            },
-                            child: Image.asset(
-                              "assets/images/bell_icon.png",
-                              height: 25.h,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  )
-                  : SizedBox();
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(NotificationScreen());
+                        },
+                        child: Image.asset(
+                          "assets/images/bell_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+                  : const SizedBox();
             }),
             Expanded(
               child: SingleChildScrollView(
@@ -137,7 +136,7 @@ class SearchScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CircleAvatar(
+                           CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
                             foregroundImage: AssetImage(
@@ -159,7 +158,7 @@ class SearchScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Search",
+                          AppStrings.search.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -171,7 +170,7 @@ class SearchScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Let’s find a suitable doctor for you",
+                          AppStrings.findDoctorSub.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFonts.jakartaMedium,
@@ -199,11 +198,10 @@ class SearchScreen extends StatelessWidget {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           onChanged: searchController.updateSearchQuery,
-                          // Use controller method
                           decoration: InputDecoration(
-                            hintText: 'Search',
+                            hintText: AppStrings.searchHint.tr,
                             border: InputBorder.none,
-                            icon: Icon(Icons.search, color: Colors.grey),
+                            icon: const Icon(Icons.search, color: Colors.grey),
                             suffixIcon: InkWell(
                               onTap: () {
                                 Get.bottomSheet(
@@ -235,22 +233,20 @@ class SearchScreen extends StatelessWidget {
                             return Padding(
                               padding: EdgeInsets.only(right: 8.sp),
                               child: Obx(
-                                () => InkWell(
+                                    () => InkWell(
                                   onTap: () {
                                     searchController.selectedCategory.value =
-                                        searchController.doctorsTypeList[index];
+                                    searchController.doctorsTypeList[index];
                                   },
                                   child: Container(
                                     padding: EdgeInsets.all(12.sp),
                                     decoration: BoxDecoration(
-                                      color:
+                                      color: searchController
+                                          .selectedCategory.value ==
                                           searchController
-                                                      .selectedCategory
-                                                      .value ==
-                                                  searchController
-                                                      .doctorsTypeList[index]
-                                              ? AppColors.primaryColor
-                                              : Colors.white,
+                                              .doctorsTypeList[index]
+                                          ? AppColors.primaryColor
+                                          : Colors.white,
                                       borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     child: Text(
@@ -258,14 +254,12 @@ class SearchScreen extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w500,
-                                        color:
+                                        color: searchController
+                                            .selectedCategory.value ==
                                             searchController
-                                                        .selectedCategory
-                                                        .value ==
-                                                    searchController
-                                                        .doctorsTypeList[index]
-                                                ? Colors.white
-                                                : Colors.black,
+                                                .doctorsTypeList[index]
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                     ),
                                   ),
@@ -277,10 +271,10 @@ class SearchScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () => Align(
+                            () => Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "${searchController.doctorList.length} doctors found",
+                            "${searchController.doctorList.length} ${AppStrings.doctorsFound.tr}",
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -291,8 +285,8 @@ class SearchScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () => ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
+                            () => ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
                           itemCount: searchController.doctorList.length,
@@ -306,7 +300,7 @@ class SearchScreen extends StatelessWidget {
                                 );
                               },
                               appointmentModel:
-                                  searchController.doctorList[index],
+                              searchController.doctorList[index],
                             );
                           },
                         ),

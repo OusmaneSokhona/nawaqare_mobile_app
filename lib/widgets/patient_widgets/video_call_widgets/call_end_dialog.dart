@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
 
 import '../../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
@@ -33,7 +34,7 @@ class CallEndDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Ending Call',
+                  AppStrings.endingCall.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24.sp,
@@ -44,7 +45,7 @@ class CallEndDialog extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'End call for both participants?',
+                  AppStrings.endCallForBoth.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                 ),
@@ -72,8 +73,8 @@ class CallEndDialog extends StatelessWidget {
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          'Your feedback is anonymous and helps improve service quality',
-                          style: TextStyle(color: Colors.black, fontSize: 13),
+                          AppStrings.anonymousFeedbackNote.tr,
+                          style: const TextStyle(color: Colors.black, fontSize: 13),
                         ),
                       ),
                     ],
@@ -95,9 +96,9 @@ class CallEndDialog extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Cancel',
-                          style: TextStyle(
+                        child: Text(
+                          AppStrings.cancel.tr,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -109,15 +110,16 @@ class CallEndDialog extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () async {
                           Get.back();
+                          // Localization logic for redirection
                           await LocalStorageUtils.getLoginedDoctor()
                               ? Get.offAll(
-                                MainScreenDoctor(),
-                                binding: AppBinding(),
-                              )
+                            MainScreenDoctor(),
+                            binding: AppBinding(),
+                          )
                               : Get.to(
-                                ConsultaionFinishedScreen(),
-                                binding: AppBinding(),
-                              );
+                            ConsultaionFinishedScreen(),
+                            binding: AppBinding(),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
@@ -128,9 +130,9 @@ class CallEndDialog extends StatelessWidget {
                           ),
                           elevation: 0,
                         ),
-                        child: const Text(
-                          'Confirm',
-                          style: TextStyle(
+                        child: Text(
+                          AppStrings.confirm.tr,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -147,7 +149,7 @@ class CallEndDialog extends StatelessWidget {
             top: 10,
             child: IconButton(
               icon: const Icon(Icons.close, color: Colors.grey),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Get.back(),
             ),
           ),
         ],

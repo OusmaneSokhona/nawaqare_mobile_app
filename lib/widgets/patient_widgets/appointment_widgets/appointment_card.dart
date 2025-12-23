@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class AppointmentCard extends StatelessWidget {
   final String imagePath;
@@ -9,11 +11,11 @@ class AppointmentCard extends StatelessWidget {
   final String title;
   final String type;
   final String consultationTypeIcon;
-  final String consultationTypeText;
+  final String? consultationTypeText;
   final bool showGreenDot;
   final bool showRating;
   final Function? onTap;
-  final String buttonText;
+  final String? buttonText;
 
   const AppointmentCard({
     super.key,
@@ -24,9 +26,9 @@ class AppointmentCard extends StatelessWidget {
     this.showGreenDot = true,
     this.showRating = true,
     this.consultationTypeIcon = "assets/images/call_icon.png",
-    this.consultationTypeText = "Remote Consultation",
+    this.consultationTypeText,
     this.onTap,
-    this.buttonText='Join',
+    this.buttonText,
   });
 
   @override
@@ -47,15 +49,16 @@ class AppointmentCard extends StatelessWidget {
         ),
         5.verticalSpace,
         InkWell(
-          onTap: (){
-            onTap!();
+          onTap: () {
+            if (onTap != null) onTap!();
           },
           child: Container(
             padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16.0),
-              border: Border.all(color: AppColors.primaryColor.withOpacity(0.6), width: 1),
+              border: Border.all(
+                  color: AppColors.primaryColor.withOpacity(0.6), width: 1),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),
@@ -81,21 +84,21 @@ class AppointmentCard extends StatelessWidget {
                         ),
                         showGreenDot
                             ? Positioned(
-                              top: 0,
-                              right: 0,
-                              child: Container(
-                                width: 10,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                ),
+                          top: 0,
+                          right: 0,
+                          child: Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
                               ),
-                            )
+                            ),
+                          ),
+                        )
                             : SizedBox(),
                       ],
                     ),
@@ -124,8 +127,7 @@ class AppointmentCard extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
                         foregroundColor: Colors.white,
@@ -138,7 +140,8 @@ class AppointmentCard extends StatelessWidget {
                         ),
                         elevation: 0,
                       ),
-                      child:  Text(buttonText, style: TextStyle(fontSize: 16)),
+                      child: Text(buttonText ?? AppStrings.join.tr,
+                          style: TextStyle(fontSize: 16)),
                     ),
                   ],
                 ),
@@ -146,14 +149,18 @@ class AppointmentCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    _buildDetailItem("assets/images/calender_icon.png", 'Sunday, 12 June'),
-                    _buildDetailItem("assets/images/clock_icon.png", '11:00-12:00 AM'),
+                    _buildDetailItem("assets/images/calender_icon.png",
+                        '${AppStrings.sunday.tr}, 12 ${AppStrings.june.tr}'),
+                    _buildDetailItem(
+                        "assets/images/clock_icon.png", '11:00-12:00 AM'),
                     showRating
-                        ? _buildDetailItem("assets/images/star_icon.png", '4.3/5')
+                        ? _buildDetailItem(
+                        "assets/images/star_icon.png", '4.3/5')
                         : _buildDetailItem(
-                          consultationTypeIcon,
-                          consultationTypeText,
-                        ),
+                      consultationTypeIcon,
+                      consultationTypeText ??
+                          AppStrings.remoteConsultation.tr,
+                    ),
                   ],
                 ),
               ],

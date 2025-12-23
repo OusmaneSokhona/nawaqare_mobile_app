@@ -77,14 +77,20 @@ class SignInController extends GetxController {
 
   List<ValidationRule> getValidationRules() {
     return [
-      ValidationRule(text: 'At least 8 characters', isValid: hasMinLength),
       ValidationRule(
-        text: 'At least one uppercase letter E.g: X,Y,Z',
+        text: AppStrings.atLeast8Chars.tr,
+        isValid: hasMinLength,
+      ),
+      ValidationRule(
+        text: AppStrings.atLeastOneUpper.tr,
         isValid: hasUppercase,
       ),
-      ValidationRule(text: 'At least one number E.g: 1,2,3', isValid: hasDigit),
       ValidationRule(
-        text: 'At least one special character E.g: @,!, \$',
+        text: AppStrings.atLeastOneNumber.tr,
+        isValid: hasDigit,
+      ),
+      ValidationRule(
+        text: AppStrings.atLeastOneSpecial.tr,
         isValid: hasSpecialChar,
       ),
     ];

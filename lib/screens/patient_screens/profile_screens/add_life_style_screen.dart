@@ -6,6 +6,7 @@ import '../../../widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class AddLifeStyleScreen extends GetView<ProfileController> {
   const AddLifeStyleScreen({super.key});
@@ -43,7 +44,7 @@ class AddLifeStyleScreen extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add LifeStyle",
+                    AppStrings.addLifestyle.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -64,16 +65,22 @@ class AddLifeStyleScreen extends GetView<ProfileController> {
                             .map((category) => Padding(
                           padding: EdgeInsets.only(bottom:5.h),
                           child: _buildRadioGroup(
-                            category,
+                            category.tr, // Translate category title
                             controller.categories[category]!,
                           ),
                         ))
                             .toList(),
                       ),
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Add & Save", onTap: (){}),
+                      CustomButton(borderRadius: 15, text: AppStrings.addAndSave.tr, onTap: (){}),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.cancel.tr,
+                        onTap: (){Get.back();},
+                        bgColor: AppColors.inACtiveButtonColor,
+                        fontColor: Colors.black,
+                      ),
                     ],
                   ),
                 ),
@@ -84,6 +91,7 @@ class AddLifeStyleScreen extends GetView<ProfileController> {
       ),
     );
   }
+
   Widget _buildRadioGroup(String title, List<String> options) {
     return Obx(() {
       final selectedValue = controller.getSelection(title).value;
@@ -121,8 +129,8 @@ class AddLifeStyleScreen extends GetView<ProfileController> {
                       controller.updateSelection(title, option);
                     },
                     child: Text(
-                      option,
-                      style:  TextStyle(fontSize: 13.sp),
+                      option.tr, // Translate the option labels (e.g., Never, Regularly)
+                      style: TextStyle(fontSize: 13.sp),
                     ),
                   ),
                 ],

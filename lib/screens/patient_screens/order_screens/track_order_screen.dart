@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/order_widgets/track_order_card.dart';
 
 class TrackOrderScreen extends StatelessWidget {
@@ -43,7 +44,7 @@ class TrackOrderScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Track Order",
+                    AppStrings.trackOrder.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -80,7 +81,8 @@ class TrackOrderScreen extends StatelessWidget {
                               vertical: 10.0,
                             ),
                           ),
-                          child:  Text('Report An Issue',
+                          child:  Text(
+                            AppStrings.reportIssue.tr,
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -108,7 +110,8 @@ class TrackOrderScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.local_phone_outlined,size: 25.sp,color: Colors.white,),
-                              Text('Contact Driver',
+                              Text(
+                                AppStrings.contactDriver.tr,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 16.sp,
@@ -121,7 +124,14 @@ class TrackOrderScreen extends StatelessWidget {
                       ],
                     ),
                     10.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Contact Pharmacy", onTap: (){},icon: Icons.local_phone_outlined,fontColor: Colors.black,bgColor: AppColors.inACtiveButtonColor,),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.contactPharmacy.tr,
+                      onTap: (){},
+                      icon: Icons.local_phone_outlined,
+                      fontColor: Colors.black,
+                      bgColor: AppColors.inACtiveButtonColor,
+                    ),
                     30.verticalSpace,
                   ]),
                 ),

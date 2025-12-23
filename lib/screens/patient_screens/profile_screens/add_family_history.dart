@@ -7,6 +7,7 @@ import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class AddFamilyHistory extends GetView<ProfileController> {
   const AddFamilyHistory({super.key});
@@ -44,7 +45,7 @@ class AddFamilyHistory extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add Family History",
+                    AppStrings.addFamilyHistory.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -60,33 +61,33 @@ class AddFamilyHistory extends GetView<ProfileController> {
                     children: [
                       30.verticalSpace,
                       buildDropdownField(
-                        title: "Relation",
+                        title: AppStrings.relation.tr,
                         items: controller.relationList,
                         selectedValue: controller.activeRelation,
                         onChanged: (_) {},
                       ),
                       CustomTextField(
-                        labelText: "Condition",
-                        hintText: "Hypertension",
+                        labelText: AppStrings.condition.tr,
+                        hintText: AppStrings.hypertension.tr,
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: "Severity",
+                        title: AppStrings.severity.tr,
                         items: controller.severityList,
                         selectedValue: controller.selectedSeverityFamilyHistory,
                         onChanged: (_) {},
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Age",
-                        hintText: "20",
+                        labelText: AppStrings.age.tr,
+                        hintText: AppStrings.ageHint.tr,
                       ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Note',
-                          style: TextStyle(
+                          AppStrings.note.tr,
+                          style: const TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             color: Colors.black87,
@@ -106,19 +107,25 @@ class AddFamilyHistory extends GetView<ProfileController> {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
-                            hintText: 'Write a note to your doctor',
+                            hintText: AppStrings.writeNoteToDoctor.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
                             contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
                         ),
                       ),
 
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Add & Save", onTap: (){}),
+                      CustomButton(borderRadius: 15, text: AppStrings.addAndSave.tr, onTap: (){}),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.cancel.tr,
+                        onTap: (){Get.back();},
+                        bgColor: AppColors.inACtiveButtonColor,
+                        fontColor: Colors.black,
+                      ),
                     ],
                   ),
                 ),
@@ -156,7 +163,7 @@ class AddFamilyHistory extends GetView<ProfileController> {
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 14.0,
                 ),
@@ -174,7 +181,7 @@ class AddFamilyHistory extends GetView<ProfileController> {
               items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
-                  child: Text(value),
+                  child: Text(value.tr), // Localize the dropdown items
                 );
               }).toList(),
               onChanged: onChanged,

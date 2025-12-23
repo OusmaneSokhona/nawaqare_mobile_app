@@ -7,6 +7,7 @@ import 'package:patient_app/widgets/patient_widgets/profile_widgets/consultation
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class ConsultationScreen extends StatelessWidget {
   ConsultationScreen({super.key});
@@ -55,10 +56,10 @@ class ConsultationScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "My Consultation Plans",
+                    AppStrings.myConsultationPlans.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 21.sp,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),
@@ -79,7 +80,7 @@ class ConsultationScreen extends StatelessWidget {
                     Obx(
                           () => InkWell(
                         onTap: () {
-                          consultationController.orderType.value = "Active Plan(2)";
+                          consultationController.orderType.value = AppStrings.activePlan;
                           consultationController.searchQuery.value = '';
                         },
                         child: Container(
@@ -87,17 +88,17 @@ class ConsultationScreen extends StatelessWidget {
                           width: 0.455.sw,
                           decoration: BoxDecoration(
                             color: consultationController.orderType.value ==
-                                "Active Plan(2)"
+                                AppStrings.activePlan
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Active Plan(2)",
+                            AppStrings.activePlan.tr,
                             style: TextStyle(
                               color: consultationController.orderType.value ==
-                                  "Active Plan(2)"
+                                  AppStrings.activePlan
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 14.5.sp,
@@ -111,7 +112,7 @@ class ConsultationScreen extends StatelessWidget {
                     Obx(
                           () => InkWell(
                         onTap: () {
-                          consultationController.orderType.value = "Plan History";
+                          consultationController.orderType.value = AppStrings.planHistory;
                           consultationController.searchQuery.value = '';
                         },
                         child: Container(
@@ -119,17 +120,17 @@ class ConsultationScreen extends StatelessWidget {
                           width: 0.455.sw,
                           decoration: BoxDecoration(
                             color: consultationController.orderType.value ==
-                                "Plan History"
+                                AppStrings.planHistory
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Plan History",
+                            AppStrings.planHistory.tr,
                             style: TextStyle(
                               color: consultationController.orderType.value ==
-                                  "Plan History"
+                                  AppStrings.planHistory
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 14.5.sp,
@@ -158,7 +159,7 @@ class ConsultationScreen extends StatelessWidget {
                     consultationController.searchQuery.value = value;
                   },
                   decoration: InputDecoration(
-                    hintText: "Search by date,status...",
+                    hintText: AppStrings.searchConsultationHint.tr,
                     hintStyle: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 15.sp,
@@ -187,7 +188,7 @@ class ConsultationScreen extends StatelessWidget {
                     return Expanded(
                       child: Center(
                         child: Text(
-                          "No orders found.",
+                          AppStrings.noOrdersFound.tr,
                           style: TextStyle(
                             fontSize: 16.sp,
                             color: Colors.grey,
@@ -203,7 +204,7 @@ class ConsultationScreen extends StatelessWidget {
                       itemCount: filteredList.length,
                       itemBuilder: (context, index) {
                         return ConsultationCard(
-                          isCompleted: consultationController.orderType.value=="Active Plan(2)"?false:true,
+                          isCompleted: consultationController.orderType.value == AppStrings.planHistory,
                           onTap: () {
                             Get.to(() => const ConsultationDetailsScreen());
                           },

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
-
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_fonts.dart';
 
 class NextActionsRow extends StatelessWidget {
@@ -9,9 +10,20 @@ class NextActionsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Column(
       children: [
-        Align(alignment:Alignment.centerLeft,child: Text("Next Actions",style: TextStyle(fontSize:18.sp,fontFamily:AppFonts.jakartaMedium,fontWeight: FontWeight.w700,color: Colors.black),)),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            AppStrings.nextActions.tr,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontFamily: AppFonts.jakartaMedium,
+              fontWeight: FontWeight.w700,
+              color: Colors.black,
+            ),
+          ),
+        ),
         5.verticalSpace,
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -52,7 +64,7 @@ class UploadPrescriptionCard extends StatelessWidget {
             ),
           ],
         ),
-        child:  Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -70,7 +82,7 @@ class UploadPrescriptionCard extends StatelessWidget {
             ),
             SizedBox(height: 12),
             Text(
-              'Upload Prescription',
+              AppStrings.uploadPrescription.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -94,7 +106,7 @@ class PrescriptionDetailCard extends StatelessWidget {
     const Color secondaryColor = Color(0xFF6B7280);
 
     return Container(
-      padding:  EdgeInsets.all(14.sp),
+      padding: EdgeInsets.all(14.sp),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.0),
@@ -111,24 +123,26 @@ class PrescriptionDetailCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Text(
-            'Prescription',
+          Text(
+            AppStrings.prescription.tr,
             style: TextStyle(
               fontSize: 15.sp,
               fontWeight: FontWeight.bold,
               color: primaryColor,
             ),
           ),
-5.verticalSpace,          Row(
+          5.verticalSpace,
+          Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Icon(Icons.radio_button_checked, color: AppColors.primaryColor, size: 18),
+              Icon(Icons.radio_button_checked,
+                  color: AppColors.primaryColor, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(
+                    Text(
                       'Amoxicillin 500mg',
                       style: TextStyle(
                         fontSize: 11.sp,
@@ -138,7 +152,7 @@ class PrescriptionDetailCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Dosage: Morning/Evening',
+                      '${AppStrings.dosage.tr}: ${AppStrings.morningEvening.tr}',
                       style: TextStyle(
                         fontSize: 9.sp,
                         color: secondaryColor,
@@ -151,10 +165,10 @@ class PrescriptionDetailCard extends StatelessWidget {
           ),
           Row(
             children: [
-               Icon(Icons.refresh, color: AppColors.primaryColor, size: 18),
+              Icon(Icons.refresh, color: AppColors.primaryColor, size: 18),
               const SizedBox(width: 8),
               Text(
-                'Refill',
+                AppStrings.refill.tr,
                 style: TextStyle(
                   fontSize: 11.sp,
                   fontWeight: FontWeight.w600,
@@ -164,9 +178,9 @@ class PrescriptionDetailCard extends StatelessWidget {
             ],
           ),
           Padding(
-            padding:  EdgeInsets.only(left: 18.sp),
+            padding: EdgeInsets.only(left: 18.sp),
             child: Text(
-              'Date: 12 june',
+              'Date: 12 ${AppStrings.june.tr}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

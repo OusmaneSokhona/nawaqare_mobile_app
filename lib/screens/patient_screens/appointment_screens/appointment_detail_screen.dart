@@ -6,9 +6,11 @@ import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/appointment_widgets/appintment_detail_widget.dart';
 import '../../../widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
 import '../video_call_screens/preview_screen.dart';
+
 class AppointmentDetailScreen extends StatelessWidget {
   bool isCompleted;
   AppointmentDetailScreen({super.key,required this.appointmentModel,this.isCompleted=false});
@@ -45,7 +47,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Appointment Details",
+                    AppStrings.appointmentDetails.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -66,7 +68,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                       }else...{
                         Align(
                           alignment: AlignmentDirectional.topStart,
-                          child: Text("Status",
+                          child: Text(AppStrings.status.tr,
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20.sp,
@@ -87,7 +89,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                               child: Icon(Icons.check, color: Colors.white,),
                             ),
                             10.horizontalSpace,
-                            Text("Confirmed", style: TextStyle(
+                            Text(AppStrings.confirmed.tr, style: TextStyle(
                               color: Colors.grey,
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
@@ -98,7 +100,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                         10.verticalSpace,
                         Align(
                           alignment: AlignmentDirectional.topStart,
-                          child: Text("Notes",
+                          child: Text(AppStrings.notes.tr,
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 20.sp,
@@ -109,7 +111,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                         ),
                         10.verticalSpace,
                         Text(
-                          "Hypertension follow-up. Blood pressure stable, continue medication",
+                          AppStrings.medicalNotesDemo.tr,
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 16.sp,
@@ -117,11 +119,11 @@ class AppointmentDetailScreen extends StatelessWidget {
                             fontFamily: AppFonts.jakartaMedium,
                           ),),
                         70.verticalSpace,
-                        CustomButton(borderRadius: 15, text: "Join Consultation", onTap: (){
+                        CustomButton(borderRadius: 15, text: AppStrings.joinConsultation.tr, onTap: (){
                           Get.to(PreviewScreen(appointmentModel: appointmentModel));
                         }),
                         10.verticalSpace,
-                       CustomButton(borderRadius: 15, text: "Reschedule", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                        CustomButton(borderRadius: 15, text: AppStrings.reschedule.tr, onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
                       },
                     ],
                   ),

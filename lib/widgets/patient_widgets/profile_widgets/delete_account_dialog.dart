@@ -5,6 +5,7 @@ import 'package:patient_app/controllers/patient_controllers/profile_controller.d
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
+import '../../../utils/app_strings.dart';
 
 class DeleteAccountDialog extends StatelessWidget {
   const DeleteAccountDialog({super.key});
@@ -23,11 +24,11 @@ class DeleteAccountDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.asset("assets/images/delete_icon.png",height: 110.h,),
+            Image.asset("assets/images/delete_icon.png", height: 110.h),
             const SizedBox(height: 16),
-            const Text(
-              'Delete Account',
-              style: TextStyle(
+            Text(
+              AppStrings.deleteAccount.tr,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -36,24 +37,24 @@ class DeleteAccountDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'This action will permanently delete your medical data and profile, in accordance with GDPR',
+              AppStrings.deleteAccountWarning.tr,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[700]),
             ),
             const SizedBox(height: 24),
-            Obx( // Use Obx to listen to changes in controller.isChecked
+            Obx(
                   () => Row(
                 children: <Widget>[
                   Checkbox(
-                    value: controller.isChecked.value, // Access the observable value
-                    onChanged: controller.toggleCheck, // Call the controller method
+                    value: controller.isChecked.value,
+                    onChanged: controller.toggleCheck,
                     activeColor: Colors.green,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Automatic data download before deletion',
-                      style: TextStyle(fontSize: 14),
+                      AppStrings.autoDataDownload.tr,
+                      style: const TextStyle(fontSize: 14),
                     ),
                   ),
                 ],
@@ -65,7 +66,7 @@ class DeleteAccountDialog extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Get.back(result: false); // Use Get.back instead of Navigator.pop
+                      Get.back(result: false);
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -74,9 +75,9 @@ class DeleteAccountDialog extends StatelessWidget {
                       ),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text(
-                      'Cancle',
-                      style: TextStyle(
+                    child: Text(
+                      AppStrings.cancel.tr, // Fixed typo and localized
+                      style: const TextStyle(
                           color: Colors.black54,
                           fontWeight: FontWeight.bold),
                     ),
@@ -87,7 +88,7 @@ class DeleteAccountDialog extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       LocalStorageUtils.deleteUser();
-                      Get.offAll(SignInScreen(),binding: AppBinding()); // Use Get.back instead of Navigator.pop
+                      Get.offAll( SignInScreen(), binding: AppBinding());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],
@@ -98,9 +99,9 @@ class DeleteAccountDialog extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.confirm.tr,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

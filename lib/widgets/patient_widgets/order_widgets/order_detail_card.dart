@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-
+import '../../../utils/app_strings.dart';
 
 class OrderDetailCard extends StatelessWidget {
   final String status;
-  const OrderDetailCard({super.key,required this.status});
+  const OrderDetailCard({super.key, required this.status});
+
   @override
   Widget build(BuildContext context) {
-    const List<String> steps = [
-      'Order',
-      'Preparig',
-      'In Delivery',
-      'Delivered',
+    final List<String> steps = [
+      AppStrings.stepOrder.tr,
+      AppStrings.stepPreparing.tr,
+      AppStrings.stepInDelivery.tr,
+      AppStrings.stepDelivered.tr,
     ];
-    const int completedStepIndex = 3;
 
     return Card(
-      elevation: 4,color: Colors.white,
+      elevation: 4,
+      color: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // Header Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Order #12456',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  '${AppStrings.orderNo.tr} #12456',
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Delivery Sep 30, 2025',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Text(
+                  '${AppStrings.deliveryDate.tr} Sep 30, 2025',
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -47,14 +48,17 @@ class OrderDetailCard extends StatelessWidget {
                         color: _getStatusColor(status),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child:  Text(
+                      child: Text(
                         status,
-                        style: TextStyle(color:_getStatusTextColor(status), fontWeight: FontWeight.w600, fontSize: 12.sp),
+                        style: TextStyle(
+                            color: _getStatusTextColor(status),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12.sp),
                       ),
                     ),
-                   8.horizontalSpace,
-                     Text(
-                      'ETA: Today, 5:30 PM',
+                    8.horizontalSpace,
+                    Text(
+                      AppStrings.etaLabel.tr,
                       style: TextStyle(fontSize: 12.sp, color: AppColors.darkGrey),
                     ),
                   ],
@@ -62,14 +66,12 @@ class OrderDetailCard extends StatelessWidget {
               ],
             ),
             const Divider(height: 30, thickness: 1, color: Color(0xFFE0E0E0)),
-
-            // Order Summary Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Order Summary',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppStrings.orderSummary.tr,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -77,20 +79,18 @@ class OrderDetailCard extends StatelessWidget {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 4),
-                _buildInfoRow("Order ID:", "#12456"),
+                _buildInfoRow("${AppStrings.orderIdLabel.tr} ", "#12456"),
                 const SizedBox(height: 4),
-                _buildInfoRow("Expected By:", "Sep 30, 2025"),
+                _buildInfoRow("${AppStrings.expectedBy.tr} ", "Sep 30, 2025"),
               ],
             ),
             const Divider(height: 30, thickness: 1, color: Color(0xFFE0E0E0)),
-
-            // Delivery Address Section
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Delivery Address',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppStrings.deliveryAddress.tr,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -103,12 +103,12 @@ class OrderDetailCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Delivery Information',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppStrings.deliveryInformation.tr,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 10.verticalSpace,
-                _buildInfoRow("Courier Name", "Adam Asmith"),
+                _buildInfoRow("${AppStrings.courierName.tr} ", "Adam Asmith"),
               ],
             ),
             30.verticalSpace,
@@ -116,30 +116,29 @@ class OrderDetailCard extends StatelessWidget {
             10.verticalSpace,
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: steps
-                  .map(
-                    (stage) => Text(
+              children: steps.asMap().entries.map((entry) {
+                int idx = entry.key;
+                String stage = entry.value;
+                return Text(
                   stage,
                   style: TextStyle(
-                    color: stage.indexOf(stage) <= 2
-                        ? Colors.black
-                        : Colors.grey.shade500,
+                    color: idx <= 2 ? Colors.black : Colors.grey.shade500,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFonts.jakartaMedium,
                   ),
-                ),
-              )
-                  .toList(),
+                );
+              }).toList(),
             ),
           ],
         ),
       ),
     );
   }
+
   Widget _buildProgressBar(BuildContext context) {
     double totalStages = 4.0;
-    double progressValue = (4) / totalStages;
+    double progressValue = 4 / totalStages;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10.sp),
@@ -151,6 +150,7 @@ class OrderDetailCard extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildInfoRow(String label, String value) {
     return RichText(
       text: TextSpan(
@@ -175,6 +175,7 @@ class OrderDetailCard extends StatelessWidget {
       ),
     );
   }
+
   Color _getStatusColor(String status) {
     switch (status) {
       case 'In Progress':

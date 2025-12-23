@@ -3,16 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/chat_controller.dart';
 import 'package:patient_app/utils/app_bindings.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../notifications_screens/notifications_screen.dart';
 import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {
-  bool showBackIcon;
-  ChatScreen({super.key,this.showBackIcon=false});
+  final bool showBackIcon;
+  ChatScreen({super.key, this.showBackIcon = false});
 
-  ChatController chatController = Get.find();
+  final ChatController chatController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -40,71 +41,71 @@ class ChatScreen extends StatelessWidget {
 
               final double targetHeight = isScrolledPastThreshold ? 120.0 : 0.0;
 
-              final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              final Color targetColor = isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return isScrolledPastThreshold
                   ? AnimatedContainer(
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    height: targetHeight,
-                    width: 1.sw,
-                    color: targetColor,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 8.h,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+                height: targetHeight,
+                width: 1.sw,
+                color: targetColor,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                  vertical: 8.h,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 1,
+                              blurRadius: 5,
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(30.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 1,
-                                  blurRadius: 5,
-                                ),
-                              ],
-                            ),
-                            child: TextField(
-                              onTapOutside: (_) {
-                                FocusManager.instance.primaryFocus!.unfocus();
-                              },
-                              onChanged: chatController.updateSearchQuery,
-                              decoration: const InputDecoration(
-                                hintText: 'Search',
-                                border: InputBorder.none,
-                                icon: Icon(Icons.search, color: Colors.grey),
-                              ),
-                            ),
+                          ],
+                        ),
+                        child: TextField(
+                          onTapOutside: (_) {
+                            FocusManager.instance.primaryFocus!.unfocus();
+                          },
+                          onChanged: chatController.updateSearchQuery,
+                          decoration: InputDecoration(
+                            hintText: AppStrings.search.tr,
+                            border: InputBorder.none,
+                            icon: const Icon(Icons.search,
+                                color: Colors.grey),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8.h),
-                          child: InkWell(
-                            onTap: () {
-                              Get.to(NotificationScreen());
-                            },
-                            child: Image.asset(
-                              "assets/images/bell_icon.png",
-                              height: 25.h,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  )
-                  : SizedBox();
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(NotificationScreen());
+                        },
+                        child: Image.asset(
+                          "assets/images/bell_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+                  : const SizedBox();
             }),
             Expanded(
               child: SingleChildScrollView(
@@ -118,19 +119,32 @@ class ChatScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                         if (showBackIcon) Padding(
-                            padding:  EdgeInsets.only(top: 12.0),
-                            child: InkWell(onTap:(){Get.back();},child: Image.asset("assets/images/back_icon.png",color: Colors.white,height: 33.sp,)),
-                          ) else SizedBox(),
-                          showBackIcon?5.horizontalSpace:SizedBox(),
+                          if (showBackIcon)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: InkWell(
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: Image.asset(
+                                    "assets/images/back_icon.png",
+                                    color: Colors.white,
+                                    height: 33.sp,
+                                  )),
+                            )
+                          else
+                            const SizedBox(),
+                          showBackIcon
+                              ? 5.horizontalSpace
+                              : const SizedBox(),
                           CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
-                            foregroundImage: AssetImage(
+                            foregroundImage: const AssetImage(
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());
@@ -146,7 +160,7 @@ class ChatScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Chat",
+                          AppStrings.chat.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -158,7 +172,7 @@ class ChatScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Communicate here with your practitioner for any questions regarding your treatment or tests",
+                          AppStrings.chatDescription.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFonts.jakartaMedium,
@@ -186,112 +200,111 @@ class ChatScreen extends StatelessWidget {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           onChanged: chatController.updateSearchQuery,
-                          decoration: const InputDecoration(
-                            hintText: 'Search',
+                          decoration: InputDecoration(
+                            hintText: AppStrings.search.tr,
                             border: InputBorder.none,
-                            icon: Icon(Icons.search, color: Colors.grey),
+                            icon: const Icon(Icons.search, color: Colors.grey),
                           ),
                         ),
                       ),
                       10.verticalSpace,
                       Obx(
-                        () =>
-                            chatController.filteredDoctors.isNotEmpty
-                                ? Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.3),
-                                        spreadRadius: 5,
-                                        blurRadius: 7,
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListView.separated(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.only(top: 8),
-                                    itemCount:
-                                        chatController.filteredDoctors.length,
-                                    separatorBuilder:
-                                        (context, index) => const Divider(
-                                          height: 1,
-                                          indent: 80,
-                                        ),
-                                    itemBuilder: (context, index) {
-                                      final doctor =
-                                          chatController.filteredDoctors[index];
-                                      return ListTile(
-                                        leading: ClipOval(
-                                          child: Image.asset(
-                                            doctor.imageUrl,
-                                            width: 56,
-                                            height: 56,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        title: Text(
-                                          doctor.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        subtitle: Text(doctor.specialty),
-                                        trailing: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              doctor.lastMessageTime,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color:
-                                                    doctor.unreadCount > 0
-                                                        ? Colors.blue.shade600
-                                                        : Colors.grey,
-                                              ),
-                                            ),
-                                            if (doctor.unreadCount > 0)
-                                              Container(
-                                                margin: const EdgeInsets.only(
-                                                  top: 4,
-                                                ),
-                                                padding: const EdgeInsets.all(
-                                                  4,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blue.shade600,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Text(
-                                                  doctor.unreadCount.toString(),
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                        onTap: () {
-                                          Get.to(() => ChatDetailScreen(),binding: AppBinding());
-                                        },
-                                      );
-                                    },
-                                  ),
-                                )
-                                : Text(
-                                  "No Data Found",
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
+                            () => chatController.filteredDoctors.isNotEmpty
+                            ? Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 5,
+                                blurRadius: 7,
+                              ),
+                            ],
+                          ),
+                          child: ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.only(top: 8),
+                            itemCount:
+                            chatController.filteredDoctors.length,
+                            separatorBuilder: (context, index) =>
+                            const Divider(
+                              height: 1,
+                              indent: 80,
+                            ),
+                            itemBuilder: (context, index) {
+                              final doctor =
+                              chatController.filteredDoctors[index];
+                              return ListTile(
+                                leading: ClipOval(
+                                  child: Image.asset(
+                                    doctor.imageUrl,
+                                    width: 56,
+                                    height: 56,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
+                                title: Text(
+                                  doctor.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(doctor.specialty),
+                                trailing: Column(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      doctor.lastMessageTime,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: doctor.unreadCount > 0
+                                            ? Colors.blue.shade600
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    if (doctor.unreadCount > 0)
+                                      Container(
+                                        margin: const EdgeInsets.only(
+                                          top: 4,
+                                        ),
+                                        padding: const EdgeInsets.all(
+                                          4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.shade600,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Text(
+                                          doctor.unreadCount.toString(),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                onTap: () {
+                                  Get.to(() => ChatDetailScreen(),
+                                      binding: AppBinding());
+                                },
+                              );
+                            },
+                          ),
+                        )
+                            : Text(
+                          AppStrings.noDataFound.tr,
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
                       ),
                       10.verticalSpace,
                     ],

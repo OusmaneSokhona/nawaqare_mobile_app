@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 
@@ -36,7 +37,7 @@ class AddPrescriptionDrawer extends GetView<VideoCallController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Add Prescription',
+                      AppStrings.addPrescription.tr,
                       style: TextStyle(
                         fontSize: 25.sp,
                         fontWeight: FontWeight.w800,
@@ -44,13 +45,25 @@ class AddPrescriptionDrawer extends GetView<VideoCallController> {
                       ),
                     ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Patient Name",hintText: "Mr John",),
+                    CustomTextField(
+                      labelText: AppStrings.patientName.tr,
+                      hintText: AppStrings.patientNameHint.tr,
+                    ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Medicines",hintText: "Enter Medicines",),
+                    CustomTextField(
+                      labelText: AppStrings.medicines.tr,
+                      hintText: AppStrings.medicinesHint.tr,
+                    ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Dosage",hintText: "Enter Dosage",),
+                    CustomTextField(
+                      labelText: AppStrings.dosage.tr,
+                      hintText: AppStrings.dosageHint.tr,
+                    ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Refill Date",hintText: "Enter date",),
+                    CustomTextField(
+                      labelText: AppStrings.refillDate.tr,
+                      hintText: AppStrings.dateHint.tr,
+                    ),
                     10.verticalSpace,
                     Align(
                       alignment: Alignment.centerLeft,
@@ -84,7 +97,7 @@ class AddPrescriptionDrawer extends GetView<VideoCallController> {
                           expands: true,
                           textAlignVertical: TextAlignVertical.top,
                           decoration: InputDecoration(
-                            hintText: "Avoid antibiotics in same family",
+                            hintText: AppStrings.prescriptionNotesHint.tr,
                             border: InputBorder.none,
                           ),
                           style: TextStyle(
@@ -95,9 +108,19 @@ class AddPrescriptionDrawer extends GetView<VideoCallController> {
                       ),
                     ),
                     30.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Save", onTap: (){}),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.save.tr,
+                      onTap: () {},
+                    ),
                     10.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Send to Patient", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.sendToPatient.tr,
+                      onTap: () {},
+                      bgColor: AppColors.inACtiveButtonColor,
+                      fontColor: Colors.black,
+                    ),
                     30.verticalSpace,
                   ],
                 ),

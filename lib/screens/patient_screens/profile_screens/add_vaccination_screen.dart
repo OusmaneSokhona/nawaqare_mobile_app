@@ -8,6 +8,7 @@ import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class AddVaccinationScreen extends GetView<ProfileController> {
   const AddVaccinationScreen({super.key});
@@ -45,7 +46,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add Vaccination",
+                    AppStrings.addVaccination.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -61,14 +62,14 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                     children: [
                       30.verticalSpace,
                       CustomTextField(
-                        labelText: "Vaccination Name",
-                        hintText: "Influenza",
+                        labelText: AppStrings.vaccinationName.tr,
+                        hintText: AppStrings.influenza.tr,
                       ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Date",
+                          AppStrings.date.tr,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
@@ -93,11 +94,9 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                             children: [
                               Text(
                                 controller.formattedDate,
-                                // Display the formatted date
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color:
-                                  controller.selectedDate == null
+                                  color: controller.selectedDate == null
                                       ? Colors.grey
                                       : Colors.black,
                                   fontWeight: FontWeight.w500,
@@ -114,7 +113,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: "Status",
+                        title: AppStrings.status.tr,
                         items: controller.medicationStatusList,
                         selectedValue: controller.vaccinationStatus,
                         onChanged: (_) {},
@@ -123,7 +122,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Upload Certificate",
+                          AppStrings.uploadCertificate.tr,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.w600,
@@ -161,9 +160,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  controller.selectedFileName.value == 'No file selected' || controller.selectedFileName.value == 'File selection cancelled'
-                                      ? 'Upload lab test or  report (PDF, JPG, PNG)'
-                                      : controller.selectedFileName.value!,
+                                  _getUploadText(controller.selectedFileName.value!),
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 14.sp,
@@ -172,9 +169,9 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                                   ),
                                 ),
                                 if (controller.selectedFileName.value != 'No file selected' && controller.selectedFileName.value != 'File selection cancelled')
-                                  const Text(
-                                    'Tap to select a new file',
-                                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                                  Text(
+                                    AppStrings.tapToSelectNewFile.tr,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                                   ),
                               ],
                             ),
@@ -183,9 +180,15 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                       ),
 
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Add & Save", onTap: (){}),
+                      CustomButton(borderRadius: 15, text: AppStrings.addAndSave.tr, onTap: (){}),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.cancel.tr,
+                        onTap: (){Get.back();},
+                        bgColor: AppColors.inACtiveButtonColor,
+                        fontColor: Colors.black,
+                      ),
                     ],
                   ),
                 ),
@@ -197,8 +200,15 @@ class AddVaccinationScreen extends GetView<ProfileController> {
     );
   }
 
+  // Helper for dynamic file upload text
+  String _getUploadText(String value) {
+    if (value == 'No file selected') return AppStrings.uploadLabReportHint.tr;
+    if (value == 'File selection cancelled') return AppStrings.selectionCancelled.tr;
+    return value;
+  }
+
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -207,7 +217,6 @@ class AddVaccinationScreen extends GetView<ProfileController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
@@ -238,7 +247,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding: EdgeInsets.symmetric(
+                contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16.0,
                   vertical: 14.0,
                 ),

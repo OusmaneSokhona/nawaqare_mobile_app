@@ -8,10 +8,10 @@ import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 import 'edit_blood_type.dart';
+import '../../../utils/app_strings.dart';
 
 class BloodType extends GetView<ProfileController> {
   BloodType({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,7 @@ class BloodType extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Blood Type",
+                    AppStrings.bloodType.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -81,7 +81,7 @@ class BloodType extends GetView<ProfileController> {
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                "Current Blood Type",
+                                AppStrings.currentBloodType.tr,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 17.sp,
@@ -91,38 +91,99 @@ class BloodType extends GetView<ProfileController> {
                               ),
                             ),
                             10.verticalSpace,
-                            Image.asset("assets/images/blood_icon.png",height: 80.h,fit: BoxFit.fill,),
+                            Image.asset(
+                              "assets/images/blood_icon.png",
+                              height: 80.h,
+                              fit: BoxFit.fill,
+                            ),
                             5.verticalSpace,
-                            Obx(()=> Text(controller.selectedBloodType.value,style: TextStyle(fontSize: 29.sp,fontWeight: FontWeight.w800,fontFamily: AppFonts.jakartaBold),)),
-                         Row(
-                           mainAxisAlignment: MainAxisAlignment.start,
-                           children: [
-                             Text("Last confirmed",style: TextStyle(fontSize: 13.sp,fontFamily:AppFonts.jakartaMedium,color: Colors.black,fontWeight: FontWeight.w500),),
-                             20.horizontalSpace,
-                             Text("Source",style: TextStyle(fontSize: 13.sp,fontFamily:AppFonts.jakartaMedium,color: Colors.black,fontWeight: FontWeight.w500),),
-                             Spacer(),
-                             Text("Verification status",style: TextStyle(fontSize: 13.sp,fontFamily:AppFonts.jakartaMedium,color: Colors.black,fontWeight: FontWeight.w500),),
-                           ],
-                         ),
-                         10.verticalSpace,
-                         Row(
-                           mainAxisAlignment: MainAxisAlignment.start,
-                           children: [
-                             Text("Jan 2024",style: TextStyle(fontSize: 10.sp,fontFamily:AppFonts.jakartaMedium,color: Colors.black,fontWeight: FontWeight.w400),),
-                             50.horizontalSpace,
-                             Text("Medical Test Report",style: TextStyle(fontSize: 10.sp,fontFamily:AppFonts.jakartaMedium,color: Colors.black,fontWeight: FontWeight.w400),),
-                             Spacer(),
-                             Text("✅ Verified",style: TextStyle(fontSize: 10.sp,fontFamily:AppFonts.jakartaMedium,color: Colors.black,fontWeight: FontWeight.w400),),
-                            50.horizontalSpace,
-                           ],
-                         ),
+                            Obx(
+                              () => Text(
+                                controller.selectedBloodType.value,
+                                style: TextStyle(
+                                  fontSize: 29.sp,
+                                  fontWeight: FontWeight.w800,
+                                  fontFamily: AppFonts.jakartaBold,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.lastConfirmed.tr,
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                20.horizontalSpace,
+                                Text(
+                                  AppStrings.source.tr,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Spacer(),
+                                Text(
+                                  AppStrings.verificationStatus.tr,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            10.verticalSpace,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.jan2024.tr,
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                50.horizontalSpace,
+                                Text(
+                                  AppStrings.medicalTestReport.tr,
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Spacer(),
+                                Text(
+                                  "✅ ${AppStrings.verified.tr}",
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                50.horizontalSpace,
+                              ],
+                            ),
                           ],
                         ),
                       ),
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Update Blood Type",
+                        text: AppStrings.updateBloodType.tr,
                         onTap: () {
                           Get.to(EditBloodType());
                         },
@@ -149,7 +210,6 @@ class BloodType extends GetView<ProfileController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }

@@ -5,21 +5,22 @@ import 'package:patient_app/controllers/patient_controllers/prescription_control
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/prescription_widgets/prescription_card.dart';
 
 class PrescriptionScreen extends StatelessWidget {
   PrescriptionScreen({super.key});
-PrescriptionController prescriptionController =Get.put(PrescriptionController());
+  final PrescriptionController prescriptionController = Get.put(PrescriptionController());
+
   @override
   Widget build(BuildContext context) {
-    print(prescriptionController.prescriptionType.value);
     return Scaffold(
       body: Container(
         height: 1.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.onboardingBackground, Colors.white,],
+            colors: [AppColors.onboardingBackground, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -32,7 +33,7 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Image.asset(
@@ -43,7 +44,7 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Prescription",
+                    AppStrings.prescription.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -67,27 +68,22 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
                     Obx(
                           () => InkWell(
                         onTap: () {
-                          prescriptionController.prescriptionType.value =
-                          "activePrescription";
+                          prescriptionController.prescriptionType.value = "activePrescription";
                         },
                         child: Container(
                           height: 55.h,
                           width: 0.455.sw,
                           decoration: BoxDecoration(
-                            color:
-                            prescriptionController.prescriptionType.value ==
-                                "activePrescription"
+                            color: prescriptionController.prescriptionType.value == "activePrescription"
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Active Prescriptions",
+                            AppStrings.activePrescriptions.tr,
                             style: TextStyle(
-                              color:
-                              prescriptionController.prescriptionType.value ==
-                                  "activePrescription"
+                              color: prescriptionController.prescriptionType.value == "activePrescription"
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 14.5.sp,
@@ -107,20 +103,16 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
                           height: 55.h,
                           width: 0.455.sw,
                           decoration: BoxDecoration(
-                            color:
-                            prescriptionController.prescriptionType.value==
-                                "pastPrescription"
+                            color: prescriptionController.prescriptionType.value == "pastPrescription"
                                 ? AppColors.primaryColor
                                 : Colors.white,
                             borderRadius: BorderRadius.circular(14.sp),
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            "Past Prescriptions",
+                            AppStrings.pastPrescriptions.tr,
                             style: TextStyle(
-                              color:
-                              prescriptionController.prescriptionType.value ==
-                                  "pastPrescription"
+                              color: prescriptionController.prescriptionType.value == "pastPrescription"
                                   ? Colors.white
                                   : Colors.black,
                               fontSize: 14.5.sp,
@@ -136,14 +128,14 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
               ),
               10.verticalSpace,
               Obx(
-                    ()=> prescriptionController.prescriptionType.value=="activePrescription"?
-                Expanded(
+                    () => prescriptionController.prescriptionType.value == "activePrescription"
+                    ? Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.only(top: 20.h,bottom: 20.h),
+                    padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
                     itemCount: prescriptionController.prescriptions.length,
                     itemBuilder: (context, index) {
                       return PrescriptionCard(
-                        onTap: (){
+                        onTap: () {
                           prescriptionController.viewDetail(prescriptionController.prescriptions[index]);
                         },
                         isActive: true,
@@ -151,13 +143,14 @@ PrescriptionController prescriptionController =Get.put(PrescriptionController())
                       );
                     },
                   ),
-                ): Expanded(
+                )
+                    : Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.only(top: 20.h,bottom: 20.h),
+                    padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
                     itemCount: prescriptionController.postPrescriptions.length,
                     itemBuilder: (context, index) {
                       return PrescriptionCard(
-                        onTap: (){
+                        onTap: () {
                           prescriptionController.viewDetail(prescriptionController.postPrescriptions[index]);
                         },
                         isActive: false,

@@ -5,6 +5,7 @@ import 'package:patient_app/screens/patient_screens/prescription_screens/payment
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart'; // Added import
 import '../../../widgets/custom_button.dart';
 
 class OrderSummaryScreen extends StatelessWidget {
@@ -12,21 +13,20 @@ class OrderSummaryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Container(
         height: 1.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.onboardingBackground, Colors.white,],
+            colors: [AppColors.onboardingBackground, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: SingleChildScrollView(
           child: Padding(
-            padding:  EdgeInsets.all(20.w),
+            padding: EdgeInsets.all(20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -34,9 +34,7 @@ class OrderSummaryScreen extends StatelessWidget {
                 Row(
                   children: [
                     InkWell(
-                      onTap: (){
-                        Get.back();
-                      },
+                      onTap: () => Get.back(),
                       child: Image.asset(
                         AppImages.backIcon,
                         height: 33.h,
@@ -45,7 +43,7 @@ class OrderSummaryScreen extends StatelessWidget {
                     ),
                     10.horizontalSpace,
                     Text(
-                      "Summary",
+                      AppStrings.orderSummary.tr, // Localized
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 23.sp,
@@ -64,13 +62,19 @@ class OrderSummaryScreen extends StatelessWidget {
                 15.verticalSpace,
                 _buildCertificationNote(),
                 30.verticalSpace,
-                CustomButton(borderRadius: 15, text: "Confirm order", onTap: (){
-                  Get.to(PaymentDetailScreen());
-                }),
+                CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.confirmOrder.tr, // Localized
+                  onTap: () => Get.to(const PaymentDetailScreen()),
+                ),
                 20.verticalSpace,
-                CustomButton(borderRadius: 15, text: "Cancel", onTap: (){
-                  Get.back();
-                },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.cancel.tr, // Localized
+                  onTap: () => Get.back(),
+                  bgColor: AppColors.inACtiveButtonColor,
+                  fontColor: Colors.black,
+                ),
               ],
             ),
           ),
@@ -89,13 +93,13 @@ class OrderSummaryScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildFeeItem('Amoxicillin 500mg', 'Price for 10mg',156),
+            _buildFeeItem('Amoxicillin 500mg', '${AppStrings.priceFor.tr} 10mg', 156),
             const Divider(height: 20, thickness: 1, color: Color(0xFFE0E0E0)),
-            _buildFeeItem('Panadol 500mg', 'Price for 5mg', 120),
+            _buildFeeItem('Panadol 500mg', '${AppStrings.priceFor.tr} 5mg', 120),
             const Divider(height: 20, thickness: 1, color: Color(0xFFE0E0E0)),
-            _buildFeeItem('Delivery Charges', 'if home delivery', 2.0, isDelivery: true),
+            _buildFeeItem(AppStrings.deliveryCharges.tr, AppStrings.homeDeliveryNote.tr, 2.0, isDelivery: true),
             const Divider(height: 20, thickness: 1, color: Color(0xFFE0E0E0)),
-           _buildTotalFee('Total Fee', 330.0),
+            _buildTotalFee(AppStrings.totalFee.tr, 330.0),
           ],
         ),
       ),
@@ -111,28 +115,17 @@ class OrderSummaryScreen extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF333333),
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Color(0xFF333333)),
             ),
             Text(
               subtitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: isDelivery ? Colors.black54 : Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 14, color: isDelivery ? Colors.black54 : Colors.grey.shade600),
             ),
           ],
         ),
         Text(
           '\$${amount.toStringAsFixed(amount.truncateToDouble() == amount ? 0 : 2)}',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.blue,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.blue),
         ),
       ],
     );
@@ -144,43 +137,28 @@ class OrderSummaryScreen extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF333333),
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
         ),
         Text(
           '\$${amount.toStringAsFixed(amount.truncateToDouble() == amount ? 0 : 2)}',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
         ),
       ],
     );
   }
 
   Widget _buildEstimatedDelivery() {
-    return const Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Estimated Delivery Time',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF333333),
-          ),
+          AppStrings.estimatedDeliveryTime.tr,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
-          'Expected within 2–3 business days',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black54,
-          ),
+          AppStrings.expectedDeliveryDays.tr,
+          style: const TextStyle(fontSize: 14, color: Colors.black54),
         ),
       ],
     );
@@ -190,21 +168,14 @@ class OrderSummaryScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Pharmacy',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF333333),
-          ),
+        Text(
+          AppStrings.pharmacy.tr,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
         ),
         const SizedBox(height: 4),
         Text(
-          'Pharmacie Centrale',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade600,
-          ),
+          'Pharmacie Centrale', // Pharmacy names are usually proper nouns, but can be translated if dynamic
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
         ),
       ],
     );
@@ -217,13 +188,9 @@ class OrderSummaryScreen extends StatelessWidget {
         color: const Color(0xFFE3F2FD),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Text(
-        'Licensed Pharmacy — Certified by CNPD & Ministry of Health',
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.blue,
-          fontWeight: FontWeight.w500,
-        ),
+      child: Text(
+        AppStrings.certificationNote.tr,
+        style: const TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.w500),
       ),
     );
   }

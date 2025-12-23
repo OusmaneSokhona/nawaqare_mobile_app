@@ -7,6 +7,7 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../utils/app_strings.dart';
 
 class EditBloodType extends GetView<ProfileController> {
   EditBloodType({super.key});
@@ -45,10 +46,10 @@ class EditBloodType extends GetView<ProfileController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Blood Type",
+                    AppStrings.editBloodType.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 23.sp,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),
@@ -61,7 +62,7 @@ class EditBloodType extends GetView<ProfileController> {
                   child: Column(
                     children: [
                       buildDropdownField(
-                        title: "Blood Type",
+                        title: AppStrings.bloodType.tr,
                         items: controller.bloodList,
                         selectedValue: controller.selectedBloodType,
                         onChanged: (_) {},
@@ -70,7 +71,7 @@ class EditBloodType extends GetView<ProfileController> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Upload test proof (optional)',
+                          AppStrings.uploadProofOptional.tr,
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -105,7 +106,7 @@ class EditBloodType extends GetView<ProfileController> {
                             ],
                           ),
                           child: Obx(
-                            () => Column(
+                                () => Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
@@ -116,10 +117,10 @@ class EditBloodType extends GetView<ProfileController> {
                                 const SizedBox(height: 12),
                                 Text(
                                   controller.selectedFileName.value ==
-                                              'No file selected' ||
-                                          controller.selectedFileName.value ==
-                                              'File selection cancelled'
-                                      ? 'Upload test proof'
+                                      'No file selected' ||
+                                      controller.selectedFileName.value ==
+                                          'File selection cancelled'
+                                      ? AppStrings.uploadTestProof.tr
                                       : controller.selectedFileName.value!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
@@ -129,11 +130,11 @@ class EditBloodType extends GetView<ProfileController> {
                                   ),
                                 ),
                                 if (controller.selectedFileName.value !=
-                                        'No file selected' &&
+                                    'No file selected' &&
                                     controller.selectedFileName.value !=
                                         'File selection cancelled')
-                                  const Text(
-                                    'Tap to select a new file',
+                                  Text(
+                                    AppStrings.tapToSelectNew.tr,
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
@@ -147,13 +148,13 @@ class EditBloodType extends GetView<ProfileController> {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Update",
+                        text: AppStrings.update.tr,
                         onTap: () {Get.back();},
                       ),
                       15.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
+                        text: AppStrings.cancel.tr,
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                         onTap: () {Get.back();},
@@ -180,7 +181,6 @@ class EditBloodType extends GetView<ProfileController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }
@@ -208,7 +208,7 @@ class EditBloodType extends GetView<ProfileController> {
             ),
           ),
           Obx(
-            () => DropdownButtonFormField<String>(
+                () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
@@ -226,12 +226,12 @@ class EditBloodType extends GetView<ProfileController> {
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
               items:
-                  items.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+              items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               onChanged: onChanged,
             ),
           ),

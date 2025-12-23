@@ -3,14 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/notification_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/notification_model.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 
 class NotificationScreen extends StatelessWidget {
-   NotificationScreen({super.key});
-NotificationController notificationController=Get.put(NotificationController());
+  NotificationScreen({super.key});
+  NotificationController notificationController =
+  Get.put(NotificationController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,20 +22,23 @@ NotificationController notificationController=Get.put(NotificationController());
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.onboardingBackground, Colors.white,],
+            colors: [
+              AppColors.onboardingBackground,
+              Colors.white,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               70.verticalSpace,
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Image.asset(
@@ -44,7 +49,7 @@ NotificationController notificationController=Get.put(NotificationController());
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Notifications",
+                    AppStrings.notifications.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -53,7 +58,18 @@ NotificationController notificationController=Get.put(NotificationController());
                     ),
                   ),
                   Spacer(),
-                  Container(decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.sp),color: AppColors.primaryColor),alignment:Alignment.center,padding:EdgeInsets.all(5.sp),child: Text("1 New",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500),),)
+                  Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5.sp),
+                        color: AppColors.primaryColor),
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(5.sp),
+                    child: Text(
+                      "1 ${AppStrings.newCount.tr}",
+                      style: TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w500),
+                    ),
+                  )
                 ],
               ),
               20.verticalSpace,
@@ -65,7 +81,9 @@ NotificationController notificationController=Get.put(NotificationController());
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildGroupHeader(context, group.day),
-                        ...group.items.map((item) => _NotificationTile(item)).toList(),
+                        ...group.items
+                            .map((item) => _NotificationTile(item))
+                            .toList(),
                         const SizedBox(height: 20),
                       ],
                     );
@@ -80,13 +98,18 @@ NotificationController notificationController=Get.put(NotificationController());
   }
 
   Widget _buildGroupHeader(BuildContext context, String title) {
+    // Handling "Today" and "Yesterday" translation logic if the mockData uses those strings
+    String displayTitle = title;
+    if (title.toLowerCase() == "today") displayTitle = AppStrings.today.tr;
+    if (title.toLowerCase() == "yesterday") displayTitle = AppStrings.yesterday.tr;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            title,
+            displayTitle,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -95,12 +118,12 @@ NotificationController notificationController=Get.put(NotificationController());
           ),
           GestureDetector(
             onTap: () {},
-            child:  Text(
-              'Mark all as read',
+            child: Text(
+              AppStrings.markAllRead.tr,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color:AppColors.darkGrey,
+                color: AppColors.darkGrey,
               ),
             ),
           ),
@@ -156,10 +179,8 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: _getBackgroundColor(),
-        borderRadius: BorderRadius.circular(10.r)
-      ),
-      
+          color: _getBackgroundColor(),
+          borderRadius: BorderRadius.circular(10.r)),
       padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

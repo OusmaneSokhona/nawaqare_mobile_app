@@ -6,12 +6,13 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import 'order_summary.dart';
 
 class RefillStaus extends StatelessWidget {
   RefillStaus({super.key});
 
-  PrescriptionController prescriptionController = Get.find();
+  final PrescriptionController prescriptionController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class RefillStaus extends StatelessWidget {
           ),
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -46,7 +47,7 @@ class RefillStaus extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Refill Status",
+                    AppStrings.refillStatus.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -58,7 +59,7 @@ class RefillStaus extends StatelessWidget {
               ),
               20.verticalSpace,
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -67,7 +68,7 @@ class RefillStaus extends StatelessWidget {
                       color: Colors.grey.withOpacity(0.1),
                       spreadRadius: 1,
                       blurRadius: 10,
-                      offset: Offset(0, 5),
+                      offset: const Offset(0, 5),
                     ),
                   ],
                 ),
@@ -78,13 +79,13 @@ class RefillStaus extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Prescriptions',
+                          AppStrings.prescriptions.tr,
                           style: TextStyle(
                             fontSize: 17.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         Text(
                           'Amoxicillin 500mg',
                           style: TextStyle(
@@ -92,7 +93,7 @@ class RefillStaus extends StatelessWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         Text(
                           '1 tablet, twice daily after meals',
                           style: TextStyle(
@@ -100,7 +101,7 @@ class RefillStaus extends StatelessWidget {
                             color: AppColors.darkGrey,
                           ),
                         ),
-                        SizedBox(height: 15),
+                        const SizedBox(height: 15),
                         Text(
                           'Dr. Camille Dupont',
                           style: TextStyle(
@@ -110,24 +111,24 @@ class RefillStaus extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Align(
                       alignment: Alignment.topRight,
                       child: Container(
                         height: 30.h,
-                        width: 80.w,padding: EdgeInsets.all(5.r),
+                        width: 80.w,
+                        padding: EdgeInsets.all(5.r),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
                           color: AppColors.green,
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          "Approved",
+                          AppStrings.approved.tr,
                           style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12.sp
-                          ),
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12.sp),
                         ),
                       ),
                     ),
@@ -135,26 +136,30 @@ class RefillStaus extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Text(
-                'Note',
-                style: TextStyle(
+                AppStrings.noteLabel.tr,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Text(
                 prescriptionController.noteController.text.isNotEmpty
                     ? prescriptionController.noteController.text
-                    : "No notes Available",
-                style: TextStyle(color: AppColors.lightGrey,fontSize: 15.sp,fontWeight: FontWeight.w500,),
+                    : AppStrings.noNotesAvailable.tr,
+                style: TextStyle(
+                  color: AppColors.lightGrey,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               60.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Order Medicine",
+                text: AppStrings.orderMedicine.tr,
                 onTap: () {
                   Get.to(OrderSummaryScreen());
                 },
@@ -162,7 +167,7 @@ class RefillStaus extends StatelessWidget {
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Cancel",
+                text: AppStrings.cancel.tr,
                 onTap: () {
                   Get.back();
                 },

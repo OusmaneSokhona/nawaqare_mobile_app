@@ -3,15 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/search_controller.dart';
 
-class SearchBottomSheet extends GetView<SearchController> {
-   SearchBottomSheet({super.key});
-SearchControllerCustom searchController=Get.find();
+class SearchBottomSheet extends StatelessWidget {
+  SearchBottomSheet({super.key});
+
+  final SearchControllerCustom searchController = Get.find<SearchControllerCustom>();
+
   @override
   Widget build(BuildContext context) {
-    Get.put(SearchController());
-
     return Container(
       height: 0.8.sh,
       width: 1.sw,
@@ -21,7 +22,7 @@ SearchControllerCustom searchController=Get.find();
         right: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -33,32 +34,32 @@ SearchControllerCustom searchController=Get.find();
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(context),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildDateField(context),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildReligionDropdown(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildLocationDropdown(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildConsultationMode(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildDistanceSlider(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildGenderRadio(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildPriceSlider(),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
           _buildActionButtons(),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
     );
@@ -71,12 +72,12 @@ SearchControllerCustom searchController=Get.find();
         InkWell(
           onTap: () => Get.back(),
           child: Container(
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               color: AppColors.primaryColor,
               borderRadius: BorderRadius.circular(7.r),
             ),
-            child: Icon(Icons.close, color:Colors.white, size: 20),
+            child: const Icon(Icons.close, color: Colors.white, size: 20),
           ),
         ),
       ],
@@ -87,13 +88,13 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Date', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 8),
+        Text(AppStrings.date.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 8),
         GestureDetector(
           onTap: () => searchController.pickDate(context),
           child: Obx(
                 () => Container(
-              padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(10),
@@ -101,12 +102,12 @@ SearchControllerCustom searchController=Get.find();
               child: Row(
                 children: [
                   Icon(Icons.calendar_today, color: AppColors.primaryColor, size: 20),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     searchController.selectedDate.value != null
                         ? DateFormat('dd/MMM/yyyy').format(searchController.selectedDate.value!)
-                        : 'Select Date',
-                    style: TextStyle(fontSize: 16),
+                        : AppStrings.selectDate.tr,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
@@ -121,11 +122,11 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Religion', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 8),
+        Text(AppStrings.religion.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 8),
         Obx(
               () => Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(10),
@@ -134,7 +135,7 @@ SearchControllerCustom searchController=Get.find();
               child: DropdownButton<String>(
                 isExpanded: true,
                 value: searchController.selectedReligion.value,
-                icon: Icon(Icons.keyboard_arrow_down),
+                icon: const Icon(Icons.keyboard_arrow_down),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
                     searchController.selectedReligion.value = newValue;
@@ -143,7 +144,7 @@ SearchControllerCustom searchController=Get.find();
                 items: searchController.religions.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, style: TextStyle(fontSize: 16)),
+                    child: Text(value, style: const TextStyle(fontSize: 16)),
                   );
                 }).toList(),
               ),
@@ -158,11 +159,11 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Location', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 8),
+        Text(AppStrings.location.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 8),
         Obx(
               () => Container(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(10),
@@ -171,7 +172,7 @@ SearchControllerCustom searchController=Get.find();
               child: DropdownButton<String>(
                 isExpanded: true,
                 value: searchController.selectedLocation.value,
-                icon: Icon(Icons.keyboard_arrow_down),
+                icon: const Icon(Icons.keyboard_arrow_down),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
                     searchController.selectedLocation.value = newValue;
@@ -180,7 +181,7 @@ SearchControllerCustom searchController=Get.find();
                 items: searchController.locations.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 16)),
+                    child: Text(value, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
                   );
                 }).toList(),
               ),
@@ -195,7 +196,7 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Consultation Mode', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(AppStrings.consultationMode.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         Obx(
               () => Row(
             children: [
@@ -207,8 +208,8 @@ SearchControllerCustom searchController=Get.find();
                   if (value != null) searchController.consultationMode.value = value;
                 },
               ),
-              Text('In-Person'),
-              SizedBox(width: 20),
+              Text(AppStrings.inPerson.tr),
+              const SizedBox(width: 20),
               Radio<ConsultationMode>(
                 activeColor: AppColors.primaryColor,
                 value: ConsultationMode.remote,
@@ -217,7 +218,7 @@ SearchControllerCustom searchController=Get.find();
                   if (value != null) searchController.consultationMode.value = value;
                 },
               ),
-              Text('Teleconsultation'),
+              Text(AppStrings.teleconsultation.tr),
             ],
           ),
         ),
@@ -229,10 +230,10 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Distance', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(AppStrings.distance.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         Obx(
               () => Slider(
-                activeColor: AppColors.primaryColor,
+            activeColor: AppColors.primaryColor,
             value: searchController.distanceRange.value,
             min: 0,
             max: 5,
@@ -242,7 +243,7 @@ SearchControllerCustom searchController=Get.find();
             },
           ),
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -260,7 +261,7 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Gender', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(AppStrings.gender.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         Obx(
               () => Row(
             children: [
@@ -272,8 +273,8 @@ SearchControllerCustom searchController=Get.find();
                   if (value != null) searchController.selectedGender.value = value;
                 },
               ),
-              Text('Male'),
-              SizedBox(width: 20),
+              Text(AppStrings.male.tr),
+              const SizedBox(width: 20),
               Radio<Gender>(
                 activeColor: AppColors.primaryColor,
                 value: Gender.female,
@@ -282,7 +283,7 @@ SearchControllerCustom searchController=Get.find();
                   if (value != null) searchController.selectedGender.value = value;
                 },
               ),
-              Text('Female'),
+              Text(AppStrings.female.tr),
             ],
           ),
         ),
@@ -294,10 +295,10 @@ SearchControllerCustom searchController=Get.find();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Price', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(AppStrings.price.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         Obx(
               () => Slider(
-                activeColor: AppColors.primaryColor,
+            activeColor: AppColors.primaryColor,
             value: searchController.priceRange.value,
             min: 0,
             max: 50,
@@ -307,7 +308,7 @@ SearchControllerCustom searchController=Get.find();
             },
           ),
         ),
-        Padding(
+        const Padding(
           padding: EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -323,7 +324,7 @@ SearchControllerCustom searchController=Get.find();
 
   Widget _buildActionButtons() {
     return Padding(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
       child: Row(
         children: [
           Expanded(
@@ -332,27 +333,27 @@ SearchControllerCustom searchController=Get.find();
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.black,
                 side: BorderSide(color: Colors.grey.shade400),
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('Reset', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.reset.tr, style: const TextStyle(fontSize: 16)),
             ),
           ),
-          SizedBox(width: 15),
+          const SizedBox(width: 15),
           Expanded(
             child: ElevatedButton(
               onPressed: searchController.applyFilters,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade700,
+                backgroundColor: AppColors.primaryColor,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 15),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('Apply', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.apply.tr, style: const TextStyle(fontSize: 16)),
             ),
           ),
         ],

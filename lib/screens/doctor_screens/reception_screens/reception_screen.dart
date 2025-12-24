@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/reception_controller.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/absence_and_exception.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/calender_screen.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/reception_widgets/feautre_card_widget.dart';
 import 'package:patient_app/widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
 
@@ -13,8 +14,9 @@ import '../../patient_screens/notifications_screens/notifications_screen.dart';
 import '../../patient_screens/video_call_screens/help_center_screen.dart';
 
 class ReceptionScreen extends StatelessWidget {
-   ReceptionScreen({super.key});
-ReceptionController controller=Get.put(ReceptionController());
+  ReceptionScreen({super.key});
+  final ReceptionController controller = Get.put(ReceptionController());
+
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
@@ -41,8 +43,7 @@ ReceptionController controller=Get.put(ReceptionController());
 
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
-              final Color targetColor =
-              isScrolledPastThreshold
+              final Color targetColor = isScrolledPastThreshold
                   ? AppColors.primaryColor
                   : Colors.transparent;
 
@@ -60,7 +61,7 @@ ReceptionController controller=Get.put(ReceptionController());
                     CircleAvatar(
                       radius: 20.h,
                       backgroundColor: Colors.white,
-                      foregroundImage: AssetImage(
+                      foregroundImage: const AssetImage(
                         "assets/demo_images/doctor_1.png",
                       ),
                     ),
@@ -74,10 +75,10 @@ ReceptionController controller=Get.put(ReceptionController());
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     InkWell(
                       onTap: () {
-                        Get.to(HelpCenterScreen());
+                        Get.to( HelpCenterScreen());
                       },
                       child: Image.asset(
                         "assets/images/help_center_icon.png",
@@ -87,7 +88,7 @@ ReceptionController controller=Get.put(ReceptionController());
                     10.horizontalSpace,
                     InkWell(
                       onTap: () {
-                        Get.to(NotificationScreen());
+                        Get.to( NotificationScreen());
                       },
                       child: Image.asset(
                         "assets/images/bell_icon.png",
@@ -113,14 +114,14 @@ ReceptionController controller=Get.put(ReceptionController());
                           CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
-                            foregroundImage: AssetImage(
+                            foregroundImage: const AssetImage(
                               "assets/demo_images/doctor_1.png",
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           InkWell(
                             onTap: () {
-                              Get.to(HelpCenterScreen());
+                              Get.to( HelpCenterScreen());
                             },
                             child: Image.asset(
                               "assets/images/help_center_icon.png",
@@ -130,7 +131,7 @@ ReceptionController controller=Get.put(ReceptionController());
                           10.horizontalSpace,
                           InkWell(
                             onTap: () {
-                              Get.to(NotificationScreen());
+                              Get.to( NotificationScreen());
                             },
                             child: Image.asset(
                               "assets/images/bell_icon.png",
@@ -143,7 +144,7 @@ ReceptionController controller=Get.put(ReceptionController());
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Reception",
+                          AppStrings.reception.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -155,7 +156,7 @@ ReceptionController controller=Get.put(ReceptionController());
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Manage your schedules, services, and absences from this space",
+                          AppStrings.receptionSubtitle.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFonts.jakartaBold,
@@ -186,7 +187,7 @@ ReceptionController controller=Get.put(ReceptionController());
                             ),
                             10.horizontalSpace,
                             Text(
-                              "Last syn: 12/Sep/2025",
+                              "${AppStrings.lastSync.tr}: 12/Sep/2025",
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
@@ -198,7 +199,7 @@ ReceptionController controller=Get.put(ReceptionController());
                         ),
                       ),
                       15.verticalSpace,
-                      CardHeader(title: "Weekly Summary"),
+                      CardHeader(title: AppStrings.weeklySummary.tr),
                       10.verticalSpace,
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,7 +207,7 @@ ReceptionController controller=Get.put(ReceptionController());
                           Expanded(
                             child: _buildCard(
                               Icons.check_circle,
-                              'Available',
+                              AppStrings.available.tr,
                               '15h',
                             ),
                           ),
@@ -214,7 +215,7 @@ ReceptionController controller=Get.put(ReceptionController());
                           Expanded(
                             child: _buildCard(
                               Icons.calendar_today,
-                              'Slots Booked',
+                              AppStrings.slotsBooked.tr,
                               '20',
                             ),
                           ),
@@ -225,21 +226,35 @@ ReceptionController controller=Get.put(ReceptionController());
                         width: double.infinity,
                         child: _buildCard(
                           Icons.bookmark,
-                          'Planned Absences',
+                          AppStrings.plannedAbsences.tr,
                           '2',
                         ),
                       ),
                       15.verticalSpace,
-                      CardHeader(title: "Quick Access"),
+                      CardHeader(title: AppStrings.quickAccess.tr),
                       10.verticalSpace,
-                      FeatureCard(onTap: (){
-                        Get.to(CalenderScreen());
-                      },icon: Icons.calendar_today, title: "Calendar", subtitle: "View & manage appointment", hasButton:true),
-                      FeatureCard(onTap: (){},icon: Icons.monetization_on_outlined, title: "Services & Pricing", subtitle: "Edit your services,duration& fees", hasButton:false),
-                      FeatureCard(onTap: (){
-                        Get.to(AbsenceAndException());
-                      },icon: Icons.do_not_disturb_on_outlined, title: "Absences & exceptions", subtitle: "Declare an absence or mark unavailable", hasButton:false),
-
+                      FeatureCard(
+                          onTap: () {
+                            Get.to(CalenderScreen());
+                          },
+                          icon: Icons.calendar_today,
+                          title: AppStrings.calendar.tr,
+                          subtitle: AppStrings.calendarSubtitle.tr,
+                          hasButton: true),
+                      FeatureCard(
+                          onTap: () {},
+                          icon: Icons.monetization_on_outlined,
+                          title: AppStrings.servicesPricing.tr,
+                          subtitle: AppStrings.servicesPricingSubtitle.tr,
+                          hasButton: false),
+                      FeatureCard(
+                          onTap: () {
+                            Get.to(AbsenceAndException());
+                          },
+                          icon: Icons.do_not_disturb_on_outlined,
+                          title: AppStrings.absencesExceptions.tr,
+                          subtitle: AppStrings.absencesExceptionsSubtitle.tr,
+                          hasButton: false),
                     ],
                   ),
                 ),
@@ -250,43 +265,43 @@ ReceptionController controller=Get.put(ReceptionController());
       ),
     );
   }
-   Widget _buildCard(IconData icon, String title, String value) {
-     return Container(
-       decoration: BoxDecoration(
-         color: Colors.white,
-         border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
-         borderRadius: BorderRadius.circular(18.sp)
-       ),
-       child: Padding(
-         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-         child: Column(
-           mainAxisSize: MainAxisSize.min,
-           crossAxisAlignment: CrossAxisAlignment.center,
-           children: <Widget>[
-             Icon(icon, color:  Color(0xFF1E88E5), size: 24.sp),
-             const SizedBox(height: 10),
-             Text(
-               title,
-               style: TextStyle(
-                 fontSize: 12.sp,
-                 fontWeight: FontWeight.w600,
-                 color:Colors.black,
-               ),
-               textAlign: TextAlign.center,
-             ),
-             const SizedBox(height: 5),
-             Text(
-               value,
-               style: TextStyle(
-                 fontSize: 14.sp,
-                 fontWeight: FontWeight.w400,
-                 color: AppColors.lightGrey,
-               ),
-               textAlign: TextAlign.center,
-             ),
-           ],
-         ),
-       ),
-     );
-   }
+
+  Widget _buildCard(IconData icon, String title, String value) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
+          borderRadius: BorderRadius.circular(18.sp)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Icon(icon, color: const Color(0xFF1E88E5), size: 24.sp),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 5),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColors.lightGrey,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

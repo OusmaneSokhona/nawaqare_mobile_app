@@ -3,12 +3,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/filtter_bottom_sheet.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class SchedulerWidget extends StatelessWidget {
   SchedulerWidget({super.key});
 
   final DoctorAppointmentController controller = Get.find();
-  final List<String> daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+
+  // Use translated keys for days
+  final List<String> daysOfWeek = [
+    AppStrings.mondayAbbr.tr,
+    AppStrings.tuesdayAbbr.tr,
+    AppStrings.wednesdayAbbr.tr,
+    AppStrings.thursdayAbbr.tr,
+    AppStrings.fridayAbbr.tr,
+    AppStrings.saturdayAbbr.tr,
+    AppStrings.sundayAbbr.tr,
+  ];
+
   final List<String> dates = ['23', '24', '25', '26', '26', '26', '27'];
   static const Color primaryColor = Color(0xFF4285F4);
   static const Color borderColor = Color(0xFFE0E0E0);
@@ -19,7 +31,7 @@ class SchedulerWidget extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            padding:  EdgeInsets.symmetric(horizontal: 16.0,vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.h),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(borderRadius),
@@ -33,23 +45,18 @@ class SchedulerWidget extends StatelessWidget {
                   size: 24,
                 ),
                 const SizedBox(width: 8.0),
-                 Expanded(
+                Expanded(
                   child: TextField(
                     onTapOutside: (_) {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
                     decoration: InputDecoration(
-                      hintText: 'Search by patient name...',
+                      hintText: AppStrings.searchByPatientName.tr,
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                ),
-                const Icon(
-                  Icons.filter_list,
-                  color: primaryColor,
-                  size: 24,
                 ),
               ],
             ),
@@ -57,8 +64,8 @@ class SchedulerWidget extends StatelessWidget {
         ),
         const SizedBox(width: 10.0),
         InkWell(
-          onTap: (){
-            Get.bottomSheet(FilterBottomSheet());
+          onTap: () {
+            Get.bottomSheet(const FilterBottomSheet());
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -67,17 +74,17 @@ class SchedulerWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
               border: Border.all(color: borderColor),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.sort,
                   color: Colors.black,
                   size: 24,
                 ),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 Text(
-                  'Sort',
-                  style: TextStyle(
+                  AppStrings.sort.tr,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
@@ -97,7 +104,7 @@ class SchedulerWidget extends StatelessWidget {
       return GestureDetector(
         onTap: () => controller.selectDate(index),
         child: Container(
-          width: 50,
+          width: 50.w, // Added .w for consistency
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           decoration: BoxDecoration(
@@ -120,7 +127,7 @@ class SchedulerWidget extends StatelessWidget {
                 daysOfWeek[index],
                 style: TextStyle(
                   color: isSelected ? Colors.white : Colors.black87,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -129,7 +136,7 @@ class SchedulerWidget extends StatelessWidget {
                 dates[index],
                 style: TextStyle(
                   color: isSelected ? Colors.white : Colors.black54,
-                  fontSize: 16,
+                  fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -147,9 +154,9 @@ class SchedulerWidget extends StatelessWidget {
       children: [
         _buildSearchBar(),
         const SizedBox(height: 20.0),
-        const Text(
-          'Today Scheduler',
-          style: TextStyle(
+        Text(
+          AppStrings.todayScheduler.tr,
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -164,7 +171,7 @@ class SchedulerWidget extends StatelessWidget {
             ),
             Expanded(
               child: SizedBox(
-                height: 80,
+                height: 80.h,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: daysOfWeek.length,

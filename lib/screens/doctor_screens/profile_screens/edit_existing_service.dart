@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
 
@@ -11,8 +12,8 @@ import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 
 class EditExistingService extends StatelessWidget {
-  DoctorProfileController   controller=Get.find();
-   EditExistingService({super.key});
+  final DoctorProfileController controller = Get.find();
+  EditExistingService({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class EditExistingService extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Existing Service",
+                    AppStrings.editExistingService.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -61,20 +62,43 @@ class EditExistingService extends StatelessWidget {
                   child: Column(
                     children: [
                       20.verticalSpace,
-                      CustomTextField(labelText: "Service Name",hintText: "MA-PK-457621",),
+                      CustomTextField(
+                        labelText: AppStrings.serviceName.tr,
+                        hintText: "MA-PK-457621",
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Default Duration",hintText: "15 mint",),
+                      CustomTextField(
+                        labelText: AppStrings.defaultDuration.tr,
+                        hintText: "15 min",
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Fee",hintText: "\$590",),
+                      CustomTextField(
+                        labelText: AppStrings.fee.tr,
+                        hintText: "\$590",
+                      ),
                       10.verticalSpace,
-                      CustomDropdown(label: "Mode", options: controller.mode, currentValue: controller.selectedMode.value, onChanged: (_){}),
+                      Obx(() => CustomDropdown(
+                        label: AppStrings.mode.tr,
+                        options: controller.mode,
+                        currentValue: controller.selectedMode.value,
+                        onChanged: (val) {
+                          if (val != null) controller.selectedMode.value = val;
+                        },
+                      )),
                       10.verticalSpace,
-                      CustomDropdown(label: "Status", options: controller.serviceTypeList, currentValue: controller.selectedServiceType.value, onChanged: (_){}),
-                     10.verticalSpace,
+                      Obx(() => CustomDropdown(
+                        label: AppStrings.status.tr,
+                        options: controller.serviceTypeList,
+                        currentValue: controller.selectedServiceType.value,
+                        onChanged: (val) {
+                          if (val != null) controller.selectedServiceType.value = val;
+                        },
+                      )),
+                      10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Description',
+                          AppStrings.description.tr,
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -91,30 +115,30 @@ class EditExistingService extends StatelessWidget {
                         ),
                         child: TextField(
                           maxLines: 3,
-                          onTapOutside: (_){
+                          onTapOutside: (_) {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
-                            hintText: 'Write something about you',
+                            hintText: AppStrings.aboutMeHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
                           ),
                         ),
                       ),
                       20.verticalSpace,
                       CustomButton(
-                        text: "Update",
-                        onTap: (){
+                        text: AppStrings.update.tr,
+                        onTap: () {
                           Get.back();
                         },
                         borderRadius: 15,
                       ),
                       10.verticalSpace,
                       CustomButton(
-                        text: "Cancel",
-                        onTap: (){
+                        text: AppStrings.cancel.tr,
+                        onTap: () {
                           Get.back();
                         },
                         borderRadius: 15,

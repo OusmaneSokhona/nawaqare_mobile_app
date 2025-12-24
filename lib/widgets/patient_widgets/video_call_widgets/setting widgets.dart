@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../controllers/patient_controllers/appointment_controllers/setting_controller.dart';
 
@@ -121,33 +121,33 @@ class AudioVideoSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         SectionTitle(title: 'Audio & Video Setup'),
+        SectionTitle(title: AppStrings.audioVideoSetup.tr),
         CustomDropdown(
-          label: 'Microphone',
+          label: AppStrings.microphone.tr,
           options: controller.microphoneOptions,
           currentValue: controller.microphoneValue.value,
           onChanged: controller.updateMicrophone,
           trailing: _buildMicLevelVisualizer(),
         ),
         CustomDropdown(
-          label: 'Speakers',
+          label: AppStrings.speakers.tr,
           options: controller.speakerOptions,
           currentValue: controller.speakerValue.value,
           onChanged: controller.updateSpeaker,
           trailing: TextButton(
             onPressed: () {},
-            child: const Text('Test speakers', style: TextStyle(color: Color(0xFF4285F4), fontSize: 13)),
+            child: Text(AppStrings.testSpeakers.tr, style: const TextStyle(color: Color(0xFF4285F4), fontSize: 13)),
           ),
         ),
         CustomDropdown(
-          label: 'Camera',
+          label: AppStrings.camera.tr,
           options: controller.cameraOptions,
           currentValue: controller.cameraValue.value,
           onChanged: controller.updateCamera,
-          trailing: const Text('Camera is off', style: TextStyle(color: Colors.black54, fontSize: 13)),
+          trailing: Text(AppStrings.cameraOff.tr, style: const TextStyle(color: Colors.black54, fontSize: 13)),
         ),
         CustomDropdown(
-          label: 'Captions Language',
+          label: AppStrings.captionsLanguage.tr,
           options: controller.captionLanguageOptions,
           currentValue: controller.captionLanguageValue.value,
           onChanged: controller.updateCaptionLanguage,
@@ -179,23 +179,23 @@ class ConnectionHealthSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         SectionTitle(title: 'Connection Health'),
+        SectionTitle(title: AppStrings.connectionHealth.tr),
         Container(
           padding: EdgeInsets.all(10.sp),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.sp),
             color: Colors.white,
-              border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
           ),
           child: Obx(
-            ()=> Column(
+                ()=> Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildMetricRow('Bandwidth', controller.bandwidth.value),
-                _buildMetricRow('Latency', controller.latency.value),
-                _buildMetricRow('Connection Quality', controller.connectionQuality.value),
+                _buildMetricRow(AppStrings.bandwidth.tr, controller.bandwidth.value),
+                _buildMetricRow(AppStrings.latency.tr, controller.latency.value),
+                _buildMetricRow(AppStrings.connectionQuality.tr, controller.connectionQuality.value),
                 const SizedBox(height: 15),
-                CustomButton(borderRadius: 15, text: "Run Network Test", onTap: controller.runNetworkTest),
+                CustomButton(borderRadius: 15, text: AppStrings.runNetworkTest.tr, onTap: controller.runNetworkTest),
               ],
             ),
           ),
@@ -212,7 +212,7 @@ class DevicePermissionsSection extends StatelessWidget {
   Widget _buildPermissionRow(String label, bool isGranted) {
     Color color = isGranted ? Colors.green.shade700 : Colors.red.shade700;
     IconData icon = isGranted ? Icons.check_circle : Icons.cancel;
-    String status = isGranted ? 'Granted' : 'Blocked';
+    String status = isGranted ? AppStrings.granted.tr : AppStrings.blocked.tr;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -237,7 +237,7 @@ class DevicePermissionsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionTitle(title: 'Device Permissions'),
+        SectionTitle(title: AppStrings.devicePermissions.tr),
         Container(
           padding: EdgeInsets.all(10.sp),
           decoration: BoxDecoration(
@@ -246,14 +246,14 @@ class DevicePermissionsSection extends StatelessWidget {
             border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
           ),
           child: Obx(
-    ()=> Column(
+                ()=> Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                _buildPermissionRow('Camera Access', controller.isCameraGranted.value),
-                _buildPermissionRow('Microphone Access', controller.isMicrophoneGranted.value),
+                _buildPermissionRow(AppStrings.cameraAccess.tr, controller.isCameraGranted.value),
+                _buildPermissionRow(AppStrings.microphoneAccess.tr, controller.isMicrophoneGranted.value),
                 const SizedBox(height: 15),
-                CustomButton(borderRadius: 15, text: 'Manage Permissions', onTap: controller.managePermissions),
+                CustomButton(borderRadius: 15, text: AppStrings.managePermissions.tr, onTap: controller.managePermissions),
               ],
             ),
           ),
@@ -271,8 +271,8 @@ class OtherStepsSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children:  [
-        SectionTitle(title: 'Device Permissions'),
-        Text('If you’re experiencing call or device issues, try these steps:', style: TextStyle(fontSize: 15.sp, color: Colors.black87)),
+        SectionTitle(title: AppStrings.otherStepsTitle.tr),
+        Text(AppStrings.otherStepsSub.tr, style: TextStyle(fontSize: 15.sp, color: Colors.black87)),
       ],
     );
   }

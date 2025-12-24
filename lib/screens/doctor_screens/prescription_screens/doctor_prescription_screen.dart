@@ -6,6 +6,7 @@ import 'package:patient_app/screens/doctor_screens/prescription_screens/add_new_
 import 'package:patient_app/screens/doctor_screens/prescription_screens/add_new_template.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/edit_template_screen.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/template_details_screen.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/prescription_widgets/doctor_prescription_card.dart';
 import 'package:patient_app/widgets/doctor_widgets/prescription_widgets/prescription_filter_bottom_sheet.dart';
@@ -24,7 +25,6 @@ class DoctorPrescriptionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(doctorPrescriptionController.prescriptionType.value);
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -55,7 +55,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Prescription",
+                    AppStrings.prescription.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -71,24 +71,24 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Obx(
-                        () =>
-                            doctorPrescriptionController
-                                        .prescriptionType
-                                        .value ==
-                                    "activePrescription"
-                                ? Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "Manage Active Prescriptions And Reusable Templates",
-                                    style: TextStyle(
-                                      color: AppColors.lightGrey,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFonts.jakartaMedium,
-                                    ),
-                                  ),
-                                )
-                                : SizedBox(),
+                            () =>
+                        doctorPrescriptionController
+                            .prescriptionType
+                            .value ==
+                            "activePrescription"
+                            ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            AppStrings.managePrescriptionSub.tr,
+                            style: TextStyle(
+                              color: AppColors.lightGrey,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        )
+                            : SizedBox(),
                       ),
                       10.verticalSpace,
                       Container(
@@ -102,7 +102,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Obx(
-                              () => InkWell(
+                                  () => InkWell(
                                 onTap: () {
                                   doctorPrescriptionController
                                       .prescriptionType
@@ -113,25 +113,25 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                                   width: 0.455.sw,
                                   decoration: BoxDecoration(
                                     color:
-                                        doctorPrescriptionController
-                                                    .prescriptionType
-                                                    .value ==
-                                                "activePrescription"
-                                            ? AppColors.primaryColor
-                                            : Colors.white,
+                                    doctorPrescriptionController
+                                        .prescriptionType
+                                        .value ==
+                                        "activePrescription"
+                                        ? AppColors.primaryColor
+                                        : Colors.white,
                                     borderRadius: BorderRadius.circular(14.sp),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Active Prescriptions(${doctorPrescriptionController.prescriptions.length})",
+                                    "${AppStrings.activePrescriptions.tr}(${doctorPrescriptionController.prescriptions.length})",
                                     style: TextStyle(
                                       color:
-                                          doctorPrescriptionController
-                                                      .prescriptionType
-                                                      .value ==
-                                                  "activePrescription"
-                                              ? Colors.white
-                                              : Colors.black,
+                                      doctorPrescriptionController
+                                          .prescriptionType
+                                          .value ==
+                                          "activePrescription"
+                                          ? Colors.white
+                                          : Colors.black,
                                       fontSize: 11.5.sp,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFonts.jakartaMedium,
@@ -141,7 +141,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                               ),
                             ),
                             Obx(
-                              () => InkWell(
+                                  () => InkWell(
                                 onTap: () {
                                   doctorPrescriptionController
                                       .prescriptionType
@@ -152,25 +152,25 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                                   width: 0.455.sw,
                                   decoration: BoxDecoration(
                                     color:
-                                        doctorPrescriptionController
-                                                    .prescriptionType
-                                                    .value ==
-                                                "prescriptionTemplate"
-                                            ? AppColors.primaryColor
-                                            : Colors.white,
+                                    doctorPrescriptionController
+                                        .prescriptionType
+                                        .value ==
+                                        "prescriptionTemplate"
+                                        ? AppColors.primaryColor
+                                        : Colors.white,
                                     borderRadius: BorderRadius.circular(14.sp),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Prescriptions Templates",
+                                    AppStrings.prescriptionTemplates.tr,
                                     style: TextStyle(
                                       color:
-                                          doctorPrescriptionController
-                                                      .prescriptionType
-                                                      .value ==
-                                                  "prescriptionTemplate"
-                                              ? Colors.white
-                                              : Colors.black,
+                                      doctorPrescriptionController
+                                          .prescriptionType
+                                          .value ==
+                                          "prescriptionTemplate"
+                                          ? Colors.white
+                                          : Colors.black,
                                       fontSize: 11.5.sp,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFonts.jakartaMedium,
@@ -184,8 +184,8 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                       ),
                       15.verticalSpace,
                       Obx(
-                        ()=> CustomTextField(
-                          hintText: doctorPrescriptionController.prescriptionType.value=="activePrescription"?"Search by patient name...":"Search by template name...",
+                            ()=> CustomTextField(
+                          hintText: doctorPrescriptionController.prescriptionType.value=="activePrescription" ? AppStrings.searchByPatient.tr : AppStrings.searchByTemplate.tr,
                           prefixIcon: Icons.search,
                           suffixIcon: doctorPrescriptionController.prescriptionType.value=="activePrescription"?Icons.filter_list:null,
                           suffixIconColor: AppColors.primaryColor,
@@ -197,102 +197,102 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () =>
-                            doctorPrescriptionController
-                                        .prescriptionType
-                                        .value ==
-                                    "activePrescription"
-                                ? Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    "${doctorPrescriptionController.prescriptions.length} Active Prescriptions Found",
-                                    style: TextStyle(
-                                      color: AppColors.darkGrey,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: AppFonts.jakartaMedium,
-                                    ),
-                                  ),
-                                )
-                                : SizedBox(),
+                            () =>
+                        doctorPrescriptionController
+                            .prescriptionType
+                            .value ==
+                            "activePrescription"
+                            ? Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "${doctorPrescriptionController.prescriptions.length} ${AppStrings.activePrescriptionsFound.tr}",
+                            style: TextStyle(
+                              color: AppColors.darkGrey,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        )
+                            : SizedBox(),
                       ),
                       Obx(
-                        () =>
-                            doctorPrescriptionController
-                                        .prescriptionType
-                                        .value ==
-                                    "activePrescription"
-                                ? ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(
-                                    bottom: 20.h,
-                                  ),
-                                  itemCount:
-                                      doctorPrescriptionController
-                                          .prescriptions
-                                          .length,
-                                  itemBuilder: (context, index) {
-                                    return DoctorPrescriptionCard(
-                                      onTap: () {
-                                        doctorPrescriptionController.viewDetail(
-                                          doctorPrescriptionController
-                                              .prescriptions[index],
-                                        );
-                                      },
-                                      isActive: true,
-                                      prescription:
-                                          doctorPrescriptionController
-                                              .prescriptions[index],
-                                    );
-                                  },
-                                )
-                                : ListView.builder(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.only(
-                                    top: 5.h,
-                                    bottom: 20.h,
-                                  ),
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: 5,
-                                  itemBuilder: (context, index) {
-                                    return TemplateCard(
-                                      title: 'Hypertension Basic Set',
-                                      category: 'Cardiology',
-                                      details:
-                                          'Includes: Lisinopril 10mg, 30 days, daily dose.',
-                                      lastUpdate: '12/Sep/2025',
-                                      onEdit: (){
-                                        Get.to(EditTemplateScreen());
-                                      },
-                                      onUse: (){
-                                        Get.to(TemplateDetailsScreen());
-                                      },
-                                    );
-                                  },
-                                ),
+                            () =>
+                        doctorPrescriptionController
+                            .prescriptionType
+                            .value ==
+                            "activePrescription"
+                            ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            bottom: 20.h,
+                          ),
+                          itemCount:
+                          doctorPrescriptionController
+                              .prescriptions
+                              .length,
+                          itemBuilder: (context, index) {
+                            return DoctorPrescriptionCard(
+                              onTap: () {
+                                doctorPrescriptionController.viewDetail(
+                                  doctorPrescriptionController
+                                      .prescriptions[index],
+                                );
+                              },
+                              isActive: true,
+                              prescription:
+                              doctorPrescriptionController
+                                  .prescriptions[index],
+                            );
+                          },
+                        )
+                            : ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(
+                            top: 5.h,
+                            bottom: 20.h,
+                          ),
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: 5,
+                          itemBuilder: (context, index) {
+                            return TemplateCard(
+                              title: 'Hypertension Basic Set',
+                              category: 'Cardiology',
+                              details:
+                              'Includes: Lisinopril 10mg, 30 days, daily dose.',
+                              lastUpdate: '12/Sep/2025',
+                              onEdit: (){
+                                Get.to(EditTemplateScreen());
+                              },
+                              onUse: (){
+                                Get.to(TemplateDetailsScreen());
+                              },
+                            );
+                          },
+                        ),
                       ),
                       10.verticalSpace,
                       Obx(
-                        () =>
-                            doctorPrescriptionController
-                                        .prescriptionType
-                                        .value ==
-                                    "activePrescription"
-                                ? CustomButton(
-                                  borderRadius: 15,
-                                  text: "Add Prescription",
-                                  onTap: () {
-                                    Get.to(AddNewPrescription());
-                                  },
-                                )
-                                : CustomButton(
-                                  borderRadius: 15,
-                                  text: "Add New Template",
-                                  onTap: () {
-                                    Get.to(AddNewTemplate());
-                                  },
-                                ),
+                            () =>
+                        doctorPrescriptionController
+                            .prescriptionType
+                            .value ==
+                            "activePrescription"
+                            ? CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.addPrescription.tr,
+                          onTap: () {
+                            Get.to(AddNewPrescription());
+                          },
+                        )
+                            : CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.addNewTemplate.tr,
+                          onTap: () {
+                            Get.to(AddNewTemplate());
+                          },
+                        ),
                       ),
                       30.verticalSpace,
                     ],

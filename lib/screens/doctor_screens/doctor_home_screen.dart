@@ -14,6 +14,7 @@ import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/category_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/home_widgets/quick_statistics_card.dart';
 import 'package:patient_app/widgets/doctor_widgets/home_widgets/recent_activity_card.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../widgets/patient_widgets/appointment_widgets/appointment_card.dart';
 import '../patient_screens/notifications_screens/notifications_screen.dart';
@@ -50,9 +51,9 @@ class DoctorHomeScreen extends StatelessWidget {
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
               final Color targetColor =
-                  isScrolledPastThreshold
-                      ? AppColors.primaryColor
-                      : Colors.transparent;
+              isScrolledPastThreshold
+                  ? AppColors.primaryColor
+                  : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -151,7 +152,7 @@ class DoctorHomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Hello,\nDr. Alex",
+                          "${AppStrings.hello.tr}\nDr. Alex",
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -206,7 +207,7 @@ class DoctorHomeScreen extends StatelessWidget {
                             ),
                             10.horizontalSpace,
                             Text(
-                              "Offline mode activated",
+                              AppStrings.offlineMode.tr,
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w700,
@@ -219,10 +220,10 @@ class DoctorHomeScreen extends StatelessWidget {
                       ),
                       15.verticalSpace,
                       AppointmentCard(
-                        title: "Ongoing  Appointment",
+                        title: AppStrings.ongoingAppointment.tr,
                         imagePath: "assets/demo_images/home_demo_image.png",
                         name: "Mr. Waston",
-                        type: 'Patient',
+                        type: AppStrings.patient.tr,
                         showGreenDot: false,
                         showRating: false,
                         onTap: (){},
@@ -230,15 +231,15 @@ class DoctorHomeScreen extends StatelessWidget {
                       15.verticalSpace,
                       AppointmentCard(
                         onTap: (){},
-                        title: "Upcoming Appointment",
+                        title: AppStrings.upcomingAppointment.tr,
                         imagePath: "assets/demo_images/home_demo_image.png",
                         name: "Mr. Waston",
-                        type: 'Patient',
-                        buttonText: "Detail",
+                        type: AppStrings.patient.tr,
+                        buttonText: AppStrings.detail.tr,
                         showGreenDot: false,
                         showRating: false,
                         consultationTypeIcon: "assets/images/in_person_icon.png",
-                        consultationTypeText: "In-Person Consultation",
+                        consultationTypeText: AppStrings.inPersonConsultation.tr,
                       ),
                       20.verticalSpace,
                       Row(
@@ -248,7 +249,7 @@ class DoctorHomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(DoctorAppointmentScreen());
                             },
-                            title: "Appointments",
+                            title: AppStrings.appointments.tr,
                             icon: "assets/images/calender_icon.png",
                             color: AppColors.primaryColor,
                           ),
@@ -256,7 +257,7 @@ class DoctorHomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(PatientScreen());
                             },
-                            title: "Patients",
+                            title: AppStrings.patients.tr,
                             icon: "assets/images/pateint_button_icon.png",
                             color: AppColors.green,
                           ),
@@ -264,7 +265,7 @@ class DoctorHomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(PrescriptionScreen());
                             },
-                            title: "Prescription",
+                            title: AppStrings.prescription.tr,
                             icon: "assets/images/prescription_icon.png",
                             color: AppColors.secondryColor,
                           ),
@@ -272,7 +273,7 @@ class DoctorHomeScreen extends StatelessWidget {
                             onTap: () {
                               Get.to(StaticsScreen());
                             },
-                            title: "Statistics",
+                            title: AppStrings.statistics.tr,
                             icon: "assets/images/statistics_button_icon.png",
                             color: AppColors.orange,
                           ),
@@ -282,7 +283,7 @@ class DoctorHomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Quick Statistics",
+                          AppStrings.quickStatistics.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
@@ -297,7 +298,7 @@ class DoctorHomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Recent Activity",
+                          AppStrings.recentActivity.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,

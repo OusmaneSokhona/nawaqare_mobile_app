@@ -47,6 +47,7 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
                     CustomButton(
                         borderRadius: 15,
                         text: AppStrings.uploadNewReport.tr,
+                        fontSize: 14,
                         onTap: () {}
                     ),
                     30.verticalSpace,
@@ -96,8 +97,8 @@ class RecentProjectsDrawer extends GetView<VideoCallController> {
                 const SizedBox(width: 8),
                 Text(
                   title.tr, // Localized
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: TextStyle(
+                    fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

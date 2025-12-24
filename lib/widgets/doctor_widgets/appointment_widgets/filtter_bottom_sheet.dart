@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class FilterBottomSheet extends GetView<DoctorAppointmentController> {
   const FilterBottomSheet({super.key});
@@ -30,7 +31,7 @@ class FilterBottomSheet extends GetView<DoctorAppointmentController> {
               items: items
                   .map((String item) => DropdownMenuItem(
                 value: item,
-                child: Text(item),
+                child: Text(item.tr),
               ))
                   .toList(),
               onChanged: onChanged,
@@ -71,7 +72,7 @@ class FilterBottomSheet extends GetView<DoctorAppointmentController> {
           ),
           Obx(
                 () => _buildDropdown(
-              'Consultation Type',
+              AppStrings.consultationType.tr,
               controller.selectedConsultationType,
               controller.consultationTypes,
               controller.updateConsultationType,
@@ -79,7 +80,7 @@ class FilterBottomSheet extends GetView<DoctorAppointmentController> {
           ),
           Obx(
                 () => _buildDropdown(
-              'Status',
+              AppStrings.status.tr,
               controller.selectedStatus,
               controller.statuses,
               controller.updateStatus,
@@ -87,7 +88,7 @@ class FilterBottomSheet extends GetView<DoctorAppointmentController> {
           ),
           Obx(
                 () => _buildDropdown(
-              'Period',
+              AppStrings.period.tr,
               controller.selectedPeriod,
               controller.periods,
               controller.updatePeriod,
@@ -106,9 +107,9 @@ class FilterBottomSheet extends GetView<DoctorAppointmentController> {
                     ),
                     side: BorderSide(color: Colors.grey.shade300),
                   ),
-                  child: const Text(
-                    'Reset',
-                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  child: Text(
+                    AppStrings.reset.tr,
+                    style: const TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                 ),
               ),
@@ -123,9 +124,9 @@ class FilterBottomSheet extends GetView<DoctorAppointmentController> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                    AppStrings.apply.tr,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 import '../../../utils/app_colors.dart';
@@ -42,7 +43,7 @@ class TemplateDetailsScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Template Detail",
+                    AppStrings.templateDetail.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -67,7 +68,7 @@ class TemplateDetailsScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Dosage",
+                          AppStrings.dosage.tr,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 19.sp,
@@ -92,7 +93,7 @@ class TemplateDetailsScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Special Instructions",
+                          AppStrings.specialInstructions.tr,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 19.sp,
@@ -113,14 +114,16 @@ class TemplateDetailsScreen extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Apply Template",
+                        text: AppStrings.applyTemplate.tr,
                         onTap: () {},
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
-                        onTap: () {},
+                        text: AppStrings.cancel.tr,
+                        onTap: () {
+                          Get.back();
+                        },
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                       ),
@@ -222,11 +225,11 @@ class TemplateDetailsScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDetailRow('Foam', form),
-        _buildDetailRow('Route of Administration', route),
-        _buildDetailRow('Quantity to Dispense', quantity),
-        _buildDetailRow('Refill', refill),
-        _buildDetailRow('Category', category),
+        _buildDetailRow(AppStrings.form.tr, form),
+        _buildDetailRow(AppStrings.routeOfAdministrationLabel.tr, route),
+        _buildDetailRow(AppStrings.quantityToDispenseLabel.tr, quantity),
+        _buildDetailRow(AppStrings.refillLabel.tr, refill),
+        _buildDetailRow(AppStrings.category.tr, category),
       ],
     );
   }

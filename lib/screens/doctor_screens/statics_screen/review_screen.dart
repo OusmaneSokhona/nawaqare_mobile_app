@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/review_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/doctor_widgets/patient_widgets/filter_dopdown_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/statics_widgets/review_filter_bottom_sheet.dart';
@@ -13,8 +14,7 @@ import '../../../utils/app_images.dart';
 
 class ReviewScreen extends StatelessWidget {
   ReviewScreen({Key? key}) : super(key: key);
-ReviewsController controller=Get.put(ReviewsController());
-
+  final ReviewsController controller = Get.put(ReviewsController());
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +30,14 @@ ReviewsController controller=Get.put(ReviewsController());
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
               70.verticalSpace,
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -48,7 +46,7 @@ ReviewsController controller=Get.put(ReviewsController());
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Reviews",
+                    AppStrings.reviewsCount.tr, // Or create a generic 'Reviews' string
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -66,77 +64,9 @@ ReviewsController controller=Get.put(ReviewsController());
                     children: [
                       _buildSegmentedControl(),
                       const SizedBox(height: 24),
-                      Obx(
-                        ()=> controller.selectedTab.value==0?Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Patient Reviews',
-                              style: TextStyle(
-                                fontSize: 22.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Feedback From Your Recent Consultations',
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: AppColors.lightGrey,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            CustomTextField(
-                              prefixIcon: Icons.search,
-                              suffixIcon: Icons.filter_list,
-                              prefixIconColor: AppColors.lightGrey,
-                              suffixIconColor: AppColors.primaryColor,
-                              hintText: "Search by patient name...",
-                              onSuffixIconTap: (){
-                                Get.bottomSheet(backgroundColor: Colors.white,ReviewFilterBottomSheet( onApply: (){}, onReset: (){}));
-                              },
-                            ),
-                            const SizedBox(height: 24),
-                            _buildSummaryAndCriteria(),
-                            const SizedBox(height: 20),
-                            Obx(() => ListView.builder(
-                              padding: EdgeInsets.zero,
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: controller.reviews.length,
-                              itemBuilder: (context, index) {
-                                return _buildReviewCard(controller.reviews[index]);
-                              },
-                            )),
-                            30.verticalSpace,
-                          ],
-                        ):Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Performance Statistics',
-                              style: TextStyle(
-                                fontSize: 22.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Feedback From Your Recent Consultations',
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: AppColors.lightGrey,
-                              ),
-                            ),
-                            10.verticalSpace,
-                            FilterControlBar(),
-                            10.verticalSpace,
-                            Obx(()=> controller.selectedActivityValue.value=="Activity"?Image.asset("assets/demo_images/demo1.png"):controller.selectedActivityValue.value=="Performance"?Image.asset("assets/demo_images/demo2.png"):controller.selectedActivityValue.value=="Compliance"?Image.asset("assets/demo_images/demo3.png"):Image.asset("assets/demo_images/demo4.png")),
-                          ],
-                        ),
-                      ),
+                      Obx(() => controller.selectedTab.value == 0
+                          ? _buildPatientReviewsTab()
+                          : _buildStatisticsTab()),
                     ],
                   ),
                 ),
@@ -147,38 +77,92 @@ ReviewsController controller=Get.put(ReviewsController());
       ),
     );
   }
-  Widget _buildRatingBar(String criterion, double value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 90,
-            child: Text(
-              criterion,maxLines: 1,
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey.shade700,
-              ),
-            ),
+
+  Widget _buildPatientReviewsTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.patientReviews.tr,
+          style: TextStyle(
+            fontSize: 22.sp,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: value,
-                  minHeight: 8,
-                  backgroundColor: Colors.grey.shade200,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade600),
-                ),
-              ),
-            ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          AppStrings.feedbackSubtitle.tr,
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: AppColors.lightGrey,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+        CustomTextField(
+          prefixIcon: Icons.search,
+          suffixIcon: Icons.filter_list,
+          prefixIconColor: AppColors.lightGrey,
+          suffixIconColor: AppColors.primaryColor,
+          hintText: AppStrings.searchByPatient.tr,
+          onSuffixIconTap: () {
+            Get.bottomSheet(
+                backgroundColor: Colors.white,
+                ReviewFilterBottomSheet(onApply: () {}, onReset: () {}));
+          },
+        ),
+        const SizedBox(height: 24),
+        _buildSummaryAndCriteria(),
+        const SizedBox(height: 20),
+        Obx(() => ListView.builder(
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: controller.reviews.length,
+          itemBuilder: (context, index) {
+            return _buildReviewCard(controller.reviews[index]);
+          },
+        )),
+        30.verticalSpace,
+      ],
+    );
+  }
+
+  Widget _buildStatisticsTab() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.performanceStatistics.tr,
+          style: TextStyle(
+            fontSize: 22.sp,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          AppStrings.feedbackSubtitle.tr,
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: AppColors.lightGrey,
+          ),
+        ),
+        10.verticalSpace,
+         FilterControlBar(),
+        10.verticalSpace,
+        Obx(() {
+          String imagePath = "assets/demo_images/demo1.png";
+          if (controller.selectedActivityValue.value == "Performance") {
+            imagePath = "assets/demo_images/demo2.png";
+          } else if (controller.selectedActivityValue.value == "Compliance") {
+            imagePath = "assets/demo_images/demo3.png";
+          } else if (controller.selectedActivityValue.value != "Activity") {
+            imagePath = "assets/demo_images/demo4.png";
+          }
+          return Image.asset(imagePath);
+        }),
+      ],
     );
   }
 
@@ -211,14 +195,14 @@ ReviewsController controller=Get.put(ReviewsController());
                           review.reviewerName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 15,
+                            fontSize: 15.sp,
                             color: Colors.grey.shade800,
                           ),
                         ),
                         Text(
                           review.date,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 13.sp,
                             color: Colors.grey.shade600,
                           ),
                         ),
@@ -231,7 +215,7 @@ ReviewsController controller=Get.put(ReviewsController());
                           review.rating.toStringAsFixed(1),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             color: Colors.grey.shade800,
                           ),
                         ),
@@ -240,14 +224,15 @@ ReviewsController controller=Get.put(ReviewsController());
                           children: List.generate(5, (index) {
                             return Icon(
                               Icons.star,
-                              color: index < review.rating ? Colors.amber : Colors.grey.shade300,
-                              size: 16,
+                              color: index < review.rating
+                                  ? Colors.amber
+                                  : Colors.grey.shade300,
+                              size: 16.sp,
                             );
                           }),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
                   ],
                 ),
               ),
@@ -257,7 +242,7 @@ ReviewsController controller=Get.put(ReviewsController());
         Text(
           review.reviewText,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 14.sp,
             color: Colors.grey.shade700,
           ),
         ),
@@ -266,45 +251,26 @@ ReviewsController controller=Get.put(ReviewsController());
           children: [
             TextButton(
               onPressed: () {},
-              child: const Text('Reply', style: TextStyle(color: AppColors.primaryColor, fontWeight: FontWeight.w600,decorationColor: AppColors.primaryColor,decoration: TextDecoration.underline)),
+              child: Text(
+                AppStrings.reply.tr,
+                style: const TextStyle(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline),
+              ),
             ),
             TextButton.icon(
               onPressed: () {},
-              icon: Icon(Icons.flag_outlined, size: 16, color: Colors.grey.shade600),
+              icon: Icon(Icons.flag_outlined, size: 16.sp, color: Colors.grey.shade600),
               label: Text(
-                'Report',
-                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                AppStrings.report.tr,
+                style: TextStyle(color: Colors.grey.shade600, fontSize: 13.sp),
               ),
             ),
           ],
         ),
-        Divider(height: 0.2.sp, color: AppColors.lightGrey.withOpacity(0.3)),
+        Divider(height: 1.h, color: AppColors.lightGrey.withOpacity(0.3)),
       ],
-    );
-  }
-
-  Widget _buildSegmentButton(String label, bool isSelected, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 48,
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryColor : Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -317,12 +283,12 @@ ReviewsController controller=Get.put(ReviewsController());
       child: Row(
         children: [
           _buildSegmentButton(
-            'Patient Reviews',
+            AppStrings.patientReviews.tr,
             controller.selectedTab.value == 0,
                 () => controller.selectTab(0),
           ),
           _buildSegmentButton(
-            'Statistics',
+            AppStrings.statistics.tr,
             controller.selectedTab.value == 1,
                 () => controller.selectTab(1),
           ),
@@ -330,6 +296,32 @@ ReviewsController controller=Get.put(ReviewsController());
       ),
     ));
   }
+
+  Widget _buildSegmentButton(String label, bool isSelected, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 48.h,
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.primaryColor : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 14.sp,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSummaryAndCriteria() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -337,13 +329,6 @@ ReviewsController controller=Get.put(ReviewsController());
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade100,
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
       ),
       child: Obx(() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,7 +343,7 @@ ReviewsController controller=Get.put(ReviewsController());
                       return Icon(
                         Icons.star,
                         color: index < 4 ? Colors.amber : Colors.grey.shade300,
-                        size: 18,
+                        size: 18.sp,
                       );
                     }),
                   ),
@@ -366,41 +351,68 @@ ReviewsController controller=Get.put(ReviewsController());
                   Text(
                     '4.0',
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 18.sp,
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade800,
                     ),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '05 Reviews',
+                    '05 ${AppStrings.reviewsCount.tr}',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),
                 ],
               ),
-              Icon(Icons.ios_share, color:AppColors.primaryColor),
+              const Icon(Icons.ios_share, color: AppColors.primaryColor),
             ],
           ),
           const SizedBox(height: 16),
           Text(
-            'Criteria',
+            AppStrings.criteria.tr,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 15,
-              color: Colors.grey.shade800,
+              fontSize: 15.sp,
             ),
           ),
           const SizedBox(height: 8),
-          _buildRatingBar('Communication', controller.communication.value),
-          _buildRatingBar('Clarity', controller.clarity.value),
-          _buildRatingBar('Punctuality', controller.punctuality.value),
-          _buildRatingBar('Behaviors', controller.behaviors.value),
-          _buildRatingBar('Quality', controller.quality.value),
+          _buildRatingBar(AppStrings.communication.tr, controller.communication.value),
+          _buildRatingBar(AppStrings.clarity.tr, controller.clarity.value),
+          _buildRatingBar(AppStrings.punctuality.tr, controller.punctuality.value),
+          _buildRatingBar(AppStrings.behaviors.tr, controller.behaviors.value),
+          _buildRatingBar(AppStrings.quality.tr, controller.quality.value),
         ],
       )),
+    );
+  }
+
+  Widget _buildRatingBar(String criterion, double value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 100.w,
+            child: Text(
+              criterion,
+              maxLines: 1,
+              style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade700),
+            ),
+          ),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: value,
+                minHeight: 8.h,
+                backgroundColor: Colors.grey.shade200,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade600),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

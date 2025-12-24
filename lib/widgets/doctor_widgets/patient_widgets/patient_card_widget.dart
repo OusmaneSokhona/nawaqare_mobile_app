@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/models/patient_model.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../utils/app_colors.dart';
 
@@ -55,7 +57,7 @@ class PatientCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Text(
-          'Follow Up',
+          AppStrings.followUp.tr,
           style: TextStyle(
             color: Colors.white,
             fontSize: 11.sp,
@@ -151,7 +153,7 @@ class PatientCardWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'Period:',
+                        AppStrings.period.tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: AppColors.darkGrey,
@@ -176,14 +178,14 @@ class PatientCardWidget extends StatelessWidget {
           Row(
             children: [
               _buildActionButton(
-                'Schedule',
+                AppStrings.schedule.tr,
                 AppColors.lightGrey, Colors.black,
                 onScheduleTap,
                 isOutlined: true,
               ),
               10.horizontalSpace,
               _buildActionButton(
-                'Add Note',
+                AppStrings.addNote.tr,
                 AppColors.primaryColor,
                 Colors.white,
                 onAddNoteTap,

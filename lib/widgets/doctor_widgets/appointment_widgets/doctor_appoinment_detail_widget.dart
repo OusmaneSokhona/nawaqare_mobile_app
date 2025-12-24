@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
@@ -7,22 +9,17 @@ import '../../../utils/app_colors.dart';
 class DoctorAppoinmentDetailWidget extends StatelessWidget {
   final AppointmentModel appointmentModel;
 
-  DoctorAppoinmentDetailWidget({Key? key, required this.appointmentModel, })
+  const DoctorAppoinmentDetailWidget({Key? key, required this.appointmentModel})
       : super(key: key);
 
   Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case "follow up":
-        return AppColors.primaryColor;
-      case "renewal":
-        return Colors.orange;
-      case "exam review":
-        return Colors.lightBlueAccent;
-      case "initial":
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
+    // It's best to compare against untranslated keys or a fixed set of identifiers
+    String s = status.toLowerCase();
+    if (s.contains("follow") || s.contains("suivi")) return AppColors.primaryColor;
+    if (s.contains("renewal") || s.contains("renouvellement")) return Colors.orange;
+    if (s.contains("exam") || s.contains("examen")) return Colors.lightBlueAccent;
+    if (s.contains("initial")) return Colors.green;
+    return Colors.grey;
   }
 
   @override
@@ -52,7 +49,7 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                       children: [
                         Text(
                           "${appointmentModel.date}",
-                          style:  TextStyle(color: Colors.black54, fontSize: 12.sp),
+                          style: TextStyle(color: Colors.black54, fontSize: 12.sp),
                         ),
                         8.horizontalSpace,
                         Icon(
@@ -63,7 +60,7 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                         4.horizontalSpace,
                         Text(
                           "${appointmentModel.time}",
-                          style:  TextStyle(color: Colors.black54, fontSize: 12.sp),
+                          style: TextStyle(color: Colors.black54, fontSize: 12.sp),
                         ),
                       ],
                     ),
@@ -79,24 +76,25 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.sp),
                   ),
                   child: Text(
-                    appointmentModel.status,
+                    appointmentModel.status.tr, // Translate status
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 9.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),              ],
+                ),
+              ],
             ),
-
             const SizedBox(height: 4),
-            Divider(thickness: 0.3,color: Colors.black45,),
+            const Divider(thickness: 0.3, color: Colors.black45),
             const SizedBox(height: 4),
-
             Row(
               children: [
                 Image.asset(
-                  appointmentModel.imageUrl,height: 105.h,fit: BoxFit.fill,
+                  appointmentModel.imageUrl,
+                  height: 105.h,
+                  fit: BoxFit.fill,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -105,7 +103,7 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                     children: [
                       Text(
                         appointmentModel.name,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
                         ),
@@ -124,25 +122,28 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            appointmentModel.consultationType,
-                            style:  TextStyle(
+                            appointmentModel.consultationType.tr, // Translate type
+                            style: TextStyle(
                               color: Colors.black,
                               fontSize: 13.sp,
                             ),
                           ),
                         ],
                       ),
-                     10.verticalSpace,
-                     Text("View Record",style: TextStyle(color: AppColors.primaryColor,decoration: TextDecoration.underline,decorationColor: AppColors.primaryColor),),
+                      10.verticalSpace,
+                      Text(
+                        AppStrings.viewRecord.tr,
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.primaryColor,
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ],
             ),
-
-
-
-
           ],
         ),
       ),

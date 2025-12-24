@@ -50,7 +50,7 @@ class RequestRefill extends StatelessWidget {
                     AppStrings.requestRefill.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 23.sp,
+                      fontSize: 19.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),

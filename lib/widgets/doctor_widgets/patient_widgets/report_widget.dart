@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 class ReportWidget extends StatelessWidget {
@@ -13,25 +15,25 @@ class ReportWidget extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "Medical Reports",
+            AppStrings.medicalReports.tr,
             style: TextStyle(fontSize: 21.sp, fontWeight: FontWeight.w600),
           ),
         ),
         10.verticalSpace,
         _buildMedicalRecordsCard(context),
         20.verticalSpace,
-        CustomButton(borderRadius: 15, text: "Add New Reports", onTap: (){}),
+        CustomButton(borderRadius: 15, text: AppStrings.addNewReports.tr, onTap: (){}),
         30.verticalSpace,
       ],
     );
   }
 
   Widget _buildRecordTile(
-    BuildContext context,
-    IconData iconData,
-    String title,
-    String date,
-  ) {
+      BuildContext context,
+      IconData iconData,
+      String title,
+      String date,
+      ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -103,7 +105,7 @@ class ReportWidget extends StatelessWidget {
             _buildRecordTile(
               context,
               Icons.science_outlined,
-              'Blood Test',
+              AppStrings.bloodTest.tr,
               'Jan 2025',
             ),
             Padding(
@@ -117,7 +119,7 @@ class ReportWidget extends StatelessWidget {
             _buildRecordTile(
               context,
               Icons.description_outlined,
-              'Chest X-ray',
+              AppStrings.chestXray.tr,
               'Jan 2025',
             ),
             Padding(
@@ -131,7 +133,7 @@ class ReportWidget extends StatelessWidget {
             _buildRecordTile(
               context,
               Icons.description_outlined,
-              'Chest X-ray',
+              AppStrings.chestXray.tr,
               'Jan 2025',
             ),
           ],

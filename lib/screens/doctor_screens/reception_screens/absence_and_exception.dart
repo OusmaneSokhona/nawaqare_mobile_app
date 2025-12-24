@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/absence_exception_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:patient_app/widgets/custom_radio_tile.dart';
@@ -49,7 +50,7 @@ class AbsenceAndException extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Absences & Exceptions",
+                    AppStrings.absencesExceptions.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -67,23 +68,23 @@ class AbsenceAndException extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Select Date',
-                          style: TextStyle(
+                          AppStrings.selectDate.tr,
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.black,
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: Obx(
-                          () => CalendarDatePicker2(
+                              () => CalendarDatePicker2(
                             config: _buildCalendarConfig(),
                             value: [controller.selectedDate.value],
                             onValueChanged: (dates) {
@@ -97,28 +98,34 @@ class AbsenceAndException extends StatelessWidget {
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Declare Absence",
+                        text: AppStrings.declareAbsence.tr,
                         onTap: () {
-                          Get.to(CalenderSyncronizationScreen());
+                          Get.to( CalenderSyncronizationScreen());
                         },
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Period",
+                        labelText: AppStrings.period.tr,
                         hintText: "Nov 1 - Nov 3",
                       ),
                       10.verticalSpace,
-                      CustomDropdown(
-                        label: "Reason",
-                        options: ["Vacation", "On Work", "Week End"],
+                      Obx(() => CustomDropdown(
+                        label: AppStrings.reason.tr,
+                        options: [
+                          AppStrings.vacation.tr,
+                          AppStrings.onWork.tr,
+                          AppStrings.weekEnd.tr
+                        ],
                         currentValue: controller.selectedReason.value,
-                        onChanged: (_) {},
-                      ),
+                        onChanged: (val) {
+                          if (val != null) controller.selectedReason.value = val;
+                        },
+                      )),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Scope",
+                          AppStrings.scope.tr,
                           style: TextStyle(
                             fontSize: 17.sp,
                             fontWeight: FontWeight.w600,
@@ -127,34 +134,34 @@ class AbsenceAndException extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () => CustomRadioTile(
-                          text: "All services",
+                            () => CustomRadioTile(
+                          text: AppStrings.allServices.tr,
                           isSelected: controller.allService.value,
                           onTap: () {
                             controller.allService.value =
-                                !controller.allService.value;
+                            !controller.allService.value;
                           },
                         ),
                       ),
                       5.verticalSpace,
                       Obx(
-                        () => CustomRadioTile(
-                          text: "Specific",
+                            () => CustomRadioTile(
+                          text: AppStrings.specific.tr,
                           isSelected: controller.specific.value,
                           onTap: () {
                             controller.specific.value =
-                                !controller.specific.value;
+                            !controller.specific.value;
                           },
                         ),
                       ),
                       15.verticalSpace,
                       Obx(
-                        () => CustomRadioTile(
-                          text: "Notify affected patients",
+                            () => CustomRadioTile(
+                          text: AppStrings.notifyAffectedPatients.tr,
                           isSelected: controller.notifyAffectedPatient.value,
                           onTap: () {
                             controller.notifyAffectedPatient.value =
-                                !controller.notifyAffectedPatient.value;
+                            !controller.notifyAffectedPatient.value;
                           },
                           isCircle: false,
                         ),
@@ -162,14 +169,16 @@ class AbsenceAndException extends StatelessWidget {
                       20.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Save",
+                        text: AppStrings.save.tr,
                         onTap: () {},
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
-                        onTap: () {},
+                        text: AppStrings.cancel.tr,
+                        onTap: () {
+                          Get.back();
+                        },
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                       ),
@@ -177,7 +186,7 @@ class AbsenceAndException extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Past Absences",
+                          AppStrings.pastAbsences.tr,
                           style: TextStyle(
                             fontSize: 19.sp,
                             fontFamily: AppFonts.jakartaBold,
@@ -185,42 +194,42 @@ class AbsenceAndException extends StatelessWidget {
                           ),
                         ),
                       ),
-                    5.verticalSpace,
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(15.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16.0),
-                       border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           Text(
-                            'Identity',
-                            style: TextStyle(
-                              fontSize: 18.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                      5.verticalSpace,
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(15.0),
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.0),
+                            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStrings.identity.tr,
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
-                          10.verticalSpace,
-                          _buildStatusRow(
-                            dateRange: 'Oct 10–12',
-                            status: 'Completed',
-                            isNotified: true,
-                          ),
-                          const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
-                          _buildStatusRow(
-                            dateRange: 'Oct 10–12',
-                            status: 'Completed',
-                            isNotified: true,
-                          ),
-                        ],
+                            10.verticalSpace,
+                            _buildStatusRow(
+                              dateRange: 'Oct 10–12',
+                              status: AppStrings.completed.tr,
+                              isNotified: true,
+                            ),
+                            const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+                            _buildStatusRow(
+                              dateRange: 'Oct 10–12',
+                              status: AppStrings.completed.tr,
+                              isNotified: true,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
                       30.verticalSpace,
                     ],
                   ),
@@ -233,11 +242,12 @@ class AbsenceAndException extends StatelessWidget {
     );
   }
 
+  // Configuration remains same, but you can localize month labels here if the package supports it
   CalendarDatePicker2Config _buildCalendarConfig() {
     return CalendarDatePicker2Config(
       calendarType: CalendarDatePicker2Type.single,
       currentDate: controller.initialDate,
-      weekdayLabelTextStyle: TextStyle(
+      weekdayLabelTextStyle: const TextStyle(
         color: Colors.black,
         fontWeight: FontWeight.bold,
       ),
@@ -267,41 +277,9 @@ class AbsenceAndException extends StatelessWidget {
         color: AppColors.primaryColor,
       ),
       controlsHeight: 40,
-      dayBuilder: ({
-        DateTime? date,
-        TextStyle? textStyle,
-        BoxDecoration? decoration,
-        bool? isSelected,
-        bool? isDisabled,
-        bool? isToday,
-      }) {
-        if (date == null) return null;
-        final isSelectedDay = isSelected ?? false;
-        final day = date.day.toString();
-
-        return Container(
-          alignment: Alignment.center,
-          margin: EdgeInsets.symmetric(vertical: 4, horizontal: 2),
-          width: 38,
-          height: 38,
-          decoration: BoxDecoration(
-            color: isSelectedDay ? AppColors.primaryColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            day,
-            style: TextStyle(
-              color:
-                  isSelectedDay
-                      ? Colors.white
-                      : (isDisabled == true ? Colors.grey : Colors.black),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        );
-      },
     );
   }
+
   Widget _buildStatusRow({
     required String dateRange,
     required String status,
@@ -346,7 +324,7 @@ class AbsenceAndException extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Notified',
+                      AppStrings.notified.tr,
                       style: const TextStyle(
                         fontSize: 16,
                         color: Color(0xFF757575),

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/service_and_pricing_controller.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/add_service_reception.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_radio_tile.dart';
 import 'package:patient_app/widgets/doctor_widgets/reception_widgets/edit_price_dialogs.dart';
@@ -14,7 +15,7 @@ import '../../../utils/app_fonts.dart';
 class ServicesAndPricing extends StatelessWidget {
   ServicesAndPricing({super.key});
 
-  ServiceAndPricingController controller = Get.put(
+  final ServiceAndPricingController controller = Get.put(
     ServiceAndPricingController(),
   );
 
@@ -39,9 +40,7 @@ class ServicesAndPricing extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       "assets/images/back_icon.png",
                       height: 22.h,
@@ -49,7 +48,7 @@ class ServicesAndPricing extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Services & pricing",
+                    AppStrings.servicesPricing.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -61,9 +60,9 @@ class ServicesAndPricing extends StatelessWidget {
               ),
               5.verticalSpace,
               Text(
-                "This Is A Preview Of The Patient’s Booking View",
+                AppStrings.servicesPricingPreview.tr,
                 style: TextStyle(
-                  fontSize: 16.sp,
+                  fontSize: 14.sp, // Adjusted slightly for long translations
                   fontWeight: FontWeight.w500,
                   color: AppColors.darkGrey,
                 ),
@@ -71,91 +70,27 @@ class ServicesAndPricing extends StatelessWidget {
               10.verticalSpace,
               Align(
                 alignment: Alignment.centerLeft,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    profileType("Availability per Service", 130.w),
-                    9.horizontalSpace,
-                    profileType("Duration & Pricing", 100.w),
-                    9.horizontalSpace,
-                    profileType("Global Policies", 85.w),
-                  ],
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      profileType(AppStrings.availabilityPerService.tr, 130.w),
+                      9.horizontalSpace,
+                      profileType(AppStrings.durationPricing.tr, 100.w),
+                      9.horizontalSpace,
+                      profileType(AppStrings.globalPolicies.tr, 85.w),
+                    ],
+                  ),
                 ),
               ),
               10.verticalSpace,
-              Obx(
-                () =>
-                    controller.type.value == "Availability per Service"
-                        ? Column(
-                          children: [
-                            buildConsultationCard(
-                              title: 'General Consultation',
-                              typeIcon: Icons.apartment_outlined,
-                              typeDescription: 'In person Consultation',
-                              location: 'Clinic Room 2',
-                              schedule: 'Mon-Friday',
-                              onEditPressed: () {
-                                Get.dialog(EditServiceDialog());
-                              },
-                            ),
-                            10.verticalSpace,
-                            buildConsultationCard(
-                              title: 'Teleconsultation',
-                              typeIcon: Icons.call_outlined,
-                              typeDescription: 'Remote Consultation',
-                              location: 'Virtual Room',
-                              schedule: 'Tue-Sat',
-                              onEditPressed: () {
-                                Get.dialog(EditServiceDialog());
-                              },
-                            ),
-                            30.verticalSpace,
-                            CustomButton(
-                              borderRadius: 15,
-                              text: "Add Service",
-                              onTap: () {
-                                Get.to(AddServiceReception());
-                              },
-                            ),
-                          ],
-                        )
-                        :  controller.type.value == "Duration & Pricing"?Column(
-                          children: [
-                            buildDurationAndPricingCard(
-                              title: 'General Consultation',
-                              time: '30min',
-                              price:
-                                  ""
-                                  "\$45",
-                              onEditPressed: () {
-                                Get.dialog(EditPriceDialogs());
-                              },
-                            ),
-                            10.verticalSpace,
-                            buildDurationAndPricingCard(
-                              title: "Teleconsultation",
-                              price: "\$45",
-                              time: "45",
-                              onEditPressed: () {
-                                Get.dialog(EditPriceDialogs());
-                              },
-                            ),
-                          ],
-                        ):Column(
-                      children: [
-                        CustomDropdown(label: "Minimum booking notice", options: ["2 hours","4 hours","6 hours","8 hours"], currentValue: controller.selectedTime.value, onChanged: (_){}),
-                        10.verticalSpace,
-                        CustomDropdown(label: "buffer time", options: ["10 mint","20 mint","5 mint"], currentValue: controller.selectedBufferTime.value, onChanged: (_){}),
-                        10.verticalSpace,
-                        Obx(()=> CustomRadioTile(text: "Cancellation policy Free until 24h before appointment ", isSelected: controller.selectPolicy.value, onTap: (){
-                          controller.selectPolicy.value=!controller.selectPolicy.value;
-                        },isCircle: false,fontSize: 11,)),
-                        20.verticalSpace,
-                        CustomButton(borderRadius: 15, text: "Save", onTap: (){}),
-                        10.verticalSpace,
-                        CustomButton(borderRadius: 15, text: "Cancel", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,)
-                      ],
-                    ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Obx(
+                        () => _buildSelectedTabContent(),
+                  ),
+                ),
               ),
             ],
           ),
@@ -164,12 +99,102 @@ class ServicesAndPricing extends StatelessWidget {
     );
   }
 
+  Widget _buildSelectedTabContent() {
+    // Note: Comparing against translated string can be risky if keys change.
+    // Ideally use an enum or the original AppStrings key.
+    if (controller.type.value == AppStrings.availabilityPerService.tr) {
+      return Column(
+        children: [
+          buildConsultationCard(
+            title: AppStrings.generalConsultation.tr,
+            typeIcon: Icons.apartment_outlined,
+            typeDescription: AppStrings.inPersonConsultation.tr,
+            location: AppStrings.locationHint.tr,
+            schedule: 'Mon-Friday',
+            onEditPressed: () => Get.dialog(EditServiceDialog()),
+          ),
+          10.verticalSpace,
+          buildConsultationCard(
+            title: AppStrings.teleconsultation.tr,
+            typeIcon: Icons.call_outlined,
+            typeDescription: AppStrings.remoteConsultation.tr,
+            location: AppStrings.virtualRoom.tr,
+            schedule: 'Tue-Sat',
+            onEditPressed: () => Get.dialog(EditServiceDialog()),
+          ),
+          30.verticalSpace,
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.addService.tr,
+            onTap: () => Get.to(AddServiceReception()),
+          ),
+        ],
+      );
+    } else if (controller.type.value == AppStrings.durationPricing.tr) {
+      return Column(
+        children: [
+          buildDurationAndPricingCard(
+            title: AppStrings.generalConsultation.tr,
+            time: '30min',
+            price: "\$45",
+            onEditPressed: () => Get.dialog(EditPriceDialogs()),
+          ),
+          10.verticalSpace,
+          buildDurationAndPricingCard(
+            title: AppStrings.teleconsultation.tr,
+            price: "\$45",
+            time: "45min",
+            onEditPressed: () => Get.dialog(EditPriceDialogs()),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          CustomDropdown(
+            label: AppStrings.minBookingNotice.tr,
+            options: const ["2 hours", "4 hours", "6 hours", "8 hours"],
+            currentValue: controller.selectedTime.value,
+            onChanged: (val) => controller.selectedTime.value = val!,
+          ),
+          10.verticalSpace,
+          CustomDropdown(
+            label: AppStrings.bufferTime.tr,
+            options: const ["5 mint", "10 mint", "20 mint"],
+            currentValue: controller.selectedBufferTime.value,
+            onChanged: (val) => controller.selectedBufferTime.value = val!,
+          ),
+          10.verticalSpace,
+          Obx(() => CustomRadioTile(
+            text: AppStrings.cancellationPolicyText.tr,
+            isSelected: controller.selectPolicy.value,
+            onTap: () => controller.selectPolicy.value = !controller.selectPolicy.value,
+            isCircle: false,
+            fontSize: 11.sp,
+          )),
+          20.verticalSpace,
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.save.tr,
+            onTap: () {},
+          ),
+          10.verticalSpace,
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.cancel.tr,
+            onTap: () => Get.back(),
+            bgColor: AppColors.inACtiveButtonColor,
+            fontColor: Colors.black,
+          )
+        ],
+      );
+    }
+  }
+
   Widget profileType(String title, double width) {
     return Obx(
-      () => InkWell(
-        onTap: () {
-          controller.type.value = title;
-        },
+          () => InkWell(
+        onTap: () => controller.type.value = title,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -178,10 +203,7 @@ class ServicesAndPricing extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color:
-                    controller.type.value == title
-                        ? AppColors.primaryColor
-                        : AppColors.lightGrey,
+                color: controller.type.value == title ? AppColors.primaryColor : AppColors.lightGrey,
                 fontSize: 11.sp,
                 fontWeight: FontWeight.w700,
               ),
@@ -189,20 +211,21 @@ class ServicesAndPricing extends StatelessWidget {
             2.verticalSpace,
             controller.type.value == title
                 ? Container(
-                  width: width.w,
-                  height: 3.h,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryColor,
-                    borderRadius: BorderRadius.circular(7.sp),
-                  ),
-                )
-                : SizedBox(),
+              width: width,
+              height: 3.h,
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(7.sp),
+              ),
+            )
+                : const SizedBox(height: 3),
           ],
         ),
       ),
     );
   }
 
+  // Card builders stay mostly same, but use AppStrings.location.tr and AppStrings.priceLabel.tr
   Widget buildConsultationCard({
     required String title,
     required IconData typeIcon,
@@ -223,24 +246,13 @@ class ServicesAndPricing extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  child: Text(title,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
                 ),
                 IconButton(
-                  icon: ImageIcon(
-                    AssetImage("assets/images/edit_icon.png"),
-                    size: 23.sp,
-                    color: AppColors.primaryColor,
-                  ),
+                  icon: ImageIcon(const AssetImage("assets/images/edit_icon.png"),
+                      size: 23.sp, color: AppColors.primaryColor),
                   onPressed: onEditPressed,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
@@ -248,42 +260,25 @@ class ServicesAndPricing extends StatelessWidget {
               children: [
                 Icon(typeIcon, size: 18.sp, color: AppColors.primaryColor),
                 const SizedBox(width: 8),
-                Text(
-                  typeDescription,
-                  style: TextStyle(fontSize: 14.sp, color: Colors.black54),
-                ),
+                Text(typeDescription, style: TextStyle(fontSize: 14.sp, color: Colors.black54)),
               ],
+            ),
+            const SizedBox(height: 8),
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                children: [
+                  TextSpan(text: '${AppStrings.location.tr}: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: location, style: const TextStyle(color: Colors.black54)),
+                ],
+              ),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                const Text(
-                  'Location: ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  location,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(
-                  Icons.calendar_today_outlined,
-                  size: 19.sp,
-                  color: AppColors.primaryColor,
-                ),
+                Icon(Icons.calendar_today_outlined, size: 19.sp, color: AppColors.primaryColor),
                 const SizedBox(width: 8),
-                Text(
-                  schedule,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
+                Text(schedule, style: const TextStyle(fontSize: 14, color: Colors.black54)),
               ],
             ),
           ],
@@ -310,57 +305,32 @@ class ServicesAndPricing extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
+                  child: Text(title,
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
                 ),
                 IconButton(
-                  icon: ImageIcon(
-                    AssetImage("assets/images/edit_icon.png"),
-                    size: 23.sp,
-                    color: AppColors.primaryColor,
-                  ),
+                  icon: ImageIcon(const AssetImage("assets/images/edit_icon.png"),
+                      size: 23.sp, color: AppColors.primaryColor),
                   onPressed: onEditPressed,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Text(
-                  'Price: ',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-                Text(
-                  price,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
-              ],
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                children: [
+                  TextSpan(text: '${AppStrings.priceLabel.tr}: ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: price, style: const TextStyle(color: Colors.black54)),
+                ],
+              ),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
-                  Icons.watch_later_outlined,
-                  size: 19.sp,
-                  color: AppColors.primaryColor,
-                ),
+                Icon(Icons.watch_later_outlined, size: 19.sp, color: AppColors.primaryColor),
                 const SizedBox(width: 8),
-                Text(
-                  time,
-                  style: const TextStyle(fontSize: 14, color: Colors.black54),
-                ),
+                Text(time, style: const TextStyle(fontSize: 14, color: Colors.black54)),
               ],
             ),
           ],

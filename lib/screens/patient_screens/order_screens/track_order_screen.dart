@@ -86,7 +86,7 @@ class TrackOrderScreen extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
-                              fontSize: 17.sp,
+                              fontSize: 11.sp,
                               fontFamily: AppFonts.jakartaMedium,
                             ),
                           ),
@@ -114,7 +114,7 @@ class TrackOrderScreen extends StatelessWidget {
                                 AppStrings.contactDriver.tr,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 16.sp,
+                                  fontSize: 11.sp,
                                   fontFamily: AppFonts.jakartaMedium,
                                 ),
                               ),

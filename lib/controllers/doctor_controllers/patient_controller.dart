@@ -1,12 +1,15 @@
 import 'package:get/get.dart';
+import '../../utils/app_strings.dart';
 
-class PatientController extends GetxController{
-  RxString selectedCategory = 'Overview'.obs;
+class PatientController extends GetxController {
+  RxString selectedCategory = AppStrings.overview.tr.obs;
+
   List<String> statusOptions = [
-    'All',
-    'Active',
-    'Expiry Soon',
-    'Expired',
+    AppStrings.all.tr,
+    AppStrings.active.tr,
+    AppStrings.expirySoon.tr,
+    AppStrings.expired.tr,
   ];
-  RxString selectedStatus = 'All'.obs;
+
+  RxString selectedStatus = AppStrings.all.tr.obs;
 }

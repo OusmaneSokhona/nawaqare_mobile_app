@@ -7,14 +7,15 @@ import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%2
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/upload_document_widget.dart';
 
 class AddReportScreen extends StatelessWidget {
   AddReportScreen({super.key});
 
-  DoctorAppointmentController doctorAppointmentController =
-      Get.find<DoctorAppointmentController>();
+  final DoctorAppointmentController doctorAppointmentController =
+  Get.find<DoctorAppointmentController>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class AddReportScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add Report",
+                    AppStrings.addReport.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -60,27 +61,30 @@ class AddReportScreen extends StatelessWidget {
               ),
               30.verticalSpace,
               CustomDropdown(
-                label: "Report Type",
+                label: AppStrings.reportType.tr,
                 options: doctorAppointmentController.reportTypes,
                 currentValue:
-                    doctorAppointmentController.selectedReportType.value,
+                doctorAppointmentController.selectedReportType.value,
                 onChanged: (_) {},
               ),
               30.verticalSpace,
               UploadDocumentWidget(
                 selectedFileName: doctorAppointmentController.selectedFileName,
-                pickFile: (){
-                  doctorAppointmentController.pickFile(doctorAppointmentController.selectedFileName);
+                pickFile: () {
+                  doctorAppointmentController
+                      .pickFile(doctorAppointmentController.selectedFileName);
                 },
-                title: "Upload Report",
-                centerText: "Upload your Report",
-                acceptedFile: "Accepted files: PDF, JPEG – max 5MB.",
-              ),30.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Save Report", onTap: () {}),
+                title: AppStrings.uploadReport.tr,
+                centerText: AppStrings.uploadYourReport.tr,
+                acceptedFile: AppStrings.acceptedFilesInfo.tr,
+              ),
+              30.verticalSpace,
+              CustomButton(
+                  borderRadius: 15, text: AppStrings.saveReport.tr, onTap: () {}),
               10.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Cancel",
+                text: AppStrings.cancel.tr,
                 onTap: () {
                   Get.back();
                 },

@@ -2,14 +2,13 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/display_field.dart';
-import '../../../widgets/profile_picture_widget.dart';
 
 class DoctorEditProfessionalInfo extends GetView<SignUpController> {
   DoctorEditProfessionalInfo({super.key});
@@ -47,7 +46,7 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Professional Info",
+                    AppStrings.editProfessionalInfo.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -64,22 +63,22 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                     children: [
                       20.verticalSpace,
                       CustomTextField(
-                        labelText: "National Identity Document",
+                        labelText: AppStrings.nationalIdentityDocument.tr,
                         hintText: "MA-PK-451271",
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: 'Medical Speciality',
+                        title: AppStrings.medicalSpeciality.tr,
                         items: controller.medicalSpecialityList,
                         selectedValue: controller.selectedSpecialist,
                         onChanged: controller.updateSpecialization,
                       ),
                       CustomTextField(
-                        labelText: "Experience (in years)",
+                        labelText: AppStrings.experienceInYears.tr,
                         hintText: "7",
                       ),
                       buildDropdownField(
-                        title: 'Fee',
+                        title: AppStrings.fee.tr,
                         items: controller.feeList,
                         selectedValue: controller.selectedFee,
                         onChanged: controller.updateFee,
@@ -91,14 +90,11 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Date of Registration",
+                                AppStrings.dateOfRegistration.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -122,7 +118,6 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                                   children: [
                                     Text(
                                       controller.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
@@ -146,16 +141,22 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                         ),
                       ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Place of Practice",hintText: "Allied Hospital, Faisalabad",),
+                      CustomTextField(
+                        labelText: AppStrings.placeOfPractice.tr,
+                        hintText: "Allied Hospital, Faisalabad",
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Year",hintText: "2008",),
+                      CustomTextField(
+                        labelText: AppStrings.year.tr,
+                        hintText: "2008",
+                      ),
                     ],
                   ),
                 ),
               ),
               20.verticalSpace,
               CustomButton(
-                text: "Update",
+                text: AppStrings.update.tr,
                 onTap: (){
                   Get.back();
                 },
@@ -163,7 +164,7 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
               ),
               10.verticalSpace,
               CustomButton(
-                text: "Cancel",
+                text: AppStrings.cancel.tr,
                 onTap: (){
                   Get.back();
                 },
@@ -188,7 +189,6 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }

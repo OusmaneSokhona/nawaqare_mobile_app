@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -40,7 +41,7 @@ class AddNotesScreen extends StatelessWidget {
                 ),
                 10.horizontalSpace,
                 Text(
-                  "Add Notes",
+                  AppStrings.addNotes.tr,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 23.sp,
@@ -54,7 +55,7 @@ class AddNotesScreen extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Add Note",
+                AppStrings.addNote.tr,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 18.sp,
@@ -88,7 +89,7 @@ class AddNotesScreen extends StatelessWidget {
                   expands: true,
                   textAlignVertical: TextAlignVertical.top,
                   decoration: InputDecoration(
-                    hintText: "Enter notes here...",
+                    hintText: AppStrings.enterNotesHint.tr,
                     border: InputBorder.none,
                   ),
                   style: TextStyle(

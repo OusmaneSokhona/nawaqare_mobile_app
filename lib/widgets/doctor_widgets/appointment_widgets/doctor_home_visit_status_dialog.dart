@@ -6,9 +6,11 @@ import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
 
+import '../../../utils/app_strings.dart';
+
 class DoctorHomeVisitStatusDialog extends StatelessWidget {
   final bool status;
-  const DoctorHomeVisitStatusDialog({super.key,required this.status});
+  const DoctorHomeVisitStatusDialog({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +23,16 @@ class DoctorHomeVisitStatusDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.asset(status?"assets/images/confirmation_tick_icon.png":"assets/images/home_visit_decline_icon.png",height: 110.h,),
+            Image.asset(
+              status
+                  ? "assets/images/confirmation_tick_icon.png"
+                  : "assets/images/home_visit_decline_icon.png",
+              height: 110.h,
+            ),
             const SizedBox(height: 16),
             Text(
-              status?'Confirmed':"Confirm Decline",
-              style: TextStyle(
+              status ? AppStrings.confirmed.tr : AppStrings.confirmDecline.tr,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -34,7 +41,9 @@ class DoctorHomeVisitStatusDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              status?'Are u sure you want to refer your patient / close  your consultation .':"Are you sure you want to decline this home visit request?",
+              status
+                  ? AppStrings.closeConsultationMsg.tr
+                  : AppStrings.declineHomeVisitMsg.tr,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[700]),
             ),
@@ -44,7 +53,7 @@ class DoctorHomeVisitStatusDialog extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Get.back(); // Use Get.back instead of Navigator.pop
+                      Get.back();
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -53,11 +62,10 @@ class DoctorHomeVisitStatusDialog extends StatelessWidget {
                       ),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.cancel.tr,
+                      style: const TextStyle(
+                          color: Colors.black54, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -76,9 +84,9 @@ class DoctorHomeVisitStatusDialog extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child:  Text(
-                      status?'Confirm':"Decline",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      status ? AppStrings.confirm.tr : AppStrings.decline.tr,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

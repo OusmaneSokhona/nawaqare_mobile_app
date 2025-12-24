@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/services_and_pricing.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/reception_widgets/view_as_patient_card.dart';
 
 import '../../../utils/app_colors.dart';
@@ -42,7 +43,7 @@ class ViewAsPatient extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "View as Patient",
+                    AppStrings.viewAsPatient.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -54,7 +55,7 @@ class ViewAsPatient extends StatelessWidget {
               ),
               10.verticalSpace,
               Text(
-                "This Is A Preview Of The Patient’s Booking View",
+                AppStrings.previewSubtitle.tr,
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
@@ -71,7 +72,8 @@ class ViewAsPatient extends StatelessWidget {
                       appointmentModel: AppointmentModel(
                         name: "Mr. Alex Martin",
                         specialty: "specialty",
-                        consultationType: "Remote Consultation",
+                        // Note: You might want to localize consultation types in the model or via a utility
+                        consultationType: AppStrings.remoteConsultation.tr,
                         rating: 2,
                         fee: 2,
                         date: "Sunday,12 June",

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class PatientDetailCard extends StatelessWidget {
   const PatientDetailCard({super.key});
@@ -34,11 +35,11 @@ class PatientDetailCard extends StatelessWidget {
                 children: [
                   const Icon(Icons.calendar_today_outlined, size: 18, color: AppColors.primaryColor),
                   const SizedBox(width: 8),
-                   Text(
+                  Text(
                     'Monday, Oct 11:00-12:00 AM',
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Color(0xFF5A6674),
+                      color: const Color(0xFF5A6674),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -52,10 +53,10 @@ class PatientDetailCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  padding:  EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                   elevation: 0,
                 ),
-                child:  Text('Follow Up', style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500)),
+                child:  Text(AppStrings.followUp.tr, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500)),
               ),
             ],
           ),
@@ -88,28 +89,28 @@ class PatientDetailCard extends StatelessWidget {
                             color: Color(0xFF1F2937),
                           ),
                         ),
-                         Spacer(),
+                        const Spacer(),
                         GestureDetector(
                           onTap: () {},
                           child:  Padding(
-                            padding: EdgeInsets.only(top: 2.0),
+                            padding: const EdgeInsets.only(top: 2.0),
                             child:Image.asset("assets/images/chat_icon.png",height: 20.h,color: AppColors.primaryColor,),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Patient Id: #123456',
-                      style: TextStyle(
+                    Text(
+                      '${AppStrings.patientId.tr}: #123456',
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF6B7280),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    const Text(
-                      'Gender: Male',
-                      style: TextStyle(
+                    Text(
+                      '${AppStrings.gender.tr}: ${AppStrings.male.tr}',
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF6B7280),
                       ),
@@ -134,7 +135,7 @@ class PatientDetailCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     elevation: 0,
                   ),
-                  child: const Text('Schedule', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text(AppStrings.schedule.tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(width: 12),
@@ -152,7 +153,7 @@ class PatientDetailCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     elevation: 0,
                   ),
-                  child: const Text('Add Note', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  child: Text(AppStrings.addNote.tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],

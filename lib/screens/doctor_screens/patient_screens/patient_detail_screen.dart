@@ -9,12 +9,13 @@ import 'package:patient_app/widgets/doctor_widgets/patient_widgets/report_widget
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/search_widgets/rating_widget.dart';
 
 class PatientDetailScreen extends StatelessWidget {
   PatientDetailScreen({super.key});
 
-  PatientController patientController = Get.find();
+  final PatientController patientController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +49,7 @@ class PatientDetailScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Patient Details",
+                    AppStrings.patientDetails.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -72,21 +73,21 @@ class PatientDetailScreen extends StatelessWidget {
                             icon: Icons.person_outline_outlined,
                             iconCircleColor: AppColors.primaryColor,
                             metricText: "12",
-                            labelText: "Total Consultations",
+                            labelText: AppStrings.totalConsultations.tr,
                             width: 100,
                           ),
                           RatingWidget(
                             icon: Icons.ac_unit,
                             iconCircleColor: AppColors.green,
                             metricText: "10+",
-                            labelText: "Last Prescriptions",
+                            labelText: AppStrings.lastPrescriptions.tr,
                             width: 100,
                           ),
                           RatingWidget(
                             icon: Icons.chat,
                             iconCircleColor: AppColors.orange,
                             metricText: "12/sep/2023",
-                            labelText: "Next Follow-up",
+                            labelText: AppStrings.nextFollowUp.tr,
                             width: 100,
                           ),
                         ],
@@ -96,18 +97,20 @@ class PatientDetailScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Obx(
-                            ()=> InkWell(
-                              onTap: (){
-                                patientController.selectedCategory.value="Overview";
+                                () => InkWell(
+                              onTap: () {
+                                patientController.selectedCategory.value = "Overview";
                               },
                               child: Column(
                                 children: [
                                   Text(
-                                    "Overview",
+                                    AppStrings.overview.tr,
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
-                                      color:patientController.selectedCategory.value=="Overview"?AppColors.primaryColor:AppColors.lightGrey,
+                                      color: patientController.selectedCategory.value == "Overview"
+                                          ? AppColors.primaryColor
+                                          : AppColors.lightGrey,
                                     ),
                                   ),
                                   3.verticalSpace,
@@ -115,7 +118,9 @@ class PatientDetailScreen extends StatelessWidget {
                                     height: 3.h,
                                     width: 75.w,
                                     decoration: BoxDecoration(
-                                      color: patientController.selectedCategory.value=="Overview"?AppColors.primaryColor:Colors.transparent,
+                                      color: patientController.selectedCategory.value == "Overview"
+                                          ? AppColors.primaryColor
+                                          : Colors.transparent,
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
@@ -124,18 +129,20 @@ class PatientDetailScreen extends StatelessWidget {
                             ),
                           ),
                           Obx(
-                            ()=> InkWell(
-                              onTap: (){
-                                patientController.selectedCategory.value="Reports";
+                                () => InkWell(
+                              onTap: () {
+                                patientController.selectedCategory.value = "Reports";
                               },
                               child: Column(
                                 children: [
                                   Text(
-                                    "Reports",
+                                    AppStrings.reports.tr,
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
-                                      color:patientController.selectedCategory.value=="Reports"?AppColors.primaryColor:AppColors.lightGrey,
+                                      color: patientController.selectedCategory.value == "Reports"
+                                          ? AppColors.primaryColor
+                                          : AppColors.lightGrey,
                                     ),
                                   ),
                                   3.verticalSpace,
@@ -143,7 +150,9 @@ class PatientDetailScreen extends StatelessWidget {
                                     height: 3.h,
                                     width: 75.w,
                                     decoration: BoxDecoration(
-                                      color: patientController.selectedCategory.value=="Reports"?AppColors.primaryColor:Colors.transparent,
+                                      color: patientController.selectedCategory.value == "Reports"
+                                          ? AppColors.primaryColor
+                                          : Colors.transparent,
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
@@ -152,18 +161,20 @@ class PatientDetailScreen extends StatelessWidget {
                             ),
                           ),
                           Obx(
-                            ()=> InkWell(
-                              onTap: (){
-                                patientController.selectedCategory.value="Notes";
+                                () => InkWell(
+                              onTap: () {
+                                patientController.selectedCategory.value = "Notes";
                               },
                               child: Column(
                                 children: [
                                   Text(
-                                    "Notes",
+                                    AppStrings.notes.tr,
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w500,
-                                      color:patientController.selectedCategory.value=="Notes"?AppColors.primaryColor:AppColors.lightGrey,
+                                      color: patientController.selectedCategory.value == "Notes"
+                                          ? AppColors.primaryColor
+                                          : AppColors.lightGrey,
                                     ),
                                   ),
                                   3.verticalSpace,
@@ -171,7 +182,9 @@ class PatientDetailScreen extends StatelessWidget {
                                     height: 3.h,
                                     width: 75.w,
                                     decoration: BoxDecoration(
-                                      color: patientController.selectedCategory.value=="Notes"?AppColors.primaryColor:Colors.transparent,
+                                      color: patientController.selectedCategory.value == "Notes"
+                                          ? AppColors.primaryColor
+                                          : Colors.transparent,
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                   ),
@@ -183,8 +196,11 @@ class PatientDetailScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                          ()=> patientController.selectedCategory.value=="Overview"?
-                        MedicalRecordWidgets():patientController.selectedCategory.value=="Reports"?ReportWidget():NotesWidget(),
+                            () => patientController.selectedCategory.value == "Overview"
+                            ? MedicalRecordWidgets()
+                            : patientController.selectedCategory.value == "Reports"
+                            ? ReportWidget()
+                            : NotesWidget(),
                       ),
                     ],
                   ),

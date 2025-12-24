@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 class MedicalRecordWidgets extends StatelessWidget {
@@ -28,33 +30,33 @@ class MedicalRecordWidgets extends StatelessWidget {
       width: 1.sw,
       decoration: BoxDecoration(
           color: Colors.white,
-        border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
-        borderRadius: BorderRadius.circular(9.sp)
+          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+          borderRadius: BorderRadius.circular(9.sp)
       ),
-     padding: EdgeInsets.symmetric(horizontal:16.sp,vertical: 20.sp),
+      padding: EdgeInsets.symmetric(horizontal:16.sp,vertical: 20.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'Current Medication',
+            AppStrings.currentMedication.tr,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
           ),
-           Text(
+          Text(
             'Amoxicillin 500mg',
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
           ),
           const SizedBox(height: 4.0),
-           Text(
+          Text(
             '1 tablet, twice daily after meals',
             style: textStyle,
           ),
           const SizedBox(height: 12.0),
-           Text(
+          Text(
             'Refill until Oct 15, 2025',
             style: detailStyle,
           ),
           const SizedBox(height: 4.0),
-           Text(
+          Text(
             'Last updated: 12 Sept 2025',
             style: detailStyle,
           ),
@@ -64,7 +66,7 @@ class MedicalRecordWidgets extends StatelessWidget {
             color: AppColors.lightGrey,
           ),
           Text(
-            'Allergy',
+            AppStrings.allergy.tr,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
           ),
           10.verticalSpace,
@@ -75,8 +77,8 @@ class MedicalRecordWidgets extends StatelessWidget {
           5.verticalSpace,
           Row(
             children: <Widget>[
-               Icon(Icons.description, size: 16, color: AppColors.primaryColor),
-               SizedBox(width: 4),
+              Icon(Icons.description, size: 16, color: AppColors.primaryColor),
+              SizedBox(width: 4),
               Text(
                 'Skin_Test_2024.pdf',
                 style: TextStyle(fontSize: 13.sp, color: Colors.black),
@@ -95,7 +97,7 @@ class MedicalRecordWidgets extends StatelessWidget {
             color: AppColors.lightGrey,
           ),
           Text(
-            'Vaccination',
+            AppStrings.vaccination.tr,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
           ),
           3.verticalSpace,
@@ -106,9 +108,9 @@ class MedicalRecordWidgets extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Expanded(flex: 3, child: Text("Reaction", style: textStyle)),
-              Expanded(flex: 2, child: Text("Severity", style: textStyle)),
-              Expanded(flex: 3, child: Text("Date Identified", style: textStyle, textAlign: TextAlign.right)),
+              Expanded(flex: 3, child: Text(AppStrings.reaction.tr, style: textStyle)),
+              Expanded(flex: 2, child: Text(AppStrings.severity.tr, style: textStyle)),
+              Expanded(flex: 3, child: Text(AppStrings.dateIdentified.tr, style: textStyle, textAlign: TextAlign.right)),
             ],
           ),
           Row(
@@ -158,25 +160,25 @@ class MedicalRecordWidgets extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-               Icon(Icons.phone_in_talk, size: 17.sp, color:AppColors.primaryColor),
-               SizedBox(width: 6),
+              Icon(Icons.phone_in_talk, size: 17.sp, color:AppColors.primaryColor),
+              SizedBox(width: 6),
               Text(
-                'Remote Consultation',
+                AppStrings.remoteConsultation.tr,
                 style: TextStyle(fontSize: 13.0, color:AppColors.lightGrey, fontWeight: FontWeight.w500),
               ),
             ],
           ),
-           SizedBox(height: 4.0),
-           Text(
+          SizedBox(height: 4.0),
+          Text(
             'Monday, Oct 11:00-12:00 AM',
             style: TextStyle(fontSize: 13.sp, color: AppColors.lightGrey),
           ),
-           SizedBox(height: 16.0),
+          SizedBox(height: 16.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-               Text(
-                'Diagnosis',
+              Text(
+                AppStrings.diagnosis.tr,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
               ),
               Text(
@@ -185,14 +187,14 @@ class MedicalRecordWidgets extends StatelessWidget {
               ),
             ],
           ),
-           SizedBox(height: 4.0),
-           Text(
+          SizedBox(height: 4.0),
+          Text(
             'Migraine without aura',
             style: TextStyle(fontSize: 14.sp, color: Colors.black87),
           ),
-           SizedBox(height: 16.0),
-           Text(
-            'Diagnosis Notes',
+          SizedBox(height: 16.0),
+          Text(
+            AppStrings.diagnosisNotes.tr,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
           ),
           const SizedBox(height: 4.0),
@@ -209,22 +211,22 @@ class MedicalRecordWidgets extends StatelessWidget {
     return Container(
       width: 1.sw,
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.sp)
+          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.sp)
       ),
       padding: EdgeInsets.symmetric(horizontal:16.sp,vertical: 16.sp,),
       child: Column(
         children: <Widget>[
-          _buildVitalRow('Height', '165 cm'),
+          _buildVitalRow(AppStrings.height.tr, '165 cm'),
           const Divider(height: 1, color: Color(0xFFE0E0E0)),
-          _buildVitalRow('Weight', '60 kg'),
+          _buildVitalRow(AppStrings.weight.tr, '60 kg'),
           const Divider(height: 1, color: Color(0xFFE0E0E0)),
-          _buildVitalRow('BMI', '22.0'),
+          _buildVitalRow(AppStrings.bmi.tr, '22.0'),
           const Divider(height: 1, color: Color(0xFFE0E0E0)),
-          _buildVitalRow('Blood Pressure', '120/80 mmHg'),
+          _buildVitalRow(AppStrings.bloodPressure.tr, '120/80 mmHg'),
           const Divider(height: 1, color: Color(0xFFE0E0E0)),
-          _buildVitalRow('Heart Rate', '72 bpm'),
+          _buildVitalRow(AppStrings.heartRate.tr, '72 bpm'),
         ],
       ),
     );
@@ -233,20 +235,20 @@ class MedicalRecordWidgets extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _buildSectionTitle('Medical History'),
-          _buildMedicationCard(),
-          _buildSectionTitle('Vital indicators'),
-          _buildVitalIndicators(),
-          _buildSectionTitle('Vital indicators'),
-          _buildDiagnosisCard(),
-          10.verticalSpace,
-          CustomButton(borderRadius: 15, text: "Add Follow-up", onTap: (){}),
-          10.verticalSpace,
-          CustomButton(borderRadius: 15, text: "View Last Report", onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
-          30.verticalSpace,
-        ],
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        _buildSectionTitle(AppStrings.medicalHistory.tr),
+        _buildMedicationCard(),
+        _buildSectionTitle(AppStrings.medicalVitals.tr),
+        _buildVitalIndicators(),
+        _buildSectionTitle(AppStrings.medicalVitals.tr),
+        _buildDiagnosisCard(),
+        10.verticalSpace,
+        CustomButton(borderRadius: 15, text: AppStrings.addFollowUp.tr, onTap: (){}),
+        10.verticalSpace,
+        CustomButton(borderRadius: 15, text: AppStrings.viewLastReport.tr, onTap: (){},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+        30.verticalSpace,
+      ],
     );
   }
 }

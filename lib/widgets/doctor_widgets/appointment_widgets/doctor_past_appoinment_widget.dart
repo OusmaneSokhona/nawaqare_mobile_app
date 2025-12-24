@@ -7,6 +7,7 @@ import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_note
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/delete_report_dialog.dart';
 import '../../../utils/app_fonts.dart';
+import '../../../utils/app_strings.dart';
 
 class DoctorPastAppoinmentWidget extends StatelessWidget {
    DoctorPastAppoinmentWidget({super.key});
@@ -19,7 +20,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
         Align(
           alignment: AlignmentDirectional.topStart,
           child: Text(
-            "Symptoms History",
+            AppStrings.symptomsHistory.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -41,7 +42,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Patient Symptoms",
+                AppStrings.patientSymptoms.tr,
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15.sp,
@@ -51,7 +52,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
               ),
               10.verticalSpace,
               Text(
-                "Patient reports persistent headaches, mild nausea, and dizziness. Symptoms occur mostly in the morning. No prior medication taken@sep/2023",
+                AppStrings.symptomsPlaceholder.tr,
                 style: TextStyle(color: Colors.grey, fontSize: 14.sp),
               ),
             ],
@@ -61,7 +62,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
         Align(
           alignment: AlignmentDirectional.topStart,
           child: Text(
-            "Covered by patient’s prepaid plan",
+            AppStrings.coveredByPlan.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 17.sp,
@@ -329,7 +330,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Prescriptions",
+            AppStrings.prescriptions.tr,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontFamily: AppFonts.jakartaBold,
@@ -446,7 +447,7 @@ class MedicalReportCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CardHeader(title: "Medical Reports"),
+        CardHeader(title: AppStrings.medicalReports.tr),
         5.verticalSpace,
         Container(
           padding: EdgeInsets.all(10.sp),
@@ -514,7 +515,12 @@ class MedicalReportCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    InkWell(onTap: (){Get.dialog(DeleteReportDialog());},child: Icon(Icons.delete_outline, color: AppColors.red)),
+                    InkWell(
+                        onTap: () {
+                          Get.dialog(DeleteReportDialog());
+                        },
+                        child: Icon(Icons.delete_outline,
+                            color: AppColors.red)),
                   ],
                 ),
               ),
@@ -536,7 +542,7 @@ class MedicalReportCard extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        'Add Report',
+                        AppStrings.addReport.tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
@@ -558,7 +564,7 @@ class MedicalReportCard extends StatelessWidget {
                         elevation: 0,
                       ),
                       child: Text(
-                        'Download Report', // Corrected text to "Refill"
+                        AppStrings.downloadReport.tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.white,
@@ -576,7 +582,6 @@ class MedicalReportCard extends StatelessWidget {
     );
   }
 }
-
 class FollowUpRecommendationCard extends StatelessWidget {
   final String recommendation;
   final List<String> options;

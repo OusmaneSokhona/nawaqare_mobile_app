@@ -2,6 +2,7 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -47,7 +48,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Personal Info",
+                    AppStrings.editPersonalInfo.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -69,7 +70,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Full Name",
+                        label: AppStrings.fullName.tr,
                         value: controller.nameController.text,
                       ),
                       10.verticalSpace,
@@ -80,14 +81,11 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Date of Birth",
+                                AppStrings.dateOfBirth.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -111,7 +109,6 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                                   children: [
                                     Text(
                                       controller.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
@@ -136,40 +133,40 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Email",
+                        label: AppStrings.email.tr,
                         value: controller.emailController.text,
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Phone Number",
+                        label: AppStrings.phoneNumber.tr,
                         value: controller.phoneNumberController.text,
                       ),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: 'Gender',
+                        title: AppStrings.gender.tr,
                         items: controller.genderList,
                         selectedValue: controller.selectedGender,
                         onChanged: controller.updateSelectedGender,
                       ),
                       buildDropdownField(
-                        title: 'Country of Residence',
+                        title: AppStrings.countryOfResidence.tr,
                         items: controller.countryList,
                         selectedValue: controller.selectedCountry,
                         onChanged: controller.updateSelectedCountry,
                       ),
                       buildDropdownField(
-                        title: 'Religion',
+                        title: AppStrings.religion.tr,
                         items: controller.religionList,
                         selectedValue: controller.selectedReligion,
                         onChanged: controller.updateSelectedReligion,
                       ),
                       CustomTextField(
-                        labelText: "ID Number",
+                        labelText: AppStrings.idNumber.tr,
                         prefixIcon: Icons.badge_outlined,
                         hintText: "31101-5678-9876",
                       ),
                       CustomTextField(
-                        labelText: "Clinic Address",
+                        labelText: AppStrings.clinicAddress.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
                       ),
@@ -177,7 +174,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'About Me',
+                          AppStrings.aboutMe.tr,
                           style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
@@ -198,7 +195,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
-                            hintText: 'Write something about you',
+                            hintText: AppStrings.aboutMeHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
                             contentPadding:
@@ -212,7 +209,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
               ),
               20.verticalSpace,
               CustomButton(
-                text: "Update",
+                text: AppStrings.update.tr,
                 onTap: (){
                   Get.back();
                 },
@@ -220,7 +217,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
               ),
               10.verticalSpace,
               CustomButton(
-                text: "Cancel",
+                text: AppStrings.cancel.tr,
                 onTap: (){
                   Get.back();
                 },
@@ -245,7 +242,6 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }

@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/confirmat
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_detail_widget.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_home_visit_status_dialog.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -13,7 +14,9 @@ import '../../../utils/app_images.dart';
 import '../../patient_screens/video_call_screens/preview_screen.dart';
 
 class DoctorAppointmentDetail extends StatelessWidget {
-  bool isCompleted;
+  final bool isCompleted;
+  final AppointmentModel appointmentModel;
+  final RxBool statusSetedHomeVisit = false.obs;
 
   DoctorAppointmentDetail({
     super.key,
@@ -21,8 +24,6 @@ class DoctorAppointmentDetail extends StatelessWidget {
     this.isCompleted = false,
   });
 
-  final AppointmentModel appointmentModel;
-RxBool statusSetedHomeVisit=false.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +56,7 @@ RxBool statusSetedHomeVisit=false.obs;
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Appointment Details",
+                    AppStrings.appointmentDetails.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -79,7 +80,7 @@ RxBool statusSetedHomeVisit=false.obs;
                         Align(
                           alignment: AlignmentDirectional.topStart,
                           child: Text(
-                            "Status",
+                            AppStrings.status.tr,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20.sp,
@@ -95,15 +96,15 @@ RxBool statusSetedHomeVisit=false.obs;
                               height: 30.h,
                               width: 30.w,
                               alignment: Alignment.center,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.green,
                               ),
-                              child: Icon(Icons.check, color: Colors.white),
+                              child: const Icon(Icons.check, color: Colors.white),
                             ),
                             10.horizontalSpace,
                             Text(
-                              "Confirmed",
+                              AppStrings.confirmed.tr,
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 16.sp,
@@ -117,7 +118,7 @@ RxBool statusSetedHomeVisit=false.obs;
                         Align(
                           alignment: AlignmentDirectional.topStart,
                           child: Text(
-                            "Symptoms History",
+                            AppStrings.symptomsHistory.tr,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20.sp,
@@ -128,7 +129,6 @@ RxBool statusSetedHomeVisit=false.obs;
                         ),
                         10.verticalSpace,
                         Container(
-                          height: 170.h,
                           width: 1.sw,
                           padding: EdgeInsets.all(15.w),
                           decoration: BoxDecoration(
@@ -140,7 +140,7 @@ RxBool statusSetedHomeVisit=false.obs;
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Patient Symptoms",
+                                AppStrings.patientSymptoms.tr,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 20.sp,
@@ -150,50 +150,58 @@ RxBool statusSetedHomeVisit=false.obs;
                               ),
                               10.verticalSpace,
                               Text(
-                                "Patient reports persistent headaches, mild nausea, and dizziness. Symptoms occur mostly in the morning. No prior medication taken",
+                                AppStrings.symptomsDescription.tr,
                                 style: TextStyle(
                                   color: Colors.grey,
-                                  fontSize: 16.sp,  ),
+                                  fontSize: 16.sp,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                        MedicalReportCard(title: "Blood Test Report", date: "200/Sep/2025"),
+                        MedicalReportCard(
+                            title: AppStrings.bloodTestReport.tr,
+                            date: "200/Sep/2025"
+                        ),
 
                         30.verticalSpace,
-                        Obx(()=>statusSetedHomeVisit.value?CustomButton(
+                        Obx(() => statusSetedHomeVisit.value
+                            ? CustomButton(
                           borderRadius: 15,
-                          text: "Join Consultation",
+                          text: AppStrings.joinConsultation.tr,
                           onTap: () {
                             Get.to(
                               PreviewScreen(appointmentModel: appointmentModel),
                             );
                           },
-                        ):CustomButton(
+                        )
+                            : CustomButton(
                           borderRadius: 15,
-                          text: "Accept",
+                          text: AppStrings.accept.tr,
                           onTap: () {
                             Get.dialog(DoctorHomeVisitStatusDialog(status: true));
-                            statusSetedHomeVisit.value=true;
+                            statusSetedHomeVisit.value = true;
                           },
-                        ),),
+                        )),
                         10.verticalSpace,
-                        Obx(()=>statusSetedHomeVisit.value?CustomButton(
+                        Obx(() => statusSetedHomeVisit.value
+                            ? CustomButton(
                           borderRadius: 15,
-                          text: "Reschedule",
+                          text: AppStrings.reschedule.tr,
                           onTap: () {},
                           bgColor: AppColors.inACtiveButtonColor,
                           fontColor: Colors.black,
-                        ):CustomButton(
+                        )
+                            : CustomButton(
                           borderRadius: 15,
-                          text: "Decline",
+                          text: AppStrings.decline.tr,
                           onTap: () {
                             Get.dialog(DoctorHomeVisitStatusDialog(status: false));
-                            statusSetedHomeVisit.value=true;
+                            statusSetedHomeVisit.value = true;
                           },
                           bgColor: AppColors.inACtiveButtonColor,
                           fontColor: Colors.black,
-                        ),),
+                        )),
                         30.verticalSpace,
                       },
                     ],

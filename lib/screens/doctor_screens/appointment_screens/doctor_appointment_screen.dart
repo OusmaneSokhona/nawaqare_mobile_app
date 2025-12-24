@@ -8,6 +8,7 @@ import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_widget.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/filtter_bottom_sheet.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/schedular_widget.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -54,7 +55,7 @@ class DoctorAppointmentScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Appointments",
+                    AppStrings.appointments.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -80,7 +81,7 @@ class DoctorAppointmentScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Obx(
-                              () => InkWell(
+                                  () => InkWell(
                                 onTap: () {
                                   controller.appointmentType.value = "upcoming";
                                 },
@@ -89,21 +90,21 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                   width: 0.455.sw,
                                   decoration: BoxDecoration(
                                     color:
-                                        controller.appointmentType.value ==
-                                                "upcoming"
-                                            ? AppColors.primaryColor
-                                            : Colors.white,
+                                    controller.appointmentType.value ==
+                                        "upcoming"
+                                        ? AppColors.primaryColor
+                                        : Colors.white,
                                     borderRadius: BorderRadius.circular(14.sp),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Upcoming(${controller.patientList.length})",
+                                    "${AppStrings.upcoming.tr}(${controller.patientList.length})",
                                     style: TextStyle(
                                       color:
-                                          controller.appointmentType.value ==
-                                                  "upcoming"
-                                              ? Colors.white
-                                              : Colors.black,
+                                      controller.appointmentType.value ==
+                                          "upcoming"
+                                          ? Colors.white
+                                          : Colors.black,
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: AppFonts.jakartaMedium,
@@ -113,7 +114,7 @@ class DoctorAppointmentScreen extends StatelessWidget {
                               ),
                             ),
                             Obx(
-                              () => InkWell(
+                                  () => InkWell(
                                 onTap: () {
                                   controller.appointmentType.value = "past";
                                 },
@@ -122,21 +123,21 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                   width: 0.455.sw,
                                   decoration: BoxDecoration(
                                     color:
-                                        controller.appointmentType.value ==
-                                                "past"
-                                            ? AppColors.primaryColor
-                                            : Colors.white,
+                                    controller.appointmentType.value ==
+                                        "past"
+                                        ? AppColors.primaryColor
+                                        : Colors.white,
                                     borderRadius: BorderRadius.circular(14.sp),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "Past(${controller.patientList.length})",
+                                    "${AppStrings.past.tr}(${controller.postPatientList.length})",
                                     style: TextStyle(
                                       color:
-                                          controller.appointmentType.value ==
-                                                  "past"
-                                              ? Colors.white
-                                              : Colors.black,
+                                      controller.appointmentType.value ==
+                                          "past"
+                                          ? Colors.white
+                                          : Colors.black,
                                       fontSize: 16.sp,
                                       fontWeight: FontWeight.w600,
                                       fontFamily: AppFonts.jakartaMedium,
@@ -150,77 +151,77 @@ class DoctorAppointmentScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () =>
-                            controller.appointmentType.value == "upcoming"
-                                ? SchedulerWidget()
-                                : CustomTextField(
-                                  labelText: "",
-                                  hintText: "Search by patient name...",
-                                  prefixIcon: Icons.search,
-                                  suffixIcon: Icons.filter_list,
-                                ),
+                            () =>
+                        controller.appointmentType.value == "upcoming"
+                            ? SchedulerWidget()
+                            : CustomTextField(
+                          labelText: "",
+                          hintText: AppStrings.searchPatientHint.tr,
+                          prefixIcon: Icons.search,
+                          suffixIcon: Icons.filter_list,
+                        ),
                       ),
                       Obx(
-                        () =>
-                            controller.appointmentType.value == "upcoming"
-                                ? ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(
-                                    top: 20.h,
-                                    bottom: 20.h,
+                            () =>
+                        controller.appointmentType.value == "upcoming"
+                            ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            top: 20.h,
+                            bottom: 20.h,
+                          ),
+                          itemCount: controller.patientList.length,
+                          itemBuilder: (context, index) {
+                            return DoctorAppoinmentWidget(
+                              onTap: () {
+                                Get.to(
+                                  DoctorAppointmentDetail(
+                                    appointmentModel:
+                                    controller.patientList[index],
                                   ),
-                                  itemCount: controller.patientList.length,
-                                  itemBuilder: (context, index) {
-                                    return DoctorAppoinmentWidget(
-                                      onTap: () {
-                                        Get.to(
-                                          DoctorAppointmentDetail(
-                                            appointmentModel:
-                                                controller.patientList[index],
-                                          ),
-                                        );
-                                      },
-                                      appointmentModel:
-                                          controller.patientList[index],
-                                    );
-                                  },
-                                )
-                                : ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  padding: EdgeInsets.only(
-                                    top: 20.h,
-                                    bottom: 20.h,
+                                );
+                              },
+                              appointmentModel:
+                              controller.patientList[index],
+                            );
+                          },
+                        )
+                            : ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            top: 20.h,
+                            bottom: 20.h,
+                          ),
+                          itemCount: controller.postPatientList.length,
+                          itemBuilder: (context, index) {
+                            return DoctorAppoinmentWidget(
+                              isCompleted: true,
+                              onTap: () {
+                                Get.to(
+                                  DoctorAppointmentDetail(
+                                    isCompleted: true,
+                                    appointmentModel:
+                                    controller.postPatientList[index],
                                   ),
-                                  itemCount: controller.postPatientList.length,
-                                  itemBuilder: (context, index) {
-                                    return DoctorAppoinmentWidget(
-                                      isCompleted: true,
-                                      onTap: () {
-                                        Get.to(
-                                          DoctorAppointmentDetail(
-                                            isCompleted: true,
-                                            appointmentModel:
-                                                controller.patientList[index],
-                                          ),
-                                        );
-                                      },
-                                      appointmentModel:
-                                          controller.postPatientList[index],
-                                    );
-                                  },
-                                ),
+                                );
+                              },
+                              appointmentModel:
+                              controller.postPatientList[index],
+                            );
+                          },
+                        ),
                       ),
                       Obx(
-                        () =>
-                            controller.appointmentType.value == "upcoming"
-                                ? CustomButton(
-                                  borderRadius: 15,
-                                  text: "Add Appointment",
-                                  onTap: () {},
-                                )
-                                : SizedBox(),
+                            () =>
+                        controller.appointmentType.value == "upcoming"
+                            ? CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.addAppointment.tr,
+                          onTap: () {},
+                        )
+                            : SizedBox(),
                       ),
                       20.verticalSpace,
                     ],

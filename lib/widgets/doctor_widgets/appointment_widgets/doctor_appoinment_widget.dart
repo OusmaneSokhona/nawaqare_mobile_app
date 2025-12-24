@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_fonts.dart';
-import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 
 class DoctorAppoinmentWidget extends StatelessWidget {
   final AppointmentModel appointmentModel;
-  Function onTap;
-  bool isCompleted = false;
+  final Function onTap;
+  final bool isCompleted;
 
   DoctorAppoinmentWidget({
     Key? key,
@@ -20,16 +21,21 @@ class DoctorAppoinmentWidget extends StatelessWidget {
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case "follow up":
+      case "suivi":
         return AppColors.primaryColor;
       case "renewal":
+      case "renouvellement":
         return AppColors.orange;
       case "exam review":
+      case "examen":
         return Colors.lightBlueAccent;
       case "initial":
         return AppColors.green;
       case "completed":
+      case "terminé":
         return AppColors.green;
       case "cancelled":
+      case "annulé":
         return Colors.red;
       default:
         return Colors.grey;
@@ -86,7 +92,7 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                 Container(
+                Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 7,
                     vertical: 4,
@@ -96,7 +102,7 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.sp),
                   ),
                   child: Text(
-                    appointmentModel.status,
+                    appointmentModel.status.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 9.sp,
@@ -106,11 +112,9 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 4),
             Divider(thickness: 0.3, color: Colors.black45),
             const SizedBox(height: 4),
-
             Row(
               children: [
                 Image.asset(
@@ -120,7 +124,8 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -144,7 +149,7 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            appointmentModel.consultationType,
+                            appointmentModel.consultationType.tr,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 13.sp,
@@ -155,24 +160,34 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "Period:",
-                            style:  TextStyle(fontSize: 14.sp,fontFamily: AppFonts.jakartaMedium,fontWeight: FontWeight.w500),
+                            AppStrings.period.tr,
+                            style: TextStyle(
+                                fontSize: 14.sp,
+                                fontFamily: AppFonts.jakartaMedium,
+                                fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "This Week",
+                            AppStrings.thisWeek.tr,
                             style: const TextStyle(fontSize: 13),
                           ),
                         ],
                       ),
                       7.verticalSpace,
-                      isCompleted?SizedBox():Row(
+                      isCompleted
+                          ? SizedBox()
+                          : Row(
                         children: [
-                          Icon(Icons.check_box_outlined,color: AppColors.green,size: 20.sp,),
-                           SizedBox(width: 4),
+                          Icon(
+                            Icons.check_box_outlined,
+                            color: AppColors.green,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 4),
                           Text(
-                            "Confirmed",
-                            style:  TextStyle(fontSize: 13.sp,color: AppColors.green),
+                            AppStrings.confirmed.tr,
+                            style: TextStyle(
+                                fontSize: 13.sp, color: AppColors.green),
                           ),
                         ],
                       ),
@@ -181,29 +196,33 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
-            Row(children: [
-              _buildButton(
-                onTap: () {},
-                text: isCompleted?"Clinical Note":"Cancel",
-                backgroundColor:AppColors.inACtiveButtonColor,
-                textColor: Colors.black,
-              ),
-              _buildButton(
-                onTap: () {
-                  onTap();
-                },
-                text: "View Detail",
-                backgroundColor: AppColors.primaryColor,
-                textColor: Colors.white,
-              ),
-            ],)
+            Row(
+              children: [
+                _buildButton(
+                  onTap: () {},
+                  text: isCompleted
+                      ? AppStrings.clinicalNote.tr
+                      : AppStrings.cancel.tr,
+                  backgroundColor: AppColors.inACtiveButtonColor,
+                  textColor: Colors.black,
+                ),
+                _buildButton(
+                  onTap: () {
+                    onTap();
+                  },
+                  text: AppStrings.viewDetail.tr,
+                  backgroundColor: AppColors.primaryColor,
+                  textColor: Colors.white,
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
+
   Widget _buildButton({
     required String text,
     required Color backgroundColor,

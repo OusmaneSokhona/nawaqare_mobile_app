@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/calender_controller.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/view_as_patient.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:patient_app/widgets/doctor_widgets/reception_widgets/edit_day_drawer.dart';
@@ -47,7 +48,7 @@ class CalenderScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Calender",
+                    AppStrings.calendar.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -65,10 +66,10 @@ class CalenderScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _buildLegendItem(AppColors.green, 'Available'),
-                          _buildLegendItem(AppColors.red, 'Unavailable'),
-                          _buildLegendItem(AppColors.primaryColor, 'Booked'),
-                          _buildLegendItem(AppColors.primaryColor, 'Exception'),
+                          _buildLegendItem(AppColors.green, AppStrings.available.tr),
+                          _buildLegendItem(AppColors.red, AppStrings.unavailable.tr),
+                          _buildLegendItem(AppColors.primaryColor, AppStrings.booked.tr),
+                          _buildLegendItem(AppColors.primaryColor, AppStrings.exception.tr),
                         ],
                       ),
                       20.verticalSpace,
@@ -76,7 +77,7 @@ class CalenderScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Select Date',
+                        AppStrings.selectDate.tr,
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -95,7 +96,7 @@ class CalenderScreen extends StatelessWidget {
                                 ()=> DropdownButton<String>(
                                   value: controller.selectedDuration.value,
                                   icon: Icon(Icons.keyboard_arrow_down, color: AppColors.lightGrey),
-                                  items: <String>['Daily', 'Weekly', 'Monthly']
+                                  items: <String>[AppStrings.daily.tr, AppStrings.weekly.tr, AppStrings.monthly.tr]
                                       .map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
@@ -132,7 +133,7 @@ class CalenderScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Available Times',
+                          AppStrings.availableTimes.tr,
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -151,14 +152,14 @@ class CalenderScreen extends StatelessWidget {
                             return _buildTimeSlot(controller.availableTimes[index]);
                           }),
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Edit Day", onTap: () {
+                      CustomButton(borderRadius: 15, text:AppStrings.editDay.tr, onTap: () {
                         controller.scaffoldKey.currentState!.openEndDrawer();
 
                       }),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "View as Patient",
+                        text: AppStrings.viewAsPatient.tr,
                         onTap: () {
                           Get.to(ViewAsPatient());
                         },

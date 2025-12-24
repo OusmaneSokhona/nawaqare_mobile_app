@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/patient_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
+import '../../../utils/app_strings.dart';
 
 class PatientFilterBottomSheet extends StatelessWidget {
   final String initialStatus;
@@ -17,7 +17,9 @@ class PatientFilterBottomSheet extends StatelessWidget {
     required this.onApply,
     required this.onReset,
   });
-  PatientController patientController = Get.find();
+
+  final PatientController patientController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -40,14 +42,13 @@ class PatientFilterBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-          CustomDropdown(label: "Status", options: patientController.statusOptions, currentValue: patientController.selectedStatus.value, onChanged: (_){}),
-
-
-
+          CustomDropdown(
+              label: AppStrings.status.tr,
+              options: patientController.statusOptions,
+              currentValue: patientController.selectedStatus.value,
+              onChanged: (_) {}),
           const SizedBox(height: 32),
-
           Row(
             children: <Widget>[
               Expanded(
@@ -62,15 +63,13 @@ class PatientFilterBottomSheet extends StatelessWidget {
                     ),
                   ),
                   onPressed: onReset,
-                  child: const Text(
-                    'Reset',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: Text(
+                    AppStrings.reset.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -82,15 +81,14 @@ class PatientFilterBottomSheet extends StatelessWidget {
                     ),
                   ),
                   onPressed: onApply,
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: Text(
+                    AppStrings.apply.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 20),
         ],
       ),

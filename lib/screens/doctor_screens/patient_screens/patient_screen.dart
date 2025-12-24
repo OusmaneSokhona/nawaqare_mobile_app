@@ -10,34 +10,36 @@ import 'package:patient_app/widgets/doctor_widgets/patient_widgets/patient_filte
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/doctor_widgets/patient_widgets/patient_card_widget.dart';
 
 class PatientScreen extends StatelessWidget {
-   PatientScreen({super.key});
-   PatientController patientController = Get.put(PatientController());
-   List<PatientModel> samplePatients = [
+  PatientScreen({super.key});
+  final PatientController patientController = Get.put(PatientController());
+  final List<PatientModel> samplePatients = [
     PatientModel(
       patientName: 'Mr. Alex Martin',
-      patientImageUrl: 'assets/demo_images/patient_1.png', // Placeholder image path
+      patientImageUrl: 'assets/demo_images/patient_1.png',
       lastAppointmentDate: 'Sunday, 12 June',
       consultationType: 'Remote Consultation',
       period: 'This Week',
     ),
     PatientModel(
       patientName: 'Ms. Sarah Johnson',
-      patientImageUrl: 'assets/demo_images/patient_2.png', // Placeholder image path
+      patientImageUrl: 'assets/demo_images/patient_2.png',
       lastAppointmentDate: 'Monday, 13 June',
       consultationType: 'In-Person Consultation',
       period: 'This Month',
     ),
     PatientModel(
       patientName: 'Mr. David Lee',
-      patientImageUrl: 'assets/demo_images/patient_3.png', // Placeholder image path
+      patientImageUrl: 'assets/demo_images/patient_3.png',
       lastAppointmentDate: 'Wednesday, 15 June',
       consultationType: 'Remote Consultation',
       period: 'This Week',
     ),
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +72,7 @@ class PatientScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "All Patients",
+                    AppStrings.allPatients.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -84,10 +86,9 @@ class PatientScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-
                       10.verticalSpace,
                       Text(
-                        "Manage patient profiles, medical history access.",
+                        AppStrings.patientScreenDesc.tr,
                         style: TextStyle(
                           color: AppColors.lightGrey,
                           fontSize: 15.sp,
@@ -98,19 +99,24 @@ class PatientScreen extends StatelessWidget {
                       20.verticalSpace,
                       CustomTextField(
                         prefixIcon: Icons.search,
-                        hintText: "Search by patient name,Id...",
+                        hintText: AppStrings.searchPatientHint.tr,
                         prefixIconColor: AppColors.darkGrey,
                         suffixIcon: Icons.filter_list,
                         suffixIconColor: AppColors.darkGrey,
-                        onSuffixIconTap: (){
-                          Get.bottomSheet(backgroundColor: Colors.white,PatientFilterBottomSheet(initialStatus: "acitve", onApply: (){}, onReset: (){}));
+                        onSuffixIconTap: () {
+                          Get.bottomSheet(
+                              backgroundColor: Colors.white,
+                              PatientFilterBottomSheet(
+                                  initialStatus: "active",
+                                  onApply: () {},
+                                  onReset: () {}));
                         },
                       ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Most Recent Appointment",
+                          AppStrings.mostRecentAppointment.tr,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 19.sp,
@@ -118,13 +124,23 @@ class PatientScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      ListView.builder(padding: EdgeInsets.zero,itemBuilder: (context,index){
-                        return PatientCardWidget(patientModel: samplePatients[index],onAddNoteTap: (){
-                          Get.to(AddNotesScreen());
-                        },onFollowUpTap: (){},onScheduleTap: (){
-                          Get.to(PatientDetailScreen());
-                        },);
-                      },itemCount: samplePatients.length,shrinkWrap: true,physics: const NeverScrollableScrollPhysics(),
+                      ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context, index) {
+                          return PatientCardWidget(
+                            patientModel: samplePatients[index],
+                            onAddNoteTap: () {
+                              Get.to(AddNotesScreen());
+                            },
+                            onFollowUpTap: () {},
+                            onScheduleTap: () {
+                              Get.to(PatientDetailScreen());
+                            },
+                          );
+                        },
+                        itemCount: samplePatients.length,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                       ),
                     ],
                   ),

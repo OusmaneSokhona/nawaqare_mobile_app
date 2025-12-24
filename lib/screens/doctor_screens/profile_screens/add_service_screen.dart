@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -11,8 +12,9 @@ import '../../../widgets/custom_text_field.dart';
 import '../../../widgets/patient_widgets/video_call_widgets/setting widgets.dart';
 
 class AddServiceScreen extends StatelessWidget {
-  DoctorProfileController controller=Get.find();
-   AddServiceScreen({super.key});
+  final DoctorProfileController controller = Get.find<DoctorProfileController>();
+
+  AddServiceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class AddServiceScreen extends StatelessWidget {
             Row(
               children: [
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Get.back();
                   },
                   child: Image.asset(
@@ -45,7 +47,7 @@ class AddServiceScreen extends StatelessWidget {
                 ),
                 10.horizontalSpace,
                 Text(
-                  "Add Services",
+                  AppStrings.addServices.tr,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 23.sp,
@@ -61,35 +63,60 @@ class AddServiceScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     10.verticalSpace,
-                    Text("Create a new service to offer to your patients",style: TextStyle(
-                      color: AppColors.lightGrey,
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: AppFonts.jakartaRegular,
-                    ),),
-                    10.verticalSpace,
-                    CustomTextField(labelText: "Service Name",hintText: "MA-PK-457621",),
-                    10.verticalSpace,
-                    CustomTextField(labelText: "Default Duration",hintText: "15 mint",),
-                    10.verticalSpace,
-                    CustomTextField(labelText: "Fee",hintText: "\$590",),
-                    10.verticalSpace,
-                    CustomDropdown(label: "Mode", options: controller.mode, currentValue: controller.selectedMode.value, onChanged: (_){}),
-                    10.verticalSpace,
-                    CustomDropdown(label: "Status", options: controller.serviceTypeList, currentValue: controller.selectedServiceType.value, onChanged: (_){}),
+                    Text(
+                      AppStrings.addServicesSubtitle.tr,
+                      style: TextStyle(
+                        color: AppColors.lightGrey,
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFonts.jakartaRegular,
+                      ),
+                    ),
                     20.verticalSpace,
+                    CustomTextField(
+                      labelText: AppStrings.serviceName.tr,
+                      hintText: "General Consultation",
+                    ),
+                    10.verticalSpace,
+                    CustomTextField(
+                      labelText: AppStrings.defaultDuration.tr,
+                      hintText: "15 min",
+                    ),
+                    10.verticalSpace,
+                    CustomTextField(
+                      labelText: AppStrings.fee.tr,
+                      hintText: "\$50",
+                    ),
+                    10.verticalSpace,
+                    Obx(() => CustomDropdown(
+                      label: AppStrings.mode.tr,
+                      options: controller.mode,
+                      currentValue: controller.selectedMode.value,
+                      onChanged: (val) {
+                        if (val != null) controller.selectedMode.value = val;
+                      },
+                    )),
+                    10.verticalSpace,
+                    Obx(() => CustomDropdown(
+                      label: AppStrings.status.tr,
+                      options: controller.serviceTypeList,
+                      currentValue: controller.selectedServiceType.value,
+                      onChanged: (val) {
+                        if (val != null) controller.selectedServiceType.value = val;
+                      },
+                    )),
+                    30.verticalSpace,
                     CustomButton(
-                      text: "Add & Save",
-                      onTap: (){
+                      text: AppStrings.addAndSave.tr,
+                      onTap: () {
                         Get.back();
                       },
                       borderRadius: 15,
                     ),
                     10.verticalSpace,
                     CustomButton(
-                      text: "PDF Export Service",
-                      onTap: (){
-                      },
+                      text: AppStrings.pdfExportService.tr,
+                      onTap: () {},
                       borderRadius: 15,
                       bgColor: AppColors.inACtiveButtonColor,
                       fontColor: Colors.black,

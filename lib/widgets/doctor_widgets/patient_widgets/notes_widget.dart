@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 import '../../../utils/app_colors.dart';
@@ -14,14 +16,14 @@ class NotesWidget extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "Notes",
+            AppStrings.notes.tr,
             style: TextStyle(fontSize: 21.sp, fontWeight: FontWeight.w600),
           ),
         ),
         10.verticalSpace,
         _buildDiagnosisCard(),
         15.verticalSpace,
-        CustomButton(borderRadius: 15, text: "Add New Notes", onTap: (){}),
+        CustomButton(borderRadius: 15, text: AppStrings.addNewNotes.tr, onTap: (){}),
         30.verticalSpace,
       ],
     );
@@ -42,10 +44,10 @@ class NotesWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                'Diagnosis',
+                AppStrings.diagnosis.tr,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
               ),
-Icon(Icons.description,color: AppColors.primaryColor,size: 20.sp,),
+              Icon(Icons.description,color: AppColors.primaryColor,size: 20.sp,),
             ],
           ),
           SizedBox(height: 4.0),
@@ -64,7 +66,7 @@ Icon(Icons.description,color: AppColors.primaryColor,size: 20.sp,),
           ),
           SizedBox(height: 16.0),
           Text(
-            'Diagnosis Notes',
+            AppStrings.diagnosisNotes.tr,
             style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.black),
           ),
           const SizedBox(height: 4.0),

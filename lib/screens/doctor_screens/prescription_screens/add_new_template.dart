@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
@@ -13,7 +14,9 @@ import '../../../utils/app_images.dart';
 
 class AddNewTemplate extends StatelessWidget {
   AddNewTemplate({super.key});
-  DoctorPrescriptionController doctorPrescriptionController = Get.find<DoctorPrescriptionController>();
+
+  final DoctorPrescriptionController doctorPrescriptionController = Get.find<DoctorPrescriptionController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,7 +49,7 @@ class AddNewTemplate extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add New Template",
+                    AppStrings.addNewTemplate.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 21.sp,
@@ -61,24 +64,57 @@ class AddNewTemplate extends StatelessWidget {
                   child: Column(
                     children: [
                       20.verticalSpace,
-                      CustomTextField(labelText: "Template Name",hintText: "Hypertension Basic Set",),
+                      CustomTextField(
+                        labelText: AppStrings.templateName.tr,
+                        hintText: "Hypertension Basic Set",
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Medication Name",hintText: "Amoxicillin 500mg capsule",),
+                      CustomTextField(
+                        labelText: AppStrings.medicationName.tr,
+                        hintText: "Amoxicillin 500mg capsule",
+                      ),
                       10.verticalSpace,
-                      CustomDropdown(label: "Form", options: doctorPrescriptionController.medicineForm, currentValue: doctorPrescriptionController.selectedMedicineForm.value, onChanged: (_){}),
+                      Obx(() => CustomDropdown(
+                          label: AppStrings.form.tr,
+                          options: doctorPrescriptionController.medicineForm,
+                          currentValue: doctorPrescriptionController.selectedMedicineForm.value,
+                          onChanged: (val) {
+                            if (val != null) doctorPrescriptionController.selectedMedicineForm.value = val;
+                          }
+                      )),
                       10.verticalSpace,
-                      CustomDropdown(label: "Category", options: doctorPrescriptionController.medicineCategory, currentValue: doctorPrescriptionController.selectedMedicineCategory.value, onChanged: (_){}),
+                      Obx(() => CustomDropdown(
+                          label: AppStrings.category.tr,
+                          options: doctorPrescriptionController.medicineCategory,
+                          currentValue: doctorPrescriptionController.selectedMedicineCategory.value,
+                          onChanged: (val) {
+                            if (val != null) doctorPrescriptionController.selectedMedicineCategory.value = val;
+                          }
+                      )),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Dosage",hintText: "1 capsule every 8 hours",),
+                      CustomTextField(
+                        labelText: AppStrings.dosage.tr,
+                        hintText: "1 capsule every 8 hours",
+                      ),
                       10.verticalSpace,
-                      CustomDropdown(label: "Route of Administration", options: doctorPrescriptionController.administrationRoute, currentValue: doctorPrescriptionController.selectedAdministrationRoute.value, onChanged: (_){}),
+                      Obx(() => CustomDropdown(
+                          label: AppStrings.routeOfAdministration.tr,
+                          options: doctorPrescriptionController.administrationRoute,
+                          currentValue: doctorPrescriptionController.selectedAdministrationRoute.value,
+                          onChanged: (val) {
+                            if (val != null) doctorPrescriptionController.selectedAdministrationRoute.value = val;
+                          }
+                      )),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Quantity to Dispense",hintText: "15 tablets",),
+                      CustomTextField(
+                        labelText: AppStrings.quantityToDispense.tr,
+                        hintText: "15 tablets",
+                      ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Refill Date",
+                          AppStrings.refillDate.tr,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -102,18 +138,16 @@ class AddNewTemplate extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              Obx(() => Text(
                                 doctorPrescriptionController.formattedDate,
-                                // Display the formatted date
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color:
-                                  doctorPrescriptionController.selectedDate == null
+                                  color: doctorPrescriptionController.selectedDate.value == null
                                       ? Colors.grey
                                       : Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
-                              ),
+                              )),
                               const Icon(
                                 Icons.calendar_today,
                                 color: Colors.blue,
@@ -127,7 +161,7 @@ class AddNewTemplate extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Special Instructions",
+                          AppStrings.specialInstructions.tr,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18.sp,
@@ -140,19 +174,18 @@ class AddNewTemplate extends StatelessWidget {
                       Container(
                         height: 120.h,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
                         ),
                         child: Padding(
-                          padding:
-                          EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+                          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
                           child: TextField(
                             maxLines: null,
                             expands: true,
                             textAlignVertical: TextAlignVertical.top,
                             decoration: InputDecoration(
-                              hintText: "Avoid antibiotics in same family",
+                              hintText: AppStrings.notesHint.tr,
                               border: InputBorder.none,
                             ),
                             style: TextStyle(
@@ -165,14 +198,16 @@ class AddNewTemplate extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Add & Save",
+                        text: AppStrings.addAndSave.tr,
                         onTap: () {},
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
-                        onTap: () {},
+                        text: AppStrings.cancel.tr,
+                        onTap: () {
+                          Get.back();
+                        },
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                       ),
@@ -187,6 +222,7 @@ class AddNewTemplate extends StatelessWidget {
       ),
     );
   }
+
   void _showDatePicker(BuildContext context) async {
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
@@ -197,9 +233,10 @@ class AddNewTemplate extends StatelessWidget {
       ),
       dialogSize: const Size(325, 400),
       value: [doctorPrescriptionController.selectedDate.value],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
+    if (dates != null && dates.isNotEmpty) {
+      doctorPrescriptionController.selectedDate.value = dates.first;
+    }
   }
-
 }

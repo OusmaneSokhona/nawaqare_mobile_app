@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
@@ -14,7 +15,7 @@ import '../../../utils/app_images.dart';
 class AddNewPrescription extends StatelessWidget {
   AddNewPrescription({super.key});
 
-  DoctorPrescriptionController doctorPrescriptionController =
+  final DoctorPrescriptionController doctorPrescriptionController =
   Get.find<DoctorPrescriptionController>();
 
   @override
@@ -49,7 +50,7 @@ class AddNewPrescription extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add New Prescription",
+                    AppStrings.addNewPrescription.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -65,29 +66,31 @@ class AddNewPrescription extends StatelessWidget {
                     children: [
                       20.verticalSpace,
                       CustomTextField(
-                        labelText: "Patient Name",
+                        labelText: AppStrings.patientName.tr,
                         hintText: "Penicillin",
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Medications",
+                        labelText: AppStrings.medications.tr,
                         hintText: "Amoxicillin 500mg",
                       ),
                       10.verticalSpace,
-                      CustomDropdown(
-                        label: "Dosage",
+                      Obx(() => CustomDropdown(
+                        label: AppStrings.dosage.tr,
                         options: doctorPrescriptionController.dosageList,
                         currentValue:
                         doctorPrescriptionController
                             .selectedDosage
                             .value,
-                        onChanged: (_) {},
-                      ),
+                        onChanged: (val) {
+                          if(val != null) doctorPrescriptionController.selectedDosage.value = val;
+                        },
+                      )),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Refill Date",
+                          AppStrings.refillDate.tr,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -111,20 +114,17 @@ class AddNewPrescription extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
+                              Obx(() => Text(
                                 doctorPrescriptionController.formattedDate,
-                                // Display the formatted date
                                 style: TextStyle(
                                   fontSize: 15.sp,
                                   color:
-                                  doctorPrescriptionController
-                                      .selectedDate ==
-                                      null
+                                  doctorPrescriptionController.selectedDate.value == null
                                       ? Colors.grey
                                       : Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
-                              ),
+                              )),
                               const Icon(
                                 Icons.calendar_today,
                                 color: Colors.blue,
@@ -138,7 +138,7 @@ class AddNewPrescription extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Notes",
+                          AppStrings.notes.tr,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18.sp,
@@ -167,7 +167,7 @@ class AddNewPrescription extends StatelessWidget {
                             expands: true,
                             textAlignVertical: TextAlignVertical.top,
                             decoration: InputDecoration(
-                              hintText: "Avoid antibiotics in same family",
+                              hintText: AppStrings.notesHint.tr,
                               border: InputBorder.none,
                             ),
                             style: TextStyle(
@@ -180,13 +180,13 @@ class AddNewPrescription extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Send",
+                        text: AppStrings.send.tr,
                         onTap: () {},
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
+                        text: AppStrings.cancel.tr,
                         onTap: () {
                           Get.back();
                         },
@@ -206,7 +206,7 @@ class AddNewPrescription extends StatelessWidget {
   }
 
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -215,7 +215,6 @@ class AddNewPrescription extends StatelessWidget {
       ),
       dialogSize: const Size(325, 400),
       value: [doctorPrescriptionController.selectedDate.value],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
   }

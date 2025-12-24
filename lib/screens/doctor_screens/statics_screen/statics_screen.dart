@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/doctor_screens/statics_screen/report_screen.dart';
 import 'package:patient_app/screens/doctor_screens/statics_screen/review_screen.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 import '../../../utils/app_colors.dart';
@@ -45,7 +46,7 @@ class StaticsScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Statics",
+                    AppStrings.statistics.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -60,6 +61,8 @@ class StaticsScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      // These appear to be demo charts - ideally these would be localized
+                      // or generated via a library like fl_chart in the future
                       Image.asset("assets/demo_images/d_1.png"),
                       Image.asset("assets/demo_images/d_2.png"),
                       10.verticalSpace,
@@ -72,7 +75,7 @@ class StaticsScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Patient Engagement',
+                          AppStrings.patientEngagement.tr,
                           style: TextStyle(
                             fontSize: 19.sp,
                             fontWeight: FontWeight.bold,
@@ -80,44 +83,44 @@ class StaticsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       EngagementCard(
-                        onTap: (){},
+                        onTap: () {},
                         icon: Icons.access_time,
-                        title: 'Average Response Time',
+                        title: AppStrings.avgResponseTime.tr,
                         value: '2h 14m',
                         showLink: false,
                       ),
                       EngagementCard(
                         icon: Icons.star_border,
-                        title: 'Average Satisfaction',
+                        title: AppStrings.avgSatisfaction.tr,
                         value: '4.7 ⭐',
-                        linkText: 'View Patient Reviews',
+                        linkText: AppStrings.viewPatientReviews.tr,
                         showLink: true,
-                        onTap:(){
+                        onTap: () {
                           Get.to(ReviewScreen());
                         },
                       ),
                       EngagementCard(
-                        onTap: (){},
+                        onTap: () {},
                         icon: Icons.message,
-                        title: 'Number Of Messages Received / Sent',
+                        title: AppStrings.messagesSentReceived.tr,
                         value: '120 / 98',
                         showLink: false,
                       ),
                       EngagementCard(
-                        onTap: (){},
+                        onTap: () {},
                         icon: Icons.checklist,
-                        title: 'List Of Patients Without Follow-Up',
+                        title: AppStrings.patientsWithoutFollowUp.tr,
                         value: '5',
-                        linkText: 'View Patient List',
+                        linkText: AppStrings.viewPatientList.tr,
                         showLink: true,
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Compliance & Records',
+                          AppStrings.complianceRecords.tr,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -125,21 +128,21 @@ class StaticsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Row(
                         children: <Widget>[
                           Expanded(
                             child: ComplianceCard(
                               icon: Icons.description,
-                              title: 'DMP Documents',
+                              title: AppStrings.dmpDocuments.tr,
                               value: '04',
                             ),
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           Expanded(
                             child: ComplianceCard(
                               icon: Icons.edit,
-                              title: 'Valid Signatures',
+                              title: AppStrings.validSignatures.tr,
                               value: '02',
                             ),
                           ),
@@ -157,21 +160,31 @@ class StaticsScreen extends StatelessWidget {
                           ),
                           color: AppColors.orange.withOpacity(0.3),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 15.sp,vertical: 6.h),
+                        padding: EdgeInsets.symmetric(horizontal: 15.sp, vertical: 6.h),
                         child: Row(
                           children: [
-                           Image.asset("assets/images/explanation_icon.png",height: 35.sp,),
+                            Image.asset(
+                              "assets/images/explanation_icon.png",
+                              height: 35.sp,
+                            ),
                             5.horizontalSpace,
-                            Text("Data stored under HDS standards",style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w400,color: Colors.black),),
+                            Text(
+                              AppStrings.hdsDataStandard.tr,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                            ),
                           ],
                         ),
                       ),
                       20.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Export Monthly Report",
+                        text: AppStrings.exportMonthlyReport.tr,
                         onTap: () {
-                          Get.to(ReportScreen());
+                          Get.to(const ReportScreen());
                         },
                       ),
                       30.verticalSpace,

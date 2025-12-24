@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/service_and_pricing_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/patient_widgets/video_call_widgets/setting widgets.dart';
+import '../../../widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
 
 class AddServiceReception extends StatelessWidget {
   AddServiceReception({super.key});
-  ServiceAndPricingController controller=Get.find();
+  final ServiceAndPricingController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +44,7 @@ class AddServiceReception extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Add Service",
+                    AppStrings.addService.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -53,18 +55,49 @@ class AddServiceReception extends StatelessWidget {
                 ],
               ),
               5.verticalSpace,
-              CustomTextField(labelText: "Service name",hintText: "General Consultation",),
+              CustomTextField(
+                labelText: AppStrings.serviceNameLabel.tr,
+                hintText: AppStrings.serviceNameHint.tr,
+              ),
               10.verticalSpace,
-              CustomDropdown(label: "Days", options: controller.daysList, currentValue: controller.selectedDay.value, onChanged: (_){}),
+              Obx(() => CustomDropdown(
+                  label: AppStrings.days.tr,
+                  options: controller.daysList,
+                  currentValue: controller.selectedDay.value,
+                  onChanged: (val) {
+                    if (val != null) controller.selectedDay.value = val;
+                  }
+              )),
               10.verticalSpace,
-              CustomDropdown(label: "Mode", options: controller.modeList, currentValue: controller.selectedMode.value, onChanged: (_){}),
+              Obx(() => CustomDropdown(
+                  label: AppStrings.mode.tr,
+                  options: controller.modeList,
+                  currentValue: controller.selectedMode.value,
+                  onChanged: (val) {
+                    if (val != null) controller.selectedMode.value = val;
+                  }
+              )),
               10.verticalSpace,
-              CustomTextField(labelText: "Location",hintText: "Clinic Room 2",),
+              CustomTextField(
+                labelText: AppStrings.location.tr,
+                hintText: AppStrings.locationHint.tr,
+              ),
               30.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Add Service", onTap: (){
-              }),
+              CustomButton(
+                borderRadius: 15,
+                text: AppStrings.addService.tr,
+                onTap: () {},
+              ),
               15.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+              CustomButton(
+                borderRadius: 15,
+                text: AppStrings.cancel.tr,
+                onTap: () {
+                  Get.back();
+                },
+                bgColor: AppColors.inACtiveButtonColor,
+                fontColor: Colors.black,
+              ),
             ],
           ),
         ),

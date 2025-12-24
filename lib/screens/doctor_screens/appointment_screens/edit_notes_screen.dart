@@ -6,11 +6,14 @@ import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_con
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 
 class EditNotesScreen extends StatelessWidget {
-   EditNotesScreen({super.key});
-DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointmentController>();
+  EditNotesScreen({super.key});
+  final DoctorAppointmentController doctorAppointmentController =
+  Get.find<DoctorAppointmentController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +27,9 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(padding: EdgeInsets.symmetric(horizontal: 15.w),child: Column(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 15.w),
+          child: Column(
             children: [
               70.verticalSpace,
               Row(
@@ -41,7 +46,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Notes",
+                    AppStrings.editNotes.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -55,7 +60,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Edit Note",
+                  AppStrings.editNote.tr,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 18.sp,
@@ -67,7 +72,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
               10.verticalSpace,
               Container(
                 width: 1.sw,
-height: 350.h,
+                height: 350.h,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20.r),
@@ -76,21 +81,20 @@ height: 350.h,
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 5,
                       blurRadius: 7,
-                      offset:
-                          const Offset(0, 3), // changes position of shadow
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
                 child: Padding(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
+                  EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
                   child: TextField(
                     maxLines: null,
                     expands: true,
                     controller: doctorAppointmentController.notesController,
                     textAlignVertical: TextAlignVertical.top,
                     decoration: InputDecoration(
-                      hintText: "Enter notes here...",
+                      hintText: AppStrings.enterNotesHint.tr,
                       border: InputBorder.none,
                     ),
                     style: TextStyle(
@@ -103,7 +107,7 @@ height: 350.h,
               30.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Note Save",
+                text: AppStrings.noteSave.tr,
                 onTap: () {
                   doctorAppointmentController.saveNotes();
                   Get.back();
@@ -112,13 +116,16 @@ height: 350.h,
               10.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Cancel",
-                onTap: () {Get.back();},
+                text: AppStrings.cancel.tr,
+                onTap: () {
+                  Get.back();
+                },
                 bgColor: AppColors.inACtiveButtonColor,
                 fontColor: Colors.black,
               ),
             ],
-        ),),
+          ),
+        ),
       ),
     );
   }

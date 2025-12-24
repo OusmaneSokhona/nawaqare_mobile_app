@@ -3,21 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_documents.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_personal_info.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_professional_info.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/revalidation.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-import '../../../widgets/patient_widgets/profile_widgets/delete_account_dialog.dart';
-import '../../../widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import '../../patient_screens/notifications_screens/notifications_screen.dart';
 import '../../patient_screens/video_call_screens/help_center_screen.dart';
 
 class DoctorProfileScreen extends StatelessWidget {
   DoctorProfileScreen({super.key});
-  DoctorProfileController controller=Get.put(DoctorProfileController());
-  ProfileController profileController=Get.put(ProfileController());
+  final DoctorProfileController controller = Get.put(DoctorProfileController());
+  final ProfileController profileController = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
@@ -44,8 +44,7 @@ class DoctorProfileScreen extends StatelessWidget {
 
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
-              final Color targetColor =
-              isScrolledPastThreshold
+              final Color targetColor = isScrolledPastThreshold
                   ? AppColors.primaryColor
                   : Colors.transparent;
 
@@ -63,7 +62,7 @@ class DoctorProfileScreen extends StatelessWidget {
                     CircleAvatar(
                       radius: 20.h,
                       backgroundColor: Colors.white,
-                      foregroundImage: AssetImage(
+                      foregroundImage: const AssetImage(
                         "assets/demo_images/doctor_1.png",
                       ),
                     ),
@@ -77,10 +76,10 @@ class DoctorProfileScreen extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     InkWell(
                       onTap: () {
-                        Get.to(NotificationScreen());
+                        Get.to( NotificationScreen());
                       },
                       child: Image.asset(
                         "assets/images/bell_icon.png",
@@ -106,14 +105,14 @@ class DoctorProfileScreen extends StatelessWidget {
                           CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
-                            foregroundImage: AssetImage(
+                            foregroundImage: const AssetImage(
                               "assets/demo_images/doctor_1.png",
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           InkWell(
                             onTap: () {
-                              Get.to(HelpCenterScreen());
+                              Get.to( HelpCenterScreen());
                             },
                             child: Image.asset(
                               "assets/images/help_center_icon.png",
@@ -123,7 +122,7 @@ class DoctorProfileScreen extends StatelessWidget {
                           10.horizontalSpace,
                           InkWell(
                             onTap: () {
-                              Get.to(NotificationScreen());
+                              Get.to( NotificationScreen());
                             },
                             child: Image.asset(
                               "assets/images/bell_icon.png",
@@ -136,7 +135,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Profile",
+                          AppStrings.profile.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -148,7 +147,7 @@ class DoctorProfileScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Real-Time Messaging For Consultations.",
+                          AppStrings.profileSubtitle.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 16.sp,
@@ -166,25 +165,26 @@ class DoctorProfileScreen extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              profileType("Personal Info", 65.w),
+                              profileType(AppStrings.personalInfo.tr, 65.w, "Personal Info"),
                               9.horizontalSpace,
-                              profileType("Professional Info", 80.w),
+                              profileType(AppStrings.professionalInfo.tr, 80.w, "Professional Info"),
                               9.horizontalSpace,
-                              profileType("Documents", 55.w),
+                              profileType(AppStrings.documents.tr, 55.w, "Documents"),
                               9.horizontalSpace,
-                              profileType("Revalidation", 60.w),
+                              profileType(AppStrings.revalidation.tr, 60.w, "Revalidation"),
                             ],
                           ),
                         ),
                       ),
                       15.verticalSpace,
                       Obx(
-                            () =>
-                        controller.type.value == "Personal Info"
+                            () => controller.type.value == "Personal Info"
                             ? DoctorPersonalInfo()
                             : controller.type.value == "Professional Info"
                             ? DoctorProfessionalInfo()
-                            : controller.type.value=="Documents"?DoctorDocuments():Revalidation(),
+                            : controller.type.value == "Documents"
+                            ? DoctorDocuments()
+                            : Revalidation(),
                       ),
                       10.verticalSpace,
                     ],
@@ -198,11 +198,11 @@ class DoctorProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget profileType(String title, double width) {
+  Widget profileType(String title, double width, String value) {
     return Obx(
           () => InkWell(
         onTap: () {
-          controller.type.value = title;
+          controller.type.value = value;
         },
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -212,8 +212,7 @@ class DoctorProfileScreen extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                color:
-                controller.type.value == title
+                color: controller.type.value == value
                     ? AppColors.primaryColor
                     : AppColors.lightGrey,
                 fontSize: 10.sp,
@@ -221,7 +220,7 @@ class DoctorProfileScreen extends StatelessWidget {
               ),
             ),
             2.verticalSpace,
-            controller.type.value == title
+            controller.type.value == value
                 ? Container(
               width: width.w,
               height: 3.h,
@@ -230,7 +229,7 @@ class DoctorProfileScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(7.sp),
               ),
             )
-                : SizedBox(),
+                : const SizedBox(),
           ],
         ),
       ),

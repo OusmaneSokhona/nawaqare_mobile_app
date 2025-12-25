@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/pharmacy_controllers/pharmacy_prescription_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
@@ -11,18 +12,27 @@ import '../custom_button.dart';
 class PharmacyPrescriptionFilterBottomSheet extends StatelessWidget {
   final VoidCallback onApply;
   final VoidCallback onReset;
-PharmacyPrescriptionController controller=Get.find();
+  final PharmacyPrescriptionController controller = Get.find();
+
   PharmacyPrescriptionFilterBottomSheet({
     required this.onApply,
     required this.onReset,
     super.key,
   });
 
-  final RxString selectedDate = "12/Sep/2025".obs;
-  final RxString selectedStatus = "Approved".obs;
+  // These should ideally come from the controller to persist state
+  final RxString selectedStatus = AppStrings.statusApproved.tr.obs;
   final RxString selectedDoctor = "Dr. Alina shah".obs;
 
-  final List<String> statuses = ["Approved", "Pending", "Ready to Ship", "Delivered", "Canceled"];
+  // Localized statuses list
+  final List<String> statuses = [
+    AppStrings.statusApproved.tr,
+    AppStrings.statusPending.tr,
+    AppStrings.statusReadyToShip.tr,
+    AppStrings.statusDelivered.tr,
+    AppStrings.cancel.tr // Using existing cancel key
+  ];
+
   final List<String> doctors = ["Dr. Alina shah", "Dr. John Doe", "Dr. Jane Smith"];
 
   @override
@@ -31,161 +41,90 @@ PharmacyPrescriptionController controller=Get.find();
       padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, MediaQuery.of(context).viewInsets.bottom + 20.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0.sp)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0.r)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
-            alignment: Alignment.topRight,
-            child: Container(
-              padding: EdgeInsets.all(5.sp),
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.sp),color: AppColors.primaryColor),
-              child: InkWell(
-                onTap: () => Get.back(),
-                child: Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 18.sp,
-                ),
-              ),
-            ),
-          ),
-          Obx(
-                () => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Text(
-                    "Issue Date",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      // Medium boldness
-                      color:
-                      Colors
-                          .black87, // Darker text for the label
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () => _showDatePicker(context),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 18,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          controller.formattedDate,
-                          // Display the formatted date
-                          style: TextStyle(
-                            fontSize: 18,
-                            color:
-                            controller.selectedDate ==
-                                null
-                                ? Colors.grey
-                                : Colors.black,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const Icon(
-                          Icons.calendar_today,
-                          color: Colors.blue,
-                          size: 24,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _buildCloseButton(),
+          10.verticalSpace,
+          _buildDateSelector(context),
           20.verticalSpace,
-          CustomDropdown(label: "Status", options: statuses, currentValue: selectedStatus.value, onChanged: (_){}),
+          Obx(() => CustomDropdown(
+            label: AppStrings.status.tr,
+            options: statuses,
+            currentValue: selectedStatus.value,
+            onChanged: (val) => selectedStatus.value = val!,
+          )),
           20.verticalSpace,
-          CustomDropdown(label: "Doctor", options: doctors, currentValue: selectedDoctor.value, onChanged: (_){}),
+          Obx(() => CustomDropdown(
+            label: AppStrings.doctor.tr,
+            options: doctors,
+            currentValue: selectedDoctor.value,
+            onChanged: (val) => selectedDoctor.value = val!,
+          )),
           40.verticalSpace,
-          Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  text: "Reset",
-                  borderRadius: 15,
-                  bgColor: AppColors.inACtiveButtonColor,
-                  fontColor: Colors.black,
-                  onTap: onReset,
-                ),
-              ),
-              15.horizontalSpace,
-              Expanded(
-                child: CustomButton(
-                  text: "Apply",
-                  borderRadius: 15,
-                  onTap: onApply,
-                ),
-              ),
-            ],
-          ),
+          _buildActionButtons(),
         ],
       ),
     );
   }
 
-  Widget _buildFilterItem(
-      String label, IconData? icon, RxString value, VoidCallback? onTap) {
+  Widget _buildCloseButton() {
+    return Align(
+      alignment: Alignment.topRight,
+      child: InkWell(
+        onTap: () => Get.back(),
+        child: Container(
+          padding: EdgeInsets.all(5.r),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5.r),
+            color: AppColors.primaryColor,
+          ),
+          child: Icon(Icons.close, color: Colors.white, size: 18.sp),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateSelector(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          AppStrings.issueDate.tr,
           style: TextStyle(
-            color: Colors.black,
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
+            color: Colors.black87,
             fontFamily: AppFonts.jakartaMedium,
           ),
         ),
-        5.verticalSpace,
+        8.verticalSpace,
         InkWell(
-          onTap: onTap,
+          onTap: () => _showDatePicker(context),
           child: Container(
-            height: 55.h,
-            padding: EdgeInsets.symmetric(horizontal: 15.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(10.sp),
-              border: Border.all(color: AppColors.onboardingBackground, width: 1.5.w),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: Colors.grey.shade300),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (icon != null) ...[
-                  Icon(icon, color: AppColors.primaryColor, size: 20.sp),
-                  10.horizontalSpace,
-                ],
-                Obx(
-                      () => Text(
-                    value.value,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: AppFonts.jakartaBold,
-                    ),
+                Obx(() => Text(
+                  controller.selectedDate == null
+                      ? AppStrings.selectDate.tr
+                      : controller.formattedDate,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: controller.selectedDate == null ? Colors.grey : Colors.black,
+                    fontWeight: FontWeight.w500,
                   ),
-                ),
+                )),
+                const Icon(Icons.calendar_today, color: Colors.blue, size: 20),
               ],
             ),
           ),
@@ -194,18 +133,41 @@ PharmacyPrescriptionController controller=Get.find();
     );
   }
 
+  Widget _buildActionButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: CustomButton(
+            text: AppStrings.reset.tr,
+            borderRadius: 15,
+            bgColor: AppColors.inACtiveButtonColor,
+            fontColor: Colors.black,
+            onTap: onReset,
+          ),
+        ),
+        15.horizontalSpace,
+        Expanded(
+          child: CustomButton(
+            text: AppStrings.apply.tr,
+            borderRadius: 15,
+            onTap: onApply,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
-        selectedDayHighlightColor: Colors.blue,
-        centerAlignModePicker: true,
+        selectedDayHighlightColor: AppColors.primaryColor,
       ),
-      dialogSize: const Size(325, 400),
+      dialogSize: Size(325.w, 400.h),
       value: [controller.selectedDate],
-      // Current date value
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(15.r),
     );
+    // Note: Ensure your controller updates 'selectedDate' inside this logic if not handled by standard dialog callback
   }
 }

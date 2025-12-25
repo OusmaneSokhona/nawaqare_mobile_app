@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../utils/app_fonts.dart';
+import '../utils/app_strings.dart';
 
 class UploadDocumentWidget extends StatelessWidget {
-  Rx<String?> selectedFileName = Rx<String?>('No file selected');
+  final Rx<String?> selectedFileName;
   final String title;
   final Function pickFile;
   final String centerText;
   final String acceptedFile;
 
-   UploadDocumentWidget({
+  const UploadDocumentWidget({
     super.key,
-     required this.selectedFileName,
+    required this.selectedFileName,
     required this.pickFile,
     required this.title,
     required this.centerText,
@@ -27,7 +27,7 @@ class UploadDocumentWidget extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            '$title',
+            title, // This should be passed as AppStrings.someTitle.tr from parent
             style: TextStyle(
               fontSize: 15.sp,
               fontWeight: FontWeight.w600,
@@ -38,16 +38,14 @@ class UploadDocumentWidget extends StatelessWidget {
         ),
         3.verticalSpace,
         InkWell(
-          onTap: () {
-            pickFile();
-          },
-          borderRadius: BorderRadius.circular(12),
+          onTap: () => pickFile(),
+          borderRadius: BorderRadius.circular(12.r),
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 20.w),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
               boxShadow: [
                 BoxShadow(
@@ -59,37 +57,46 @@ class UploadDocumentWidget extends StatelessWidget {
               ],
             ),
             child: Obx(
-              () => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.cloud_upload_outlined,
-                    size: 40,
-                    color: Colors.blue.shade700,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    selectedFileName.value == 'No file selected' ||
-                            selectedFileName.value == 'File selection cancelled'
-                        ? '$centerText'
-                        : selectedFileName.value!,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+                  () {
+                // Check if the current value matches our default state strings
+                final bool isFileEmpty = selectedFileName.value == AppStrings.noFileSelected ||
+                    selectedFileName.value == AppStrings.fileSelectionCancelled ||
+                    selectedFileName.value == 'No file selected'; // Fallback for hardcoded initial values
+
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.cloud_upload_outlined,
+                      size: 40.h,
+                      color: Colors.blue.shade700,
                     ),
-                  ),
-                  if (selectedFileName.value !=
-                          'No file selected' &&
-                      selectedFileName.value !=
-                          'File selection cancelled')
-                    const Text(
-                      'Tap to select a new file',
-                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                    12.verticalSpace,
+                    Text(
+                      isFileEmpty ? centerText : selectedFileName.value!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontFamily: AppFonts.jakartaMedium,
+                      ),
                     ),
-                ],
-              ),
+                    if (!isFileEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top:4.h),
+                        child: Text(
+                          AppStrings.tapToSelectNewFile.tr,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey,
+                            fontFamily: AppFonts.jakartaRegular,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -97,11 +104,12 @@ class UploadDocumentWidget extends StatelessWidget {
         Align(
           alignment: Alignment.centerLeft,
           child: Text(
-            "$acceptedFile",
+            acceptedFile, // This should be passed as AppStrings.someAcceptedType.tr from parent
             style: TextStyle(
               fontSize: 13.sp,
               fontWeight: FontWeight.w300,
               fontFamily: AppFonts.jakartaRegular,
+              color: Colors.grey.shade600,
             ),
           ),
         ),

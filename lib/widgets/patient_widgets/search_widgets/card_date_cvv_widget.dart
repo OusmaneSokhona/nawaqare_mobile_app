@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class CardDateCvvWidget extends StatelessWidget {
   CardDateCvvWidget({super.key});
 
-  PaymentController controller = Get.find();
+  final PaymentController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    final fieldHeight = 56.0;
+    const fieldHeight = 56.0;
     final borderRadius = BorderRadius.circular(12.0);
 
     return Row(
@@ -19,9 +20,9 @@ class CardDateCvvWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Text(
-                'Expiration date',
-                style: TextStyle(
+              Text(
+                AppStrings.expirationDate.tr,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -47,17 +48,15 @@ class CardDateCvvWidget extends StatelessWidget {
                   ),
                   child: Row(
                     children: <Widget>[
-                      // Calendar Icon (Blue)
                       const Icon(
                         Icons.calendar_today,
                         color: Colors.blue,
                         size: 20,
                       ),
                       const SizedBox(width: 10.0),
-                      // Formatted Date Text wrapped in Obx
                       Obx(
-                        () => Text(
-                          controller.formattedDate, // Access reactive getter
+                            () => Text(
+                          controller.formattedDate,
                           style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black87,
@@ -77,9 +76,9 @@ class CardDateCvvWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              const Text(
-                'Cvv',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              Text(
+                AppStrings.cvv.tr,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               const SizedBox(height: 8.0),
               TextFormField(
@@ -98,7 +97,7 @@ class CardDateCvvWidget extends StatelessWidget {
                   counterText: "",
                   filled: true,
                   fillColor: Colors.white,
-                  hintText: '123',
+                  hintText: AppStrings.cvvHint.tr,
                   border: OutlineInputBorder(
                     borderRadius: borderRadius,
                     borderSide: BorderSide.none,

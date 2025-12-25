@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import '../../../screens/patient_screens/chat_screens/chat_detail_screen.dart';
 import '../../../screens/patient_screens/video_call_screens/setting_screen.dart';
 import 'call_end_dialog.dart';
 
 class VideoCallControls extends StatelessWidget {
-   VideoCallControls({super.key});
+  VideoCallControls({super.key});
 
-  VideoCallController  controller = Get.put(VideoCallController());
+  final VideoCallController controller = Get.put(VideoCallController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +38,7 @@ class VideoCallControls extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: ElevatedButton(
-              onPressed: () {
-                _showEndCallDialog();
-              },
+              onPressed: () => _showEndCallDialog(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.red[700],
                 shape: RoundedRectangleBorder(
@@ -51,9 +50,9 @@ class VideoCallControls extends StatelessWidget {
                 ),
                 elevation: 5,
               ),
-              child: const Text(
-                'End',
-                style: TextStyle(
+              child: Text(
+                AppStrings.end.tr,
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -61,57 +60,49 @@ class VideoCallControls extends StatelessWidget {
               ),
             ),
           ),
-
           _buildMicButton(),
-
           _buildCameraButton(),
-
           _buildSpeakerButton(),
-
-        Obx(()=> controller.isDoctor.value?_buildMoreMenuButtonDoctor(context):_buildMoreMenuButton(context)),
+          Obx(() => controller.isDoctor.value
+              ? _buildMoreMenuButtonDoctor(context)
+              : _buildMoreMenuButton(context)),
         ],
       ),
     );
   }
 
-   Widget _buildMicButton() {
-     return Obx(
-           () {
-         final isMuted = controller.micMuted.value;
-         return _buildControlButton(
-           icon: isMuted ? Icons.mic_off : Icons.mic,
-           onPressed: controller.toggleMic,
-           isActive: !isMuted,
-         );
-       },
-     );
-   }
+  Widget _buildMicButton() {
+    return Obx(() {
+      final isMuted = controller.micMuted.value;
+      return _buildControlButton(
+        icon: isMuted ? Icons.mic_off : Icons.mic,
+        onPressed: controller.toggleMic,
+        isActive: !isMuted,
+      );
+    });
+  }
 
-   Widget _buildCameraButton() {
-     return Obx(
-           () {
-         final isOff = controller.cameraOff.value;
-         return _buildControlButton(
-           icon: isOff ? Icons.videocam_off : Icons.videocam,
-           onPressed: controller.toggleCamera,
-           isActive: !isOff,
-         );
-       },
-     );
-   }
+  Widget _buildCameraButton() {
+    return Obx(() {
+      final isOff = controller.cameraOff.value;
+      return _buildControlButton(
+        icon: isOff ? Icons.videocam_off : Icons.videocam,
+        onPressed: controller.toggleCamera,
+        isActive: !isOff,
+      );
+    });
+  }
 
-   Widget _buildSpeakerButton() {
-     return Obx(
-           () {
-         final isMuted = controller.speakerMuted.value;
-         return _buildControlButton(
-           icon: isMuted ? Icons.volume_off : Icons.volume_up,
-           onPressed: controller.toggleSpeaker,
-           isActive: !isMuted,
-         );
-       },
-     );
-   }
+  Widget _buildSpeakerButton() {
+    return Obx(() {
+      final isMuted = controller.speakerMuted.value;
+      return _buildControlButton(
+        icon: isMuted ? Icons.volume_off : Icons.volume_up,
+        onPressed: controller.toggleSpeaker,
+        isActive: !isMuted,
+      );
+    });
+  }
 
   Widget _buildControlButton({
     required IconData icon,
@@ -129,11 +120,7 @@ class VideoCallControls extends StatelessWidget {
           customBorder: const CircleBorder(),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 28,
-            ),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
         ),
       ),
@@ -148,46 +135,40 @@ class VideoCallControls extends StatelessWidget {
         shape: const CircleBorder(),
         elevation: 5,
         child: PopupMenuButton<String>(
-          icon: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-            size: 28,
-          ),
+          icon: const Icon(Icons.more_vert, color: Colors.white, size: 28),
           onSelected: (String result) {
-            print('Selected: $result');
-            if(result=="messages"){
+            if (result == "messages") {
               Get.to(ChatDetailScreen());
-            }else if(result=="setting"){
+            } else if (result == "setting") {
               Get.to(SettingScreen());
             }
           },
           offset: const Offset(0, -200),
           color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'messages',
-              child: Text('In-video messages', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.inVideoMessages.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'share',
-              child: Text('Share', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.share.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'setting',
-              child: Text('Setting', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.settings.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'captions',
-              child: Text('Captions off', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.captionsOff.tr, style: const TextStyle(fontSize: 16)),
             ),
           ],
         ),
       ),
     );
   }
+
   Widget _buildMoreMenuButtonDoctor(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
@@ -196,64 +177,57 @@ class VideoCallControls extends StatelessWidget {
         shape: const CircleBorder(),
         elevation: 5,
         child: PopupMenuButton<String>(
-          icon: const Icon(
-            Icons.more_vert,
-            color: Colors.white,
-            size: 28,
-          ),
+          icon: const Icon(Icons.more_vert, color: Colors.white, size: 28),
           onSelected: (String result) {
-            print('Selected: $result');
-            if(result=="messages"){
+            if (result == "messages") {
               Get.to(ChatDetailScreen());
-            }else if(result=="setting"){
+            } else if (result == "setting") {
               Get.to(SettingScreen());
-            }else if(result=="note"){
-              controller.drawerValue.value="doctorNotes";
-            controller.scaffoldKey.currentState?.openEndDrawer();
-            }else if(result=="addPrescription"){
-              controller.drawerValue.value="addPrescription";
+            } else if (result == "note") {
+              controller.drawerValue.value = "doctorNotes";
               controller.scaffoldKey.currentState?.openEndDrawer();
-            }else if(result=="viewReports"){
-              controller.drawerValue.value="viewReports";
+            } else if (result == "addPrescription") {
+              controller.drawerValue.value = "addPrescription";
               controller.scaffoldKey.currentState?.openEndDrawer();
-             }else if(result=="patientHistory"){
-              controller.drawerValue.value="viewReports";
+            } else if (result == "viewReports") {
+              controller.drawerValue.value = "viewReports";
+              controller.scaffoldKey.currentState?.openEndDrawer();
+            } else if (result == "patientHistory") {
+              controller.drawerValue.value = "viewReports"; // Note: verify value if patientHistory is intended
               controller.scaffoldKey.currentState?.openEndDrawer();
             }
           },
           offset: const Offset(0, -200),
           color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'note',
-              child: Text('Add Doctor Note', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.addDoctorNote.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'addPrescription',
-              child: Text('Add Prescription ', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.addPrescription.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'viewReports',
-              child: Text('View Reports', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.viewReports.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'patientHistory',
-              child: Text('Patient History', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.patientHistory.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'messages',
-              child: Text('In-video messages', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.inVideoMessages.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'captions',
-              child: Text('Captions off', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.captionsOff.tr, style: const TextStyle(fontSize: 16)),
             ),
-            const PopupMenuItem<String>(
+            PopupMenuItem<String>(
               value: 'setting',
-              child: Text('Setting', style: TextStyle(fontSize: 16)),
+              child: Text(AppStrings.settings.tr, style: const TextStyle(fontSize: 16)),
             ),
           ],
         ),
@@ -261,9 +235,7 @@ class VideoCallControls extends StatelessWidget {
     );
   }
 
-
   void _showEndCallDialog() {
-
-   Get.dialog(barrierDismissible: false,CallEndDialog());
+    Get.dialog(barrierDismissible: false, const CallEndDialog());
   }
 }

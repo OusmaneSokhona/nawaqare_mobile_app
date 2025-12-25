@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_edit_legal_information.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_health_space_grid.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../controllers/patient_controllers/profile_controller.dart';
 import '../../utils/app_fonts.dart';
@@ -30,10 +31,10 @@ class LegalInformation extends StatelessWidget{
             ),
           ),
           const SizedBox(height: 16),
-          Center(
+          const Center(
             child: Text(
               "Alex Martin Pharmacy",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1F2937),
@@ -42,7 +43,7 @@ class LegalInformation extends StatelessWidget{
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
@@ -64,7 +65,7 @@ class LegalInformation extends StatelessWidget{
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:  Text('Edit Legal Info', style: TextStyle(fontSize: 14.sp)),
+              child:  Text(AppStrings.editLegalInfo.tr, style: TextStyle(fontSize: 14.sp)),
             ),
           ),
           const SizedBox(height: 30),
@@ -83,12 +84,12 @@ class LegalInformation extends StatelessWidget{
             ),
             child: Column(
               children: [
-                InfoRow(label: 'License Number', value: "LIC-20493"),
-                const InfoRow(label: 'Issuing Authority', value: 'Punjab Pharmacy Council'),
-                InfoRow(label: 'Issue Date', value:"15/Oct/2023"),
-                InfoRow(label: 'Expiry Date', value: "15/Oct/2023"),
-                const InfoRow(label: 'Business Reg. No.', value: 'BRN-99821'),
-                InfoRow(label: 'Registered Name', value: "Alex Martin Healthcare (Pvt) Ltd",showDivider: false,),
+                InfoRow(label: AppStrings.licenseNumber.tr, value: "LIC-20493"),
+                InfoRow(label: AppStrings.issuingAuthority.tr, value: 'Punjab Pharmacy Council'),
+                InfoRow(label: AppStrings.issueDate.tr, value:"15/Oct/2023"),
+                InfoRow(label: AppStrings.expiryDate.tr, value: "15/Oct/2023"),
+                InfoRow(label: AppStrings.businessRegNo.tr, value: 'BRN-99821'),
+                InfoRow(label: AppStrings.registeredName.tr, value: "Alex Martin Healthcare (Pvt) Ltd",showDivider: false,),
               ],
             ),
           ),
@@ -107,7 +108,7 @@ class LegalInformation extends StatelessWidget{
                 12.horizontalSpace,
                 Expanded(
                   child: Text(
-                    "Your license will expire on 15/Oct/2026.\nPlease renew your information.",
+                    AppStrings.licenseExpiryWarning.tr,
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w600,
@@ -120,9 +121,9 @@ class LegalInformation extends StatelessWidget{
             ),
           ),
           10.verticalSpace,
-          const Text(
-            'Security Settings',
-            style: TextStyle(
+          Text(
+            AppStrings.securitySettings.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
@@ -131,7 +132,7 @@ class LegalInformation extends StatelessWidget{
           SizedBox(height: 10.h),
           PharmacyHealthSpaceGrid(profileController: controller),
           10.verticalSpace,
-          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: "Payment Setting", onTap: (){}),
+          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: AppStrings.paymentSetting.tr, onTap: (){}),
           10.verticalSpace,
           buildSecuritySection(),
           const SizedBox(height: 20),
@@ -139,17 +140,18 @@ class LegalInformation extends StatelessWidget{
       ),
     );
   }
+
   Widget buildDigitalSignatureCard() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Digital Signature Certificate",
+          AppStrings.digitalSignatureCert.tr,
           style: TextStyle(
             fontSize: 21.sp,
             fontWeight: FontWeight.w700,
             fontFamily: AppFonts.jakartaBold,
-            color:  Color(0xFF2D3142),
+            color:  const Color(0xFF2D3142),
           ),
         ),
         16.verticalSpace,
@@ -159,7 +161,7 @@ class LegalInformation extends StatelessWidget{
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
-              color:  Color(0xFFE8E8E8),
+              color:  const Color(0xFFE8E8E8),
               width: 1.2,
             ),
           ),
@@ -172,7 +174,7 @@ class LegalInformation extends StatelessWidget{
                     Row(
                       children: [
                         Text(
-                          "Drag or select file (.p12 / .cer)",
+                          AppStrings.dragSelectFile.tr,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -180,7 +182,7 @@ class LegalInformation extends StatelessWidget{
                             color: const Color(0xFF2D3142),
                           ),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         InkWell(
                           onTap: () {},
                           child: Icon(
@@ -210,7 +212,7 @@ class LegalInformation extends StatelessWidget{
                         ),
                         4.horizontalSpace,
                         Text(
-                          "Verified",
+                          AppStrings.verified.tr,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.grey,
@@ -228,6 +230,7 @@ class LegalInformation extends StatelessWidget{
       ],
     );
   }
+
   Widget buildSecuritySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,11 +244,11 @@ class LegalInformation extends StatelessWidget{
           ),
           child: Row(
             children: [
-              ImageIcon(AssetImage("assets/images/delete_account_icon.png"), color: Colors.blue, size: 30.sp),
+              ImageIcon(const AssetImage("assets/images/delete_account_icon.png"), color: Colors.blue, size: 30.sp),
               16.horizontalSpace,
               Expanded(
                 child: Text(
-                  "2FA Authentication",
+                  AppStrings.twoFactorAuth.tr,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,

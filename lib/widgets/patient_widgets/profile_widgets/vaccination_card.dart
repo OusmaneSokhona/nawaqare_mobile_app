@@ -1,14 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/models/vaccination_history_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/prscription_model.dart';
+
 class VaccinationCard extends StatelessWidget {
-  Function onTap;
+  final Function onTap;
   final VaccinationHistoryModel vaccinationHistoryModel;
-  VaccinationCard({required this.vaccinationHistoryModel, super.key,required this.onTap});
+
+  const VaccinationCard({
+    required this.vaccinationHistoryModel,
+    super.key,
+    required this.onTap
+  });
+
   Color _getStatusColor(String status) {
     switch (status) {
       case "Active":
@@ -19,8 +27,24 @@ class VaccinationCard extends StatelessWidget {
         return AppColors.red;
       case "Completed":
         return AppColors.green;
+      default:
+        return Colors.grey;
     }
-    return Colors.grey;
+  }
+
+  String _getLocalizedStatus(String status) {
+    switch (status) {
+      case "Active":
+        return AppStrings.active.tr;
+      case "Pending":
+        return AppStrings.pending.tr;
+      case "Expired":
+        return AppStrings.expired.tr;
+      case "Completed":
+        return AppStrings.completed.tr;
+      default:
+        return status;
+    }
   }
 
   Widget _buildStatusChip(String status) {
@@ -31,7 +55,7 @@ class VaccinationCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
-        status,
+        _getLocalizedStatus(status),
         style: TextStyle(
           color: Colors.white,
           fontSize: 12.sp,
@@ -41,13 +65,8 @@ class VaccinationCard extends StatelessWidget {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    final bool showRefillButton = vaccinationHistoryModel.status != PrescriptionStatus.completed;
-    final Color primaryColor = _getStatusColor(vaccinationHistoryModel.status);
-
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
       padding: EdgeInsets.all(16.w),
@@ -67,43 +86,38 @@ class VaccinationCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    vaccinationHistoryModel.vaccineName,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF333333),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      vaccinationHistoryModel.vaccineName,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF333333),
+                      ),
                     ),
-                  ),
-                  Text(
-                    vaccinationHistoryModel.testName,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF666666),
+                    Text(
+                      vaccinationHistoryModel.testName,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: const Color(0xFF666666),
+                      ),
                     ),
-                  ),
-                  Text(
-                    vaccinationHistoryModel.lastUpdated,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF666666),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const Spacer(),
+              10.horizontalSpace,
               _buildStatusChip(vaccinationHistoryModel.status),
             ],
           ),
-          Divider(),
+          const Divider(),
           Text(
-            "Last Updated ${vaccinationHistoryModel.lastUpdated}",
+            "${AppStrings.lastUpdatedLabel.tr} ${vaccinationHistoryModel.lastUpdated}",
             style: TextStyle(
               fontSize: 14.sp,
-              color:  AppColors.darkGrey,
+              color: AppColors.darkGrey,
             ),
           ),
         ],

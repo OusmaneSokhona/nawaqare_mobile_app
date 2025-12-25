@@ -7,13 +7,16 @@ import 'package:patient_app/screens/patient_screens/video_call_screens/help_cent
 import 'package:patient_app/screens/pharmacy_screens/upload_prescription_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import '../patient_screens/notifications_screens/notifications_screen.dart';
 
 class PharmacyHomeScreen extends StatelessWidget {
   PharmacyHomeScreen({super.key});
 
-  PharmacyHomeController homeController = Get.put(PharmacyHomeController());
+  final PharmacyHomeController homeController = Get.put(
+    PharmacyHomeController(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +41,11 @@ class PharmacyHomeScreen extends StatelessWidget {
             Obx(() {
               final bool isScrolledPastThreshold =
                   homeController.scrollValue.value >= 180;
-
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
-
               final Color targetColor =
-              isScrolledPastThreshold ? AppColors.primaryColor : Colors.transparent;
+                  isScrolledPastThreshold
+                      ? AppColors.primaryColor
+                      : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -64,7 +67,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                     ),
                     20.horizontalSpace,
                     Text(
-                      "Dr Alex",
+                      AppStrings.drAlex.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: AppFonts.jakartaBold,
@@ -73,35 +76,19 @@ class PharmacyHomeScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        Get.to(ChatScreen(showBackIcon: true,));
-                      },
-                      child: Image.asset(
-                        "assets/images/chat_icon.png",
-                        height: 25.h,
-                        color: Colors.white,
-                      ),
+                    _buildIconBtn(
+                      "assets/images/chat_icon.png",
+                      () => Get.to(ChatScreen(showBackIcon: true)),
                     ),
                     5.horizontalSpace,
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => HelpCenterScreen());
-                      },
-                      child: Image.asset(
-                        "assets/images/help_center_icon.png",
-                        height: 25.h,
-                      ),
+                    _buildIconBtn(
+                      "assets/images/help_center_icon.png",
+                      () => Get.to(() => HelpCenterScreen()),
                     ),
                     5.horizontalSpace,
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => NotificationScreen());
-                      },
-                      child: Image.asset(
-                        "assets/images/bell_icon.png",
-                        height: 25.h,
-                      ),
+                    _buildIconBtn(
+                      "assets/images/bell_icon.png",
+                      () => Get.to(() => NotificationScreen()),
                     ),
                   ],
                 ),
@@ -127,35 +114,20 @@ class PharmacyHomeScreen extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
-                          InkWell(
-                            onTap: () {
-                              Get.to(ChatScreen(showBackIcon: true,));
-                            },
-                            child: Image.asset(
-                              "assets/images/chat_icon.png",
-                              height: 25.h,
-                              color: Colors.white,
-                            ),
+                          _buildIconBtn(
+                            "assets/images/chat_icon.png",
+                            () => Get.to(ChatScreen(showBackIcon: true)),
                           ),
                           10.horizontalSpace,
-                          InkWell(
-                            onTap: () {
-                              Get.to(() => HelpCenterScreen());
-                            },
-                            child: Image.asset(
-                              "assets/images/help_center_icon.png",
-                              height: 25.h,
-                            ),
+                          _buildIconBtn(
+                            "assets/images/help_center_icon.png",
+                            () => Get.to(() => HelpCenterScreen()),
                           ),
                           10.horizontalSpace,
-                          InkWell(
-                            onTap: () {
-                              Get.to(() => NotificationScreen());
-                            },
-                            child: Image.asset(
-                              "assets/images/bell_icon.png",
-                              height: 30.h,
-                            ),
+                          _buildIconBtn(
+                            "assets/images/bell_icon.png",
+                            () => Get.to(() => NotificationScreen()),
+                            height: 30.h,
                           ),
                         ],
                       ),
@@ -163,7 +135,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Pharma Plus\nLahore",
+                          AppStrings.pharmaPlusLahore.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -176,6 +148,7 @@ class PharmacyHomeScreen extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Monday, 20 Oct  at 10:30 AM",
+                          // Usually dynamically formatted, kept static for UI
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
@@ -197,6 +170,21 @@ class PharmacyHomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildIconBtn(
+    String asset,
+    VoidCallback onTap, {
+    double height = 25,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Image.asset(
+        asset,
+        height: height,
+        color: asset.contains("chat") ? Colors.white : null,
+      ),
+    );
+  }
+
   Widget statCard({
     required String icon,
     required String title,
@@ -210,19 +198,18 @@ class PharmacyHomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: AppColors.lightGrey.withOpacity(0.4)),
         color: backgroundColor,
-      borderRadius: BorderRadius.circular(12.sp)
+        borderRadius: BorderRadius.circular(12.sp),
       ),
-
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Image.asset(icon, color: iconColor, height: 30.h),
           const SizedBox(height: 8),
           Text(
             title,
+            textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
@@ -230,7 +217,7 @@ class PharmacyHomeScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             value,
-            style:  TextStyle(
+            style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
               color: Colors.black54,
@@ -243,18 +230,11 @@ class PharmacyHomeScreen extends StatelessWidget {
 
   Widget statusTag({required String status}) {
     Color getStatusColor() {
-      switch (status) {
-        case 'Pending':
-          return AppColors.orange;
-        case 'Accepted':
-          return AppColors.green;
-        case 'Rejected':
-          return AppColors.red;
-        default:
-          return Colors.grey.shade100;
-      }
+      if (status == AppStrings.pendingStatus.tr) return AppColors.orange;
+      if (status == AppStrings.acceptedStatus.tr) return AppColors.green;
+      if (status == AppStrings.rejectedStatus.tr) return AppColors.red;
+      return Colors.grey.shade400;
     }
-
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -266,7 +246,7 @@ class PharmacyHomeScreen extends StatelessWidget {
         status,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 12.sp,
+          fontSize: 11.sp,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -285,33 +265,32 @@ class PharmacyHomeScreen extends StatelessWidget {
         children: <Widget>[
           Text(
             prescriptionId,
-            style:  TextStyle(fontSize: 13.sp,fontFamily: AppFonts.jakartaMedium,color: AppColors.lightGrey,fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.lightGrey,
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: statusTag(status: status),
-          ),
+          statusTag(status: status),
           Text(
             time,
-            style: const TextStyle(color: Colors.black54),
-            textAlign: TextAlign.end,
+            style: const TextStyle(color: Colors.black54, fontSize: 12),
           ),
-          const SizedBox(width: 12),
-          const ImageIcon(AssetImage("assets/images/pharmacy_chat_icon.png"), color: Colors.blue, size: 18),
+          const ImageIcon(
+            AssetImage("assets/images/pharmacy_chat_icon.png"),
+            color: Colors.blue,
+            size: 18,
+          ),
         ],
       ),
     );
   }
 
-
-
   Widget scanUploadButton() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(vertical: 24.0),
       child: ElevatedButton(
-        onPressed: () {
-          Get.to(UploadPrescriptionScreen());
-        },
+        onPressed: () => Get.to(const UploadPrescriptionScreen()),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
@@ -321,12 +300,20 @@ class PharmacyHomeScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children:  <Widget>[
-            ImageIcon(AssetImage("assets/images/qr_scan_icon.png"), size: 24,color: Colors.white,),
-            SizedBox(width: 8),
+          children: <Widget>[
+            const ImageIcon(
+              AssetImage("assets/images/qr_scan_icon.png"),
+              size: 24,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
             Text(
-              'Scan or Upload Prescription\"',
-              style: TextStyle(fontSize: 16,color: Colors.white,fontWeight: FontWeight.bold),
+              AppStrings.scanOrUploadPrescription.tr,
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
@@ -335,70 +322,80 @@ class PharmacyHomeScreen extends StatelessWidget {
   }
 
   Widget pharmacyDashboardUI() {
-    final List<Map<String, String>> recentActivity = const [
-      {'id': 'RX-20391', 'status': 'Pending', 'time': '2h ago'},
-      {'id': 'RX-20391', 'status': 'Accepted', 'time': '2h ago'},
-      {'id': 'RX-20391', 'status': 'Rejected', 'time': '2h ago'},
-      {'id': 'RX-20391', 'status': 'Pending', 'time': '2h ago'},
+    final List<Map<String, String>> recentActivity = [
+      {
+        'id': 'RX-20391',
+        'status': AppStrings.pendingStatus.tr,
+        'time': '2h ago',
+      },
+      {
+        'id': 'RX-20391',
+        'status': AppStrings.acceptedStatus.tr,
+        'time': '2h ago',
+      },
+      {
+        'id': 'RX-20391',
+        'status': AppStrings.rejectedStatus.tr,
+        'time': '2h ago',
+      },
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             statCard(
-              icon:"assets/images/pending_prescription_icon.png",
-              title: 'Pending Prescriptions',
+              icon: "assets/images/pending_prescription_icon.png",
+              title: AppStrings.pendingPrescriptions.tr,
               value: '15h',
               iconColor: AppColors.primaryColor,
             ),
             statCard(
               icon: "assets/images/pharmacy_calender_icon.png",
-              title: 'Validated Today',
-              value: '20',
-              iconColor: AppColors.primaryColor,
-            ),
-          ],
-        ),10.verticalSpace,
-        Row(
-          mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            statCard(
-              icon: "assets/images/pharmacy_warning_icon.png",
-              title: 'Deliveries In Progress',
-              value: '15h',
-              iconColor: AppColors.primaryColor,
-            ),
-            statCard(
-              icon: "assets/images/delivery_icon.png",
-              title: 'Stock Alerts',
+              title: AppStrings.validatedToday.tr,
               value: '20',
               iconColor: AppColors.primaryColor,
             ),
           ],
         ),
-        const SizedBox(height: 20),
+        10.verticalSpace,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            statCard(
+              icon: "assets/images/pharmacy_warning_icon.png",
+              title: AppStrings.deliveriesInProgress.tr,
+              value: '5',
+              iconColor: AppColors.primaryColor,
+            ),
+            statCard(
+              icon: "assets/images/delivery_icon.png",
+              title: AppStrings.stockAlerts.tr,
+              value: '12',
+              iconColor: AppColors.primaryColor,
+            ),
+          ],
+        ),
+        20.verticalSpace,
         CustomTextField(
-         hintText: "Search by Prescription ID...",
+          hintText: AppStrings.searchByPrescriptionId.tr,
           prefixIcon: Icons.search,
           prefixIconColor: AppColors.lightGrey,
           suffixIcon: Icons.filter_list,
           suffixIconColor: AppColors.lightGrey,
         ),
-        const SizedBox(height: 20),
-         Text(
-          'Recent Activity',
+        20.verticalSpace,
+        Text(
+          AppStrings.recentActivity.tr,
           style: TextStyle(
             fontSize: 18.sp,
             fontFamily: AppFonts.jakartaBold,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 10),
+        10.verticalSpace,
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -415,39 +412,21 @@ class PharmacyHomeScreen extends StatelessWidget {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text(
-                    "Prescription ID",
-                    style:  TextStyle(fontSize: 12.sp,fontWeight: FontWeight.w500),
-                  ),
-                   SizedBox(width: 20.w),
-                  Text(
-                    "Status",
-                    style:  TextStyle(fontSize: 12.sp,fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(width: 40.w),
-                  Text(
-                    "Time",
-                    style:  TextStyle(fontSize: 12.sp,fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.end,
-                  ),
-                  Spacer(),
-                  Text(
-                    "Action",
-                    style:  TextStyle(fontSize: 12.sp,fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.end,
-                  ),
+                  _headerText(AppStrings.prescriptionIdLabel.tr),
+                  _headerText(AppStrings.statusLabel.tr),
+                  _headerText(AppStrings.timeLabel.tr),
+                  _headerText(AppStrings.actionLabel.tr),
                 ],
               ),
-              Column(
-                children: recentActivity.map((activity) {
-                  return activityRow(
-                    prescriptionId: activity['id']!,
-                    status: activity['status']!,
-                    time: activity['time']!,
-                  );
-                }).toList(),
+              const Divider(),
+              ...recentActivity.map(
+                (activity) => activityRow(
+                  prescriptionId: activity['id']!,
+                  status: activity['status']!,
+                  time: activity['time']!,
+                ),
               ),
             ],
           ),
@@ -456,4 +435,13 @@ class PharmacyHomeScreen extends StatelessWidget {
       ],
     );
   }
+
+  Widget _headerText(String text) => Text(
+    text,
+    style: TextStyle(
+      fontSize: 11.sp,
+      fontWeight: FontWeight.w600,
+      color: Colors.grey,
+    ),
+  );
 }

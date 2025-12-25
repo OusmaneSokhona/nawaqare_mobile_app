@@ -1,27 +1,39 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/models/medical_history_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/prscription_model.dart';
 
 class CurrentMedicineCard extends StatelessWidget {
-  Function onTap;
+  final Function onTap;
   final MedicalHistoryModel medicalHistoryModel;
-  CurrentMedicineCard({required this.medicalHistoryModel, super.key,required this.onTap});
+
+  CurrentMedicineCard({required this.medicalHistoryModel, super.key, required this.onTap});
+
   Color _getStatusColor(String status) {
+    if (status == "Active") return AppColors.primaryColor;
+    if (status == "In Progress") return AppColors.orange;
+    if (status == "Expired") return AppColors.red;
+    if (status == "Completed") return AppColors.green;
+    return Colors.grey;
+  }
+
+  String _getLocalizedStatus(String status) {
     switch (status) {
       case "Active":
-        return AppColors.primaryColor;
+        return AppStrings.active.tr;
       case "In Progress":
-        return AppColors.orange;
+        return AppStrings.inProgress.tr;
       case "Expired":
-        return AppColors.red;
+        return AppStrings.expired.tr;
       case "Completed":
-        return AppColors.green;
+        return AppStrings.completed.tr;
+      default:
+        return status;
     }
-    return Colors.grey;
   }
 
   Widget _buildStatusChip(String status) {
@@ -32,7 +44,7 @@ class CurrentMedicineCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
-        status,
+        _getLocalizedStatus(status),
         style: TextStyle(
           color: Colors.white,
           fontSize: 12.sp,
@@ -42,13 +54,8 @@ class CurrentMedicineCard extends StatelessWidget {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    final bool showRefillButton = medicalHistoryModel.doctor.status != PrescriptionStatus.completed;
-    final Color primaryColor = _getStatusColor(medicalHistoryModel.doctor.status);
-
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
       padding: EdgeInsets.all(16.w),
@@ -68,7 +75,7 @@ class CurrentMedicineCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Image.asset(medicalHistoryModel.doctor.image,height: 70.h,),
+              Image.asset(medicalHistoryModel.doctor.image, height: 70.h),
               15.horizontalSpace,
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +102,7 @@ class CurrentMedicineCard extends StatelessWidget {
             ],
           ),
           5.verticalSpace,
-          Divider(),
+          const Divider(),
           5.verticalSpace,
           Text(
             medicalHistoryModel.medicationName,
@@ -114,10 +121,9 @@ class CurrentMedicineCard extends StatelessWidget {
             ),
           ),
           8.verticalSpace,
-
           if (medicalHistoryModel.refillLimitDate != null)
             Text(
-              'Refills left: ${medicalHistoryModel.refillLimitDate}',
+              '${AppStrings.refillsLeft.tr}: ${medicalHistoryModel.refillLimitDate}',
               style: TextStyle(
                 fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
@@ -128,7 +134,7 @@ class CurrentMedicineCard extends StatelessWidget {
             medicalHistoryModel.lastUpdated,
             style: TextStyle(
               fontSize: 14.sp,
-              color:  AppColors.darkGrey,
+              color: AppColors.darkGrey,
             ),
           ),
           16.verticalSpace,

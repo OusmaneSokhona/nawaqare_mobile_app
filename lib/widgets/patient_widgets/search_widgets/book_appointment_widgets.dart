@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';
 
 class ConsultationDetailsCard extends StatelessWidget {
@@ -23,7 +24,7 @@ class ConsultationDetailsCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'Consultation Details',
+              AppStrings.consultationDetails.tr,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
@@ -31,48 +32,48 @@ class ConsultationDetailsCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-              Obx(
-                  ()=> controller.appointmentType.value!="homeVisit"?
-                Text('Type of Appointment',
-                    style: TextStyle(
-                        color: const Color(0xFF666666), fontSize: 14.sp)):SizedBox(),
-              ),
-              Obx(()=>controller.appointmentType.value!="homeVisit"?SizedBox(height: 8.h):SizedBox()),
-              Obx(
-                    () => controller.appointmentType.value!="homeVisit"?Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                        color: const Color(0xFFE5E5E5), width: 1.w),
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: controller.appointmentType.value,
-                      icon: Icon(Icons.keyboard_arrow_down,
-                          size: 24.sp, color: const Color(0xFF666666)),
-                      onChanged: controller.selectAppointmentType,
-                      items: controller.appointmentOptions
-                          .map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value,
-                              style: TextStyle(
-                                  color: const Color(0xFF333333),
-                                  fontSize: 14.sp)),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ):SizedBox(),
-              ),
             Obx(
-              ()=> controller.appointmentType.value=="homeVisit"?CustomTextField(labelText: "Consultation Address",hintText: "Xyz street",):
+                  ()=> controller.appointmentType.value!="homeVisit"?
+              Text(AppStrings.typeOfAppointment.tr,
+                  style: TextStyle(
+                      color: const Color(0xFF666666), fontSize: 14.sp)):SizedBox(),
+            ),
+            Obx(()=>controller.appointmentType.value!="homeVisit"?SizedBox(height: 8.h):SizedBox()),
+            Obx(
+                  () => controller.appointmentType.value!="homeVisit"?Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                      color: const Color(0xFFE5E5E5), width: 1.w),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: controller.appointmentType.value,
+                    icon: Icon(Icons.keyboard_arrow_down,
+                        size: 24.sp, color: const Color(0xFF666666)),
+                    onChanged: controller.selectAppointmentType,
+                    items: controller.appointmentOptions
+                        .map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value.tr,
+                            style: TextStyle(
+                                color: const Color(0xFF333333),
+                                fontSize: 14.sp)),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ):SizedBox(),
+            ),
+            Obx(
+                  ()=> controller.appointmentType.value=="homeVisit"?CustomTextField(labelText: AppStrings.consultationAddress.tr, hintText: AppStrings.addressHint.tr):
               SizedBox(),
             ),
             SizedBox(height: 16.h),
-            Text('Duration',
+            Text(AppStrings.duration.tr,
                 style:
                 TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
             SizedBox(height: 8.h),
@@ -81,7 +82,7 @@ class ConsultationDetailsCard extends StatelessWidget {
               readOnly: true,
             ),
             SizedBox(height: 16.h),
-            Text('Fee',
+            Text(AppStrings.fee.tr,
                 style:
                 TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
             SizedBox(height: 8.h),
@@ -91,7 +92,7 @@ class ConsultationDetailsCard extends StatelessWidget {
             ),
             10.verticalSpace,
             Text(
-              'Note',
+              AppStrings.note.tr,
               style: TextStyle(
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w500,
@@ -111,7 +112,7 @@ class ConsultationDetailsCard extends StatelessWidget {
                   FocusManager.instance.primaryFocus!.unfocus();
                 },
                 decoration: InputDecoration(
-                  hintText: 'Write a note to your doctor',
+                  hintText: AppStrings.noteHint.tr,
                   hintStyle: TextStyle(color: Colors.grey.shade500),
                   border: InputBorder.none,
                   contentPadding:
@@ -179,7 +180,7 @@ class CalendarWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'June 2025',
+                '${AppStrings.june.tr} 2025',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16.sp,
@@ -197,7 +198,7 @@ class CalendarWidget extends StatelessWidget {
             ],
           ),
           5.verticalSpace,
-          const _DayLabels(),
+           _DayLabels(),
           5.verticalSpace,
           _DateGrid(controller: controller),
         ],
@@ -229,15 +230,15 @@ class _CalendarArrowButton extends StatelessWidget {
 }
 
 class _DayLabels extends StatelessWidget {
-  const _DayLabels();
-  final List<String> days = const [
-    'Sun',
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat'
+   _DayLabels();
+  final List<String> days =  [
+    'sun'.tr,
+    'mon'.tr,
+    'tue'.tr,
+    'wed'.tr,
+    'thu'.tr,
+    'fri'.tr,
+    'sat'.tr,
   ];
 
   @override
@@ -247,7 +248,7 @@ class _DayLabels extends StatelessWidget {
       children: days
           .map((day) => Expanded(
         child: Text(
-          day,
+          day.tr,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontWeight: FontWeight.w600,

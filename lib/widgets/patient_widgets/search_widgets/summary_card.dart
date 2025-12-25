@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/patient_widgets/search_widgets/summary_item.dart';
 
 class AppointmentSummaryCard extends StatelessWidget {
@@ -7,58 +9,58 @@ class AppointmentSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Define the primary color from the image for the price/fee values.
-     final primaryBlue = AppColors.primaryColor;
-
-    // Define the style for the regular text labels.
-    final labelStyle = TextStyle(color: Colors.grey.shade800, fontSize: 16);
+    final primaryBlue = AppColors.primaryColor;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 1. Appointment Type
-        const SummaryItem(
-          label: 'Appointment Type',
-          value: 'Follow-Up',
+        SummaryItem(
+          label: AppStrings.appointmentType.tr,
+          value: AppStrings.followUp.tr,
           valueColor: Colors.grey,
         ),
 
-        // Divider after Appointment Type
         Divider(color: Colors.grey.shade300, height: 1),
 
         // 2. Date
-        const SummaryItem(
-          label: 'Date',
-          value: 'Oct 9, 2025',
+        SummaryItem(
+          label: AppStrings.dateLabel.tr,
+          value: 'Oct 9, 2025', // Typically this would come from a controller
           valueColor: Colors.grey,
         ),
 
-        // Divider after Date
         Divider(color: Colors.grey.shade300, height: 1),
 
         // 3. Time
-        const SummaryItem(
-          label: 'Time',
-          value: '3:00 PM',
+        SummaryItem(
+          label: AppStrings.timeLabel.tr,
+          value: '3:00 PM', // Typically this would come from a controller
           valueColor: Colors.grey,
         ),
+
         const SizedBox(height: 10),
         Divider(color: Colors.grey.shade300, height: 10, thickness: 1.5),
         const SizedBox(height: 10),
+
+        // 4. Consultation Fee
         SummaryItem(
-          label: 'Consultation Fee',
+          label: AppStrings.consultationFee.tr,
           value: '\$156',
           valueColor: primaryBlue,
           valueWeight: FontWeight.w600,
-          subtitle: 'Consultation fee for 1 hour',
+          subtitle: AppStrings.consultationDurationNote.tr,
         ),
+
         Divider(color: Colors.grey.shade300, height: 1),
+
+        // 5. Total Fee
         SummaryItem(
-          label: 'Total Fee',
+          label: AppStrings.totalFee.tr,
           value: '\$158',
           valueColor: primaryBlue,
           valueWeight: FontWeight.bold,
-          isTotal: true, // Use this flag to apply bold/larger font size
+          isTotal: true,
         ),
       ],
     );

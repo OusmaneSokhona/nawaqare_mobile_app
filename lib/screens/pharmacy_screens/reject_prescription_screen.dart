@@ -7,12 +7,14 @@ import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%2
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 
 class RejectPrescriptionScreen extends StatelessWidget {
   RejectPrescriptionScreen({super.key});
 
-  PharmacyPrescriptionController controller = Get.find();
+  // Use Get.find since the controller should already be initialized in the detail screen
+  final PharmacyPrescriptionController controller = Get.find<PharmacyPrescriptionController>();
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,7 @@ class RejectPrescriptionScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -46,7 +46,7 @@ class RejectPrescriptionScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Reject Prescription",
+                    AppStrings.rejectPrescription.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -62,57 +62,65 @@ class RejectPrescriptionScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       10.verticalSpace,
-                      CustomDropdown(
-                        label: "Reasons",
+                      Obx(() => CustomDropdown(
+                        label: AppStrings.reasons.tr,
                         options: [
-                          "Invalid Signature",
-                          "Invalid Medicine",
-                          "Invalid Id",
+                          AppStrings.invalidSignature.tr,
+                          AppStrings.invalidMedicine.tr,
+                          AppStrings.invalidId.tr,
                         ],
                         currentValue: controller.slectedReasons.value,
-                        onChanged: (_) {},
-                      ),
-                      SizedBox(height: 10),
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.slectedReasons.value = value;
+                          }
+                        },
+                      )),
+                      20.verticalSpace,
                       Text(
-                        'Message',
+                        AppStrings.message.tr,
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 18.sp,
                           fontWeight: FontWeight.w600,
                           color: Colors.black87,
+                          fontFamily: AppFonts.jakartaBold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      10.verticalSpace,
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(10.r),
                           border: Border.all(color: Colors.grey.shade300, width: 1),
                         ),
                         child: TextField(
                           maxLines: 5,
-                          onTapOutside: (_){
+                          onTapOutside: (_) {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
+                          style: TextStyle(fontSize: 14.sp),
                           decoration: InputDecoration(
-                            hintText: 'Invalid Signature',
+                            hintText: AppStrings.enterMessageHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 15.h),
                           ),
                         ),
                       ),
-                      30.verticalSpace,
+                      40.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Confirm Rejection",
-                        onTap: () {},
+                        text: AppStrings.confirmRejection.tr,
+                        onTap: () {
+                          // Add your rejection logic here
+                          Get.back();
+                        },
                       ),
-                      10.verticalSpace,
+                      12.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
-                        onTap: () {},
+                        text: AppStrings.cancel.tr,
+                        onTap: () => Get.back(),
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                       ),

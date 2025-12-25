@@ -7,10 +7,11 @@ import '../../../controllers/pharmacy_controllers/preparaition_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class PrepartionAndDeliveryScreen extends StatelessWidget {
   PrepartionAndDeliveryScreen({super.key});
-  PreparationController controller =Get.put(PreparationController());
+  PreparationController controller = Get.put(PreparationController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +44,7 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Preparation And Delivery",
+                    AppStrings.preparationAndDelivery.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 21.sp,
@@ -61,9 +62,9 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                       10.verticalSpace,
                       headerWidget(),
                       const SizedBox(height: 24),
-                      const Text(
-                        'Preparation Checklist',
-                        style: TextStyle(
+                      Text(
+                        AppStrings.preparationChecklist.tr,
+                        style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF2D3133),
@@ -71,24 +72,24 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 16),
                       checklistWidget(),
-                       10.verticalSpace,
-                       Obx(
-                         ()=> controller.genrateQrButton.value?Text(
-                          'Delivery QR Section',
+                      10.verticalSpace,
+                      Obx(
+                            ()=> controller.genrateQrButton.value?Text(
+                          AppStrings.deliveryQrSection.tr,
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
                             color: Color(0xFF2D3133),
                           ),
-                                               ):SizedBox(),
-                       ),
-                       Obx(()=> controller.genrateQrButton.value?SizedBox(height: 16):SizedBox()),
+                        ):SizedBox(),
+                      ),
+                      Obx(()=> controller.genrateQrButton.value?SizedBox(height: 16):SizedBox()),
                       Obx(()=>controller.genrateQrButton.value? qrCardWidget():SizedBox()),
                       20.verticalSpace,
                       Obx(
-                        ()=>!controller.genrateQrButton.value? CustomButton(
+                            ()=>!controller.genrateQrButton.value? CustomButton(
                           borderRadius: 15,
-                          text: "Generate Delivery QR",
+                          text: AppStrings.generateDeliveryQr.tr,
                           onTap: () {
                             controller.genrateQrButton.value=true;
                           },
@@ -99,7 +100,7 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "View Delivery Log",
+                        text: AppStrings.viewDeliveryLog.tr,
                         onTap: () {
                           Get.to(DeliveryLog());
                         },
@@ -148,19 +149,19 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   Text(
+                  Text(
                     '#A10482',
                     style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                   ),
                   70.horizontalSpace,
                   Container(
-                    padding:  EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color:  AppColors.orange,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child:  Text(
-                      'Preparation',
+                      AppStrings.preparationStatus.tr,
                       style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.w600),
                     ),
                   ),
@@ -169,11 +170,11 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
               const SizedBox(height: 4),
               RichText(
                 textAlign: TextAlign.start,
-                text: const TextSpan(
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                text: TextSpan(
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
                   children: [
-                    TextSpan(text: 'Prescription Id: ',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600,color: Colors.black)),
-                    TextSpan(
+                    TextSpan(text: AppStrings.prescriptionIdLabel.tr, style: const TextStyle(fontSize: 14,fontWeight: FontWeight.w600,color: Colors.black)),
+                    const TextSpan(
                       text: 'RX-20410',
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
@@ -181,9 +182,9 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                '3 Medications To Prepare For Delivery.',
-                style: TextStyle(color: Colors.grey, fontSize: 12),
+              Text(
+                '3 ${AppStrings.medicationsToPrepare.tr}',
+                style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),
@@ -208,10 +209,10 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildCheckItem('Items packed', controller.itemsPacked),
-          _buildCheckItem('Lot numbers verified', controller.lotVerified),
-          _buildCheckItem('Expiry checked', controller.expiryChecked),
-          _buildCheckItem('QR token generated', controller.qrGenerated),
+          _buildCheckItem(AppStrings.itemsPacked.tr, controller.itemsPacked),
+          _buildCheckItem(AppStrings.lotNumbersVerified.tr, controller.lotVerified),
+          _buildCheckItem(AppStrings.expiryChecked.tr, controller.expiryChecked),
+          _buildCheckItem(AppStrings.qrTokenGenerated.tr, controller.qrGenerated),
         ],
       ),
     );
@@ -288,9 +289,9 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Scan This Code At Pickup To Confirm Delivery.',
-                  style: TextStyle(
+                Text(
+                  AppStrings.scanToConfirm.tr,
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFF8E8E8E),
                     height: 1.4,
@@ -298,12 +299,12 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  children: const [
-                    Icon(Icons.history_rounded, size: 18, color: Color(0xFF4A80F0)),
-                    SizedBox(width: 6),
+                  children: [
+                    const Icon(Icons.history_rounded, size: 18, color: Color(0xFF4A80F0)),
+                    const SizedBox(width: 6),
                     Text(
-                      'Expires in 24 hours.',
-                      style: TextStyle(
+                      AppStrings.expires24h.tr,
+                      style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF4A4A4A),
                         fontWeight: FontWeight.w500,
@@ -313,7 +314,7 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Delivery ID:DLV-0093}',
+                  '${AppStrings.deliveryId.tr}: DLV-0093',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFFA0A0A0),
@@ -321,7 +322,7 @@ class PrepartionAndDeliveryScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Generated: Oct 29, 2025 • 3:40 PM',
+                  '${AppStrings.generatedAt.tr}: Oct 29, 2025 • 3:40 PM',
                   style: const TextStyle(
                     fontSize: 14,
                     color: Color(0xFFA0A0A0),

@@ -3,52 +3,36 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../models/orders_model.dart';
 import '../../../screens/patient_screens/order_screens/order_detail_screen.dart';
 import '../../../screens/patient_screens/order_screens/order_status_screen.dart';
 import '../../../screens/patient_screens/order_screens/track_order_screen.dart';
-import '../../../utils/app_colors.dart';
-import '../../../utils/app_fonts.dart';
 
 class OrderWidget extends StatelessWidget {
   final Order order;
- final bool isComplete;
+  final bool isComplete;
 
-  const OrderWidget({super.key, required this.order,this.isComplete=false});
+  const OrderWidget({super.key, required this.order, this.isComplete = false});
 
+  // Keep internal logic but use localized keys for comparison if necessary
+  // Best practice: Model should hold keys, but here we adapt to current logic
   Color _getStatusColor(String status) {
-    switch (status) {
-      case 'In Progress':
-        return Colors.blue.shade100;
-      case 'Out For Delivered':
-        return Colors.green.shade100;
-      case 'Awaiting Confirmation':
-        return Colors.orange.shade100;
-      case 'Delivered':
-        return AppColors.green;
-      case 'Cancelled':
-        return AppColors.red;
-      default:
-        return Colors.grey.shade100;
-    }
+    if (status == AppStrings.inProgress.tr) return Colors.blue.shade100;
+    if (status == AppStrings.outForDelivered.tr) return Colors.green.shade100;
+    if (status == AppStrings.awaitingConfirmation.tr) return Colors.orange.shade100;
+    if (status == AppStrings.delivered.tr) return AppColors.green;
+    if (status == AppStrings.cancelled.tr) return AppColors.red;
+    return Colors.grey.shade100;
   }
 
   Color _getStatusTextColor(String status) {
-    switch (status) {
-      case 'In Progress':
-        return AppColors.primaryColor;
-      case 'Out For Delivered':
-        return AppColors.green;
-      case 'Awaiting Confirmation':
-        return AppColors.orange;
-      case 'Delivered':
-        return Colors.white;
-      case 'Cancelled':
-        return Colors.white;
-      default:
-        return Colors.grey.shade800;
-    }
+    if (status == AppStrings.inProgress.tr) return AppColors.primaryColor;
+    if (status == AppStrings.outForDelivered.tr) return AppColors.green;
+    if (status == AppStrings.awaitingConfirmation.tr) return AppColors.orange;
+    if (status == AppStrings.delivered.tr || status == AppStrings.cancelled.tr) return Colors.white;
+    return Colors.grey.shade800;
   }
 
   @override
@@ -85,7 +69,7 @@ class OrderWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Order #${order.orderId} | ${order.date}',
+                        '${AppStrings.order.tr} #${order.orderId} | ${order.date}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16.0,
@@ -133,7 +117,7 @@ class OrderWidget extends StatelessWidget {
                 ),
                 12.horizontalSpace,
                 Text(
-                  'Last Update: ${order.lastUpdate}',
+                  '${AppStrings.lastUpdate.tr}: ${order.lastUpdate}',
                   style: TextStyle(
                     fontSize: 10.sp,
                     color: Colors.grey.shade500,
@@ -146,101 +130,102 @@ class OrderWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
-                  'Cost: ${order.cost}',
+                  '${AppStrings.cost.tr}: ${order.cost}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15.0,
                   ),
                 ),
-                Spacer(),
+                const Spacer(),
                 Text(
-                  'Mode:',
+                  '${AppStrings.mode.tr}:',
                   style: TextStyle(fontSize: 14.0, color: AppColors.darkGrey),
                 ),
-
                 Text(
-                  order.status == 'In Progress'
-                      ? 'Pick Up Delivery'
-                      : 'Home Delivery',
+                  order.status == AppStrings.inProgress.tr
+                      ? AppStrings.pickUpDelivery.tr
+                      : AppStrings.homeDelivery.tr,
                   style: TextStyle(
                     fontSize: 14.0,
                     color:
-                        order.status == 'In Progress'
-                            ? Colors.blue
-                            : Colors.grey.shade700,
+                    order.status == AppStrings.inProgress.tr
+                        ? Colors.blue
+                        : Colors.grey.shade700,
                     fontWeight:
-                        order.status == 'In Progress'
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                    order.status == AppStrings.inProgress.tr
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
               ],
             ),
             5.verticalSpace,
-           isComplete? CustomButton(borderRadius: 15, text: "View Details", onTap: (){
-             Get.to(OrderDetailScreen(status: order.status));
-           }):Row(
+            isComplete ? CustomButton(
+                borderRadius: 15,
+                text: AppStrings.viewDetail.tr,
+                onTap: (){
+                  Get.to(OrderDetailScreen(status: order.status));
+                }) : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                order.status == 'In Progress'
+                order.status == AppStrings.inProgress.tr
                     ? OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: AppColors.inACtiveButtonColor,
-                        foregroundColor: Colors.grey.shade700,
-                        side: BorderSide(color: Colors.grey.shade300),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 10.0,
-                        ),
-                      ),
-                      child:  Text('Cancel Order',
-                        style: TextStyle(
-                          color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 19.sp,
-                        fontFamily: AppFonts.jakartaMedium,
-                      ),
-                      ),
-                    )
-                    : OutlinedButton(
-                      onPressed: () {
-                        Get.to(TrackOrderScreen());
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: AppColors.inACtiveButtonColor,
-                        foregroundColor: Colors.grey.shade700,
-                        side: BorderSide(color: Colors.grey.shade300),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16.0,
-                          vertical: 10.0,
-                        ),
-                      ),
-                      child:  Text('Track Order',
-    style: TextStyle(
-      color: Colors.black,
-    fontWeight: FontWeight.w600,
-    fontSize: 19.sp,
-    fontFamily: AppFonts.jakartaMedium,
-    ),
-                      ),
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.inACtiveButtonColor,
+                    foregroundColor: Colors.grey.shade700,
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
                     ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 10.0,
+                    ),
+                  ),
+                  child: Text(AppStrings.cancelOrder.tr,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 19.sp,
+                      fontFamily: AppFonts.jakartaMedium,
+                    ),
+                  ),
+                )
+                    : OutlinedButton(
+                  onPressed: () {
+                    Get.to(TrackOrderScreen());
+                  },
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.inACtiveButtonColor,
+                    foregroundColor: Colors.grey.shade700,
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 10.0,
+                    ),
+                  ),
+                  child: Text(AppStrings.trackOrder.tr,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 19.sp,
+                      fontFamily: AppFonts.jakartaMedium,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 8.0),
                 ElevatedButton(
                   onPressed: () {
-
-                    order.status == 'In Progress'
+                    order.status == AppStrings.inProgress.tr
                         ? Get.to(OrderStatusScreen())
                         : Get.to(OrderDetailScreen(status: order.status,));
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:AppColors.primaryColor,
+                    backgroundColor: AppColors.primaryColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
@@ -251,9 +236,9 @@ class OrderWidget extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    order.status == 'In Progress'
-                        ? 'View Status'
-                        : 'View Detail',
+                    order.status == AppStrings.inProgress.tr
+                        ? AppStrings.viewStatus.tr
+                        : AppStrings.viewDetail.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 19.sp,

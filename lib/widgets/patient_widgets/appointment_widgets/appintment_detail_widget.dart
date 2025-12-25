@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
+import '../../../utils/app_fonts.dart';
 
 class AppintmentDetailWidget extends StatelessWidget {
   final AppointmentModel appointmentModel;
 
-  AppintmentDetailWidget({Key? key, required this.appointmentModel, })
-      : super(key: key);
+  const AppintmentDetailWidget({super.key, required this.appointmentModel});
 
   Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case "follow up":
-        return AppColors.primaryColor;
-      case "renewal":
-        return Colors.orange;
-      case "exam review":
-        return Colors.lightBlueAccent;
-      case "initial":
-        return Colors.green;
-      default:
-        return Colors.grey;
-    }
+    // It's best to compare against the non-translated raw status from your model
+    final s = status.toLowerCase();
+    if (s.contains("follow up")) return AppColors.primaryColor;
+    if (s.contains("renewal")) return Colors.orange;
+    if (s.contains("exam review")) return Colors.lightBlueAccent;
+    if (s.contains("initial")) return Colors.green;
+    return Colors.grey;
   }
 
   @override
@@ -30,10 +27,10 @@ class AppintmentDetailWidget extends StatelessWidget {
     return Card(
       color: Colors.white,
       elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(12.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,28 +39,36 @@ class AppintmentDetailWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.calendar_today_outlined,
                       size: 16,
                       color: AppColors.primaryColor,
                     ),
-                    const SizedBox(width: 6),
+                    6.horizontalSpace,
                     Row(
                       children: [
                         Text(
-                          "${appointmentModel.date}",
-                          style:  TextStyle(color: Colors.black54, fontSize: 12.sp),
+                          appointmentModel.date,
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12.sp,
+                            fontFamily: AppFonts.jakartaMedium,
+                          ),
                         ),
                         8.horizontalSpace,
-                        Icon(
+                        const Icon(
                           Icons.watch_later_outlined,
                           size: 16,
                           color: AppColors.primaryColor,
                         ),
                         4.horizontalSpace,
                         Text(
-                          "${appointmentModel.time}",
-                          style:  TextStyle(color: Colors.black54, fontSize: 12.sp),
+                          appointmentModel.time,
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12.sp,
+                            fontFamily: AppFonts.jakartaMedium,
+                          ),
                         ),
                       ],
                     ),
@@ -72,37 +77,43 @@ class AppintmentDetailWidget extends StatelessWidget {
                 Icon(Icons.chat, color: AppColors.primaryColor, size: 20.sp),
               ],
             ),
-
-            const SizedBox(height: 4),
-            Divider(thickness: 0.3,color: Colors.black45,),
-            const SizedBox(height: 4),
-
+            4.verticalSpace,
+            const Divider(thickness: 0.3, color: Colors.black45),
+            4.verticalSpace,
             Row(
               children: [
-                Image.asset(
-                  appointmentModel.imageUrl,height: 105.h,fit: BoxFit.fill,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Image.asset(
+                    appointmentModel.imageUrl,
+                    height: 105.h,
+                    width: 90.w, // Added width for consistency
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                12.horizontalSpace,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         appointmentModel.name,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
+                          fontFamily: AppFonts.jakartaBold,
                         ),
                       ),
-                      Divider(thickness: 0.3,color: Colors.black45,),
+                      const Divider(thickness: 0.3, color: Colors.black45),
                       Text(
                         appointmentModel.specialty,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: Colors.black,
                           fontSize: 15.sp,
+                          fontFamily: AppFonts.jakartaMedium,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      4.verticalSpace,
                       Row(
                         children: [
                           Icon(
@@ -112,50 +123,61 @@ class AppintmentDetailWidget extends StatelessWidget {
                                 ? Icons.add_ic_call
                                 : Icons.meeting_room_outlined,
                             color: Colors.blue,
-                            size: 16,
+                            size: 16.sp,
                           ),
-                          const SizedBox(width: 6),
+                          6.horizontalSpace,
                           Text(
                             appointmentModel.consultationType,
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: Colors.black,
                               fontSize: 13.sp,
+                              fontFamily: AppFonts.jakartaRegular,
                             ),
                           ),
                         ],
                       ),
+                      5.verticalSpace,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Row(
                             children: [
                               const Icon(Icons.star, color: Colors.orange, size: 16),
-                              const SizedBox(width: 4),
+                              4.horizontalSpace,
                               Text(
                                 "${appointmentModel.rating}",
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  fontFamily: AppFonts.jakartaMedium,
+                                ),
                               ),
                             ],
                           ),
                           7.horizontalSpace,
-                          Container(height: 15.h,width: 1.w,color: AppColors.primaryColor,),
+                          Container(
+                            height: 15.h,
+                            width: 1.w,
+                            color: AppColors.primaryColor,
+                          ),
                           7.horizontalSpace,
                           Row(
                             children: [
                               Text(
-                                "Fee:",
-                                style:  TextStyle(
+                                "${AppStrings.fee.tr}: ",
+                                style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 13.sp,
+                                  fontFamily: AppFonts.jakartaMedium,
                                 ),
                               ),
                               Text(
                                 "\$${appointmentModel.fee.toStringAsFixed(0)}",
-                                style:  TextStyle(
+                                style: TextStyle(
                                   color: Colors.blue,
                                   fontWeight: FontWeight.w600,
                                   fontSize: 13.sp,
+                                  fontFamily: AppFonts.jakartaBold,
                                 ),
                               ),
                             ],
@@ -167,10 +189,6 @@ class AppintmentDetailWidget extends StatelessWidget {
                 ),
               ],
             ),
-
-
-
-
           ],
         ),
       ),

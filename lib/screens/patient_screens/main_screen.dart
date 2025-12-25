@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/main_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../utils/app_colors.dart';
 
 class MainScreen extends StatelessWidget {
-   MainScreen({super.key});
-MainController mainController=Get.put(MainController());
+  MainScreen({super.key});
+
+  final MainController mainController = Get.put(MainController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,30 +19,42 @@ MainController mainController=Get.put(MainController());
           selectedItemColor: AppColors.primaryColor,
           type: BottomNavigationBarType.fixed,
           showUnselectedLabels: true,
-          backgroundColor:Colors.white,
+          backgroundColor: Colors.white,
           currentIndex: mainController.currentIndex.value,
           onTap: mainController.changePage,
-          items:  [
+          items: [
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage("assets/images/home_icon.png"),size: 22.h,),
-              label: 'Home',
+              icon: ImageIcon(
+                const AssetImage("assets/images/home_icon.png"),
+                size: 22.h,
+              ),
+              label: AppStrings.home.tr,
             ),
             BottomNavigationBarItem(
-              icon:ImageIcon(AssetImage("assets/images/chat_icon.png"),size: 22.h,),
-              label: 'Chat',
+              icon: ImageIcon(
+                const AssetImage("assets/images/chat_icon.png"),
+                size: 22.h,
+              ),
+              label: AppStrings.chat.tr,
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage("assets/images/search_icon.png"),size: 22.h,),
-              label: 'Search',
+              icon: ImageIcon(
+                const AssetImage("assets/images/search_icon.png"),
+                size: 22.h,
+              ),
+              label: AppStrings.search.tr,
             ),
             BottomNavigationBarItem(
-              icon: ImageIcon(AssetImage("assets/images/profile_icon.png"),size: 22.h,),
-              label: 'Profile',
+              icon: ImageIcon(
+                const AssetImage("assets/images/profile_icon.png"),
+                size: 22.h,
+              ),
+              label: AppStrings.profile.tr,
             ),
           ],
         ),
       ),
-      body: Obx(()=>mainController.screens[mainController.currentIndex.value]),
+      body: Obx(() => mainController.screens[mainController.currentIndex.value]),
     );
   }
 }

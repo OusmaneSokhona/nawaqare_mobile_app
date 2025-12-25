@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_health_space_grid.dart';
-
 import '../../../controllers/patient_controllers/profile_controller.dart';
 
-
-class PharmacyRenewalStatus extends StatelessWidget{
+class PharmacyRenewalStatus extends StatelessWidget {
   PharmacyRenewalStatus({super.key});
-  ProfileController controller=Get.put(ProfileController());
+  final ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -29,10 +29,10 @@ class PharmacyRenewalStatus extends StatelessWidget{
             ),
           ),
           const SizedBox(height: 16),
-          Center(
+          const Center(
             child: Text(
               "Alex Martin Pharmacy",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1F2937),
@@ -41,7 +41,7 @@ class PharmacyRenewalStatus extends StatelessWidget{
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
@@ -50,9 +50,9 @@ class PharmacyRenewalStatus extends StatelessWidget{
           ),
           const SizedBox(height: 10),
           buildRenewalStatusWidget(context),
-          const Text(
-            'Security Settings',
-            style: TextStyle(
+          Text(
+            AppStrings.securitySettings.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
@@ -61,7 +61,11 @@ class PharmacyRenewalStatus extends StatelessWidget{
           SizedBox(height: 10.h),
           PharmacyHealthSpaceGrid(profileController: controller),
           10.verticalSpace,
-          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: "Payment Setting", onTap: (){}),
+          HealthSpaceCard(
+            icon: "assets/images/payment_setting_icon.png",
+            title: AppStrings.paymentSetting.tr,
+            onTap: () {},
+          ),
           10.verticalSpace,
           buildSecuritySection(),
           30.verticalSpace,
@@ -85,61 +89,56 @@ class PharmacyRenewalStatus extends StatelessWidget{
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 80,
                     height: 80,
                     child: CircularProgressIndicator(
                       value: 0.75,
                       strokeWidth: 10,
-                      backgroundColor: const Color(0xFFF3E0DA),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE35D33)),
+                      backgroundColor: Color(0xFFF3E0DA),
+                      valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFE35D33)),
                     ),
                   ),
-                   Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '25 Days',
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF111827),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    '25 ${AppStrings.days.tr}',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFF111827),
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-               Text(
-                '25 days left',
+              Text(
+                '25 ${AppStrings.daysLeft.tr}',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: Color(0xFF6B7280),
+                  color: const Color(0xFF6B7280),
                 ),
               ),
             ],
           ),
-           SizedBox(height: 14.h),
+          SizedBox(height: 14.h),
           Container(
-            padding:  EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: const Color(0xFFFEF9C3),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFFFDE047).withOpacity(0.5)),
             ),
-            child:  Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset("assets/images/alert_icon.png",height: 40.h,),
-                SizedBox(width: 12),
+                Image.asset("assets/images/alert_icon.png", height: 40.h),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Your account is under review or pending revalidation.',
+                    AppStrings.accountReviewWarning.tr,
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1F2937),
+                      color: const Color(0xFF1F2937),
                       height: 1.3,
                     ),
                   ),
@@ -147,33 +146,37 @@ class PharmacyRenewalStatus extends StatelessWidget{
               ],
             ),
           ),
-           SizedBox(height: 18.h),
+          SizedBox(height: 18.h),
           _buildTimelineItem(
             '1',
-            'Renewal Request Submitted',
+            AppStrings.renewalRequestSubmitted.tr,
             'Submitted on Oct 20, 2025',
             isLast: false,
           ),
           _buildTimelineItem(
             '2',
-            'Under Review',
+            AppStrings.underReview.tr,
             'By Admin R. Khan – Oct 21, 2025',
             isLast: false,
           ),
           _buildTimelineItem(
             '3',
-            'Status Update',
+            AppStrings.statusUpdate.tr,
             'Validated on Oct 25, 2025',
             isLast: false,
           ),
           _buildTimelineItem(
             '4',
-            'Next Renewal Due',
-            '15/Oct/2026 – 25 days left',
+            AppStrings.nextRenewalDue.tr,
+            '15/Oct/2026 – 25 ${AppStrings.daysLeft.tr}',
             isLast: true,
           ),
           const SizedBox(height: 32),
-         CustomButton(borderRadius: 15, text: "Start Renewal Process", onTap: (){}),
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.startRenewalProcess.tr,
+            onTap: () {},
+          ),
         ],
       ),
     );
@@ -217,21 +220,21 @@ class PharmacyRenewalStatus extends StatelessWidget{
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 SizedBox(height: 4.h),
+                SizedBox(height: 4.h),
                 Text(
                   title,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
+                    color: const Color(0xFF1F2937),
                   ),
                 ),
-                 SizedBox(height: 4.h),
+                SizedBox(height: 4.h),
                 Text(
                   subtitle,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: 12.sp,
-                    color: Color(0xFF9CA3AF),
+                    color: const Color(0xFF9CA3AF),
                   ),
                 ),
                 if (!isLast) const SizedBox(height: 32),
@@ -242,6 +245,7 @@ class PharmacyRenewalStatus extends StatelessWidget{
       ),
     );
   }
+
   Widget buildSecuritySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,11 +259,15 @@ class PharmacyRenewalStatus extends StatelessWidget{
           ),
           child: Row(
             children: [
-              ImageIcon(AssetImage("assets/images/delete_account_icon.png"), color: Colors.blue, size: 30.sp),
+              const ImageIcon(
+                AssetImage("assets/images/delete_account_icon.png"), // Note: Replace with actual 2FA icon if available
+                color: Colors.blue,
+                size: 30,
+              ),
               16.horizontalSpace,
               Expanded(
                 child: Text(
-                  "2FA Authentication",
+                  AppStrings.authentication2FA.tr,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,

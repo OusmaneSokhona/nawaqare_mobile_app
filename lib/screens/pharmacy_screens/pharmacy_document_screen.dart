@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_edit_documents_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_health_space_grid.dart';
 
@@ -11,7 +12,8 @@ import '../../../controllers/patient_controllers/profile_controller.dart';
 
 class PharmacyDocumentScreen extends StatelessWidget{
   PharmacyDocumentScreen({super.key});
-  ProfileController controller=Get.put(ProfileController());
+  final ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -29,10 +31,10 @@ class PharmacyDocumentScreen extends StatelessWidget{
             ),
           ),
           const SizedBox(height: 16),
-          Center(
+          const Center(
             child: Text(
               "Alex Martin Pharmacy",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1F2937),
@@ -41,7 +43,7 @@ class PharmacyDocumentScreen extends StatelessWidget{
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
@@ -63,16 +65,16 @@ class PharmacyDocumentScreen extends StatelessWidget{
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:  Text('Edit Document', style: TextStyle(fontSize: 14.sp)),
+              child:  Text(AppStrings.editDocument.tr, style: TextStyle(fontSize: 14.sp)),
             ),
           ),
           const SizedBox(height: 30),
           buildDocumentVerificationWidget(),
           const SizedBox(height: 30),
           10.verticalSpace,
-          const Text(
-            'Security Settings',
-            style: TextStyle(
+          Text(
+            AppStrings.securitySettings.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
@@ -81,7 +83,7 @@ class PharmacyDocumentScreen extends StatelessWidget{
           SizedBox(height: 10.h),
           PharmacyHealthSpaceGrid(profileController: controller),
           10.verticalSpace,
-          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: "Payment Setting", onTap: (){}),
+          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: AppStrings.paymentSetting.tr, onTap: (){}),
           10.verticalSpace,
           buildSecuritySection(),
           30.verticalSpace,
@@ -89,6 +91,7 @@ class PharmacyDocumentScreen extends StatelessWidget{
       ),
     );
   }
+
   Widget buildDocumentVerificationWidget() {
     return Container(
       width: 400,
@@ -110,31 +113,31 @@ class PharmacyDocumentScreen extends StatelessWidget{
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildDocumentItem(
-            title: 'License Certificate',
+            title: AppStrings.licenseCertificate.tr,
             date: 'Oct 12, 2025',
-            status: 'Under Review',
+            status: AppStrings.underReview.tr,
             statusColor: const Color(0xFFD97706),
             showProgress: true,
             progress: 0.4,
           ),
           const Divider(height: 32, color: Color(0xFFF3F4F6)),
           _buildDocumentItem(
-            title: 'Tax Clearance',
+            title: AppStrings.taxClearance.tr,
             date: 'Oct 12, 2025',
-            status: 'Validated',
+            status: AppStrings.validated.tr,
             statusColor: const Color(0xFF166534),
           ),
           const Divider(height: 32, color: Color(0xFFF3F4F6)),
           _buildDocumentItem(
-            title: 'Noc Certificate',
+            title: AppStrings.nocCertificate.tr,
             date: 'Oct 12, 2025',
-            status: 'Expired',
+            status: AppStrings.expired.tr,
             statusColor: const Color(0xFFDC2626),
             trailingIcons: true,
           ),
-         Divider(
-           color: AppColors.lightGrey.withOpacity(0.2),
-         ),
+          Divider(
+            color: AppColors.lightGrey.withOpacity(0.2),
+          ),
           Container(
             padding:  EdgeInsets.all(8.sp),
             decoration: BoxDecoration(
@@ -144,11 +147,11 @@ class PharmacyDocumentScreen extends StatelessWidget{
             ),
             child: Row(
               children: [
-                 Icon(Icons.error_outline, color: Color(0xFFD97706), size: 25.sp),
-                 SizedBox(width: 12.w),
+                Icon(Icons.error_outline, color: const Color(0xFFD97706), size: 25.sp),
+                SizedBox(width: 12.w),
                 Expanded(
                   child: Text(
-                    'All documents are encrypted and stored under HDS standards',
+                    AppStrings.hdsStandardNote.tr,
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w600,
@@ -185,11 +188,11 @@ class PharmacyDocumentScreen extends StatelessWidget{
               style:  TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+                color: const Color(0xFF1F2937),
               ),
             ),
             if (trailingIcons)
-               Row(
+              Row(
                 children: [
                   Icon(Icons.edit_outlined, color:AppColors.primaryColor, size: 20.sp),
                   SizedBox(width: 12.w),
@@ -198,21 +201,21 @@ class PharmacyDocumentScreen extends StatelessWidget{
               ),
           ],
         ),
-         SizedBox(height: 4.h),
+        SizedBox(height: 4.h),
         Row(
           children: [
              Icon(Icons.check, color: AppColors.green, size: 16.sp),
-             SizedBox(width: 4.w),
+            SizedBox(width: 4.w),
             Text(
-              'Uploaded:$date',
-              style:  TextStyle(
+              '${AppStrings.uploadedOn.tr}: $date',
+              style:   TextStyle(
                 fontSize: 15.sp,
                 color: Color(0xFF6B7280),
               ),
             ),
           ],
         ),
-         SizedBox(height: 4.h),
+        SizedBox(height: 4.h),
         Text(
           status,
           style: TextStyle(
@@ -223,17 +226,17 @@ class PharmacyDocumentScreen extends StatelessWidget{
           ),
         ),
         if (showProgress) ...[
-           SizedBox(height: 12.h),
+          SizedBox(height: 12.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-               Text(
-                'Documents validated',
-                style: TextStyle(fontSize: 13.sp, color: Color(0xFF6B7280)),
+              Text(
+                AppStrings.documentsValidatedProgress.tr,
+                style:  TextStyle(fontSize: 13.sp, color: Color(0xFF6B7280)),
               ),
               Text(
                 '${(progress * 100).toInt()}%',
-                style:  TextStyle(
+                style:   TextStyle(
                   fontSize: 13.sp,
                   color: AppColors.primaryColor,
                   fontWeight: FontWeight.w500,
@@ -241,7 +244,7 @@ class PharmacyDocumentScreen extends StatelessWidget{
               ),
             ],
           ),
-           SizedBox(height: 6.h),
+          SizedBox(height: 6.h),
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: LinearProgressIndicator(
@@ -255,6 +258,7 @@ class PharmacyDocumentScreen extends StatelessWidget{
       ],
     );
   }
+
   Widget buildSecuritySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,11 +272,11 @@ class PharmacyDocumentScreen extends StatelessWidget{
           ),
           child: Row(
             children: [
-              ImageIcon(AssetImage("assets/images/delete_account_icon.png"), color: Colors.blue, size: 30.sp),
+              ImageIcon(const AssetImage("assets/images/delete_account_icon.png"), color: Colors.blue, size: 30.sp),
               16.horizontalSpace,
               Expanded(
                 child: Text(
-                  "2FA Authentication",
+                  AppStrings.twoFactorAuth.tr,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,

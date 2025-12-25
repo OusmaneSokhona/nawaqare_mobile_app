@@ -3,18 +3,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_edit_personal_info.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_payment_setting_screen.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_health_space_grid.dart';
 
 import '../../../controllers/patient_controllers/profile_controller.dart';
 import '../../utils/app_fonts.dart';
-import '../patient_widgets/profile_widgets/heatlh_space_grid.dart';
 import '../patient_widgets/profile_widgets/info_row.dart';
 
-
-class PharmacyPersonalInfo extends StatelessWidget{
+class PharmacyPersonalInfo extends StatelessWidget {
   PharmacyPersonalInfo({super.key});
-  ProfileController controller=Get.put(ProfileController());
+  final ProfileController controller = Get.put(ProfileController());
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -31,11 +31,11 @@ class PharmacyPersonalInfo extends StatelessWidget{
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          Center(
+          16.verticalSpace,
+          const Center(
             child: Text(
               "Alex Martin Pharmacy",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1F2937),
@@ -44,93 +44,100 @@ class PharmacyPersonalInfo extends StatelessWidget{
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          20.verticalSpace,
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 88.w),
+            padding: EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
-              onPressed: (){
-                Get.to(PharmacyEditPersonalInfo());
-              },
+              onPressed: () => Get.to(() => PharmacyEditPersonalInfo()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              child:  Text('Edit Personal Info', style: TextStyle(fontSize: 14.sp)),
+              child: Text(AppStrings.editPersonalInfo.tr, style: TextStyle(fontSize: 14.sp)),
             ),
           ),
-          const SizedBox(height: 30),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                InfoRow(label: 'Full Name', value: controller.user.value.name),
-                const InfoRow(label: 'Registration ID', value: '#123RT56'),
-                InfoRow(label: 'Email', value: controller.user.value.email),
-                InfoRow(label: 'Phone', value: controller.user.value.phone),
-                const InfoRow(label: 'City', value: 'Lahore'),
-                InfoRow(label: 'Area/Locality', value: "Johar Town"),
-                InfoRow(label: 'Operating Hour', value: "5pm-10am"),
-                InfoRow(label: 'Address', value: controller.user.value.address.replaceAll('\n', ' '),showDivider: false,),
-              ],
-            ),
-          ),
-          const SizedBox(height: 30),
-          buildDigitalSignatureCard(),
+          30.verticalSpace,
+          _buildInfoSection(),
+          30.verticalSpace,
+          _buildDigitalSignatureCard(),
           10.verticalSpace,
-          const Text(
-            'Security Settings',
-            style: TextStyle(
+          Text(
+            AppStrings.securitySettings.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
             ),
           ),
-          SizedBox(height: 10.h),
+          10.verticalSpace,
           PharmacyHealthSpaceGrid(profileController: controller),
           10.verticalSpace,
-          HealthSpaceCard(icon: "assets/images/payment_setting_icon.png", title: "Payment Setting", onTap: (){
-Get.to(PharmacyPaymentSettingScreen());
-          }),
+          HealthSpaceCard(
+            icon: "assets/images/payment_setting_icon.png",
+            title: AppStrings.paymentSetting.tr,
+            onTap: () => Get.to(() =>  PharmacyPaymentSettingScreen()),
+          ),
           10.verticalSpace,
-          buildSecuritySection(),
-          const SizedBox(height: 20),
+          _buildSecuritySection(),
+          20.verticalSpace,
         ],
       ),
     );
   }
-  Widget buildDigitalSignatureCard() {
+
+  Widget _buildInfoSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.shade200,
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          InfoRow(label: AppStrings.fullName.tr, value: controller.user.value.name),
+          InfoRow(label: AppStrings.registrationId.tr, value: '#123RT56'),
+          InfoRow(label: AppStrings.email.tr, value: controller.user.value.email),
+          InfoRow(label: AppStrings.phone.tr, value: controller.user.value.phone),
+          InfoRow(label: AppStrings.city.tr, value: 'Lahore'),
+          InfoRow(label: AppStrings.areaLocality.tr, value: "Johar Town"),
+          InfoRow(label: AppStrings.operatingHours.tr, value: "5pm-10am"),
+          InfoRow(
+            label: AppStrings.address.tr,
+            value: controller.user.value.address.replaceAll('\n', ' '),
+            showDivider: false,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDigitalSignatureCard() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Digital Signature Certificate",
+          AppStrings.digitalSignatureTitle.tr,
           style: TextStyle(
             fontSize: 21.sp,
             fontWeight: FontWeight.w700,
             fontFamily: AppFonts.jakartaBold,
-            color:  Color(0xFF2D3142),
+            color: const Color(0xFF2D3142),
           ),
         ),
         16.verticalSpace,
@@ -139,69 +146,43 @@ Get.to(PharmacyPaymentSettingScreen());
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12.r),
-            border: Border.all(
-              color:  Color(0xFFE8E8E8),
-              width: 1.2,
-            ),
+            border: Border.all(color: const Color(0xFFE8E8E8), width: 1.2),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          "Drag or select file (.p12 / .cer)",
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: AppFonts.jakartaBold,
-                            color: const Color(0xFF2D3142),
-                          ),
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: () {},
-                          child: Icon(
-                            Icons.edit_outlined,
-                            color: Colors.blue,
-                            size: 22.sp,
-                          ),
-                        ),
-                        8.horizontalSpace,
-                        InkWell(
-                          onTap: () {},
-                          child: Icon(
-                            Icons.delete_outline,
-                            color: Colors.redAccent,
-                            size: 22.sp,
-                          ),
-                        ),
-                      ],
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      AppStrings.digitalSignatureHint.tr,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFonts.jakartaBold,
+                        color: const Color(0xFF2D3142),
+                      ),
                     ),
-                    4.verticalSpace,
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.check,
-                          color: Colors.green,
-                          size: 16.sp,
-                        ),
-                        4.horizontalSpace,
-                        Text(
-                          "Verified",
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
+                  ),
+                  _buildIconAction(Icons.edit_outlined, Colors.blue, () {}),
+                  8.horizontalSpace,
+                  _buildIconAction(Icons.delete_outline, Colors.redAccent, () {}),
+                ],
+              ),
+              4.verticalSpace,
+              Row(
+                children: [
+                  Icon(Icons.check, color: Colors.green, size: 16.sp),
+                  4.horizontalSpace,
+                  Text(
+                    AppStrings.verified.tr,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w400,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -209,7 +190,15 @@ Get.to(PharmacyPaymentSettingScreen());
       ],
     );
   }
-  Widget buildSecuritySection() {
+
+  Widget _buildIconAction(IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Icon(icon, color: color, size: 22.sp),
+    );
+  }
+
+  Widget _buildSecuritySection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -222,11 +211,15 @@ Get.to(PharmacyPaymentSettingScreen());
           ),
           child: Row(
             children: [
-              ImageIcon(AssetImage("assets/images/delete_account_icon.png"), color: Colors.blue, size: 30.sp),
+              const ImageIcon(
+                AssetImage("assets/images/delete_account_icon.png"),
+                color: Colors.blue,
+                size: 30,
+              ),
               16.horizontalSpace,
               Expanded(
                 child: Text(
-                  "2FA Authentication",
+                  AppStrings.authentication2FA.tr,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w700,
@@ -255,7 +248,7 @@ Get.to(PharmacyPaymentSettingScreen());
             borderRadius: BorderRadius.circular(15.r),
           ),
           child: Text(
-            "All patient data is anonymized via PatientID tokens",
+            AppStrings.anonymizationNote.tr,
             style: TextStyle(
               color: const Color(0xFF1976D2),
               fontSize: 15.sp,

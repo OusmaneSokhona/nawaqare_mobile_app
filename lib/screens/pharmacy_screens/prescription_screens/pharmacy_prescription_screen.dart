@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_prescription_detail_screen.dart';
 import 'package:patient_app/screens/pharmacy_screens/prescription_screens/pharmacy_prescription_record.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_prescription_card.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_prescription_filter_bottom_sheet.dart';
 import '../../../controllers/pharmacy_controllers/pharmacy_prescription_controller.dart';
@@ -39,7 +40,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
-                    "Prescriptions",
+                    AppStrings.prescriptions.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -53,7 +54,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Manage Active Prescriptions And Archive.",
+                  AppStrings.manageActivePrescriptions.tr,
                   style: TextStyle(
                     color: AppColors.lightGrey,
                     fontSize: 14.sp,
@@ -72,56 +73,56 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Obx(
-                        () => Align(
+                            () => Align(
                           alignment: Alignment.centerLeft,
                           child:
-                              pharmacyPrescriptionController.type.value ==
-                                      "myPrescription"
-                                  ? Text(
-                                    "My Prescriptions (${pharmacyPrescriptionController.prescriptions.length})",
-                                    style: TextStyle(
-                                      color: AppColors.darkGrey,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: AppFonts.jakartaBold,
-                                    ),
-                                  )
-                                  : Text(
-                                    "Archives (${pharmacyPrescriptionController.demoData.length})",
-                                    style: TextStyle(
-                                      color: AppColors.darkGrey,
-                                      fontSize: 15.sp,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: AppFonts.jakartaBold,
-                                    ),
-                                  ),
+                          pharmacyPrescriptionController.type.value ==
+                              "myPrescription"
+                              ? Text(
+                            "${AppStrings.myPrescriptions.tr} (${pharmacyPrescriptionController.prescriptions.length})",
+                            style: TextStyle(
+                              color: AppColors.darkGrey,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFonts.jakartaBold,
+                            ),
+                          )
+                              : Text(
+                            "${AppStrings.archivesLabel.tr} (${pharmacyPrescriptionController.demoData.length})",
+                            style: TextStyle(
+                              color: AppColors.darkGrey,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFonts.jakartaBold,
+                            ),
+                          ),
                         ),
                       ),
                       10.verticalSpace,
                       Obx(
-                        () =>
-                            pharmacyPrescriptionController.type ==
-                                    "myPrescription"
-                                ? _buildPrescriptionList()
-                                : ListView.builder(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount:
-                                      pharmacyPrescriptionController
-                                          .demoData
-                                          .length,
-                                  itemBuilder: (context, index) {
-                                    final item =
-                                        pharmacyPrescriptionController
-                                            .demoData[index];
-                                    return _buildPrescriptionCard(
-                                      id: item['id'],
-                                      status: item['status'],
-                                      statusColor: item['statusColor'],
-                                    );
-                                  },
-                                ),
+                            () =>
+                        pharmacyPrescriptionController.type ==
+                            "myPrescription"
+                            ? _buildPrescriptionList()
+                            : ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount:
+                          pharmacyPrescriptionController
+                              .demoData
+                              .length,
+                          itemBuilder: (context, index) {
+                            final item =
+                            pharmacyPrescriptionController
+                                .demoData[index];
+                            return _buildPrescriptionCard(
+                              id: item['id'],
+                              status: item['status'],
+                              statusColor: item['statusColor'],
+                            );
+                          },
+                        ),
                       ),
                       30.verticalSpace,
                     ],
@@ -147,7 +148,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Obx(
-            () => InkWell(
+                () => InkWell(
               onTap: () {
                 pharmacyPrescriptionController.type.value = "myPrescription";
               },
@@ -156,21 +157,21 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                 width: 0.455.sw,
                 decoration: BoxDecoration(
                   color:
-                      pharmacyPrescriptionController.type.value ==
-                              "myPrescription"
-                          ? AppColors.primaryColor
-                          : Colors.white,
+                  pharmacyPrescriptionController.type.value ==
+                      "myPrescription"
+                      ? AppColors.primaryColor
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(14.sp),
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  "My Prescriptions(${pharmacyPrescriptionController.prescriptions.length})",
+                  "${AppStrings.myPrescriptions.tr}(${pharmacyPrescriptionController.prescriptions.length})",
                   style: TextStyle(
                     color:
-                        pharmacyPrescriptionController.type.value ==
-                                "myPrescription"
-                            ? Colors.white
-                            : Colors.black,
+                    pharmacyPrescriptionController.type.value ==
+                        "myPrescription"
+                        ? Colors.white
+                        : Colors.black,
                     fontSize: 11.5.sp,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppFonts.jakartaBold,
@@ -180,7 +181,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
             ),
           ),
           Obx(
-            () => InkWell(
+                () => InkWell(
               onTap: () {
                 pharmacyPrescriptionController.type.value = "archive";
               },
@@ -189,19 +190,19 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
                 width: 0.455.sw,
                 decoration: BoxDecoration(
                   color:
-                      pharmacyPrescriptionController.type.value == "archive"
-                          ? AppColors.primaryColor
-                          : Colors.white,
+                  pharmacyPrescriptionController.type.value == "archive"
+                      ? AppColors.primaryColor
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(14.sp),
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  "Archive",
+                  AppStrings.archive.tr,
                   style: TextStyle(
                     color:
-                        pharmacyPrescriptionController.type.value == "archive"
-                            ? Colors.white
-                            : Colors.black,
+                    pharmacyPrescriptionController.type.value == "archive"
+                        ? Colors.white
+                        : Colors.black,
                     fontSize: 11.5.sp,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppFonts.jakartaBold,
@@ -217,7 +218,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
 
   Widget _buildSearchAndFilter() {
     return CustomTextField(
-      hintText: "Search Prescription / Patient ID",
+      hintText: AppStrings.searchPrescriptionHint.tr,
       prefixIcon: Icons.search,
       suffixIcon: Icons.filter_list,
       suffixIconColor: AppColors.primaryColor,
@@ -230,7 +231,7 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
 
   Widget _buildPrescriptionList() {
     return Obx(
-      () => ListView.builder(
+          () => ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         padding: EdgeInsets.only(bottom: 20.h),
@@ -323,9 +324,9 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
             style: TextStyle(color: Colors.grey, fontSize: 14),
           ),
           const SizedBox(height: 4),
-          const Text(
-            "Pharmacist: PH-021",
-            style: TextStyle(color: Colors.grey, fontSize: 14),
+          Text(
+            "${AppStrings.pharmacistId.tr}: PH-021",
+            style: const TextStyle(color: Colors.grey, fontSize: 14),
           ),
           const SizedBox(height: 16),
           const Divider(height: 1, thickness: 1, color: Color(0xFFF5F5F5)),
@@ -334,21 +335,21 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildButton(
-                  "Export PDF/CSV",
+                  AppStrings.exportPdfCsv.tr,
                   const Color(0xFFF0F2F5),
                   Colors.black87,
-                    (){
+                      (){
 
-                    },
+                  },
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _buildButton(
-                  "View",
-                  const Color(0xFF4A80E1),
-                  Colors.white,
-                    (){
+                    AppStrings.view.tr,
+                    const Color(0xFF4A80E1),
+                    Colors.white,
+                        (){
                       Get.to(PharmacyPrescriptionRecord());
                     }
                 ),

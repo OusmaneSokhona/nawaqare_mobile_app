@@ -11,10 +11,12 @@ import 'package:patient_app/widgets/pharmacy_widgets/share_for_delivery_dialog.d
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
+import '../../utils/app_strings.dart';
 
 class PharmacyPrescriptionDetailScreen extends StatelessWidget {
-   PharmacyPrescriptionDetailScreen({super.key});
-PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionController());
+  PharmacyPrescriptionDetailScreen({super.key});
+  final PharmacyPrescriptionController controller = Get.put(PharmacyPrescriptionController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,9 +38,7 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -47,7 +47,7 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Prescription Detail",
+                    AppStrings.prescriptionDetail.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -65,29 +65,29 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
                       10.verticalSpace,
                       _buildDoctorInfo(),
                       20.verticalSpace,
-                      _buildSectionTitle('Medication'),
+                      _buildSectionTitle(AppStrings.medication.tr),
                       10.verticalSpace,
                       _buildMedicationCard('Amoxicillin 500mg', 10, '1 tab BID', true),
                       20.verticalSpace,
-                      _buildSectionTitle('Pricing Summary'),
+                      _buildSectionTitle(AppStrings.pricingSummary.tr),
                       10.verticalSpace,
                       _buildPricingSummary(),
                       20.verticalSpace,
-                      _buildSectionTitle('Prescription QR'),
+                      _buildSectionTitle(AppStrings.prescriptionQR.tr),
                       10.verticalSpace,
                       _buildQRSection(),
                       20.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Validate Prescription",
+                        text: AppStrings.validatePrescription.tr,
                         onTap: () {
-                          Get.to(PrepartionAndDeliveryScreen());
+                          Get.to( PrepartionAndDeliveryScreen());
                         },
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Propose Partial",
+                        text: AppStrings.proposePartial.tr,
                         onTap: () {
                           Get.to(PartialFulfillmentProposalScreen());
                         },
@@ -97,11 +97,9 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
                       10.verticalSpace,
                       Center(
                         child: InkWell(
-                          onTap: (){
-                            Get.to(RejectPrescriptionScreen());
-                          },
+                          onTap: () => Get.to(RejectPrescriptionScreen()),
                           child: Text(
-                            "Reject",
+                            AppStrings.reject.tr,
                             style: TextStyle(
                               color: Colors.redAccent,
                               fontWeight: FontWeight.w700,
@@ -146,14 +144,14 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
       child: Row(
         children: <Widget>[
           Image(
-            image: AssetImage('assets/demo_images/patient_1.png'),
+            image: const AssetImage('assets/demo_images/patient_1.png'),
             height: 50.h,
           ),
           const SizedBox(width: 12),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
+               Text(
                 'Dr. Sarah Malik',
                 style: TextStyle(
                   fontSize: 16.sp,
@@ -162,7 +160,7 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
                 ),
               ),
               Text(
-                'Prescription Id: RX-20410',
+                '${AppStrings.prescriptionId.tr}: RX-20410',
                 style: TextStyle(fontSize: 14.sp, color: AppColors.lightGrey),
               ),
             ],
@@ -172,12 +170,7 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
     );
   }
 
-  Widget _buildMedicationCard(
-    String name,
-    int quantity,
-    String dosage,
-    bool inStock,
-  ) {
+  Widget _buildMedicationCard(String name, int quantity, String dosage, bool inStock) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -188,73 +181,45 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                name,
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
-                  const SizedBox(width: 8),
-                  Icon(Icons.cached, color: Colors.blue, size: 20),
-                ],
-              ),
-            ],
-          ),
+          _medicationHeader(name),
           15.verticalSpace,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDetailRow('Qty:', quantity.toString()),
-              Align(
-                alignment: Alignment.centerRight,
-                child: _buildStockStatus(inStock),
-              ),
+              _buildDetailRow(AppStrings.qty.tr, quantity.toString()),
+              Align(alignment: Alignment.centerRight, child: _buildStockStatus(inStock)),
             ],
           ),
-          _buildDetailRow('Dosage:', dosage),
+          _buildDetailRow(AppStrings.dosage.tr, dosage),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(
-                name,
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
-                  const SizedBox(width: 8),
-                  Icon(Icons.cached, color: Colors.blue, size: 20),
-                ],
-              ),
-            ],
-          ),
+          _medicationHeader(name),
           15.verticalSpace,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDetailRow('Qty:', quantity.toString()),
-              Align(
-                alignment: Alignment.centerRight,
-                child: _buildStockStatus(inStock = false),
-              ),
+              _buildDetailRow(AppStrings.qty.tr, quantity.toString()),
+              Align(alignment: Alignment.centerRight, child: _buildStockStatus(false)),
             ],
           ),
-          _buildDetailRow('Dosage:', dosage),
+          _buildDetailRow(AppStrings.dosage.tr, dosage),
         ],
       ),
+    );
+  }
+
+  Widget _medicationHeader(String name) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Text(name, style: TextStyle(fontSize: 17.sp, color: Colors.black, fontWeight: FontWeight.w600)),
+        const Row(
+          children: <Widget>[
+            Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
+            SizedBox(width: 8),
+            Icon(Icons.cached, color: Colors.blue, size: 20),
+          ],
+        ),
+      ],
     );
   }
 
@@ -263,16 +228,9 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
       padding: const EdgeInsets.symmetric(vertical: 2.0),
       child: Row(
         children: <Widget>[
-          Text(label, style: TextStyle(fontSize: 14, color: Colors.black)),
+          Text(label, style: const TextStyle(fontSize: 14, color: Colors.black)),
           const SizedBox(width: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.lightGrey,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text(value, style: const TextStyle(fontSize: 14, color: AppColors.lightGrey, fontWeight: FontWeight.w500)),
         ],
       ),
     );
@@ -286,12 +244,8 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
         borderRadius: BorderRadius.circular(10.sp),
       ),
       child: Text(
-        inStock ? 'In Stock' : 'Out Of Stock',
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 12,
-        ),
+        inStock ? AppStrings.inStock.tr : AppStrings.outOfStock.tr,
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
       ),
     );
   }
@@ -306,41 +260,17 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
       ),
       child: Column(
         children: <Widget>[
-          _buildPriceRow(
-            'Subtotal',
-            '\$156',
-            AppColors.primaryColor,
-            FontWeight.normal,
-          ),
+          _buildPriceRow(AppStrings.subtotal.tr, '\$156', AppColors.primaryColor, FontWeight.normal),
           const SizedBox(height: 8),
-          _buildPriceRow(
-            'Delivery Charges',
-            '\$2.00',
-            AppColors.primaryColor,
-            FontWeight.normal,
-            subtitle: 'if home delivery',
-          ),
+          _buildPriceRow(AppStrings.deliveryCharges.tr, '\$2.00', AppColors.primaryColor, FontWeight.normal, subtitle: AppStrings.ifHomeDelivery.tr),
           const Divider(height: 20, thickness: 1),
-          _buildPriceRow(
-            'Total Fee',
-            '\$158',
-            Colors.blue,
-            FontWeight.bold,
-            fontSize: 18.0,
-          ),
+          _buildPriceRow(AppStrings.totalFee.tr, '\$158', Colors.blue, FontWeight.bold, fontSize: 18.0),
         ],
       ),
     );
   }
 
-  Widget _buildPriceRow(
-    String label,
-    String amount,
-    Color amountColor,
-    FontWeight amountWeight, {
-    String? subtitle,
-    double fontSize = 16.0,
-  }) {
+  Widget _buildPriceRow(String label, String amount, Color amountColor, FontWeight amountWeight, {String? subtitle, double fontSize = 16.0}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,29 +278,11 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-            ),
-            if (subtitle != null)
-              Text(
-                subtitle,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
+            Text(label, style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500, color: Colors.black87)),
+            if (subtitle != null) Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
           ],
         ),
-        Text(
-          amount,
-          style: TextStyle(
-            fontSize: fontSize,
-            fontWeight: amountWeight,
-            color: amountColor,
-          ),
-        ),
+        Text(amount, style: TextStyle(fontSize: fontSize, fontWeight: amountWeight, color: amountColor)),
       ],
     );
   }
@@ -381,14 +293,7 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.1), spreadRadius: 1, blurRadius: 5, offset: const Offset(0, 3))],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,32 +304,18 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  'Prescription',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
+                const Text('Prescription', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Get.dialog(ShareForDeliveryDialog());
-                    },
+                    onPressed: () => Get.dialog(ShareForDeliveryDialog()),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text(
-                      'Share for Delivery',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Text(AppStrings.shareForDelivery.tr, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -435,18 +326,9 @@ PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionControlle
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.inACtiveButtonColor,
                       padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    child: const Text(
-                      'Download QR',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: Text(AppStrings.downloadQR.tr, style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/models/consultation_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class ConsultationCard extends StatelessWidget {
   final ConsultationModel plan;
@@ -9,37 +11,45 @@ class ConsultationCard extends StatelessWidget {
   final bool isCompleted;
 
   const ConsultationCard({
+    super.key,
     required this.plan,
     required this.onTap,
     required this.isCompleted,
   });
-Color getStatusColor(){
-  if(plan.status=="Active"){
-    return AppColors.primaryColor;
-  }else if(plan.status=="Expire Soon"||plan.status=="Expired"){
-    return AppColors.red;
-  }else if(plan.status=="Pending"){
-    return AppColors.orange;
-  }else if(plan.status=="Completed"){
-    return AppColors.green;
-  }else{
+
+  Color getStatusColor() {
+    // Checking against raw string keys or model status
+    if (plan.status == "Active") return AppColors.primaryColor;
+    if (plan.status == "Expire Soon" || plan.status == "Expired") return AppColors.red;
+    if (plan.status == "Pending") return AppColors.orange;
+    if (plan.status == "Completed") return AppColors.green;
     return Colors.grey;
   }
-}
+
+  String getLocalizedStatus(String status) {
+    switch (status) {
+      case "Active": return AppStrings.activeStatus.tr;
+      case "Expire Soon": return AppStrings.expireSoonStatus.tr;
+      case "Expired": return AppStrings.expiredStatus.tr;
+      case "Pending": return AppStrings.pendingStatus.tr;
+      case "Completed": return AppStrings.completedStatus.tr;
+      default: return status;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String formattedDate =
-        '${plan.expirationDate.day} ${getMonthName(plan.expirationDate.month)} ${plan.expirationDate.year}';
+        '${plan.expirationDate.day} ${getLocalizedMonth(plan.expirationDate.month)} ${plan.expirationDate.year}';
 
     return Padding(
-      padding:  EdgeInsets.only(bottom: 15.sp),
+      padding: EdgeInsets.only(bottom: 15.sp),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.sp),
-          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
-        ),
-        padding: EdgeInsets.symmetric(horizontal:15.sp,vertical: 20.sp),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.sp),
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))),
+        padding: EdgeInsets.symmetric(horizontal: 15.sp, vertical: 20.sp),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -54,13 +64,13 @@ Color getStatusColor(){
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                   decoration: BoxDecoration(
                     color: getStatusColor(),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    plan.status,
+                    getLocalizedStatus(plan.status),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 11.sp,
@@ -78,7 +88,7 @@ Color getStatusColor(){
             const SizedBox(height: 8),
             _buildDetailRow(
               icon: Icons.calendar_today,
-              text: 'Expires on $formattedDate',
+              text: '${AppStrings.expiresOn.tr} $formattedDate',
             ),
             const SizedBox(height: 8),
             _buildDetailRow(
@@ -87,8 +97,8 @@ Color getStatusColor(){
             ),
             const SizedBox(height: 8),
             Text(
-              '${plan.creditsUsed} out of ${plan.totalCredits} credits',
-              style: TextStyle(
+              '${plan.creditsUsed} ${AppStrings.outOf.tr} ${plan.totalCredits} ${AppStrings.credits.tr}',
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.black87,
               ),
@@ -97,19 +107,17 @@ Color getStatusColor(){
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  onTap();
-                },
+                onPressed: () => onTap(),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   backgroundColor: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
                 child: Text(
-                  isCompleted?"View Details":'Renew Plan',
-                  style: TextStyle(
+                  isCompleted ? AppStrings.viewDetail.tr : AppStrings.renewPlan.tr,
+                  style: const TextStyle(
                     fontSize: 18,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -130,7 +138,7 @@ Color getStatusColor(){
         const SizedBox(width: 10),
         Text(
           text,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             color: Colors.black54,
           ),
@@ -139,34 +147,12 @@ Color getStatusColor(){
     );
   }
 
-  String getMonthName(int month) {
-    switch (month) {
-      case 1:
-        return 'Jan';
-      case 2:
-        return 'Feb';
-      case 3:
-        return 'Mar';
-      case 4:
-        return 'Apr';
-      case 5:
-        return 'May';
-      case 6:
-        return 'Jun';
-      case 7:
-        return 'Jul';
-      case 8:
-        return 'Aug';
-      case 9:
-        return 'Sep';
-      case 10:
-        return 'Oct';
-      case 11:
-        return 'Nov';
-      case 12:
-        return 'Dec';
-      default:
-        return '';
-    }
+  String getLocalizedMonth(int month) {
+    // You can also use intl package here, but for consistency with your code:
+    final List<String> months = [
+      'jan'.tr, 'feb'.tr, 'mar'.tr, 'apr'.tr, 'may'.tr, 'jun'.tr,
+      'jul'.tr, 'aug'.tr, 'sep'.tr, 'oct'.tr, 'nov'.tr, 'dec'.tr
+    ];
+    return months[month - 1];
   }
 }

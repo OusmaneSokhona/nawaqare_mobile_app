@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 import '../../utils/app_images.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/patient_widgets/video_call_widgets/setting widgets.dart';
@@ -43,7 +44,7 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Partial Fulfillment Proposal",
+                    AppStrings.partialFulfillmentProposal.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 20.sp,
@@ -60,7 +61,7 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
                     children: <Widget>[
                       10.verticalSpace,
                       Text(
-                        "Some Items In This Prescription Are Unavailable.\nSuggest Replacements Or Partial Quantities.",
+                        AppStrings.partialFulfillmentSubtitle.tr,
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 13.sp,
@@ -70,7 +71,7 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
                       10.verticalSpace,
 
                       Text(
-                        'Unavailable Medication',
+                        AppStrings.unavailableMedication.tr,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w800,
@@ -79,8 +80,8 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       CustomDropdown(
-                        label: "Medication Name",
-                        options: [
+                        label: AppStrings.medicationName.tr,
+                        options: const [
                           "Paracetamol 500mg",
                           "Paracetamol 1000mg",
                           "Paracetamol 200mg",
@@ -91,32 +92,32 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
 
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Qty Requested",
+                        labelText: AppStrings.qtyRequested.tr,
                         hintText: "10",
                       ),
 
                       10.verticalSpace,
                       CustomDropdown(
-                        label: "Qty Available",
-                        options: ["10", "8", "5", "0"],
+                        label: AppStrings.qtyAvailable.tr,
+                        options: const ["10", "8", "5", "0"],
                         currentValue: "10",
                         onChanged: (_) {},
                       ),
 
                       10.verticalSpace,
                       CustomDropdown(
-                        label: "Substitute",
-                        options: ["Select", "Ibuprofen 200mg", "Aspirin 81mg"],
-                        currentValue: "Select",
+                        label: AppStrings.substitute.tr,
+                        options: [AppStrings.select.tr, "Ibuprofen 200mg", "Aspirin 81mg"],
+                        currentValue: AppStrings.select.tr,
                         onChanged: (_) {},
                       ),
 
                       10.verticalSpace,
-                      CustomTextField(labelText: "Price", hintText: "\$120"),
+                      CustomTextField(labelText: AppStrings.fee.tr, hintText: "\$120"),
 
                       30.verticalSpace,
                       Text(
-                        'Additional Notes',
+                        AppStrings.additionalNotes.tr,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w800,
@@ -139,11 +140,10 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
-                            hintText:
-                                'Partial availability, replacement suggested.',
+                            hintText: AppStrings.partialNoteHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
+                            contentPadding: const EdgeInsets.symmetric(
                               horizontal: 15,
                               vertical: 15,
                             ),
@@ -153,7 +153,7 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
 
                       30.verticalSpace,
                       Text(
-                        'Price Summary (Live)',
+                        AppStrings.priceSummaryLive.tr,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w800,
@@ -173,21 +173,21 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
                         child: Column(
                           children: [
                             _buildPriceSummaryRow(
-                              "Subtotal",
+                              AppStrings.subtotal.tr,
                               "\$156",
                               AppColors.primaryColor,
                             ),
                             5.verticalSpace,
                             _buildPriceSummaryRow(
-                              "Delivery Charges",
+                              AppStrings.deliveryCharges.tr,
                               "\$2.00",
                               AppColors.primaryColor,
-                              subText: "if home delivery",
+                              subText: AppStrings.ifHomeDelivery.tr,
                             ),
                             5.verticalSpace,
                             Divider(color:AppColors.lightGrey.withOpacity(0.2), height: 20.h),
                             _buildPriceSummaryRow(
-                              "New Total",
+                              AppStrings.newTotal.tr,
                               "\$158",
                               AppColors.primaryColor,
                               isTotal: true,
@@ -199,13 +199,13 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
 
                       CustomButton(
                         borderRadius: 15,
-                        text: "Submit Proposal",
+                        text: AppStrings.submitProposal.tr,
                         onTap: () {},
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Cancel",
+                        text: AppStrings.cancel.tr,
                         onTap: () {
                           Get.back();
                         },
@@ -225,12 +225,12 @@ class PartialFulfillmentProposalScreen extends StatelessWidget {
   }
 
   Widget _buildPriceSummaryRow(
-    String label,
-    String value,
-    Color valueColor, {
-    String? subText,
-    bool isTotal = false,
-  }) {
+      String label,
+      String value,
+      Color valueColor, {
+        String? subText,
+        bool isTotal = false,
+      }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(

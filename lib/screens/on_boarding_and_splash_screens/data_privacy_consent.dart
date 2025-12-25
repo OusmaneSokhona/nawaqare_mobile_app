@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/utils/shared_prefrence.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
@@ -33,7 +34,7 @@ class DataPrivacyConsent extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Data Privacy &\n Consent",
+                  AppStrings.dataPrivacyTitle.tr,
                   textAlign: TextAlign.start,
                   style: TextStyle(
                     color: Colors.black,
@@ -45,7 +46,7 @@ class DataPrivacyConsent extends StatelessWidget {
               ),
               20.verticalSpace,
               Text(
-                "Your data is protected under GDPR and CNPD compliance standards, with secure storage and HDS-certified hosting.  We use advanced end-to-end encryption and role-based access controls to ensure that only authorized professionals can view sensitive information.",
+                AppStrings.dataPrivacyDesc.tr,
                 style: TextStyle(
                   color: AppColors.lightGrey,
                   fontSize: 16.sp,
@@ -60,7 +61,7 @@ class DataPrivacyConsent extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(bottom: 9.h),
                     child: Obx(
-                      () => SizedBox(
+                          () => SizedBox(
                         width: 26.w,
                         child: Checkbox(
                           activeColor: AppColors.primaryColor,
@@ -74,7 +75,7 @@ class DataPrivacyConsent extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      "I have read and accept the Terms of Use and Privacy Policy.",
+                      AppStrings.acceptTerms.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 14.sp,
@@ -89,7 +90,7 @@ class DataPrivacyConsent extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "View full privacy policy",
+                  AppStrings.viewPrivacyPolicy.tr,
                   style: TextStyle(
                     fontFamily: AppFonts.jakartaMedium,
                     fontSize: 16.sp,
@@ -104,7 +105,7 @@ class DataPrivacyConsent extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Terms of medical data processing",
+                  AppStrings.medicalDataTerms.tr,
                   style: TextStyle(
                     fontFamily: AppFonts.jakartaMedium,
                     fontSize: 16.sp,
@@ -118,7 +119,7 @@ class DataPrivacyConsent extends StatelessWidget {
               60.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Accept & Continue",
+                text: AppStrings.acceptContinue.tr,
                 onTap: () {
                   LocalStorageUtils.setFirstTime();
                   Get.to(SignInScreen());
@@ -128,7 +129,7 @@ class DataPrivacyConsent extends StatelessWidget {
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
-                text: "Decline",
+                text: AppStrings.decline.tr,
                 onTap: () {
                   LocalStorageUtils.setFirstTime();
                   Get.to(SignInScreen());

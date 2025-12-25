@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 
 class TrackOrderCard extends StatelessWidget {
-
-  const TrackOrderCard({super.key,});
+  const TrackOrderCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const List<String> progressStages = [
-      'Order',
-      'Preparing',
-      'Ready',
-      'Pick up',
+    // List of localized progress stages
+    final List<String> progressStages = [
+      AppStrings.orderStage.tr,
+      AppStrings.preparingStage.tr,
+      AppStrings.readyStage.tr,
+      AppStrings.pickupStage.tr,
     ];
 
     return Container(
@@ -46,7 +48,7 @@ class TrackOrderCard extends StatelessWidget {
           ),
           5.verticalSpace,
           Text(
-            "12 Health St,75000 Paris",
+            "12 Health St, 75000 Paris",
             style: TextStyle(
               color: Colors.grey.shade600,
               fontSize: 14.sp,
@@ -55,33 +57,32 @@ class TrackOrderCard extends StatelessWidget {
           ),
           20.verticalSpace,
 
-          // 2. Progress Tracker Bar
+          // Progress Tracker Bar
           _buildProgressBar(context),
           10.verticalSpace,
 
-          // 3. Progress Labels
+          // Progress Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: progressStages
-                .map(
-                  (stage) => Text(
+            children: progressStages.asMap().entries.map((entry) {
+              int index = entry.key;
+              String stage = entry.value;
+              return Text(
                 stage,
                 style: TextStyle(
-                  color: progressStages.indexOf(stage) <= 2
-                      ? AppColors.primaryColor
-                      : Colors.grey.shade500,
+                  color: index <= 2 ? AppColors.primaryColor : Colors.grey.shade500,
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppFonts.jakartaMedium,
                 ),
-              ),
-            )
-                .toList(),
+              );
+            }).toList(),
           ),
           10.verticalSpace,
           const Divider(color: AppColors.lightGrey, thickness: 1),
+
           Text(
-            'Order Summary',
+            AppStrings.orderSummary.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -91,7 +92,7 @@ class TrackOrderCard extends StatelessWidget {
           ),
           10.verticalSpace,
           Text(
-            "Amoxicillin 500mg",
+            "Amoxicillin 500mg".tr, // Note: Meds often have localized names or generic tags
             style: TextStyle(
               color: Colors.grey.shade600,
               fontSize: 14.sp,
@@ -99,15 +100,15 @@ class TrackOrderCard extends StatelessWidget {
             ),
           ),
           5.verticalSpace,
-          _buildInfoRow('Order ID: ', '#${12134}'),
+          _buildInfoRow(AppStrings.orderIdLabel.tr, '#${12134}'),
           5.verticalSpace,
-          _buildInfoRow('Expected By: ',"Sep 30, 2025"),
+          _buildInfoRow(AppStrings.expectedByLabel.tr, "Sep 30, 2025"),
           10.verticalSpace,
           const Divider(color: AppColors.lightGrey, thickness: 1),
           10.verticalSpace,
 
           Text(
-            'Delivery Address',
+            AppStrings.deliveryAddress.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -126,8 +127,9 @@ class TrackOrderCard extends StatelessWidget {
           ),
           10.verticalSpace,
           const Divider(color: AppColors.lightGrey, thickness: 1),
+
           Text(
-            'Delivery Information',
+            AppStrings.deliveryInformation.tr,
             style: TextStyle(
               color: Colors.black,
               fontSize: 18.sp,
@@ -136,9 +138,9 @@ class TrackOrderCard extends StatelessWidget {
             ),
           ),
           10.verticalSpace,
-          _buildInfoRow('Courier Name: ', 'Adam Asmith'),
+          _buildInfoRow(AppStrings.courierName.tr, 'Adam Asmith'),
           5.verticalSpace,
-          _buildInfoRow('Phone Number:', '0356-67-9855'),
+          _buildInfoRow(AppStrings.phoneNumberLabel.tr, '0356-67-9855'),
           10.verticalSpace,
         ],
       ),

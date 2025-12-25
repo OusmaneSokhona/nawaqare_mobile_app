@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class DoctorDetailWidget extends StatelessWidget {
-  final String aboutMe =
+  // These would typically come from a model, but I've kept them here as per your snippet
+  final String aboutMeText =
       'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.';
-  final String experience = 'Charles Medical Offiece 2018 - Present';
-  final String fees = 'Consultation \$25/ 30 mint';
+  final String experienceText = 'Charles Medical Office 2018 - Present';
   final String reviewerName = 'Emily Anderson';
   final double rating = 5.0;
   final String reviewText =
@@ -32,8 +34,6 @@ class DoctorDetailWidget extends StatelessWidget {
       height: 1,
       thickness: 1,
       color: Color.fromARGB(25, 0, 0, 0),
-      indent: 0,
-      endIndent: 0,
     );
   }
 
@@ -68,9 +68,9 @@ class DoctorDetailWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('About Me'),
+          _buildSectionTitle(AppStrings.aboutMe.tr),
           Text(
-            aboutMe,
+            aboutMeText.tr, // Translating the dynamic bio if keys exist
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[700],
@@ -80,9 +80,9 @@ class DoctorDetailWidget extends StatelessWidget {
           const SizedBox(height: 16),
           _buildDivider(),
 
-          _buildSectionTitle('Experience'),
+          _buildSectionTitle(AppStrings.experienceLabel.tr),
           Text(
-            experience,
+            experienceText.tr,
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[900],
@@ -91,9 +91,9 @@ class DoctorDetailWidget extends StatelessWidget {
           const SizedBox(height: 16),
           _buildDivider(),
 
-          _buildSectionTitle('Fees'),
+          _buildSectionTitle(AppStrings.feesLabel.tr),
           Text(
-            fees,
+            AppStrings.consultationFeeText.tr,
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[900],
@@ -105,14 +105,12 @@ class DoctorDetailWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildSectionTitle('Review (optional)'),
+              _buildSectionTitle(AppStrings.reviewOptional.tr),
               TextButton(
-                onPressed: () {
-
-                },
-                child: const Text(
-                  'See All',
-                  style: TextStyle(
+                onPressed: () {},
+                child: Text(
+                  AppStrings.seeAll.tr,
+                  style: const TextStyle(
                     color: Color(0xFF4285F4),
                     fontWeight: FontWeight.w600,
                   ),
@@ -150,7 +148,7 @@ class DoctorDetailWidget extends StatelessWidget {
           const SizedBox(height: 12),
 
           Text(
-            reviewText,
+            reviewText.tr,
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[700],

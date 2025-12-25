@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/delivery_options_model.dart';
 
@@ -42,31 +43,31 @@ class DeliveryOptionsCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-             Padding(
-              padding: EdgeInsets.only(left: 10.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     '12 Rue De La Santé',
                     style: TextStyle(fontSize: 16, color: Colors.black54),
                   ),
-                  SizedBox(height: 6),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
                       Icon(Icons.link, size: 16.sp, color: AppColors.primaryColor),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        'Availability:',
+                        AppStrings.availability.tr,
                         style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.black,
                             fontWeight: FontWeight.w600),
                       ),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
-                        'Immediate',
-                        style: TextStyle(
+                        AppStrings.immediate.tr,
+                        style: const TextStyle(
                             fontSize: 14,
                             color: Colors.black87,
                             fontWeight: FontWeight.w400),
@@ -78,7 +79,7 @@ class DeliveryOptionsCard extends StatelessWidget {
             ),
             const Divider(height: 30, thickness: 0.5),
             Text(
-              'Delivery Option',
+              AppStrings.deliveryOption.tr,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -115,11 +116,11 @@ class DeliveryOptionsCard extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       activeColor: AppColors.primaryColor,
       title: Text(
-        currentOption.name,
+        currentOption.name, // Ensure this name is translated in the controller/model
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
       secondary: Text(
-        currentOption.priceText,
+        currentOption.priceText, // Usually "$5.00" or "Free", should be handled in model
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,

@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 
 class DoctorWidget extends StatelessWidget {
   final AppointmentModel appointmentModel;
-  Function onTap;
-  bool isCompleted = false;
+  final Function onTap;
+  final bool isCompleted;
 
-  DoctorWidget({
+  const DoctorWidget({
     Key? key,
     required this.appointmentModel,
     this.isCompleted = false,
     required this.onTap,
   }) : super(key: key);
 
-  Color _getStatusColor(String status) {
+  String _getLocalizedStatus(String status) {
     switch (status.toLowerCase()) {
       case "follow up":
-        return AppColors.primaryColor;
+        return AppStrings.followUpStatus.tr;
       case "renewal":
-        return AppColors.orange;
+        return AppStrings.renewalStatus.tr;
       case "exam review":
-        return Colors.lightBlueAccent;
+        return AppStrings.examReviewStatus.tr;
       case "initial":
-        return AppColors.green;
+        return AppStrings.initialStatus.tr;
       default:
-        return Colors.grey;
+        return status;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: (){
-        onTap();
-      },
+      onTap: () => onTap(),
       child: Card(
         color: Colors.white,
         elevation: 4,
@@ -51,7 +51,7 @@ class DoctorWidget extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.calendar_today_outlined,
                         size: 16,
                         color: AppColors.primaryColor,
@@ -67,7 +67,7 @@ class DoctorWidget extends StatelessWidget {
                             ),
                           ),
                           8.horizontalSpace,
-                          Icon(
+                          const Icon(
                             Icons.watch_later_outlined,
                             size: 16,
                             color: AppColors.primaryColor,
@@ -87,7 +87,7 @@ class DoctorWidget extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "Fee: ",
+                        "${AppStrings.feeLabel.tr}: ",
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -106,11 +106,9 @@ class DoctorWidget extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 4),
-              Divider(thickness: 0.3, color: Colors.black45),
+              const Divider(thickness: 0.3, color: Colors.black45),
               const SizedBox(height: 4),
-
               Row(
                 children: [
                   Image.asset(
@@ -130,9 +128,9 @@ class DoctorWidget extends StatelessWidget {
                             fontSize: 18.sp,
                           ),
                         ),
-                        Divider(thickness: 0.3, color: Colors.black45),
+                        const Divider(thickness: 0.3, color: Colors.black45),
                         Text(
-                          appointmentModel.specialty,
+                          appointmentModel.specialty.tr,
                           style: TextStyle(color: Colors.black, fontSize: 15.sp),
                         ),
                         const SizedBox(height: 4),
@@ -140,8 +138,8 @@ class DoctorWidget extends StatelessWidget {
                           children: [
                             Icon(
                               appointmentModel.consultationType
-                                      .toLowerCase()
-                                      .contains("remote")
+                                  .toLowerCase()
+                                  .contains("remote")
                                   ? Icons.add_ic_call
                                   : Icons.meeting_room_outlined,
                               color: Colors.blue,
@@ -149,7 +147,7 @@ class DoctorWidget extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              appointmentModel.consultationType,
+                              appointmentModel.consultationType.tr,
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 13.sp,
@@ -163,14 +161,14 @@ class DoctorWidget extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                 Icon(
+                                const Icon(
                                   Icons.language,
                                   color: AppColors.primaryColor,
                                   size: 16,
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  "French",
+                                  AppStrings.french.tr,
                                   style: const TextStyle(fontSize: 13),
                                 ),
                               ],
@@ -185,7 +183,7 @@ class DoctorWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  "Islam",
+                                  AppStrings.islam.tr,
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
                                     fontWeight: FontWeight.w500,
@@ -224,7 +222,7 @@ class DoctorWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  "1,872 Reviews",
+                                  AppStrings.reviewsCount.trParams({'count': '1,872'}),
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
                                     fontWeight: FontWeight.w500,
@@ -240,7 +238,6 @@ class DoctorWidget extends StatelessWidget {
                   ),
                 ],
               ),
-
               const SizedBox(height: 12),
             ],
           ),

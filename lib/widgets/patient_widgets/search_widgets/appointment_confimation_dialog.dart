@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class AppointmentConfirmationDialog extends StatelessWidget {
   final String doctorName;
@@ -30,13 +32,13 @@ class AppointmentConfirmationDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-           Image.asset("assets/images/appointment_confirm.png",height: 130.h,),
+            Image.asset("assets/images/appointment_confirm.png", height: 130.h,),
             const SizedBox(height: 24.0),
 
-            const Text(
-              'Congratulations!',
+            Text(
+              AppStrings.congratulations.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF333333),
@@ -45,7 +47,11 @@ class AppointmentConfirmationDialog extends StatelessWidget {
             const SizedBox(height: 16.0),
 
             Text(
-              'Your appointment with $doctorName is confirmed for $date, at $time.',
+              AppStrings.appointmentConfirmedMsg.trParams({
+                'name': doctorName,
+                'date': date,
+                'time': time,
+              }),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -68,9 +74,9 @@ class AppointmentConfirmationDialog extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  'Done',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                child: Text(
+                  AppStrings.done.tr,
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -90,9 +96,9 @@ class AppointmentConfirmationDialog extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  'View Appointment Details',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                child: Text(
+                  AppStrings.viewAppointmentDetails.tr,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
               ),
             ),

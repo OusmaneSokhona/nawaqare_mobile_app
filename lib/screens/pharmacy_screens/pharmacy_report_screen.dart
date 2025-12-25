@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/pharmacy_controllers/pharmacy_home_controller.dart';
 import 'package:patient_app/controllers/pharmacy_controllers/pharmacy_report_controller.dart';
 import 'package:patient_app/screens/patient_screens/chat_screens/chat_screen.dart';
 import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
-import 'package:patient_app/screens/pharmacy_screens/upload_prescription_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/custom_text_field.dart';
 import '../patient_screens/notifications_screens/notifications_screen.dart';
 
 class PharmacyReportScreen extends StatelessWidget {
   PharmacyReportScreen({super.key});
 
-  PharmacyReportController reportController = Get.put(PharmacyReportController());
+  final PharmacyReportController reportController = Get.put(PharmacyReportController());
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +36,9 @@ class PharmacyReportScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(() {
-              final bool isScrolledPastThreshold =
-                  reportController.scrollValue.value >= 180;
-
+              final bool isScrolledPastThreshold = reportController.scrollValue.value >= 180;
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
-
-              final Color targetColor =
-              isScrolledPastThreshold ? AppColors.primaryColor : Colors.transparent;
+              final Color targetColor = isScrolledPastThreshold ? AppColors.primaryColor : Colors.transparent;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
@@ -57,16 +51,14 @@ class PharmacyReportScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    CircleAvatar(
+                     CircleAvatar(
                       radius: 20.h,
                       backgroundColor: Colors.white,
-                      foregroundImage: const AssetImage(
-                        "assets/images/pharmacy_icon.png",
-                      ),
+                      foregroundImage: AssetImage("assets/images/pharmacy_icon.png"),
                     ),
                     20.horizontalSpace,
                     Text(
-                      "Dr Alex",
+                      AppStrings.drAlex.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontFamily: AppFonts.jakartaBold,
@@ -75,36 +67,11 @@ class PharmacyReportScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    InkWell(
-                      onTap: () {
-                        Get.to(ChatScreen(showBackIcon: true,));
-                      },
-                      child: Image.asset(
-                        "assets/images/chat_icon.png",
-                        height: 25.h,
-                        color: Colors.white,
-                      ),
-                    ),
+                    _buildNavIcon("assets/images/chat_icon.png", () => Get.to(ChatScreen(showBackIcon: true)), color: Colors.white),
                     5.horizontalSpace,
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => HelpCenterScreen());
-                      },
-                      child: Image.asset(
-                        "assets/images/help_center_icon.png",
-                        height: 25.h,
-                      ),
-                    ),
+                    _buildNavIcon("assets/images/help_center_icon.png", () => Get.to(() => HelpCenterScreen())),
                     5.horizontalSpace,
-                    InkWell(
-                      onTap: () {
-                        Get.to(() => NotificationScreen());
-                      },
-                      child: Image.asset(
-                        "assets/images/bell_icon.png",
-                        height: 25.h,
-                      ),
-                    ),
+                    _buildNavIcon("assets/images/bell_icon.png", () => Get.to(() => NotificationScreen())),
                   ],
                 ),
               );
@@ -117,55 +84,12 @@ class PharmacyReportScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       60.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 35.h,
-                            backgroundColor: Colors.white,
-                            foregroundImage: const AssetImage(
-                              "assets/images/pharmacy_icon.png",
-                            ),
-                          ),
-                          const Spacer(),
-                          InkWell(
-                            onTap: () {
-                              Get.to(ChatScreen(showBackIcon: true,));
-                            },
-                            child: Image.asset(
-                              "assets/images/chat_icon.png",
-                              height: 25.h,
-                              color: Colors.white,
-                            ),
-                          ),
-                          10.horizontalSpace,
-                          InkWell(
-                            onTap: () {
-                              Get.to(() => HelpCenterScreen());
-                            },
-                            child: Image.asset(
-                              "assets/images/help_center_icon.png",
-                              height: 25.h,
-                            ),
-                          ),
-                          10.horizontalSpace,
-                          InkWell(
-                            onTap: () {
-                              Get.to(() => NotificationScreen());
-                            },
-                            child: Image.asset(
-                              "assets/images/bell_icon.png",
-                              height: 30.h,
-                            ),
-                          ),
-                        ],
-                      ),
+                      _buildHeaderRow(),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Reports",
+                          AppStrings.reports.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             fontSize: 32.sp,
@@ -177,7 +101,7 @@ class PharmacyReportScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Manage Your Schedules, Services, And Absences From This Space",
+                          AppStrings.reportsSubtitle.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontFamily: AppFonts.jakartaBold,
@@ -186,71 +110,74 @@ class PharmacyReportScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text("Analytics",style: TextStyle(fontSize: 19.sp,color: Colors.black,fontWeight: FontWeight.w700),),
-                      ),
-                      5.verticalSpace,
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics:  NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: 1.6,
-                      children: [
-                        _buildStatCard(
-                          icon: Icons.check_circle_rounded,
-                          label: 'Acceptance Rate',
-                          value: '92%',
-                        ),
-                        _buildStatCard(
-                          icon: Icons.warning_rounded,
-                          label: 'Partial Fulfillment Rate',
-                          value: '20',
-                        ),
-                        _buildStatCard(
-                          icon: Icons.access_time_filled_rounded,
-                          label: 'Avg. Validation Time',
-                          value: '4m 12s',
-                        ),
-                        _buildStatCard(
-                          label: 'Frequent Drugs Delivered',
-                          value: '20',
-                          iconPath: "assets/images/drug_delivered_icon.png",
-                        ),
-                        _buildStatCard(
-                          label: 'Stock-Out Frequency',
-                          value: '3/week',
-                          iconPath: "assets/images/stock_out_icon.png"
-                        ),
-                        _buildStatCard(
-                          icon: Icons.local_shipping_rounded,
-                          label: 'Delivery Completion Time',
-                          value: '1h 15m avg',
-                        ),
-                      ],
-                    ),
-                      10.verticalSpace,
-                      _buildStatCard(
-                        icon: Icons.monetization_on_rounded,
-                        label: 'Generated Revenue',
-                        value: '\$82,00',
-                        isFullWidth: true,
-                      ),
-                      10.verticalSpace,
-                      Image.asset("assets/demo_images/1_demo.png"),
-                      10.verticalSpace,
-                      Image.asset("assets/demo_images/2_demo.png"),
-                      10.verticalSpace,
-                      Image.asset("assets/demo_images/3_demo.png"),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Data auto-refreshes daily. Weekly summary emailed to registered address",
+                          AppStrings.analytics.tr,
+                          style: TextStyle(fontSize: 19.sp, color: Colors.black, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                      5.verticalSpace,
+                      GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        childAspectRatio: 1.6,
+                        children: [
+                          _buildStatCard(
+                            icon: Icons.check_circle_rounded,
+                            label: AppStrings.acceptanceRate.tr,
+                            value: '92%',
+                          ),
+                          _buildStatCard(
+                            icon: Icons.warning_rounded,
+                            label: AppStrings.partialFulfillmentRate.tr,
+                            value: '20',
+                          ),
+                          _buildStatCard(
+                            icon: Icons.access_time_filled_rounded,
+                            label: AppStrings.avgValidationTime.tr,
+                            value: '4m 12s',
+                          ),
+                          _buildStatCard(
+                            label: AppStrings.frequentDrugsDelivered.tr,
+                            value: '20',
+                            iconPath: "assets/images/drug_delivered_icon.png",
+                          ),
+                          _buildStatCard(
+                            label: AppStrings.stockOutFrequency.tr,
+                            value: '3/week',
+                            iconPath: "assets/images/stock_out_icon.png",
+                          ),
+                          _buildStatCard(
+                            icon: Icons.local_shipping_rounded,
+                            label: AppStrings.deliveryCompletionTime.tr,
+                            value: '1h 15m avg',
+                          ),
+                        ],
+                      ),
+                      10.verticalSpace,
+                      _buildStatCard(
+                        icon: Icons.monetization_on_rounded,
+                        label: AppStrings.generatedRevenue.tr,
+                        value: '\$82,00',
+                        isFullWidth: true,
+                      ),
+                      10.verticalSpace,
+                      _buildDemoImage("assets/demo_images/1_demo.png"),
+                      10.verticalSpace,
+                      _buildDemoImage("assets/demo_images/2_demo.png"),
+                      10.verticalSpace,
+                      _buildDemoImage("assets/demo_images/3_demo.png"),
+                      10.verticalSpace,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppStrings.dataRefreshNote.tr,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontFamily: AppFonts.jakartaBold,
@@ -260,7 +187,11 @@ class PharmacyReportScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Export  Report", onTap: (){}),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.exportReport.tr,
+                        onTap: () {},
+                      ),
                       20.verticalSpace,
                     ],
                   ),
@@ -272,6 +203,36 @@ class PharmacyReportScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildNavIcon(String asset, VoidCallback onTap, {Color? color}) {
+    return InkWell(
+      onTap: onTap,
+      child: Image.asset(asset, height: 25.h, color: color),
+    );
+  }
+
+  Widget _buildHeaderRow() {
+    return Row(
+      children: [
+         CircleAvatar(
+          radius: 35.h,
+          backgroundColor: Colors.white,
+          foregroundImage: AssetImage("assets/images/pharmacy_icon.png"),
+        ),
+        const Spacer(),
+        _buildNavIcon("assets/images/chat_icon.png", () => Get.to(ChatScreen(showBackIcon: true)), color: Colors.white),
+        10.horizontalSpace,
+        _buildNavIcon("assets/images/help_center_icon.png", () => Get.to(() => HelpCenterScreen())),
+        10.horizontalSpace,
+        _buildNavIcon("assets/images/bell_icon.png", () => Get.to(() => NotificationScreen())),
+      ],
+    );
+  }
+
+  Widget _buildDemoImage(String asset) {
+    return Image.asset(asset, width: 1.sw, fit: BoxFit.fitWidth);
+  }
+
   Widget _buildStatCard({
     IconData? icon,
     required String label,
@@ -281,7 +242,7 @@ class PharmacyReportScreen extends StatelessWidget {
   }) {
     return Container(
       width: isFullWidth ? double.infinity : null,
-      padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 8.w),
+      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -290,8 +251,8 @@ class PharmacyReportScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          icon!=null?Icon(icon, color: AppColors.primaryColor, size: 28.h):SizedBox(),
-          iconPath!=null?ImageIcon(AssetImage(iconPath), color: AppColors.primaryColor, size: 24.h):SizedBox(),
+          if (icon != null) Icon(icon, color: AppColors.primaryColor, size: 28.h),
+          if (iconPath != null) ImageIcon(AssetImage(iconPath), color: AppColors.primaryColor, size: 24.h),
           SizedBox(height: 4.h),
           Text(
             label,

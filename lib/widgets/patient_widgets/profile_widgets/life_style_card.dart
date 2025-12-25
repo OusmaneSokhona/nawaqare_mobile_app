@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class LifestyleCard extends StatelessWidget {
   const LifestyleCard({super.key});
@@ -50,9 +52,10 @@ class LifestyleCard extends StatelessWidget {
                 color: Color(0xFF1F2937),
               ),
             ),
-            const Text(
-              'High Protein',
-              style: TextStyle(
+            // Example of using a value from keys if appropriate
+            Text(
+              AppStrings.highProteinValue.tr,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF1F2937),
@@ -87,15 +90,15 @@ class LifestyleCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            _buildLifestyleItem('Smoking', 'No'),
-            _buildLifestyleItem('Alcohol Use', 'Occasional'),
-            _buildLifestyleItem('Physical Activity', 'Sedentary'),
-            _buildLifestyleItem('Diet Type', 'High Protein'),
-            _buildLifestyleItem('Sleep Quality', 'Fair'),
+            _buildLifestyleItem(AppStrings.smoking.tr, AppStrings.noValue.tr),
+            _buildLifestyleItem(AppStrings.alcoholUse.tr, AppStrings.occasionalValue.tr),
+            _buildLifestyleItem(AppStrings.physicalActivity.tr, AppStrings.sedentaryValue.tr),
+            _buildLifestyleItem(AppStrings.dietType.tr, AppStrings.highProteinValue.tr),
+            _buildLifestyleItem(AppStrings.sleepQuality.tr, AppStrings.fairValue.tr),
             const SizedBox(height: 8),
             _buildNoteSection(
-              'Note',
-              'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.',
+              AppStrings.noteLabel.tr,
+              'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.'.tr,
             ),
           ],
         ),

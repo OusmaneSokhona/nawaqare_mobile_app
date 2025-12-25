@@ -1,18 +1,26 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/prscription_model.dart';
 
 class PrescriptionCard extends StatelessWidget {
-  Function onTap;
+  final Function onTap;
   final PrescriptionModel prescription;
-final bool isActive;
-   PrescriptionCard({required this.prescription, super.key,this.isActive=true,required this.onTap});
-PrescriptionController controller=Get.find();
+  final bool isActive;
+
+  PrescriptionCard({
+    required this.prescription,
+    super.key,
+    this.isActive = true,
+    required this.onTap
+  });
+
+  final PrescriptionController controller = Get.find();
+
   Color _getStatusColor(PrescriptionStatus status) {
     switch (status) {
       case PrescriptionStatus.active:
@@ -30,16 +38,16 @@ PrescriptionController controller=Get.find();
     String text;
     switch (status) {
       case PrescriptionStatus.active:
-        text = 'Active';
+        text = AppStrings.active.tr;
         break;
       case PrescriptionStatus.expirySoon:
-        text = 'Expiry Soon';
+        text = AppStrings.expirySoon.tr;
         break;
       case PrescriptionStatus.expired:
-        text = 'Expired';
+        text = AppStrings.expired.tr;
         break;
       case PrescriptionStatus.completed:
-        text = 'Completed';
+        text = AppStrings.completed.tr;
         break;
     }
 
@@ -60,7 +68,7 @@ PrescriptionController controller=Get.find();
     );
   }
 
-  Widget _buildActionChip(String text, Color color, VoidCallback onTap,Color textColor) {
+  Widget _buildActionChip(String text, Color color, VoidCallback onTap, Color textColor) {
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -86,7 +94,7 @@ PrescriptionController controller=Get.find();
 
   @override
   Widget build(BuildContext context) {
-    final bool showRefillButton = prescription.status != PrescriptionStatus.completed&&isActive;
+    final bool showRefillButton = prescription.status != PrescriptionStatus.completed && isActive;
     final Color primaryColor = _getStatusColor(prescription.status);
 
     return Container(
@@ -167,7 +175,7 @@ PrescriptionController controller=Get.find();
               ),
               if (prescription.refillsLeft != null)
                 Text(
-                  'Refills left: ${prescription.refillsLeft}',
+                  '${AppStrings.refillsLeft.tr}: ${prescription.refillsLeft}',
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
@@ -181,15 +189,17 @@ PrescriptionController controller=Get.find();
             children: [
               if (showRefillButton)
                 _buildActionChip(
-                  'Request Refill',
-                  const Color(0xFFE0E0E0),
-                      () => controller.requestRefill(prescription),Colors.black
+                    AppStrings.requestRefill.tr,
+                    const Color(0xFFE0E0E0),
+                        () => controller.requestRefill(prescription),
+                    Colors.black
                 ),
               if (showRefillButton) 10.horizontalSpace,
               _buildActionChip(
-                'View Detail',
-                AppColors.primaryColor,
-                    () {onTap();},Colors.white
+                  AppStrings.viewDetail.tr,
+                  AppColors.primaryColor,
+                      () { onTap(); },
+                  Colors.white
               ),
             ],
           ),

@@ -1,4 +1,3 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -6,29 +5,29 @@ import '../../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../../widgets/custom_button.dart';
-import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/display_field.dart';
-import '../../../widgets/profile_picture_widget.dart';
+import '../../../utils/app_strings.dart';
 
 class PharmacyAccessLogScreen extends GetView<SignUpController> {
-  PharmacyAccessLogScreen({super.key});
+  const PharmacyAccessLogScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Container(
+      body: Container(
         height: 1.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              AppColors.onboardingBackground, Colors.white,],
+              AppColors.onboardingBackground,
+              Colors.white,
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal:20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -36,7 +35,7 @@ class PharmacyAccessLogScreen extends GetView<SignUpController> {
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Image.asset(
@@ -47,7 +46,7 @@ class PharmacyAccessLogScreen extends GetView<SignUpController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Access Log",
+                    AppStrings.accessLog.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -65,6 +64,7 @@ class PharmacyAccessLogScreen extends GetView<SignUpController> {
       ),
     );
   }
+
   Widget buildRecentLoginsWidget() {
     final List<Map<String, String>> loginData = List.generate(
       4,
@@ -78,19 +78,19 @@ class PharmacyAccessLogScreen extends GetView<SignUpController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 16),
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 16),
           child: Text(
-            'Recent Logins',
+            AppStrings.recentLogins.tr,
             style: TextStyle(
               fontSize: 21.sp,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: const Color(0xFF1F2937),
             ),
           ),
         ),
         Container(
-          width: 400,
+          width: 1.sw,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -113,15 +113,15 @@ class PharmacyAccessLogScreen extends GetView<SignUpController> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${data['date']}•${data['time']}',
-                              style:  TextStyle(
+                              '${data['date']} • ${data['time']}',
+                              style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF111827),
+                                color: const Color(0xFF111827),
                               ),
                             ),
                             Text(
-                              'IP ${data['ip']}',
+                              '${AppStrings.ipAddress.tr} ${data['ip']}',
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 color: Colors.black,

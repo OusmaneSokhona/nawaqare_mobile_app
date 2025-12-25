@@ -6,10 +6,11 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class PharmacyPrescriptionRecord extends StatelessWidget {
   PharmacyPrescriptionRecord({super.key});
-  PharmacyPrescriptionController controller =Get.put(PharmacyPrescriptionController());
+  PharmacyPrescriptionController controller = Get.put(PharmacyPrescriptionController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +43,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Prescription Record",
+                    AppStrings.prescriptionRecord.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -61,7 +62,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                       _buildHeaderCard(),
                       24.verticalSpace,
                       Text(
-                        "Prescription Details",
+                        AppStrings.prescriptionDetails.tr,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -72,7 +73,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                       _buildDetailsCard(),
                       24.verticalSpace,
                       Text(
-                        "Pricing Summary",
+                        AppStrings.pricingSummary.tr,
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.bold,
@@ -84,14 +85,14 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Export PDF",
+                        text: AppStrings.exportPdf.tr,
                         onTap: () {
                         },
                       ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: "Export CSV",
+                        text: AppStrings.exportCsv.tr,
                         onTap: () {
                         },
                         bgColor: AppColors.inACtiveButtonColor,
@@ -129,7 +130,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Archive ID: RX-20391",
+                "${AppStrings.archiveId.tr}: RX-20391",
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
@@ -142,7 +143,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.r),
                 ),
                 child: Text(
-                  "Validated",
+                  AppStrings.validated.tr,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 12.sp,
@@ -153,9 +154,9 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
             ],
           ),
           Divider(height: 20.h, thickness: 1, color: const Color(0xFFF1F1F1)),
-          _infoRow("Patient: PT-45X2"),
+          _infoRow("${AppStrings.patient.tr}: PT-45X2"),
           4.verticalSpace,
-          _infoRow("Pharmacist ID: PH-021"),
+          _infoRow("${AppStrings.pharmacistId.tr}: PH-021"),
           4.verticalSpace,
           _infoRow("Dr. A. Rehman"),
           4.verticalSpace,
@@ -202,7 +203,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
         ),
         8.verticalSpace,
         Text(
-          "Qty: $qty",
+          "${AppStrings.quantity.tr}: $qty",
           style: TextStyle(fontSize: 15.sp, color: Colors.black87),
         ),
         8.verticalSpace,
@@ -210,11 +211,11 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Dosage: $dosage",
+              "${AppStrings.dosage.tr}: $dosage",
               style: TextStyle(fontSize: 15.sp, color: Colors.black87),
             ),
             Text(
-              "Price: $price",
+              "${AppStrings.fee.tr}: $price",
               style: TextStyle(fontSize: 15.sp, color: Colors.black87),
             ),
           ],
@@ -239,7 +240,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _priceRow("Subtotal", "\$156", isBold: true),
+          _priceRow(AppStrings.subtotal.tr, "\$156", isBold: true),
           12.verticalSpace,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,7 +250,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Delivery Charges",
+                    AppStrings.deliveryCharges.tr,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -257,7 +258,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "if home delivery",
+                    AppStrings.ifHomeDelivery.tr,
                     style: TextStyle(fontSize: 13.sp, color: Colors.grey),
                   ),
                 ],
@@ -273,7 +274,7 @@ class PharmacyPrescriptionRecord extends StatelessWidget {
             ],
           ),
           Divider(height: 32.h, thickness: 1, color: const Color(0xFFF1F1F1)),
-          _priceRow("Total Fee", "\$158", isBold: true, larger: true),
+          _priceRow(AppStrings.totalFee.tr, "\$158", isBold: true, larger: true),
         ],
       ),
     );

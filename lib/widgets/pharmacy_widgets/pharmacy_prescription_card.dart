@@ -1,33 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/models/pharmacy_prescription_model.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
+import '../../../utils/app_strings.dart';
 
 class PharmacyPrescriptionCard extends StatelessWidget {
   final PharmacyPrescriptionModel prescription;
   final VoidCallback onTap;
 
-  PharmacyPrescriptionCard({
+  const PharmacyPrescriptionCard({
     required this.prescription,
     required this.onTap,
     super.key,
   });
 
+  // Helper to map backend status to localized display and color
   Color getStatusColor(String status) {
-    switch (status) {
-      case "Approved":
-        return AppColors.primaryColor;
-      case "Pending":
-        return AppColors.orange;
-      case "Ready to Ship":
-        return AppColors.secondryColor;
-      case "Delivered":
-        return AppColors.green;
-      default:
-        return AppColors.lightGrey;
-    }
+    if (status == AppStrings.statusApproved.tr) return AppColors.primaryColor;
+    if (status == AppStrings.statusPending.tr) return AppColors.orange;
+    if (status == AppStrings.statusReadyToShip.tr) return AppColors.secondryColor;
+    if (status == AppStrings.statusDelivered.tr) return AppColors.green;
+    return AppColors.lightGrey;
   }
 
   @override
@@ -43,7 +39,7 @@ class PharmacyPrescriptionCard extends StatelessWidget {
             color: Colors.grey.withOpacity(0.1),
             spreadRadius: 2,
             blurRadius: 5,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -54,7 +50,7 @@ class PharmacyPrescriptionCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Prescription ID ${prescription.id}",
+                "${AppStrings.prescriptionId.tr} ${prescription.id}",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.sp,
@@ -75,7 +71,7 @@ class PharmacyPrescriptionCard extends StatelessWidget {
           ),
           5.verticalSpace,
           Text(
-            "Patient id:${prescription.patientId}",
+            "${AppStrings.patientId.tr}: ${prescription.patientId}",
             style: TextStyle(
               color: AppColors.darkGrey,
               fontSize: 13.sp,
@@ -114,23 +110,27 @@ class PharmacyPrescriptionCard extends StatelessWidget {
               ),
             ],
           ),
+          10.verticalSpace, // Added a bit more breathing room
           Row(
             children: [
               if (prescription.hasQr) ...[
-                _buildTag("QR", Colors.blue.shade100, Colors.blue),
+                _buildTag(AppStrings.tagQr.tr, Colors.blue.shade100, Colors.blue),
                 10.horizontalSpace,
               ],
               if (prescription.hasDoc) ...[
-                _buildTag("Doc", AppColors.orange.withOpacity(0.2), AppColors.orange),
+                _buildTag(AppStrings.tagDoc.tr, AppColors.orange.withOpacity(0.2), AppColors.orange),
                 10.horizontalSpace,
               ],
-
             ],
           ),
-        5.verticalSpace,
-        Divider(color: AppColors.lightGrey.withOpacity(0.3),),
-        5.verticalSpace,
-        CustomButton(borderRadius: 15, text: "View Detail", onTap: onTap),
+          10.verticalSpace,
+          Divider(color: AppColors.lightGrey.withOpacity(0.3)),
+          5.verticalSpace,
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.viewDetail.tr,
+            onTap: onTap,
+          ),
         ],
       ),
     );

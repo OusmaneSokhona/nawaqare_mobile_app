@@ -6,29 +6,28 @@ import '../../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/custom_text_field.dart';
-import '../../../widgets/display_field.dart';
-import '../../../widgets/profile_picture_widget.dart';
 
 class PharmacyEditLegalInformation extends GetView<SignUpController> {
-  PharmacyEditLegalInformation({super.key});
+  const PharmacyEditLegalInformation({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Container(
+      body: Container(
         height: 1.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              AppColors.onboardingBackground, Colors.white,],
+            colors: [AppColors.onboardingBackground, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal:20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -36,9 +35,7 @@ class PharmacyEditLegalInformation extends GetView<SignUpController> {
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -47,7 +44,7 @@ class PharmacyEditLegalInformation extends GetView<SignUpController> {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Edit Legal Information",
+                    AppStrings.editLegalInformation.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -63,148 +60,49 @@ class PharmacyEditLegalInformation extends GetView<SignUpController> {
                   child: Column(
                     children: [
                       15.verticalSpace,
-                      15.verticalSpace,
                       CustomTextField(
-                        labelText: "License Number",
+                        labelText: AppStrings.licenseNumber.tr,
                         hintText: "LIC-20493",
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: "Issuing Authority",
+                        labelText: AppStrings.issuingAuthority.tr,
                         hintText: "Punjab Pharmacy Council",
                       ),
                       10.verticalSpace,
-                      Obx(
-                            () => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Text(
-                                "Issue Date",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => _showDatePicker(context),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      controller.formattedDate,
-                                      // Display the formatted date
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color:
-                                        controller.selectedDate ==
-                                            null
-                                            ? Colors.grey
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.calendar_today,
-                                      color: Colors.blue,
-                                      size: 24,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildDatePickerField(
+                        context,
+                        label: AppStrings.issueDate.tr,
                       ),
                       10.verticalSpace,
-                      Obx(
-                            () => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Text(
-                                "Expiry Date",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  // Medium boldness
-                                  color:
-                                  Colors
-                                      .black87, // Darker text for the label
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => _showDatePicker(context),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      controller.formattedDate,
-                                      // Display the formatted date
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color:
-                                        controller.selectedDate ==
-                                            null
-                                            ? Colors.grey
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.calendar_today,
-                                      color: Colors.blue,
-                                      size: 24,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildDatePickerField(
+                        context,
+                        label: AppStrings.expiryDate.tr,
                       ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Business Reg. No.",hintText: "BRN-99821",),
+                      CustomTextField(
+                        labelText: AppStrings.businessRegNo.tr,
+                        hintText: "BRN-99821",
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: "Registered Name",hintText: "Alex Martin Healthcare (Pvt) Ltd",),
+                      CustomTextField(
+                        labelText: AppStrings.registeredName.tr,
+                        hintText: "Alex Martin Healthcare (Pvt) Ltd",
+                      ),
                       30.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Update", onTap: (){}),
+                      CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.update.tr,
+                          onTap: () {}
+                      ),
                       10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: "Cancel", onTap: (){Get.back();},bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.cancel.tr,
+                        onTap: () => Get.back(),
+                        bgColor: AppColors.inACtiveButtonColor,
+                        fontColor: Colors.black,
+                      ),
                       40.verticalSpace,
                     ],
                   ),
@@ -216,8 +114,55 @@ class PharmacyEditLegalInformation extends GetView<SignUpController> {
       ),
     );
   }
+
+  Widget _buildDatePickerField(BuildContext context, {required String label}) {
+    return Obx(
+          () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () => _showDatePicker(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    controller.formattedDate,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: controller.selectedDate == null ? Colors.grey : Colors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const Icon(Icons.calendar_today, color: Colors.blue, size: 24),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showDatePicker(BuildContext context) async {
-    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+    await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -226,58 +171,7 @@ class PharmacyEditLegalInformation extends GetView<SignUpController> {
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
-    );
-  }
-  static Widget buildDropdownField({
-    required String title,
-    required List<String> items,
-    required Rx<String?> selectedValue,
-    required Function(String?) onChanged,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          Obx(
-                () => DropdownButtonFormField<String>(
-              value: selectedValue.value,
-              decoration: InputDecoration(
-                contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide.none
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              isExpanded: true,
-              icon:  Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
-              style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: onChanged,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

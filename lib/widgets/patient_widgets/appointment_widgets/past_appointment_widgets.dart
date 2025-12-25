@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-
 import '../../../utils/app_fonts.dart';
-
+import '../../../utils/app_strings.dart';
 
 class PastAppointmentWidgets extends StatelessWidget {
   const PastAppointmentWidgets({super.key});
@@ -14,35 +14,33 @@ class PastAppointmentWidgets extends StatelessWidget {
     return Column(
       children: [
         15.verticalSpace,
-        const DiagnosisHistoryCard(
-            notes:
-            "Hypertension follow-up. Blood pressure stable, continue medication"),
+        DiagnosisHistoryCard(
+            notes: "Hypertension follow-up. Blood pressure stable, continue medication".tr),
         15.verticalSpace,
-        const PrescriptionHistoryCard(
-            medication: "Amoxicillin 500mg",
-            dosage: "Morning & Evening – 7 Days",
+        PrescriptionHistoryCard(
+            medication: "Amoxicillin 500mg".tr,
+            dosage: "Morning & Evening – 7 Days".tr,
             daysRemaining: 5),
         15.verticalSpace,
-        const MedicalReportCard(title: "Blood Test Report", date: "200/Sep/2025"),
+        MedicalReportCard(title: "Blood Test Report".tr, date: "20/Sep/2025"),
         15.verticalSpace,
-        const FollowUpRecommendationCard(
-            recommendation: "Schedule a follow-up in 3 months"),
+        FollowUpRecommendationCard(
+            recommendation: "Schedule a follow-up in 3 months".tr),
         15.verticalSpace,
-        const ReviewCard(
+        ReviewCard(
             image: "assets/demo_images/Frame 1000000981.png",
             reviewerName: "Emily Anderson",
             rating: 4,
-            reviewText:
-            "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care."),
+            reviewText: "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.".tr),
         15.verticalSpace,
         CustomButton(
             borderRadius: 15,
-            text: "Book Again",
+            text: AppStrings.bookAgain.tr,
             onTap: () {}),
         15.verticalSpace,
         CustomButton(
           borderRadius: 15,
-          text: "Download Invoice pdf",
+          text: AppStrings.downloadInvoicePdf.tr,
           onTap: () {},
           bgColor: AppColors.inACtiveButtonColor,
           fontColor: Colors.black,
@@ -55,7 +53,6 @@ class PastAppointmentWidgets extends StatelessWidget {
 
 class CardHeader extends StatelessWidget {
   final String title;
-
   const CardHeader({required this.title});
 
   @override
@@ -75,7 +72,6 @@ class CardHeader extends StatelessWidget {
 
 class DiagnosisHistoryCard extends StatelessWidget {
   final String notes;
-
   const DiagnosisHistoryCard({required this.notes, super.key});
 
   static const Color _primaryColor = Color(0xFF1F2937);
@@ -86,7 +82,7 @@ class DiagnosisHistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CardHeader(title: "Diagnosis History"),
+        CardHeader(title: AppStrings.diagnosisHistory.tr),
         5.verticalSpace,
         Container(
           padding: const EdgeInsets.all(16.0),
@@ -105,8 +101,8 @@ class DiagnosisHistoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(
-                'Diagnosis/Notes',
+              Text(
+                AppStrings.diagnosisNotesLabel.tr,
                 style: TextStyle(
                   fontSize: 15.sp,
                   fontWeight: FontWeight.bold,
@@ -116,7 +112,7 @@ class DiagnosisHistoryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 notes,
-                style:  TextStyle(
+                style: TextStyle(
                   fontSize: 13.sp,
                   color: _secondaryColor,
                 ),
@@ -135,9 +131,8 @@ class DiagnosisHistoryCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
                   ),
-                  child: const Text('Download Consultation Report',
-                      style:
-                      TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  child: Text(AppStrings.downloadConsultationReport.tr,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
                 ),
               ),
             ],
@@ -169,7 +164,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CardHeader(title: "Prescription History"),
+        CardHeader(title: AppStrings.prescriptionHistory.tr),
         5.verticalSpace,
         Container(
           padding: const EdgeInsets.all(16.0),
@@ -196,18 +191,18 @@ class PrescriptionHistoryCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                         Text(
-                          'Prescriptions',
+                        Text(
+                          AppStrings.prescriptionsLabel.tr,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.bold,
                             color: _primaryColor,
                           ),
                         ),
-                         SizedBox(height: 4),
+                        const SizedBox(height: 4),
                         Text(
                           medication,
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w600,
                             color: _primaryColor,
@@ -216,7 +211,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           dosage,
-                          style:  TextStyle(
+                          style: TextStyle(
                             fontSize: 13.sp,
                             color: _secondaryColor,
                           ),
@@ -231,7 +226,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                           color: AppColors.primaryColor, size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        '$daysRemaining- Days\nRemaining',
+                        '$daysRemaining- ${AppStrings.daysRemainingLabel.tr}',
                         textAlign: TextAlign.start,
                         style: const TextStyle(
                           fontSize: 12,
@@ -244,13 +239,13 @@ class PrescriptionHistoryCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              const Row(
+              Row(
                 children: [
-                  Icon(Icons.lock, color: AppColors.primaryColor, size: 16),
-                  SizedBox(width: 4),
+                  const Icon(Icons.lock, color: AppColors.primaryColor, size: 16),
+                  const SizedBox(width: 4),
                   Text(
-                    'Encrypted & compliant with GDPR/HDS',
-                    style: TextStyle(
+                    AppStrings.gdprComplianceNote.tr,
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.lightGrey,
                     ),
@@ -272,8 +267,8 @@ class PrescriptionHistoryCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
                       ),
-                      child: const Text('Download PDF',
-                          style: TextStyle(
+                      child: Text(AppStrings.downloadPdf.tr,
+                          style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
                   ),
@@ -290,8 +285,8 @@ class PrescriptionHistoryCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
                       ),
-                      child: const Text('Request Delivery',
-                          style: TextStyle(
+                      child: Text(AppStrings.requestDelivery.tr,
+                          style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
                   ),
@@ -324,7 +319,7 @@ class MedicalReportCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CardHeader(title: "Medical Reports"),
+        CardHeader(title: AppStrings.medicalReports.tr),
         5.verticalSpace,
         Container(
           padding: const EdgeInsets.all(16.0),
@@ -394,9 +389,8 @@ class MedicalReportCard extends StatelessWidget {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text('View',
-                    style:
-                    TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                child: Text(AppStrings.view.tr,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -418,7 +412,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CardHeader(title: " Follow-Up Recommendation"),
+        CardHeader(title: AppStrings.followUpRecommendation.tr),
         5.verticalSpace,
         Container(
           padding: const EdgeInsets.all(16.0),
@@ -462,9 +456,8 @@ class FollowUpRecommendationCard extends StatelessWidget {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text('Follow Up',
-                    style:
-                    TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                child: Text(AppStrings.followUpBtn.tr,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -498,7 +491,7 @@ class ReviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CardHeader(title: "Review"),
+          CardHeader(title: AppStrings.review.tr),
           5.verticalSpace,
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

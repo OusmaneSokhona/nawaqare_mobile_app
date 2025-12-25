@@ -5,10 +5,11 @@ import '../../../controllers/pharmacy_controllers/preparaition_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../utils/app_strings.dart';
 
 class DeliveryLog extends StatelessWidget {
   DeliveryLog({super.key});
-  PreparationController controller =Get.put(PreparationController());
+  PreparationController controller = Get.put(PreparationController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +42,7 @@ class DeliveryLog extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    "Delivery Log",
+                    AppStrings.deliveryLog.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 21.sp,
@@ -57,16 +58,16 @@ class DeliveryLog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       10.verticalSpace,
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      itemCount: controller.deliveries.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: 12),
-                      itemBuilder: (context, index) {
-                        return deliveryItemWidget(controller.deliveries[index]);
-                      },
-                    ),
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        itemCount: controller.deliveries.length,
+                        separatorBuilder: (context, index) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          return deliveryItemWidget(controller.deliveries[index]);
+                        },
+                      ),
                       10.verticalSpace,
                     ],
                   ),
@@ -140,7 +141,7 @@ class DeliveryLog extends StatelessWidget {
                   text: TextSpan(
                     style: const TextStyle(color: Colors.grey, fontSize: 13),
                     children: [
-                      const TextSpan(text: 'Last Update: '),
+                      TextSpan(text: AppStrings.lastUpdate.tr),
                       TextSpan(
                         text: data['update'],
                         style: const TextStyle(color: Color(0xFF4A4A4A)),

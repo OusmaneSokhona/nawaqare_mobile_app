@@ -3,16 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_health_space_grid.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_completion_loading.dart';
 import '../../patient_widgets/profile_widgets/info_row.dart';
 
-
-
-class DoctorProfessionalInfo extends StatelessWidget{
+class DoctorProfessionalInfo extends StatelessWidget {
   DoctorProfessionalInfo({super.key});
-  DoctorProfileController controller=Get.find();
+  final DoctorProfileController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -42,7 +42,7 @@ class DoctorProfessionalInfo extends StatelessWidget{
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
@@ -51,9 +51,9 @@ class DoctorProfessionalInfo extends StatelessWidget{
           ),
           const SizedBox(height: 10),
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 88.w),
+            padding: EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
-              onPressed: (){
+              onPressed: () {
                 controller.editProfessionalInfo();
               },
               style: ElevatedButton.styleFrom(
@@ -64,11 +64,11 @@ class DoctorProfessionalInfo extends StatelessWidget{
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:  Text('Edit Professional Info', style: TextStyle(fontSize: 12.sp)),
+              child: Text(AppStrings.editProfessionalInfo.tr, style: TextStyle(fontSize: 12.sp)),
             ),
           ),
           5.verticalSpace,
-          ProfileCompletionLoading(),
+          const ProfileCompletionLoading(),
           15.verticalSpace,
           Container(
             padding: const EdgeInsets.all(16),
@@ -85,29 +85,62 @@ class DoctorProfessionalInfo extends StatelessWidget{
             ),
             child: Column(
               children: [
-                CardHeader(title: "Registration & Licensing",fontSize: 17.sp,fontWeight: FontWeight.w500,),
-                InfoRow(label: 'National Identity Document', value: "MA-PK-457621",labelTextSize: 15,valueTextSize: 12,),
-                const InfoRow(label: 'Date of Registration', value: '15 March 2018'),
-                CardHeader(title: "Practice Information",fontSize: 17.sp,fontWeight: FontWeight.w500,),
-                InfoRow(label: 'Medical Specialty', value: "Cardiology"),
-                InfoRow(label: 'Place of Practice', value: "Allied Hospital, Faisalabad",labelTextSize: 15,valueTextSize: 12,),
-                InfoRow(label: 'Experience', value: "7 Year",),
-                const InfoRow(label: 'Year', value: '5'),
-                InfoRow(label: 'Nationality', value: "Pakistani"),
-                InfoRow(label: 'Country', value: "Pakistan"),
-                InfoRow(label: 'Language', value: "English",showDivider: false,),
-                Text("Note: These details appear on your public profile.", style: TextStyle(
-                  fontSize: 13.sp,
-                  color: AppColors.darkGrey,
-                ),),
-
+                CardHeader(
+                  title: AppStrings.registrationLicensing.tr,
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+                InfoRow(
+                  label: AppStrings.nationalIdentityDocument.tr,
+                  value: "MA-PK-457621",
+                  labelTextSize: 15,
+                  valueTextSize: 12,
+                ),
+                InfoRow(
+                  label: AppStrings.dateOfRegistration.tr,
+                  value: '15 March 2018',
+                ),
+                CardHeader(
+                  title: AppStrings.practiceInformation.tr,
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+                InfoRow(
+                  label: AppStrings.medicalSpecialty.tr,
+                  value: AppStrings.cardiology.tr,
+                ),
+                InfoRow(
+                  label: AppStrings.placeOfPractice.tr,
+                  value: "Allied Hospital, Faisalabad",
+                  labelTextSize: 15,
+                  valueTextSize: 12,
+                ),
+                InfoRow(
+                  label: AppStrings.experience.tr,
+                  value: "7 ${AppStrings.years.tr}",
+                ),
+                InfoRow(label: AppStrings.year.tr, value: '5'),
+                InfoRow(label: AppStrings.nationality.tr, value: AppStrings.pakistani.tr),
+                InfoRow(label: AppStrings.country.tr, value: AppStrings.pakistan.tr),
+                InfoRow(
+                  label: AppStrings.language.tr,
+                  value: AppStrings.english.tr,
+                  showDivider: false,
+                ),
+                Text(
+                  AppStrings.publicProfileNote.tr,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: AppColors.darkGrey,
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 30),
-          const Text(
-            'Actions',
-            style: TextStyle(
+          Text(
+            AppStrings.actions.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),

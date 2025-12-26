@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class QuickStatisticsCard extends StatelessWidget {
   const QuickStatisticsCard({super.key});
@@ -53,15 +55,15 @@ class QuickStatisticsCard extends StatelessWidget {
         children: [
           _buildStatItem(
             "assets/images/consultation_plan_icon.png",
-            'Today : 05',
+            '${AppStrings.today.tr} : 05',
           ),
           _buildStatItem(
             "assets/images/chat_icon.png",
-            'Messages : 02',
+            '${AppStrings.messages.tr} : 02',
           ),
           _buildStatItem(
             "assets/images/star_icon.png",
-            'Rating : 4.3/5',
+            '${AppStrings.rating.tr} : 4.3/5',
           ),
         ],
       ),

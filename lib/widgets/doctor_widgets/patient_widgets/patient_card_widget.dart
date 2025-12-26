@@ -25,7 +25,7 @@ class PatientCardWidget extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 50.h, // Adjusted height for better touch target
+          height: 50.h,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isOutlined ? AppColors.lightGrey.withOpacity(0.1) : color,
@@ -70,16 +70,14 @@ class PatientCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(vertical: 8.h),
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +91,7 @@ class PatientCardWidget extends StatelessWidget {
                       size: 13.sp, color: AppColors.primaryColor),
                   8.horizontalSpace,
                   Text(
-                    'Last appointment: ${patientModel.lastAppointmentDate}',
+                    '${AppStrings.lastAppointment.tr}: ${patientModel.lastAppointmentDate}',
                     style: TextStyle(
                       fontSize: 11.sp,
                       color: AppColors.darkGrey,
@@ -110,7 +108,6 @@ class PatientCardWidget extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Patient Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
                 child: Image.asset(
@@ -121,7 +118,6 @@ class PatientCardWidget extends StatelessWidget {
                 ),
               ),
               15.horizontalSpace,
-              // Details Column
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -134,13 +130,12 @@ class PatientCardWidget extends StatelessWidget {
                     ),
                   ),
                   8.verticalSpace,
-                  // Consultation Type
                   Row(
                     children: [
                       Icon(Icons.call_outlined, size: 16.sp, color: AppColors.primaryColor),
                       4.horizontalSpace,
                       Text(
-                        patientModel.consultationType,
+                        patientModel.consultationType.tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: AppColors.lightGrey,
@@ -149,7 +144,6 @@ class PatientCardWidget extends StatelessWidget {
                     ],
                   ),
                   4.verticalSpace,
-                  // Period (This Week)
                   Row(
                     children: [
                       Text(
@@ -162,7 +156,7 @@ class PatientCardWidget extends StatelessWidget {
                       ),
                       4.horizontalSpace,
                       Text(
-                        patientModel.period,
+                        patientModel.period.tr,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: AppColors.lightGrey,

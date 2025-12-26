@@ -4,15 +4,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 import '../../../models/prscription_model.dart';
 
 class DoctorPrescriptionCard extends StatelessWidget {
-  Function onTap;
+  final Function onTap;
   final PrescriptionModel prescription;
   final bool isActive;
-  DoctorPrescriptionCard({required this.prescription, super.key,this.isActive=true,required this.onTap});
-  DoctorPrescriptionController controller=Get.find();
+  DoctorPrescriptionCard({required this.prescription, super.key, this.isActive = true, required this.onTap});
+
+  final DoctorPrescriptionController controller = Get.find();
+
   Color _getStatusColor(PrescriptionStatus status) {
     switch (status) {
       case PrescriptionStatus.active:
@@ -30,16 +33,16 @@ class DoctorPrescriptionCard extends StatelessWidget {
     String text;
     switch (status) {
       case PrescriptionStatus.active:
-        text = 'Active';
+        text = AppStrings.active.tr;
         break;
       case PrescriptionStatus.expirySoon:
-        text = 'Expiry Soon';
+        text = AppStrings.expirySoon.tr;
         break;
       case PrescriptionStatus.expired:
-        text = 'Expired';
+        text = AppStrings.expired.tr;
         break;
       case PrescriptionStatus.completed:
-        text = 'Completed';
+        text = AppStrings.completed.tr;
         break;
     }
 
@@ -60,7 +63,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActionChip(String text, Color color, VoidCallback onTap,Color textColor) {
+  Widget _buildActionChip(String text, Color color, VoidCallback onTap, Color textColor) {
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -86,8 +89,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool showRefillButton = prescription.status != PrescriptionStatus.completed&&isActive;
-    final Color primaryColor = _getStatusColor(prescription.status);
+    final bool showRefillButton = prescription.status != PrescriptionStatus.completed && isActive;
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
@@ -183,15 +185,15 @@ class DoctorPrescriptionCard extends StatelessWidget {
             children: [
               if (showRefillButton)
                 _buildActionChip(
-                    'Modify',
+                    AppStrings.modify.tr,
                     const Color(0xFFE0E0E0),
-                        () => controller.modify(),Colors.black
+                        () => controller.modify(), Colors.black
                 ),
               if (showRefillButton) 10.horizontalSpace,
               _buildActionChip(
-                  'View Detail',
+                  AppStrings.viewDetail.tr,
                   AppColors.primaryColor,
-                      () {onTap();},Colors.white
+                      () {onTap();}, Colors.white
               ),
             ],
           ),

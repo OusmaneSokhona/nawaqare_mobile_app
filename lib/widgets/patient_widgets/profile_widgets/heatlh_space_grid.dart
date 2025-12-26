@@ -11,7 +11,7 @@ import '../../../screens/patient_screens/profile_screens/privacy_security.dart';
 import '../../../screens/patient_screens/profile_screens/update_password.dart';
 import '../../../utils/app_bindings.dart';
 import '../../../utils/app_colors.dart';
-import '../../../utils/shared_prefrence.dart';
+import '../../../utils/locat_storage.dart';
 import 'health_space_card.dart';
 import 'language_dialogs.dart';
 

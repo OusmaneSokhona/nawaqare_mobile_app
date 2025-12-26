@@ -4,7 +4,8 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class DeleteReportDialog extends StatelessWidget {
   const DeleteReportDialog({super.key});
@@ -23,9 +24,9 @@ class DeleteReportDialog extends StatelessWidget {
           children: <Widget>[
             Image.asset("assets/images/delete_icon.png",height: 110.h,),
             const SizedBox(height: 16),
-            const Text(
-              'Delete Report',
-              style: TextStyle(
+            Text(
+              'Delete Report'.tr,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -34,7 +35,7 @@ class DeleteReportDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'This action will permanently delete your medical Report',
+              'This action will permanently delete your medical Report'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[700]),
             ),
@@ -53,9 +54,9 @@ class DeleteReportDialog extends StatelessWidget {
                       ),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      AppStrings.cancel.tr,
+                      style: const TextStyle(
                           color: Colors.black54,
                           fontWeight: FontWeight.bold),
                     ),
@@ -76,9 +77,9 @@ class DeleteReportDialog extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.confirm.tr,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

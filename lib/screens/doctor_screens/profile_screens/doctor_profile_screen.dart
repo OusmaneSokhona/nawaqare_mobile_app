@@ -165,13 +165,13 @@ class DoctorProfileScreen extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              profileType(AppStrings.personalInfo.tr, 65.w, "Personal Info"),
+                              profileType(AppStrings.personalInfo, 65.w, "Personal Info"),
                               9.horizontalSpace,
-                              profileType(AppStrings.professionalInfo.tr, 80.w, "Professional Info"),
+                              profileType(AppStrings.professionalInfo, 80.w, "Professional Info"),
                               9.horizontalSpace,
-                              profileType(AppStrings.documents.tr, 55.w, "Documents"),
+                              profileType(AppStrings.documents, 55.w, "Documents"),
                               9.horizontalSpace,
-                              profileType(AppStrings.revalidation.tr, 60.w, "Revalidation"),
+                              profileType(AppStrings.revalidation, 60.w, "Revalidation"),
                             ],
                           ),
                         ),
@@ -208,7 +208,7 @@ class DoctorProfileScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              title,
+              title.tr,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

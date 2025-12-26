@@ -3,17 +3,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_health_space_grid.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_completion_loading.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_switch.dart';
 import '../../patient_widgets/profile_widgets/info_row.dart';
 
-
-
-class DoctorPersonalInfo extends StatelessWidget{
+class DoctorPersonalInfo extends StatelessWidget {
   DoctorPersonalInfo({super.key});
-  DoctorProfileController controller=Get.find();
+  final DoctorProfileController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -43,7 +43,7 @@ class DoctorPersonalInfo extends StatelessWidget{
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade500,
@@ -52,7 +52,7 @@ class DoctorPersonalInfo extends StatelessWidget{
           ),
           const SizedBox(height: 10),
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 88.w),
+            padding: EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
               onPressed: controller.editPersonalInfo,
               style: ElevatedButton.styleFrom(
@@ -63,12 +63,12 @@ class DoctorPersonalInfo extends StatelessWidget{
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:  Text('Edit Personal Info', style: TextStyle(fontSize: 14.sp)),
+              child: Text(AppStrings.editPersonalInfo.tr, style: TextStyle(fontSize: 14.sp)),
             ),
           ),
           5.verticalSpace,
-          ProfileCompletionLoading(),
-         15.verticalSpace,
+          const ProfileCompletionLoading(),
+          15.verticalSpace,
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -84,38 +84,37 @@ class DoctorPersonalInfo extends StatelessWidget{
             ),
             child: Column(
               children: [
-                CardHeader(title: "Identity",fontSize: 18.sp,fontWeight: FontWeight.w500,),
-                InfoRow(label: 'Full Name', value: controller.user.value.name),
-                const InfoRow(label: 'Date of birth', value: '02/Sep/2025'),
-                CardHeader(title: "Contact",fontSize: 18.sp,fontWeight: FontWeight.w500,),
-                InfoRow(label: 'Email', value: controller.user.value.email),
-                InfoRow(label: 'Phone', value: controller.user.value.phone),
-                InfoRow(label: 'Address', value: controller.user.value.address.replaceAll('\n', ' '),),
-                CardHeader(title: "Demographics",fontSize: 18.sp,fontWeight: FontWeight.w500,),
-                const InfoRow(label: 'Gender', value: 'Male'),
-                InfoRow(label: 'Nationality', value: "Islam"),
-                InfoRow(label: 'ID Number', value: "31101-5678-9876"),
-                CardHeader(title: "Profile Display",fontSize: 17.sp,fontWeight: FontWeight.w500,),
-                ProfileSwitch(title: "Male",isEnabled: true,),
-                ProfileSwitch(title: "Female"),
-                ProfileSwitch(title: "Public Profile",isEnabled: true,),
-                CardHeader(title: "About Me",fontSize: 17.sp,fontWeight: FontWeight.w500,),
+                CardHeader(title: AppStrings.identity.tr, fontSize: 18.sp, fontWeight: FontWeight.w500),
+                InfoRow(label: AppStrings.fullName.tr, value: controller.user.value.name),
+                InfoRow(label: AppStrings.dob.tr, value: '02/Sep/2025'),
+                CardHeader(title: AppStrings.contact.tr, fontSize: 18.sp, fontWeight: FontWeight.w500),
+                InfoRow(label: AppStrings.email.tr, value: controller.user.value.email),
+                InfoRow(label: AppStrings.phone.tr, value: controller.user.value.phone),
+                InfoRow(label: AppStrings.address.tr, value: controller.user.value.address.replaceAll('\n', ' ')),
+                CardHeader(title: AppStrings.demographics.tr, fontSize: 18.sp, fontWeight: FontWeight.w500),
+                InfoRow(label: AppStrings.gender.tr, value: AppStrings.male.tr),
+                InfoRow(label: AppStrings.nationality.tr, value: "Islam"),
+                InfoRow(label: AppStrings.idNumber.tr, value: "31101-5678-9876"),
+                CardHeader(title: AppStrings.profileDisplay.tr, fontSize: 17.sp, fontWeight: FontWeight.w500),
+                ProfileSwitch(title: AppStrings.male.tr, isEnabled: true),
+                ProfileSwitch(title: AppStrings.female.tr),
+                ProfileSwitch(title: AppStrings.publicProfile.tr, isEnabled: true),
+                CardHeader(title: AppStrings.aboutMe.tr, fontSize: 17.sp, fontWeight: FontWeight.w500),
                 Text(
-                 "Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.",
+                  "Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.",
                   style: TextStyle(
                     fontSize: 13.sp,
                     color: AppColors.lightGrey,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-
               ],
             ),
           ),
           const SizedBox(height: 30),
-          const Text(
-            'Actions',
-            style: TextStyle(
+          Text(
+            AppStrings.actions.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),

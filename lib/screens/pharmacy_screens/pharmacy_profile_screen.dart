@@ -127,22 +127,22 @@ class PharmacyProfileScreen extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: [
-                            profileType(AppStrings.personalInfo.tr, 80.w),
+                            profileType(AppStrings.personalInfo, 80.w),
                             7.horizontalSpace,
-                            profileType(AppStrings.legalInformation.tr, 100.w),
+                            profileType(AppStrings.legalInformation, 100.w),
                             7.horizontalSpace,
-                            profileType(AppStrings.documents.tr, 70.w),
+                            profileType(AppStrings.documents, 70.w),
                             7.horizontalSpace,
-                            profileType(AppStrings.renewalStatus.tr, 90.w),
+                            profileType(AppStrings.renewalStatus, 90.w),
                           ],
                         ),
                       ),
                       15.verticalSpace,
                       Obx(() {
                         final type = controller.type.value;
-                        if (type == AppStrings.personalInfo.tr) return PharmacyPersonalInfo();
-                        if (type == AppStrings.legalInformation.tr) return LegalInformation();
-                        if (type == AppStrings.documents.tr) return PharmacyDocumentScreen();
+                        if (type == AppStrings.personalInfo) return PharmacyPersonalInfo();
+                        if (type == AppStrings.legalInformation) return LegalInformation();
+                        if (type == AppStrings.documents) return PharmacyDocumentScreen();
                         return PharmacyRenewalStatus();
                       }),
                       10.verticalSpace,
@@ -172,7 +172,7 @@ class PharmacyProfileScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              title,
+              title.tr,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

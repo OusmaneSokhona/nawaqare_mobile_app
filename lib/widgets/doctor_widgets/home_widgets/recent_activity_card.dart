@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class RecentActivityCard extends StatelessWidget {
   const RecentActivityCard({super.key});
@@ -65,17 +67,17 @@ class RecentActivityCard extends StatelessWidget {
         children: [
           _buildLogItem(
             "assets/images/call_icon.png",
-            'Mr. Alex joined call',
+            '${AppStrings.mr.tr} Alex ${AppStrings.joinedCall.tr}',
             '09:15 AM',
           ),
           _buildLogItem(
             "assets/images/sent_to_pharmacy_icon.png",
-            'Prescription sent to pharmacy',
+            AppStrings.prescriptionSentPharmacy.tr,
             '09:15 AM',
           ),
           _buildLogItem(
             "assets/images/payment_confirmed_icon.png",
-            'Payment confirmed by patient',
+            AppStrings.paymentConfirmedPatient.tr,
             '09:15 AM',
           ),
         ],

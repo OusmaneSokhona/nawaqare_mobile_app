@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/service_and_pricing_controller.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
-import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
-import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
 
@@ -15,7 +12,7 @@ class EditServiceDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-ServiceAndPricingController controller=Get.find();
+    ServiceAndPricingController controller = Get.find();
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -26,13 +23,41 @@ ServiceAndPricingController controller=Get.find();
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text("General Consultation",style: TextStyle(fontSize: 22.sp,fontWeight:FontWeight.w700,fontFamily: AppFonts.jakartaBold),),
+            Text(
+              AppStrings.generalConsultation.tr,
+              style: TextStyle(
+                fontSize: 22.sp,
+                fontWeight: FontWeight.w700,
+                fontFamily: AppFonts.jakartaBold,
+              ),
+            ),
             5.verticalSpace,
-            CustomTextField(labelText: "Location",hintText: "Clinic Room 2",),
+            CustomTextField(
+              labelText: AppStrings.location.tr,
+              hintText: "Clinic Room 2",
+            ),
             10.verticalSpace,
-            CustomDropdown(label: "Days", options: controller.daysList, currentValue: controller.selectedDay.value, onChanged: (_){}),
+            Obx(
+                  () => CustomDropdown(
+                label: AppStrings.days.tr,
+                options: controller.daysList.map((e) => e.tr).toList(),
+                currentValue: controller.selectedDay.value.tr,
+                onChanged: (val) {
+                  // Logic to update controller
+                },
+              ),
+            ),
             10.verticalSpace,
-            CustomDropdown(label: "Mode", options: controller.modeList, currentValue: controller.selectedMode.value, onChanged: (_){}),
+            Obx(
+                  () => CustomDropdown(
+                label: AppStrings.mode.tr,
+                options: controller.modeList.map((e) => e.tr).toList(),
+                currentValue: controller.selectedMode.value.tr,
+                onChanged: (val) {
+                  // Logic to update controller
+                },
+              ),
+            ),
             const SizedBox(height: 24),
             Row(
               children: <Widget>[
@@ -48,11 +73,12 @@ ServiceAndPricingController controller=Get.find();
                       ),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.cancel.tr,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -71,9 +97,9 @@ ServiceAndPricingController controller=Get.find();
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.confirm.tr,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

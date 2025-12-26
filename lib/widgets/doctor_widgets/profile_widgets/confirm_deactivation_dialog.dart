@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
-import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
-import 'package:patient_app/utils/app_bindings.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class ConfirmDeactivationDialog extends StatelessWidget {
   const ConfirmDeactivationDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -21,11 +17,11 @@ class ConfirmDeactivationDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.asset("assets/images/deactivation_dialog_icon.png",height: 110.h,),
+            Image.asset("assets/images/deactivation_dialog_icon.png", height: 110.h),
             const SizedBox(height: 16),
-            const Text(
-              'Confirm  Deactivation',
-              style: TextStyle(
+            Text(
+              AppStrings.confirmDeactivation.tr,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
@@ -34,18 +30,17 @@ class ConfirmDeactivationDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'This service will no longer be bookable. Confirm?',
+              AppStrings.deactivationWarning.tr,
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[700]),
             ),
-
             const SizedBox(height: 24),
             Row(
               children: <Widget>[
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Get.back(); // Use Get.back instead of Navigator.pop
+                      Get.back();
                     },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -54,9 +49,9 @@ class ConfirmDeactivationDialog extends StatelessWidget {
                       ),
                       side: BorderSide(color: Colors.grey.shade300),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      AppStrings.cancel.tr,
+                      style: const TextStyle(
                           color: Colors.black54,
                           fontWeight: FontWeight.bold),
                     ),
@@ -66,7 +61,7 @@ class ConfirmDeactivationDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.back(); // Use Get.back instead of Navigator.pop
+                      Get.back();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],
@@ -77,9 +72,9 @@ class ConfirmDeactivationDialog extends StatelessWidget {
                       ),
                       elevation: 0,
                     ),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppStrings.confirm.tr,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

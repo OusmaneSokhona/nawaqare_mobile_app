@@ -52,12 +52,12 @@ class MedicalRecordWidgets extends StatelessWidget {
           ),
           const SizedBox(height: 12.0),
           Text(
-            'Refill until Oct 15, 2025',
+            '${AppStrings.refillUntil.tr} Oct 15, 2025',
             style: detailStyle,
           ),
           const SizedBox(height: 4.0),
           Text(
-            'Last updated: 12 Sept 2025',
+            '${AppStrings.lastUpdated.tr}: 12 Sept 2025',
             style: detailStyle,
           ),
           Divider(

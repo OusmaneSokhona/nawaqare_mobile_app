@@ -3,16 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_health_space_grid.dart';
-import 'package:patient_app/widgets/doctor_widgets/profile_widgets/document_item_widget.dart';
-import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_completion_loading.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/submit_revalidation_dialog.dart';
 
 class Revalidation extends StatelessWidget {
   Revalidation({super.key});
 
-  DoctorProfileController controller = Get.find();
+  final DoctorProfileController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +42,7 @@ class Revalidation extends StatelessWidget {
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
           ),
@@ -59,11 +58,11 @@ class Revalidation extends StatelessWidget {
                     value: 0.7,
                     strokeWidth: 8,
                     backgroundColor: AppColors.red.withOpacity(0.2),
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.red),
+                    valueColor: const AlwaysStoppedAnimation<Color>(AppColors.red),
                   ),
                 ),
                 Text(
-                  '30 Days',
+                  '30 ${AppStrings.days.tr}',
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.bold,
@@ -76,33 +75,32 @@ class Revalidation extends StatelessWidget {
           8.verticalSpace,
           Center(
             child: Text(
-              'Verification expires in 30 days',
-              style: TextStyle(fontSize: 12.sp, color:AppColors.darkGrey),
+              '${AppStrings.verificationExpiresIn.tr} 30 ${AppStrings.days.tr}',
+              style: TextStyle(fontSize: 12.sp, color: AppColors.darkGrey),
             ),
           ),
           10.verticalSpace,
           Container(
-            padding:  EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
             decoration: BoxDecoration(
               color: AppColors.yellow.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15.0),
               border: Border.all(
-                color: AppColors.yellow.withOpacity(0.2), // Use the same color for a smooth look
+                color: AppColors.yellow.withOpacity(0.2),
                 width: 1,
               ),
             ),
-            child:  Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Image.asset("assets/images/alert_icon.png",height: 45.h,),
-                SizedBox(width: 12.0),
-                // Banner Text
+                Image.asset("assets/images/alert_icon.png", height: 45.h),
+                const SizedBox(width: 12.0),
                 Expanded(
                   child: Text(
-                    'Your profile verification expires in 30 days. Please revalidate your information',
+                    '${AppStrings.revalidationWarning.tr} 30 ${AppStrings.days.tr}. ${AppStrings.pleaseRevalidate.tr}',
                     style: TextStyle(
                       fontSize: 13.sp,
-                      color: Color(0xFF333333),
+                      color: const Color(0xFF333333),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -111,13 +109,18 @@ class Revalidation extends StatelessWidget {
             ),
           ),
           20.verticalSpace,
-         CustomButton(borderRadius: 15, text: "Revalidate Data", onTap: (){
-           Get.dialog(SubmitRevalidationDialog());
-         },height: 45.h,),
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.revalidateData.tr,
+            onTap: () {
+              Get.dialog(const SubmitRevalidationDialog());
+            },
+            height: 45.h,
+          ),
           10.verticalSpace,
-          const Text(
-            'Actions',
-            style: TextStyle(
+          Text(
+            AppStrings.actions.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),

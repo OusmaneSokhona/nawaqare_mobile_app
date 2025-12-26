@@ -134,7 +134,7 @@ class PharmacyPersonalInfo extends StatelessWidget {
         Text(
           AppStrings.digitalSignatureTitle.tr,
           style: TextStyle(
-            fontSize: 21.sp,
+            fontSize: 17.sp,
             fontWeight: FontWeight.w700,
             fontFamily: AppFonts.jakartaBold,
             color: const Color(0xFF2D3142),

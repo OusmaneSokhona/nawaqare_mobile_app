@@ -5,7 +5,7 @@ import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 
 import '../../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
 import '../../../utils/app_colors.dart';

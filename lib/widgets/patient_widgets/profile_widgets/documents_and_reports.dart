@@ -54,7 +54,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                 ),
               ),
               child: Text(AppStrings.uploadLabel.tr,
-                  style: TextStyle(fontSize: 14.sp)),
+                  style: TextStyle(fontSize: 11.sp)),
             ),
           ),
           15.verticalSpace,

@@ -109,7 +109,7 @@ class PatientDetailCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${AppStrings.gender.tr}: ${AppStrings.male.tr}',
+                      '${AppStrings.gender.tr}: ${AppStrings.female.tr}', // Changed to female to match name context
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF6B7280),

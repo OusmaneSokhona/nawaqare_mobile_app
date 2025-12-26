@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class TemplateCard extends StatelessWidget {
   final String title;
@@ -38,7 +40,7 @@ class TemplateCard extends StatelessWidget {
               children: [
                 Flexible(
                   child: Text(
-                    title,
+                    title.tr, // Localizing title if it's a key
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -48,7 +50,7 @@ class TemplateCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  category,
+                  category.tr, // Localizing category if it's a key
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -57,33 +59,25 @@ class TemplateCard extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 8),
-
             Text(
-              details,
+              details.tr, // Localizing details if it's a key
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade700,
               ),
             ),
-
             const SizedBox(height: 4),
-
             Text(
-              'last update: $lastUpdate',
+              '${AppStrings.lastUpdate.tr}: $lastUpdate',
               style: TextStyle(
                 fontSize: 13,
                 color: Colors.grey.shade500,
               ),
             ),
-
             const SizedBox(height: 16),
-
             Divider(color: Colors.grey.shade300, thickness: 1),
-
             const SizedBox(height: 16),
-
             Row(
               children: <Widget>[
                 Expanded(
@@ -98,19 +92,17 @@ class TemplateCard extends StatelessWidget {
                       ),
                     ),
                     onPressed: onEdit,
-                    child: const Text(
-                      'Edit Set',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    child: Text(
+                      AppStrings.editSet.tr,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 12),
-
                 Expanded(
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:AppColors.primaryColor,
+                      backgroundColor: AppColors.primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
@@ -118,9 +110,9 @@ class TemplateCard extends StatelessWidget {
                       ),
                     ),
                     onPressed: onUse,
-                    child: const Text(
-                      'Use Template',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    child: Text(
+                      AppStrings.useTemplate.tr,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

@@ -157,11 +157,11 @@ class ProfileScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            profileType(AppStrings.personalInfo.tr, 80.w, "Personal Info"),
+                            profileType(AppStrings.personalInfo, 80.w, "Personal Info"),
                             9.horizontalSpace,
-                            profileType(AppStrings.medicalVitals.tr, 100.w, "Medical Vitals"),
+                            profileType(AppStrings.medicalVitals, 100.w, "Medical Vitals"),
                             9.horizontalSpace,
-                            profileType(AppStrings.documentsAndReports.tr, 120.w, "Documents & Reports"),
+                            profileType(AppStrings.documentsAndReports, 120.w, "Documents & Reports"),
                           ],
                         ),
                       ),
@@ -206,7 +206,7 @@ class ProfileScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              title,
+              title.tr,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

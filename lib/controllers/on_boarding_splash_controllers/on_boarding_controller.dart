@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/on_boarding_model.dart';
 import 'package:patient_app/screens/on_boarding_and_splash_screens/data_privacy_consent.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 
 class OnBoardingController extends GetxController {
   RxInt currentPageIndex = 0.obs;

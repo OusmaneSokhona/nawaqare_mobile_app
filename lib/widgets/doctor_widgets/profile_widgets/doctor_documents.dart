@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_health_space_grid.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/document_item_widget.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_completion_loading.dart';
@@ -10,12 +11,12 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_compl
 class DoctorDocuments extends StatelessWidget {
   DoctorDocuments({super.key});
 
-  DoctorProfileController controller = Get.find();
+  final DoctorProfileController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Column(
+          () => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
@@ -41,7 +42,7 @@ class DoctorDocuments extends StatelessWidget {
           ),
           Center(
             child: Text(
-              'Last update: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
           ),
@@ -64,13 +65,13 @@ class DoctorDocuments extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Re-upload Expired Document',
+                AppStrings.reuploadExpiredDocument.tr,
                 style: TextStyle(fontSize: 14.sp),
               ),
             ),
           ),
           10.verticalSpace,
-          ProfileCompletionLoading(),
+          const ProfileCompletionLoading(),
           15.verticalSpace,
           Container(
             padding: const EdgeInsets.all(16),
@@ -88,30 +89,33 @@ class DoctorDocuments extends StatelessWidget {
             child: Column(
               children: [
                 DocumentItemWidget(
-                  documentName: "National Identity Document.png",
-                  documentStatus: "Uploaded",
+                  documentName: AppStrings.nationalIdentityDocument.tr,
+                  documentStatus: AppStrings.uploadedStatus.tr,
                 ),
                 15.verticalSpace,
                 DocumentItemWidget(
-                  documentName: "Medical Diploma.JPEG",
-                  documentStatus: "Pending review",
+                  documentName: AppStrings.medicalDiploma.tr,
+                  documentStatus: AppStrings.pendingReviewStatus.tr,
                 ),
                 15.verticalSpace,
                 DocumentItemWidget(
-                  documentName: "Registration Certificate.JPEG",
-                  documentStatus: "Uploaded",
+                  documentName: AppStrings.registrationCertificate.tr,
+                  documentStatus: AppStrings.uploadedStatus.tr,
                 ),
                 15.verticalSpace,
                 DocumentItemWidget(
-                  documentName: "Professional Photo",
-                  documentStatus: "Rejected",
+                  documentName: AppStrings.professionalPhoto.tr,
+                  documentStatus: AppStrings.rejectedStatus.tr,
                 ),
                 15.verticalSpace,
-                DocumentItemWidget(documentName: "Liability Insurance Proof", documentStatus: "Expired"),
+                DocumentItemWidget(
+                  documentName: AppStrings.liabilityInsuranceProof.tr,
+                  documentStatus: AppStrings.expiredStatus.tr,
+                ),
                 15.verticalSpace,
                 DocumentItemWidget(
-                  documentName: "Bank Details Proof",
-                  documentStatus: "Uploaded",
+                  documentName: AppStrings.bankDetailsProof.tr,
+                  documentStatus: AppStrings.uploadedStatus.tr,
                   showDivider: false,
                 ),
                 7.verticalSpace,
@@ -121,26 +125,25 @@ class DoctorDocuments extends StatelessWidget {
                     color: AppColors.orange.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(15.0),
                     border: Border.all(
-                      color: AppColors.orange.withOpacity(0.3), // Use the same color for a smooth look
+                      color: AppColors.orange.withOpacity(0.3),
                       width: 1,
                     ),
                   ),
                   child:  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Icon(
+                      const Icon(
                         Icons.error_outline,
                         color: AppColors.orange,
                         size: 24,
                       ),
-                      SizedBox(width: 12.0),
-                      // Banner Text
+                      const SizedBox(width: 12.0),
                       Expanded(
                         child: Text(
-                          'All documents are encrypted and stored under HDS standards',
+                          AppStrings.encryptionBanner.tr,
                           style: TextStyle(
                             fontSize: 11.sp,
-                            color: Color(0xFF333333),
+                            color: const Color(0xFF333333),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -152,9 +155,9 @@ class DoctorDocuments extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          const Text(
-            'Actions',
-            style: TextStyle(
+          Text(
+            AppStrings.actions.tr,
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),

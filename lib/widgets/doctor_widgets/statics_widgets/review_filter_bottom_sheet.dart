@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/doctor_controllers/patient_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/review_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
 
 class ReviewFilterBottomSheet extends StatelessWidget {
@@ -16,8 +15,9 @@ class ReviewFilterBottomSheet extends StatelessWidget {
     required this.onApply,
     required this.onReset,
   });
-  ReviewsController reviewsController
-  = Get.find();
+
+  final ReviewsController reviewsController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -36,17 +36,33 @@ class ReviewFilterBottomSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(4),
                 ),
                 icon: const Icon(Icons.close, color: Colors.white, size: 20),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Get.back(),
               ),
             ],
           ),
 
           const SizedBox(height: 16),
-          CustomDropdown(label: "Period", options: reviewsController.periodList, currentValue: reviewsController.selectedPeriod.value, onChanged: (_){}),
+          Obx(
+                () => CustomDropdown(
+              label: AppStrings.period.tr,
+              options: reviewsController.periodList.map((e) => e.tr).toList(),
+              currentValue: reviewsController.selectedPeriod.value.tr,
+              onChanged: (val) {
+                // Logic to update controller value based on translated list if necessary
+              },
+            ),
+          ),
           10.verticalSpace,
-          CustomDropdown(label: "Rating", options: reviewsController.activityList, currentValue: reviewsController.selectedActivityValue.value, onChanged: (_){}),
-
-
+          Obx(
+                () => CustomDropdown(
+              label: AppStrings.rating.tr,
+              options: reviewsController.activityList.map((e) => e.tr).toList(),
+              currentValue: reviewsController.selectedActivityValue.value.tr,
+              onChanged: (val) {
+                // Logic to update controller value
+              },
+            ),
+          ),
 
           const SizedBox(height: 32),
 
@@ -64,9 +80,9 @@ class ReviewFilterBottomSheet extends StatelessWidget {
                     ),
                   ),
                   onPressed: onReset,
-                  child: const Text(
-                    'Reset',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: Text(
+                    AppStrings.reset.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -84,9 +100,9 @@ class ReviewFilterBottomSheet extends StatelessWidget {
                     ),
                   ),
                   onPressed: onApply,
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: Text(
+                    AppStrings.apply.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),

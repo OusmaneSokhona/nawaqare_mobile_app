@@ -13,7 +13,6 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
       : super(key: key);
 
   Color _getStatusColor(String status) {
-    // It's best to compare against untranslated keys or a fixed set of identifiers
     String s = status.toLowerCase();
     if (s.contains("follow") || s.contains("suivi")) return AppColors.primaryColor;
     if (s.contains("renewal") || s.contains("renouvellement")) return Colors.orange;
@@ -76,7 +75,7 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.sp),
                   ),
                   child: Text(
-                    appointmentModel.status.tr, // Translate status
+                    appointmentModel.status.tr,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 9.sp,
@@ -122,7 +121,7 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            appointmentModel.consultationType.tr, // Translate type
+                            appointmentModel.consultationType.tr,
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 13.sp,

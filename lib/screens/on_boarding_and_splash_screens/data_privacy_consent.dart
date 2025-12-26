@@ -5,7 +5,7 @@ import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
 class DataPrivacyConsent extends StatelessWidget {

@@ -10,8 +10,9 @@ import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart';
 
 class DoctorPastAppoinmentWidget extends StatelessWidget {
-   DoctorPastAppoinmentWidget({super.key});
-DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointmentController>();
+  DoctorPastAppoinmentWidget({super.key});
+  DoctorAppointmentController doctorAppointmentController = Get.find<DoctorAppointmentController>();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -84,7 +85,7 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Plan: Silver 4-Consultation Plan",
+                "${AppStrings.plan.tr}: Silver 4-Consultation Plan",
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 15.sp,
@@ -94,24 +95,24 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
               ),
               10.verticalSpace,
               Text(
-                "Remaining credits:2 consultations",
+                "${AppStrings.remainingCredits.tr}: 2 consultations",
                 style: TextStyle(color: AppColors.darkGrey, fontSize: 14.sp),
               ),
               10.verticalSpace,
               Text(
-                "Expires: 14 Feb 2026",
+                "${AppStrings.expires.tr}: 14 Feb 2026",
                 style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
               ),
               10.verticalSpace,
               Text(
-                "Plan_status: \"OK\"",
+                "${AppStrings.planStatus.tr}: \"OK\"",
                 style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
               ),
             ],
           ),
         ),
         15.verticalSpace,
-        const CardHeader(title: "Clinical Summary"),
+        CardHeader(title: AppStrings.clinicalSummary.tr),
         10.verticalSpace,
         Container(
           padding: EdgeInsets.all(10.sp),
@@ -122,13 +123,13 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
           ),
           child: Column(
             children: [
-               Obx(
-              ()=> DiagnosisHistoryCard(
+              Obx(
+                    () => DiagnosisHistoryCard(
                   diagnosis: "Migraine without aura",
                   icd: "ICD-10",
-                  notes:doctorAppointmentController.notesText.value,
-                               ),
-               ),
+                  notes: doctorAppointmentController.notesText.value,
+                ),
+              ),
               15.verticalSpace,
               const PrescriptionHistoryCard(
                 medication: "Amoxicillin 500mg",
@@ -138,31 +139,29 @@ DoctorAppointmentController doctorAppointmentController=Get.find<DoctorAppointme
             ],
           ),
         ),
-
         15.verticalSpace,
-        const MedicalReportCard(
+        MedicalReportCard(
           title: "Blood Test Report",
           date: "200/Sep/2025",
         ),
         15.verticalSpace,
-        const FollowUpRecommendationCard(
-          recommendation: "Choose option for future action:",
+        FollowUpRecommendationCard(
+          recommendation: AppStrings.chooseOptionFutureAction.tr,
           options: [
-            "Schedule Follow-up",
-            "Close Consultation",
-            "Refer Patient",
+            AppStrings.scheduleFollowUp.tr,
+            AppStrings.closeConsultation.tr,
+            AppStrings.referPatient.tr,
           ],
         ),
         15.verticalSpace,
-        const ReviewCard(
+        ReviewCard(
           image: "assets/demo_images/Frame 1000000981.png",
           reviewerName: "Emily Anderson",
           rating: 5,
           reviewText:
-              "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
+          "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
         ),
         15.verticalSpace,
-        // Removed Custom Buttons for "Book Again" and "Download Invoice pdf" as they are not explicitly shown
         40.verticalSpace,
       ],
     );
@@ -175,7 +174,12 @@ class CardHeader extends StatelessWidget {
   final FontWeight fontWeight;
   final Color color;
 
-  const CardHeader({required this.title, super.key, this.fontSize = 18, this.fontWeight = FontWeight.w700,this.color=Colors.black});
+  const CardHeader(
+      {required this.title,
+        super.key,
+        this.fontSize = 18,
+        this.fontWeight = FontWeight.w700,
+        this.color = Colors.black});
 
   @override
   Widget build(BuildContext context) {
@@ -224,12 +228,11 @@ class DiagnosisHistoryCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Diagnosis Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Diagnosis',
+                    AppStrings.diagnosis.tr,
                     style: TextStyle(
                       fontSize: 18.sp,
                       fontWeight: FontWeight.w700,
@@ -263,12 +266,11 @@ class DiagnosisHistoryCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 15.h),
-              // Diagnosis Notes Section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Diagnosis Notes',
+                    AppStrings.diagnosisNotes.tr,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -337,7 +339,6 @@ class PrescriptionHistoryCard extends StatelessWidget {
               fontSize: 16.sp,
             ),
           ),
-          // Prescription Details
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,13 +373,12 @@ class PrescriptionHistoryCard extends StatelessWidget {
               const Icon(Icons.lock, color: _secondaryColor, size: 16),
               SizedBox(width: 4.w),
               Text(
-                'Encrypted & compliant with GDRP/HDS',
+                AppStrings.encryptedCompliant.tr,
                 style: TextStyle(fontSize: 12.sp, color: _secondaryColor),
               ),
             ],
           ),
           SizedBox(height: 16.h),
-          // Buttons
           Row(
             children: [
               Expanded(
@@ -394,7 +394,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Download PDF',
+                    AppStrings.downloadPdf.tr,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -416,7 +416,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Refill', // Corrected text to "Refill"
+                    AppStrings.refill.tr,
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w600,
@@ -519,8 +519,7 @@ class MedicalReportCard extends StatelessWidget {
                         onTap: () {
                           Get.dialog(DeleteReportDialog());
                         },
-                        child: Icon(Icons.delete_outline,
-                            color: AppColors.red)),
+                        child: Icon(Icons.delete_outline, color: AppColors.red)),
                   ],
                 ),
               ),
@@ -582,6 +581,7 @@ class MedicalReportCard extends StatelessWidget {
     );
   }
 }
+
 class FollowUpRecommendationCard extends StatelessWidget {
   final String recommendation;
   final List<String> options;
@@ -592,16 +592,13 @@ class FollowUpRecommendationCard extends StatelessWidget {
     super.key,
   });
 
-  static const Color _primaryColor = Color(0xFF1F2937);
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const CardHeader(title: "Next Step"),
+        CardHeader(title: AppStrings.nextStep.tr),
         10.verticalSpace,
-        // Removed the Container wrapper here as the image shows the content without a full card background
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -614,9 +611,8 @@ class FollowUpRecommendationCard extends StatelessWidget {
               ),
             ),
             10.verticalSpace,
-            // Checkbox list
             ...options.map(
-              (option) => Padding(
+                  (option) => Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Row(
                   children: [
@@ -630,7 +626,6 @@ class FollowUpRecommendationCard extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.r),
                         ),
-                        // Visuals adjusted to match image (simple checkbox)
                       ),
                     ),
                     SizedBox(width: 8.w),
@@ -676,7 +671,7 @@ class ReviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CardHeader(title: "Review"),
+          CardHeader(title: AppStrings.review.tr),
           10.verticalSpace,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -686,8 +681,6 @@ class ReviewCard extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 20.r,
-                    // In a real app, this should handle null image or proper asset loading
-                    // For the provided image context, we assume an asset.
                     backgroundImage: AssetImage(image),
                   ),
                   SizedBox(width: 12.w),
@@ -696,7 +689,7 @@ class ReviewCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Patient review about consultation',
+                          AppStrings.patientReviewConsultation.tr,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.grey[700],

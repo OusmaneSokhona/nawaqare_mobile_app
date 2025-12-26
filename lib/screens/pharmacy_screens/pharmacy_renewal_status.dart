@@ -52,8 +52,8 @@ class PharmacyRenewalStatus extends StatelessWidget {
           buildRenewalStatusWidget(context),
           Text(
             AppStrings.securitySettings.tr,
-            style: const TextStyle(
-              fontSize: 20,
+            style:  TextStyle(
+              fontSize: 17.sp,
               fontWeight: FontWeight.bold,
               color: Color(0xFF1F2937),
             ),
@@ -174,6 +174,7 @@ class PharmacyRenewalStatus extends StatelessWidget {
           const SizedBox(height: 32),
           CustomButton(
             borderRadius: 15,
+            fontSize: 14,
             text: AppStrings.startRenewalProcess.tr,
             onTap: () {},
           ),

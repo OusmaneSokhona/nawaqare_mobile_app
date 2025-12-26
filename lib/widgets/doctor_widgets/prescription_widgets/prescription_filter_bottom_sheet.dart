@@ -1,8 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
 
 class PrescriptionFilterBottomSheet extends StatelessWidget {
@@ -10,13 +10,15 @@ class PrescriptionFilterBottomSheet extends StatelessWidget {
   final VoidCallback onApply;
   final VoidCallback onReset;
 
-   PrescriptionFilterBottomSheet({
+  PrescriptionFilterBottomSheet({
     super.key,
     required this.initialStatus,
     required this.onApply,
     required this.onReset,
   });
-DoctorPrescriptionController doctorPrescriptionController = Get.find();
+
+  final DoctorPrescriptionController doctorPrescriptionController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -39,14 +41,20 @@ DoctorPrescriptionController doctorPrescriptionController = Get.find();
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-CustomDropdown(label: "Status", options: doctorPrescriptionController.statusOptions, currentValue: doctorPrescriptionController.selectedStatus.value, onChanged: (_){}),
-
-
-
+          // Wrapped in Obx to ensure the dropdown updates when the controller state changes
+          Obx(
+                () => CustomDropdown(
+              label: AppStrings.status.tr,
+              options: doctorPrescriptionController.statusOptions.map((e) => e.tr).toList(),
+              currentValue: doctorPrescriptionController.selectedStatus.value.tr,
+              onChanged: (String? newValue) {
+                // You may need to map the translated value back to the key or
+                // handle logic in the controller
+              },
+            ),
+          ),
           const SizedBox(height: 32),
-
           Row(
             children: <Widget>[
               Expanded(
@@ -61,15 +69,13 @@ CustomDropdown(label: "Status", options: doctorPrescriptionController.statusOpti
                     ),
                   ),
                   onPressed: onReset,
-                  child: const Text(
-                    'Reset',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: Text(
+                    AppStrings.reset.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -81,15 +87,14 @@ CustomDropdown(label: "Status", options: doctorPrescriptionController.statusOpti
                     ),
                   ),
                   onPressed: onApply,
-                  child: const Text(
-                    'Apply',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  child: Text(
+                    AppStrings.apply.tr,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 20),
         ],
       ),

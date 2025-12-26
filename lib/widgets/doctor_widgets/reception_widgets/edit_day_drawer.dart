@@ -4,15 +4,17 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/calender_controller.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/duplicate_configuration.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_radio_tile.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 
 import '../../../utils/app_fonts.dart';
 
-class EditDayDrawer extends StatelessWidget{
-   EditDayDrawer({super.key});
-CalenderController controller=Get.find();
+class EditDayDrawer extends StatelessWidget {
+  EditDayDrawer({super.key});
+  final CalenderController controller = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -38,7 +40,7 @@ CalenderController controller=Get.find();
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Edit Day',
+                      AppStrings.editDay.tr,
                       style: TextStyle(
                         fontSize: 25.sp,
                         fontWeight: FontWeight.w800,
@@ -46,18 +48,34 @@ CalenderController controller=Get.find();
                       ),
                     ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Start Time",hintText: "12:00PM",suffixIcon: Icons.calendar_today,),
+                    CustomTextField(
+                      labelText: AppStrings.startTime.tr,
+                      hintText: "12:00PM",
+                      suffixIcon: Icons.calendar_today,
+                    ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "End Time",hintText: "12:00PM",suffixIcon: Icons.calendar_today,),
+                    CustomTextField(
+                      labelText: AppStrings.endTime.tr,
+                      hintText: "12:00PM",
+                      suffixIcon: Icons.calendar_today,
+                    ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Breaks",hintText: "12:00PM",suffixIcon: Icons.calendar_today,),
+                    CustomTextField(
+                      labelText: AppStrings.breaks.tr,
+                      hintText: "12:00PM",
+                      suffixIcon: Icons.calendar_today,
+                    ),
                     10.verticalSpace,
-                    CustomTextField(labelText: "Buffers",hintText: "12:00PM",suffixIcon: Icons.calendar_today,),
+                    CustomTextField(
+                      labelText: AppStrings.buffers.tr,
+                      hintText: "12:00PM",
+                      suffixIcon: Icons.calendar_today,
+                    ),
                     10.verticalSpace,
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Consultation Mode",
+                        AppStrings.consultationMode.tr,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18.sp,
@@ -68,27 +86,37 @@ CalenderController controller=Get.find();
                     ),
                     10.verticalSpace,
                     Obx(
-                        ()=> CustomRadioTile(text: "In-Person", isSelected: controller.inPerson.value, onTap: (){
-                        controller.inPerson.value=!controller.inPerson.value;
-                      }),
+                          () => CustomRadioTile(
+                          text: AppStrings.inPerson.tr,
+                          isSelected: controller.inPerson.value,
+                          onTap: () {
+                            controller.inPerson.value = !controller.inPerson.value;
+                          }),
                     ),
                     10.verticalSpace,
                     Obx(
-                        ()=> CustomRadioTile(text: "Teleconsultation", isSelected: controller.teleConsultation.value, onTap: (){
-                        controller.teleConsultation.value=!controller.teleConsultation.value;
-                      }),
+                          () => CustomRadioTile(
+                          text: AppStrings.teleconsultation.tr,
+                          isSelected: controller.teleConsultation.value,
+                          onTap: () {
+                            controller.teleConsultation.value =
+                            !controller.teleConsultation.value;
+                          }),
                     ),
                     10.verticalSpace,
                     Obx(
-                        ()=> CustomRadioTile(text: "Mixed", isSelected: controller.mixed.value, onTap: (){
-                        controller.mixed.value=!controller.mixed.value;
-                      }),
+                          () => CustomRadioTile(
+                          text: AppStrings.mixed.tr,
+                          isSelected: controller.mixed.value,
+                          onTap: () {
+                            controller.mixed.value = !controller.mixed.value;
+                          }),
                     ),
                     10.verticalSpace,
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        "Services",
+                        AppStrings.services.tr,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 18.sp,
@@ -99,31 +127,62 @@ CalenderController controller=Get.find();
                     ),
                     10.verticalSpace,
                     Obx(
-                      ()=> CustomRadioTile(text: "Consultation", isSelected:controller.consultation.value, onTap: (){
-                        controller.consultation.value=!controller.consultation.value;
-                      },isCircle: false,),
+                          () => CustomRadioTile(
+                        text: AppStrings.consultation.tr,
+                        isSelected: controller.consultation.value,
+                        onTap: () {
+                          controller.consultation.value =
+                          !controller.consultation.value;
+                        },
+                        isCircle: false,
+                      ),
                     ),
                     10.verticalSpace,
                     Obx(
-                      ()=> CustomRadioTile(text: "Follow-Up", isSelected: controller.followUp.value, onTap: (){
-                        controller.followUp.value=!controller.followUp.value;
-                      },isCircle: false,),
+                          () => CustomRadioTile(
+                        text: AppStrings.followUp.tr,
+                        isSelected: controller.followUp.value,
+                        onTap: () {
+                          controller.followUp.value = !controller.followUp.value;
+                        },
+                        isCircle: false,
+                      ),
                     ),
                     10.verticalSpace,
                     Obx(
-                      ()=> CustomRadioTile(text: "Physiotherpy", isSelected: controller.physiotherapy.value, onTap: (){
-                        controller.physiotherapy.value=!controller.physiotherapy.value;
-                      },isCircle: false,),
+                          () => CustomRadioTile(
+                        text: AppStrings.physiotherapy.tr,
+                        isSelected: controller.physiotherapy.value,
+                        onTap: () {
+                          controller.physiotherapy.value =
+                          !controller.physiotherapy.value;
+                        },
+                        isCircle: false,
+                      ),
                     ),
                     30.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Apply", onTap: (){}),
+                    CustomButton(
+                        borderRadius: 15, text: AppStrings.apply.tr, onTap: () {}),
                     10.verticalSpace,
-                    CustomButton(borderRadius: 15, text: "Duplicate Configuration", onTap: (){
-                      Get.back();
-                      Get.to(DuplicateConfiguration());
-                    },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.duplicateConfiguration.tr,
+                      onTap: () {
+                        Get.back();
+                        Get.to( DuplicateConfiguration());
+                      },
+                      bgColor: AppColors.inACtiveButtonColor,
+                      fontColor: Colors.black,
+                    ),
                     10.verticalSpace,
-                    Center(child: Text("Auto Saved: Last saved 14;25",style: TextStyle(fontSize: 16.sp,fontWeight: FontWeight.w500,color: AppColors.lightGrey),)),
+                    Center(
+                        child: Text(
+                          "${AppStrings.autoSaved.tr}: ${AppStrings.lastSaved.tr} 14:25",
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.lightGrey),
+                        )),
                     30.verticalSpace,
                   ],
                 ),
@@ -136,7 +195,7 @@ CalenderController controller=Get.find();
             child: Container(
               height: 40.h,
               width: 40.w,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.primaryColor,
               ),

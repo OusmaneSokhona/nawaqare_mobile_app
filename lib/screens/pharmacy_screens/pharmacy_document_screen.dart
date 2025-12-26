@@ -65,7 +65,7 @@ class PharmacyDocumentScreen extends StatelessWidget{
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:  Text(AppStrings.editDocument.tr, style: TextStyle(fontSize: 14.sp)),
+              child:  Text(AppStrings.editDocument.tr, style: TextStyle(fontSize: 12.sp)),
             ),
           ),
           const SizedBox(height: 30),

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 
 class ViewAsPatientCard extends StatelessWidget {
   final AppointmentModel appointmentModel;
-  Function onTap;
+  final Function onTap;
 
-  ViewAsPatientCard({
-    Key? key,
+  const ViewAsPatientCard({
+    super.key,
     required this.appointmentModel,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +30,7 @@ class ViewAsPatientCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.calendar_today_outlined,
                   size: 16,
                   color: AppColors.primaryColor,
@@ -37,21 +39,21 @@ class ViewAsPatientCard extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      "${appointmentModel.date}",
+                      appointmentModel.date,
                       style: TextStyle(
                         color: Colors.black54,
                         fontSize: 12.sp,
                       ),
                     ),
                     8.horizontalSpace,
-                    Icon(
+                    const Icon(
                       Icons.watch_later_outlined,
                       size: 16,
                       color: AppColors.primaryColor,
                     ),
                     4.horizontalSpace,
                     Text(
-                      "${appointmentModel.time}",
+                      appointmentModel.time,
                       style: TextStyle(
                         color: Colors.black54,
                         fontSize: 12.sp,
@@ -61,11 +63,9 @@ class ViewAsPatientCard extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 4),
-            Divider(thickness: 0.3, color: Colors.black45),
+            const Divider(thickness: 0.3, color: Colors.black45),
             const SizedBox(height: 4),
-
             Row(
               children: [
                 Image.asset(
@@ -75,11 +75,12 @@ class ViewAsPatientCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        appointmentModel.name,
+                        appointmentModel.name.tr, // Localizing name if applicable
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
@@ -99,7 +100,7 @@ class ViewAsPatientCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            appointmentModel.consultationType,
+                            appointmentModel.consultationType.tr, // Localizing type
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 13.sp,
@@ -110,12 +111,15 @@ class ViewAsPatientCard extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            "Period:",
-                            style:  TextStyle(fontSize: 14.sp,fontFamily: AppFonts.jakartaMedium,fontWeight: FontWeight.w500),
+                            "${AppStrings.period.tr}:",
+                            style: TextStyle(
+                                fontSize: 14.sp,
+                                fontFamily: AppFonts.jakartaMedium,
+                                fontWeight: FontWeight.w500),
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            "This Week",
+                            AppStrings.thisWeek.tr,
                             style: const TextStyle(fontSize: 13),
                           ),
                         ],
@@ -126,30 +130,37 @@ class ViewAsPatientCard extends StatelessWidget {
                 ),
               ],
             ),
-5.verticalSpace,
-Divider(height: 5.h,color: AppColors.lightGrey,thickness: 0.4,),
+            5.verticalSpace,
+            Divider(
+              height: 5.h,
+              color: AppColors.lightGrey,
+              thickness: 0.4,
+            ),
             const SizedBox(height: 12),
-            Row(children: [
-              _buildButton(
-                onTap: () {},
-                text: "Cancel",
-                backgroundColor:AppColors.inACtiveButtonColor,
-                textColor: Colors.black,
-              ),
-              _buildButton(
-                onTap: () {
-                  onTap();
-                },
-                text: "Book",
-                backgroundColor: AppColors.primaryColor,
-                textColor: Colors.white,
-              ),
-            ],)
+            Row(
+              children: [
+                _buildButton(
+                  onTap: () {},
+                  text: AppStrings.cancel.tr,
+                  backgroundColor: AppColors.inACtiveButtonColor,
+                  textColor: Colors.black,
+                ),
+                _buildButton(
+                  onTap: () {
+                    onTap();
+                  },
+                  text: AppStrings.book.tr,
+                  backgroundColor: AppColors.primaryColor,
+                  textColor: Colors.white,
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
+
   Widget _buildButton({
     required String text,
     required Color backgroundColor,

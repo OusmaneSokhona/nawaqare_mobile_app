@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 import '../../../utils/app_strings.dart';
 
 class DeleteAccountDialog extends StatelessWidget {

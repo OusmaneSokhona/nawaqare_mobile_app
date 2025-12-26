@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 
 class LanguageDialog extends StatelessWidget {
   LanguageDialog({super.key});
@@ -79,11 +80,15 @@ class LanguageDialog extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (controller.selectedLanguage.value == AppStrings.french) {
                         Get.updateLocale(const Locale('fr', 'FR'));
+                        await LocalStorageUtils.setLanguage("french");
+                        print("Language ${LocalStorageUtils.getLanguage()}");
                       } else {
                         Get.updateLocale(const Locale('en', 'US'));
+                        await LocalStorageUtils.setLanguage("english");
+                        print("Language ${LocalStorageUtils.getLanguage()}");
                       }
                       Get.back(result: controller.selectedLanguage.value);
                     },

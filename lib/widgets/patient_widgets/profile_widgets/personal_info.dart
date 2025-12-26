@@ -62,7 +62,7 @@ class PersonalInfo extends StatelessWidget {
               ),
               child: Text(
                 AppStrings.editPersonalInfo.tr,
-                style: TextStyle(fontSize: 14.sp),
+                style: TextStyle(fontSize: 11.sp),
               ),
             ),
           ),

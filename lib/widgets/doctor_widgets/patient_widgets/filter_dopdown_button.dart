@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/review_controller.dart';
+import 'package:patient_app/utils/app_strings.dart';
 
 class FilterControlBar extends StatelessWidget {
-  ReviewsController  controller =Get.find();
+  ReviewsController controller = Get.find();
 
   Widget _buildDropdownPill({
     required String pillTitle,
@@ -28,7 +29,7 @@ class FilterControlBar extends StatelessWidget {
           items: items.map<DropdownMenuItem<String>>((String item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(item.tr),
             );
           }).toList(),
           selectedItemBuilder: (BuildContext context) {
@@ -36,7 +37,7 @@ class FilterControlBar extends StatelessWidget {
               return Container(
                 alignment: Alignment.center,
                 child: Text(
-                  item,
+                  item.tr,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -53,7 +54,7 @@ class FilterControlBar extends StatelessWidget {
       ),
     )
         : Text(
-      pillTitle,
+      pillTitle.tr,
       style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w500,
@@ -71,7 +72,6 @@ class FilterControlBar extends StatelessWidget {
       },
       child: Obx(
             () {
-          bool isSelected = controller.activePillTitle.value == pillTitle;
           return Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: hasDropdown ? 0 : 8),
             margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -108,33 +108,26 @@ class FilterControlBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _buildDropdownPill(
-          // Ensure pillTitle matches the title used in the onTap handler
-          pillTitle: '7 day',
+          pillTitle: AppStrings.sevenDay,
           items: controller.periodList,
-          // selectedValue now has an initial value that matches an item in periodList
           selectedValue: controller.selectedTimeValue,
           onChanged: (v) {
             controller.setTimeValue(v);
-            controller.setActivePill('7 day');
+            controller.setActivePill(AppStrings.sevenDay);
           },
         ),
         _buildDropdownPill(
-          pillTitle: 'Activity',
+          pillTitle: AppStrings.activity,
           items: controller.activityList,
-          // selectedValue now has an initial value that matches an item in ratingList
           selectedValue: controller.selectedActivityValue,
           onChanged: (v) {
             controller.setActivityValue(v);
-            controller.setActivePill('Activity');
+            controller.setActivePill(AppStrings.activity);
           },
         ),
         _buildDropdownPill(
-          pillTitle: 'Export',
+          pillTitle: AppStrings.export,
           items: [],
-          // When items is empty, selectedValue is not used, but kept for signature.
-          // Using controller.activePillTitle as a placeholder is a quick fix to satisfy type
-          // but a better solution is to not require a Rx<String> if items is empty.
-          // Since the function signature requires it, we'll keep the empty RxString from the controller
           selectedValue: ''.obs,
           onChanged: (v) {},
         ),

@@ -4,10 +4,11 @@ import 'package:get/get.dart';
 import 'package:patient_app/screens/on_boarding_and_splash_screens/splash_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/languages.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 
 Future<void> main() async {
-  LocalStorageUtils.init();
+  WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorageUtils.init();
   runApp(const MyApp());
 }
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         initialBinding: AppBinding(),
           translations: Languages(),
-          locale: const Locale('en', 'US'), // Default language
+          locale: LocalStorageUtils.getLanguage()=="french"?Locale('fr', 'FR'):Locale('en', 'US'), // Default language
           fallbackLocale: const Locale('en', 'US'),
         debugShowCheckedModeBanner: false,
         home: SplashScreen()

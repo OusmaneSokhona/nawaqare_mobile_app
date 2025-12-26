@@ -9,7 +9,7 @@ import 'package:patient_app/screens/patient_screens/main_screen.dart';
 import 'package:patient_app/screens/pharmacy_screens/main_screen_pharmacy.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 import '../../utils/app_strings.dart';
 
 import '../../../widgets/validation_check_list.dart';

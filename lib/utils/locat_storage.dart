@@ -140,4 +140,17 @@ class LocalStorageUtils {
     remove("setLoginedDoctor");
     remove("setLoginedPharmacy");
   }
+  static Future<bool> setLanguage(String value) async {
+    if (_preferences == null) await init();
+    return _preferences!.setString("language", value);
+  }
+
+  static String? getLanguage() {
+    if (_preferences == null) {
+      print("Warning: SharedPreferences not initialized. Call init() first.");
+      return null;
+    }
+    print("Language=${_preferences!.getString("language")}");
+    return _preferences!.getString("language");
+  }
 }

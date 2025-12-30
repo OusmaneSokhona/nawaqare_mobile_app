@@ -69,6 +69,7 @@ class PrescriptionScreen extends StatelessWidget {
                           () => InkWell(
                         onTap: () {
                           prescriptionController.prescriptionType.value = "activePrescription";
+                          prescriptionController.currentPage.value = 1;
                         },
                         child: Container(
                           height: 55.h,
@@ -98,6 +99,7 @@ class PrescriptionScreen extends StatelessWidget {
                           () => InkWell(
                         onTap: () {
                           prescriptionController.prescriptionType.value = "pastPrescription";
+                          prescriptionController.currentPage.value = 1;
                         },
                         child: Container(
                           height: 55.h,
@@ -127,41 +129,96 @@ class PrescriptionScreen extends StatelessWidget {
                 ),
               ),
               10.verticalSpace,
-              Obx(
-                    () => prescriptionController.prescriptionType.value == "activePrescription"
-                    ? Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
-                    itemCount: prescriptionController.prescriptions.length,
+              Expanded(
+                child: Obx(() {
+                  var list = prescriptionController.paginatedList;
+                  bool isActive = prescriptionController.prescriptionType.value == "activePrescription";
+                  return ListView.builder(
+                    padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
+                    itemCount: list.length,
                     itemBuilder: (context, index) {
                       return PrescriptionCard(
                         onTap: () {
-                          prescriptionController.viewDetail(prescriptionController.prescriptions[index]);
+                          prescriptionController.viewDetail(list[index]);
                         },
-                        isActive: true,
-                        prescription: prescriptionController.prescriptions[index],
+                        isActive: isActive,
+                        prescription: list[index],
                       );
                     },
-                  ),
-                )
-                    : Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
-                    itemCount: prescriptionController.postPrescriptions.length,
-                    itemBuilder: (context, index) {
-                      return PrescriptionCard(
-                        onTap: () {
-                          prescriptionController.viewDetail(prescriptionController.postPrescriptions[index]);
-                        },
-                        isActive: false,
-                        prescription: prescriptionController.postPrescriptions[index],
-                      );
-                    },
+                  );
+                }),
+              ),
+              10.verticalSpace,
+              _buildPagination(),
+              20.verticalSpace,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  Widget _buildPagination() {
+    return Obx(
+          () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _paginationArrow(Icons.arrow_back, () {
+            if (prescriptionController.currentPage.value > 1) {
+              prescriptionController.currentPage.value--;
+            }
+          }),
+          15.horizontalSpace,
+          ...List.generate(prescriptionController.totalPages, (index) {
+            int page = index + 1;
+            return GestureDetector(
+              onTap: () => prescriptionController.currentPage.value = page,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Text(
+                  "$page",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: AppFonts.jakartaMedium,
+                    fontWeight: FontWeight.w600,
+                    color: prescriptionController.currentPage.value == page
+                        ? AppColors.primaryColor
+                        : Colors.grey,
                   ),
                 ),
               ),
-            ],
-          ),
+            );
+          }),
+          15.horizontalSpace,
+          _paginationArrow(Icons.arrow_forward, () {
+            if (prescriptionController.currentPage.value < prescriptionController.totalPages) {
+              prescriptionController.currentPage.value++;
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _paginationArrow(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(5.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(3.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          size: 17.h,
+          color: Colors.black,
         ),
       ),
     );

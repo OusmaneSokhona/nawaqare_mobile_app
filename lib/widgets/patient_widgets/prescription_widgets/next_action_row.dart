@@ -85,7 +85,7 @@ class UploadPrescriptionCard extends StatelessWidget {
               AppStrings.uploadPrescription.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 12.sp,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF1F2937),
               ),
@@ -106,7 +106,7 @@ class PrescriptionDetailCard extends StatelessWidget {
     const Color secondaryColor = Color(0xFF6B7280);
 
     return Container(
-      padding: EdgeInsets.all(14.sp),
+      padding: EdgeInsets.all(10.sp),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16.0),
@@ -126,8 +126,9 @@ class PrescriptionDetailCard extends StatelessWidget {
           Text(
             AppStrings.prescription.tr,
             style: TextStyle(
-              fontSize: 15.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.bold,
+              fontFamily: AppFonts.jakartaBold,
               color: primaryColor,
             ),
           ),

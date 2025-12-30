@@ -12,6 +12,7 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    mainController.currentIndex.value=0;
     return Scaffold(
       bottomNavigationBar: Obx(
             () => BottomNavigationBar(

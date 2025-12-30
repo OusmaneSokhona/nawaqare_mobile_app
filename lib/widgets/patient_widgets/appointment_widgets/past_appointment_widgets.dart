@@ -1,77 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/appointment_controllers/appointment_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart';
 
 class PastAppointmentWidgets extends StatelessWidget {
-  const PastAppointmentWidgets({super.key});
+  AppointmentController appointmentController =
+      Get.find<AppointmentController>();
+
+  PastAppointmentWidgets({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        15.verticalSpace,
-        DiagnosisHistoryCard(
-            notes: "Hypertension follow-up. Blood pressure stable, continue medication".tr),
-        15.verticalSpace,
-        PrescriptionHistoryCard(
-            medication: "Amoxicillin 500mg".tr,
-            dosage: "Morning & Evening – 7 Days".tr,
-            daysRemaining: 5),
-        15.verticalSpace,
-        MedicalReportCard(title: "Blood Test Report".tr, date: "20/Sep/2025"),
-        15.verticalSpace,
-        FollowUpRecommendationCard(
-            recommendation: "Schedule a follow-up in 3 months".tr),
-        15.verticalSpace,
-        ReviewCard(
-            image: "assets/demo_images/Frame 1000000981.png",
-            reviewerName: "Emily Anderson",
-            rating: 4,
-            reviewText: "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.".tr),
-        15.verticalSpace,
-        CustomButton(
+    return Obx(
+      () => Column(
+        children: [
+          if (appointmentController.selectedTab.value == "Diagnosis") ...{
+            15.verticalSpace,
+            DiagnosisHistoryCard(
+              notes:
+                  "Hypertension follow-up. Blood pressure stable, continue medication"
+                      .tr,
+            ),
+          },
+          if (appointmentController.selectedTab.value == "Ordonnance") ...{
+            15.verticalSpace,
+            PrescriptionHistoryCard(
+              medication: "Amoxicillin 500mg".tr,
+              dosage: "Morning & Evening – 7 Days".tr,
+              daysRemaining: 5,
+            ),
+          },
+          if (appointmentController.selectedTab.value == "Medical Report") ...{
+            15.verticalSpace,
+            MedicalReportCard(
+              title: "Blood Test Report".tr,
+              date: "20/Sep/2025",
+            ),
+          },
+          15.verticalSpace,
+          FollowUpRecommendationCard(
+            recommendation: "Schedule a follow-up in 3 months".tr,
+          ),
+          if (appointmentController.selectedTab.value == "Reviews") ...{
+            15.verticalSpace,
+            ReviewCard(
+              image: "assets/demo_images/Frame 1000000981.png",
+              reviewerName: "Emily Anderson",
+              rating: 4,
+              reviewText:
+                  "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care."
+                      .tr,
+            ),
+          },
+
+          15.verticalSpace,
+          CustomButton(
             borderRadius: 15,
             text: AppStrings.bookAgain.tr,
-            onTap: () {}),
-        15.verticalSpace,
-        CustomButton(
-          borderRadius: 15,
-          text: AppStrings.downloadInvoicePdf.tr,
-          onTap: () {},
-          bgColor: AppColors.inACtiveButtonColor,
-          fontColor: Colors.black,
-        ),
-        40.verticalSpace,
-      ],
+            onTap: () {},
+          ),
+          15.verticalSpace,
+          CustomButton(
+            borderRadius: 15,
+            text: AppStrings.downloadInvoicePdf.tr,
+            onTap: () {},
+            bgColor: AppColors.inACtiveButtonColor,
+            fontColor: Colors.black,
+          ),
+          40.verticalSpace,
+        ],
+      ),
     );
   }
 }
 
 class CardHeader extends StatelessWidget {
   final String title;
+
   const CardHeader({required this.title});
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: AlignmentDirectional.topStart,
-      child: Text(title,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 17.sp,
-            fontWeight: FontWeight.w700,
-            fontFamily: AppFonts.jakartaBold,
-          )),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 17.sp,
+          fontWeight: FontWeight.w700,
+          fontFamily: AppFonts.jakartaBold,
+        ),
+      ),
     );
   }
 }
 
 class DiagnosisHistoryCard extends StatelessWidget {
   final String notes;
+
   const DiagnosisHistoryCard({required this.notes, super.key});
 
   static const Color _primaryColor = Color(0xFF1F2937);
@@ -112,10 +143,7 @@ class DiagnosisHistoryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 notes,
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  color: _secondaryColor,
-                ),
+                style: TextStyle(fontSize: 13.sp, color: _secondaryColor),
               ),
               const SizedBox(height: 16),
               SizedBox(
@@ -131,8 +159,13 @@ class DiagnosisHistoryCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     elevation: 0,
                   ),
-                  child: Text(AppStrings.downloadConsultationReport.tr,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  child: Text(
+                    AppStrings.downloadConsultationReport.tr,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -222,8 +255,11 @@ class PrescriptionHistoryCard extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.notifications_none,
-                          color: AppColors.primaryColor, size: 16),
+                      const Icon(
+                        Icons.notifications_none,
+                        color: AppColors.primaryColor,
+                        size: 16,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '$daysRemaining- ${AppStrings.daysRemainingLabel.tr}',
@@ -241,7 +277,11 @@ class PrescriptionHistoryCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.lock, color: AppColors.primaryColor, size: 16),
+                  const Icon(
+                    Icons.lock,
+                    color: AppColors.primaryColor,
+                    size: 16,
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     AppStrings.gdprComplianceNote.tr,
@@ -267,9 +307,13 @@ class PrescriptionHistoryCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
                       ),
-                      child: Text(AppStrings.downloadPdf.tr,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      child: Text(
+                        AppStrings.downloadPdf.tr,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -285,9 +329,13 @@ class PrescriptionHistoryCard extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         elevation: 0,
                       ),
-                      child: Text(AppStrings.requestDelivery.tr,
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
+                      child: Text(
+                        AppStrings.requestDelivery.tr,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -304,11 +352,7 @@ class MedicalReportCard extends StatelessWidget {
   final String title;
   final String date;
 
-  const MedicalReportCard({
-    required this.title,
-    required this.date,
-    super.key,
-  });
+  const MedicalReportCard({required this.title, required this.date, super.key});
 
   static const Color _primaryColor = Color(0xFF1F2937);
   static const Color _secondaryColor = Color(0xFF6B7280);
@@ -383,14 +427,21 @@ class MedicalReportCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   elevation: 0,
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Text(AppStrings.view.tr,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                child: Text(
+                  AppStrings.view.tr,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
@@ -450,14 +501,21 @@ class FollowUpRecommendationCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   elevation: 0,
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Text(AppStrings.followUpBtn.tr,
-                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                child: Text(
+                  AppStrings.followUpBtn.tr,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
@@ -496,10 +554,7 @@ class ReviewCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage: AssetImage(image),
-              ),
+              CircleAvatar(radius: 30, backgroundImage: AssetImage(image)),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

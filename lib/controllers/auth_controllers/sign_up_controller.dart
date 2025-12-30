@@ -19,6 +19,7 @@ class SignUpController extends GetxController {
   TextEditingController passwordController = TextEditingController();
   RxBool passwordVisibility = false.obs;
   RxBool isPasswordActive = false.obs;
+  RxBool isRegisteredProfessional = false.obs;
   final RxString currentPassword = ''.obs;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 

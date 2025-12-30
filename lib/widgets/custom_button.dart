@@ -11,7 +11,7 @@ class CustomButton extends StatelessWidget {
   final int fontSize;
   final double height;
   final IconData? icon;
-  const CustomButton({super.key,required this.borderRadius,required this.text, required this.onTap, this.bgColor = AppColors.primaryColor, this.fontSize = 20, this.fontColor = Colors.white,this.height=50,this.icon});
+  const CustomButton({super.key,required this.borderRadius,required this.text, required this.onTap, this.bgColor = AppColors.primaryColor, this.fontSize = 18, this.fontColor = Colors.white,this.height=50,this.icon});
 
   @override
   Widget build(BuildContext context) {

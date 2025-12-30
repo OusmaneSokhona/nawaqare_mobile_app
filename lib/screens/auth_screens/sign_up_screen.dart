@@ -85,7 +85,7 @@ class SignUpScreen extends StatelessWidget {
                         5.verticalSpace,
 
                         Obx(
-                              () => CustomRadioTile(
+                          () => CustomRadioTile(
                             text: AppStrings.iAmDoctor.tr,
                             isSelected: signUpController.type.value == "doctor",
                             onTap: () {
@@ -95,9 +95,10 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         5.verticalSpace,
                         Obx(
-                              () => CustomRadioTile(
+                          () => CustomRadioTile(
                             text: AppStrings.iAmPatient.tr,
-                            isSelected: signUpController.type.value == "patient",
+                            isSelected:
+                                signUpController.type.value == "patient",
                             onTap: () {
                               signUpController.type.value = "patient";
                             },
@@ -105,25 +106,33 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         5.verticalSpace,
                         Obx(
-                              () => CustomRadioTile(
+                          () => CustomRadioTile(
                             text: AppStrings.iAmPharmacist.tr,
-                            isSelected: signUpController.type.value == "pharmacist",
+                            isSelected:
+                                signUpController.type.value == "pharmacist",
                             onTap: () {
                               signUpController.type.value = "pharmacist";
                             },
                           ),
                         ),
                         15.verticalSpace,
-                        Obx(() => ProgressStepper(
+                        Obx(
+                          () => ProgressStepper(
                             currentStep: 1,
-                            totalSteps: signUpController.type.value == "patient" ? 4 : 5)),
+                            totalSteps:
+                                signUpController.type.value == "patient"
+                                    ? 4
+                                    : 5,
+                          ),
+                        ),
                         15.verticalSpace,
                         CustomTextField(
                           labelText: AppStrings.fullName.tr,
                           prefixIcon: Icons.person_outline_outlined,
                           hintText: "Saira Tahir",
                           controller: signUpController.nameController,
-                          validator: signUpController.signInController.nameValidator,
+                          validator:
+                              signUpController.signInController.nameValidator,
                         ),
                         10.verticalSpace,
                         CustomTextField(
@@ -132,7 +141,8 @@ class SignUpScreen extends StatelessWidget {
                           hintText: 'Saira@gmail.com',
                           prefixIcon: Icons.mail_outline,
                           keyboardType: TextInputType.emailAddress,
-                          validator: signUpController.signInController.emailValidator,
+                          validator:
+                              signUpController.signInController.emailValidator,
                         ),
                         10.verticalSpace,
                         CustomTextField(
@@ -140,42 +150,80 @@ class SignUpScreen extends StatelessWidget {
                           hintText: "+33 3 6 12 34 56 78",
                           prefixIcon: Icons.phone,
                           controller: signUpController.phoneNumberController,
-                          validator: signUpController.signInController.phoneNumberValidator,
+                          validator:
+                              signUpController
+                                  .signInController
+                                  .phoneNumberValidator,
                         ),
                         10.verticalSpace,
                         Obx(
-                              () => CustomTextField(
+                          () => CustomTextField(
                             labelText: AppStrings.password.tr,
                             hintText: '********',
                             controller: signUpController.passwordController,
                             prefixIcon: Icons.lock,
                             isPasswordField: true,
-                            isEnabled: !signUpController.passwordVisibility.value,
+                            isEnabled:
+                                !signUpController.passwordVisibility.value,
                             onChanged: (value) {
                               signUpController.currentPassword.value = value;
                             },
                             onTapEye: signUpController.toggleVisibility,
                             onFocusChange: signUpController.setPasswordActive,
                             validator: signUpController.validatePassword,
-                            validationView: signUpController.isPasswordActive.value
-                                ? Obx(
-                                  () => ValidationChecklist(
-                                rules: signUpController.getValidationRules(),
-                              ),
-                            )
-                                : null,
+                            validationView:
+                                signUpController.isPasswordActive.value
+                                    ? Obx(
+                                      () => ValidationChecklist(
+                                        rules:
+                                            signUpController
+                                                .getValidationRules(),
+                                      ),
+                                    )
+                                    : null,
                           ),
                         ),
-                        40.verticalSpace,
+                        20.verticalSpace,
+                        Obx(
+                            ()=>signUpController.type.value=="doctor"?InkWell(
+                            onTap: (){
+                              signUpController.isRegisteredProfessional.value=!signUpController.isRegisteredProfessional.value;
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  signUpController.isRegisteredProfessional.value? Icons.check_box : Icons.check_box_outline_blank,
+                                  color: signUpController.isRegisteredProfessional.value ? AppColors.primaryColor: Colors.grey.shade400,
+                                  size: 20.sp,
+                                ),
+                                2.horizontalSpace,
+                                Expanded(
+                                  child: Text(
+                                    "I am a registered medical professional",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontFamily: AppFonts.jakartaRegular,
+                                      color:  Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ):SizedBox(),
+                        ),
+                        20.verticalSpace,
                         CustomButton(
                           borderRadius: 15,
                           text: AppStrings.continueText.tr,
                           onTap: () {
-                            if (signUpController.formKey.currentState!.validate()) {
+                            if (signUpController.formKey.currentState!
+                                .validate()) {
                               if (signUpController.isPasswordValid()) {
                                 if (signUpController.type.value == "doctor") {
                                   Get.to(DemographicInfo());
-                                } else if (signUpController.type.value == "pharmacist") {
+                                } else if (signUpController.type.value ==
+                                    "pharmacist") {
                                   Get.to(BasicInfoScreen());
                                 } else {
                                   Get.to(TwoFactorAuthentication());
@@ -199,6 +247,7 @@ class SignUpScreen extends StatelessWidget {
                                 color: AppColors.darkGrey,
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
+                                fontFamily: AppFonts.jakartaMedium,
                               ),
                             ),
                             5.horizontalSpace,

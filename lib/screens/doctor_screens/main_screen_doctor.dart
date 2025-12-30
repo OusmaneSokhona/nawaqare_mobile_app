@@ -9,13 +9,12 @@ import '../../utils/app_colors.dart';
 class MainScreenDoctor extends StatelessWidget {
   MainScreenDoctor({super.key});
 
-  // Using Get.put to initialize the controller
   final MainControllerDoctor mainController = Get.put(MainControllerDoctor());
 
   @override
   Widget build(BuildContext context) {
+    mainController.currentIndex.value=0;
     return Scaffold(
-      // The body updates based on the current index reactively
       body: Obx(() => mainController.screens[mainController.currentIndex.value]),
 
       bottomNavigationBar: Obx(

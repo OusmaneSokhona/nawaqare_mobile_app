@@ -46,7 +46,7 @@ class PrescriptionDetails extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
         color: _getStatusColor(status),
         borderRadius: BorderRadius.circular(20.r),
@@ -55,7 +55,7 @@ class PrescriptionDetails extends StatelessWidget {
         text,
         style: TextStyle(
           color: Colors.white,
-          fontSize: 12.sp,
+          fontSize: 10.sp,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -97,7 +97,7 @@ class PrescriptionDetails extends StatelessWidget {
                     AppStrings.prescriptionDetails.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 23.sp,
+                      fontSize: 21.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),
@@ -129,7 +129,7 @@ class PrescriptionDetails extends StatelessWidget {
                                   prescriptionModel.doctorName,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w700,
-                                    fontSize: 18.sp,
+                                    fontSize: 14.sp,
                                     fontFamily: AppFonts.jakartaBold,
                                     color: Colors.black,
                                   ),
@@ -144,7 +144,7 @@ class PrescriptionDetails extends StatelessWidget {
                                       "Elite Ortho Clinic, USA",
                                       style: TextStyle(
                                         fontWeight: FontWeight.w700,
-                                        fontSize: 12.sp,
+                                        fontSize: 11.sp,
                                         fontFamily: AppFonts.jakartaBold,
                                         color: AppColors.lightGrey,
                                       ),
@@ -165,7 +165,7 @@ class PrescriptionDetails extends StatelessWidget {
                           AppStrings.prescriptionInfo.tr,
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 18.sp,
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
                           ),
@@ -180,7 +180,7 @@ class PrescriptionDetails extends StatelessWidget {
                               AppStrings.dateOfIssue.tr,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 14.sp,
                                 color: Colors.black,
                               ),
                             ),
@@ -188,7 +188,7 @@ class PrescriptionDetails extends StatelessWidget {
                               AppStrings.validUntil.tr,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 14.sp,
                                 color: Colors.black,
                               ),
                             ),
@@ -205,7 +205,7 @@ class PrescriptionDetails extends StatelessWidget {
                               "12/Sep/2025",
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 14.sp,
                                 color: AppColors.lightGrey,
                               ),
                             ),
@@ -213,7 +213,7 @@ class PrescriptionDetails extends StatelessWidget {
                               "12/Nov/2025",
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
-                                fontSize: 16.sp,
+                                fontSize: 14.sp,
                                 color: AppColors.lightGrey,
                               ),
                             ),
@@ -227,7 +227,7 @@ class PrescriptionDetails extends StatelessWidget {
                           Text(
                             AppStrings.eligibleTill.tr,
                             style: TextStyle(
-                              fontSize: 17.sp,
+                              fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -249,7 +249,7 @@ class PrescriptionDetails extends StatelessWidget {
                           AppStrings.diagnosisHistory.tr,
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 18.sp,
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
                           ),
@@ -320,7 +320,7 @@ class PrescriptionDetails extends StatelessWidget {
                           AppStrings.prescriptionHistory.tr,
                           style: TextStyle(
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: 18.sp,
                             color: Colors.black,
                             fontWeight: FontWeight.w700,
                           ),
@@ -400,11 +400,11 @@ class PrescriptionDetails extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           AppStrings.electronicSign.tr,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: TextStyle(
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 18.sp,
                             color: Colors.black,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                       ),

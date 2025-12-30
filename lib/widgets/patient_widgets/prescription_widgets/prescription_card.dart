@@ -145,7 +145,12 @@ class PrescriptionCard extends StatelessWidget {
               _buildStatusChip(prescription.status),
             ],
           ),
-          16.verticalSpace,
+          8.verticalSpace,
+          Divider(
+            color: AppColors.lightGrey.withOpacity(0.2),
+            height: 10.h,
+          ),
+              8.verticalSpace,
           Text(
             prescription.medicationName,
             style: TextStyle(

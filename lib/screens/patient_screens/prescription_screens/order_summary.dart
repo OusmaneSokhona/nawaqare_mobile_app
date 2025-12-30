@@ -56,7 +56,7 @@ class OrderSummaryScreen extends StatelessWidget {
                 20.verticalSpace,
                 _buildFeeSummaryCard(),
                 15.verticalSpace,
-                _buildEstimatedDelivery(),
+                _buildEstimatedDelivery(),const Divider(height: 10, thickness: 1, color: Color(0xFFE0E0E0)),
                 15.verticalSpace,
                 _buildPharmacyDetails(),
                 15.verticalSpace,
@@ -94,9 +94,9 @@ class OrderSummaryScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildFeeItem('Amoxicillin 500mg', '${AppStrings.priceFor.tr} 10mg', 156),
-            const Divider(height: 20, thickness: 1, color: Color(0xFFE0E0E0)),
+            5.verticalSpace,
             _buildFeeItem('Panadol 500mg', '${AppStrings.priceFor.tr} 5mg', 120),
-            const Divider(height: 20, thickness: 1, color: Color(0xFFE0E0E0)),
+            5.verticalSpace,
             _buildFeeItem(AppStrings.deliveryCharges.tr, AppStrings.homeDeliveryNote.tr, 2.0, isDelivery: true),
             const Divider(height: 20, thickness: 1, color: Color(0xFFE0E0E0)),
             _buildTotalFee(AppStrings.totalFee.tr, 330.0),
@@ -182,16 +182,26 @@ class OrderSummaryScreen extends StatelessWidget {
   }
 
   Widget _buildCertificationNote() {
-    return Container(
-      padding: const EdgeInsets.all(12.0),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE3F2FD),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        AppStrings.certificationNote.tr,
-        style: const TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.w500),
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppStrings.certificationNoteTitle.tr,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF333333)),
+        ),
+        5.verticalSpace,
+        Container(
+          padding: const EdgeInsets.all(12.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3F2FD),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            AppStrings.certificationNote.tr,
+            style: const TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.w500),
+          ),
+        ),
+      ],
     );
   }
 }

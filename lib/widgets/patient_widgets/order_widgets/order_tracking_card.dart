@@ -38,6 +38,7 @@ class OrderTrackingCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16.0),
+              border: Border.all(color: AppColors.primaryColor.withOpacity(0.4)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.05),

@@ -3,13 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
+import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/category_button.dart';
 import 'package:patient_app/widgets/patient_widgets/prescription_widgets/next_action_row.dart';
 import 'package:patient_app/widgets/patient_widgets/order_widgets/order_tracking_card.dart';
-
 import '../../widgets/patient_widgets/appointment_widgets/appointment_card.dart';
 import 'appointment_screens/appointment_screen.dart';
 import 'notifications_screens/notifications_screen.dart';
@@ -82,6 +82,16 @@ class HomeScreen extends StatelessWidget {
                     Spacer(),
                     InkWell(
                       onTap: () {
+                        Get.to(HelpCenterScreen());
+                      },
+                      child: Image.asset(
+                        "assets/images/help_center_icon.png",
+                        height: 25.h,
+                      ),
+                    ),
+                    10.horizontalSpace,
+                    InkWell(
+                      onTap: () {
                         Get.to(NotificationScreen());
                       },
                       child: Image.asset(
@@ -102,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       60.verticalSpace,
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
@@ -112,6 +122,17 @@ class HomeScreen extends StatelessWidget {
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () {
+                              Get.to(HelpCenterScreen());
+                            },
+                            child: Image.asset(
+                              "assets/images/help_center_icon.png",
+                              height: 25.h,
+                            ),
+                          ),
+                          10.horizontalSpace,
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());

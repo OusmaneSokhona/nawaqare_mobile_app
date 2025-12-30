@@ -183,7 +183,7 @@ class AppointmentCard extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12.sp, color: Color(0xFF4B5563)),
+            style: TextStyle(fontFamily: AppFonts.jakartaMedium,fontSize: 12.sp, color: Color(0xFF4B5563)),
           ),
         ),
       ],

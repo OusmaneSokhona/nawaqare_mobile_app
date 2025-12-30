@@ -6,15 +6,35 @@ import '../../screens/patient_screens/prescription_screens/prescription_details.
 import '../../screens/patient_screens/prescription_screens/refill_staus.dart';
 import '../../screens/patient_screens/prescription_screens/request_refill.dart';
 
-class PrescriptionController extends GetxController{
-  RxString prescriptionType="activePrescription".obs;
+class PrescriptionController extends GetxController {
+  RxString prescriptionType = "activePrescription".obs;
   final prescriptions = <PrescriptionModel>[].obs;
   final postPrescriptions = <PrescriptionModel>[].obs;
+
+  RxInt currentPage = 1.obs;
+  final int itemsPerPage = 4;
+
+  List<PrescriptionModel> get paginatedList {
+    List<PrescriptionModel> currentList =
+    prescriptionType.value == "activePrescription" ? prescriptions : postPrescriptions;
+
+    int start = (currentPage.value - 1) * itemsPerPage;
+    int end = start + itemsPerPage;
+    if (start >= currentList.length) return [];
+    return currentList.sublist(start, end > currentList.length ? currentList.length : end);
+  }
+
+  int get totalPages {
+    List<PrescriptionModel> currentList =
+    prescriptionType.value == "activePrescription" ? prescriptions : postPrescriptions;
+    if (currentList.isEmpty) return 1;
+    return (currentList.length / itemsPerPage).ceil();
+  }
 
   @override
   void onInit() {
     super.onInit();
-    selectedOption.value=options.first;
+    selectedOption.value = options.first;
     loadDummyData();
   }
 
@@ -43,6 +63,39 @@ class PrescriptionController extends GetxController{
         doctorImageUrl: 'assets/demo_images/doctor_3.png',
       ),
       PrescriptionModel(
+        id: 'p2',
+        doctorName: 'Dr. John Doe',
+        specialization: 'Family Physician',
+        medicationName: 'Amlodipine 10mg',
+        dosageInstruction: 'Morning & Evening',
+        status: PrescriptionStatus.expirySoon,
+        dateInfo: 'Refill until Sep 1, 2024',
+        refillsLeft: 1,
+        doctorImageUrl: 'assets/demo_images/doctor_3.png',
+      ),
+      PrescriptionModel(
+        id: 'p3',
+        doctorName: 'Dr. Jane Smith',
+        specialization: 'Pediatrician',
+        medicationName: 'Ibuprofen 200mg',
+        dosageInstruction: '1 tablet, twice daily after meals',
+        status: PrescriptionStatus.expired,
+        dateInfo: 'Expire Sep 15, 2023',
+        refillsLeft: 0,
+        doctorImageUrl: 'assets/demo_images/doctor_4.png',
+      ),
+      PrescriptionModel(
+        id: 'p3',
+        doctorName: 'Dr. Jane Smith',
+        specialization: 'Pediatrician',
+        medicationName: 'Ibuprofen 200mg',
+        dosageInstruction: '1 tablet, twice daily after meals',
+        status: PrescriptionStatus.expired,
+        dateInfo: 'Expire Sep 15, 2023',
+        refillsLeft: 0,
+        doctorImageUrl: 'assets/demo_images/doctor_4.png',
+      ),
+      PrescriptionModel(
         id: 'p3',
         doctorName: 'Dr. Jane Smith',
         specialization: 'Pediatrician',
@@ -55,6 +108,39 @@ class PrescriptionController extends GetxController{
       ),
     ]);
     postPrescriptions.assignAll([
+      PrescriptionModel(
+        id: 'p1',
+        doctorName: 'Dr. Maria Waston',
+        specialization: 'Heart Surgeon',
+        medicationName: 'Amoxicillin 500mg',
+        dosageInstruction: '1 tablet, twice daily after meals',
+        status: PrescriptionStatus.completed,
+        dateInfo: 'Completed Date Sep 15, 2024',
+        refillsLeft: null,
+        doctorImageUrl: 'assets/demo_images/doctor_2.png',
+      ),
+      PrescriptionModel(
+        id: 'p1',
+        doctorName: 'Dr. Maria Waston',
+        specialization: 'Heart Surgeon',
+        medicationName: 'Amoxicillin 500mg',
+        dosageInstruction: '1 tablet, twice daily after meals',
+        status: PrescriptionStatus.completed,
+        dateInfo: 'Completed Date Sep 15, 2024',
+        refillsLeft: null,
+        doctorImageUrl: 'assets/demo_images/doctor_2.png',
+      ),
+      PrescriptionModel(
+        id: 'p1',
+        doctorName: 'Dr. Maria Waston',
+        specialization: 'Heart Surgeon',
+        medicationName: 'Amoxicillin 500mg',
+        dosageInstruction: '1 tablet, twice daily after meals',
+        status: PrescriptionStatus.completed,
+        dateInfo: 'Completed Date Sep 15, 2024',
+        refillsLeft: null,
+        doctorImageUrl: 'assets/demo_images/doctor_2.png',
+      ),
       PrescriptionModel(
         id: 'p1',
         doctorName: 'Dr. Maria Waston',
@@ -109,6 +195,7 @@ class PrescriptionController extends GetxController{
   void viewDetail(PrescriptionModel prescription) {
     Get.to(PrescriptionDetails(prescriptionModel: prescription));
   }
+
   final selectedCycle = '1 month'.obs;
   final refillCycles = ['1 month', '3 months', '6 months'];
 
@@ -117,11 +204,12 @@ class PrescriptionController extends GetxController{
       selectedCycle.value = newValue;
     }
   }
-  TextEditingController noteController=TextEditingController();
-  void sendRequest(){
+
+  TextEditingController noteController = TextEditingController();
+  void sendRequest() {
     Get.to(RefillStaus());
   }
-  // .........delivery option .............//
+
   final List<DeliveryOption> options = [
     DeliveryOption(name: 'Home Delivery', price: 5.00),
     DeliveryOption(name: 'Pickup in pharmacy', price: 0.00),

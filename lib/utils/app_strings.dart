@@ -415,6 +415,7 @@ class AppStrings {
   static const String estimatedDeliveryTime = "estimated_delivery_time";
   static const String expectedDeliveryDays = "expected_delivery_days";
   static const String certificationNote = "certification_note";
+  static const String certificationNoteTitle = "certification_note_title";
   static const String confirmOrder = "confirm_order";
   static const String prescriptionReceived = "prescription_received";
   static const String prescriptionAvailableNote = "prescription_available_note";

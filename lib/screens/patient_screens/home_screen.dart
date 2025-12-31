@@ -23,6 +23,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     homeController.scrollChange();
+    homeController.scrollValue.value=0.0;
     return Scaffold(
       body: Container(
         height: 1.sh,

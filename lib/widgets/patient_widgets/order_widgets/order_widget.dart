@@ -19,12 +19,12 @@ class OrderWidget extends StatelessWidget {
   // Keep internal logic but use localized keys for comparison if necessary
   // Best practice: Model should hold keys, but here we adapt to current logic
   Color _getStatusColor(String status) {
-    if (status == AppStrings.inProgress.tr) return Colors.blue.shade100;
-    if (status == AppStrings.outForDelivered.tr) return Colors.green.shade100;
-    if (status == AppStrings.awaitingConfirmation.tr) return Colors.orange.shade100;
+    if (status == AppStrings.inProgress.tr) return Colors.blue;
+    if (status == AppStrings.outForDelivered.tr) return Colors.green;
+    if (status == AppStrings.awaitingConfirmation.tr) return Colors.orange;
     if (status == AppStrings.delivered.tr) return AppColors.green;
     if (status == AppStrings.cancelled.tr) return AppColors.red;
-    return Colors.grey.shade100;
+    return Colors.grey;
   }
 
   Color _getStatusTextColor(String status) {
@@ -94,7 +94,9 @@ class OrderWidget extends StatelessWidget {
                 ),
               ],
             ),
-            16.verticalSpace,
+            8.verticalSpace,
+            Divider(color: AppColors.lightGrey.withOpacity(0.4),height:5,),
+            8.verticalSpace,
             Row(
               children: [
                 Container(
@@ -109,7 +111,7 @@ class OrderWidget extends StatelessWidget {
                   child: Text(
                     order.status,
                     style: TextStyle(
-                      color: _getStatusTextColor(order.status),
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 11.sp,
                     ),

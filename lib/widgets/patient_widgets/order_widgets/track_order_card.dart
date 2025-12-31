@@ -70,7 +70,7 @@ class TrackOrderCard extends StatelessWidget {
               return Text(
                 stage,
                 style: TextStyle(
-                  color: index <= 2 ? AppColors.primaryColor : Colors.grey.shade500,
+                  color: Colors.black,
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: AppFonts.jakartaMedium,

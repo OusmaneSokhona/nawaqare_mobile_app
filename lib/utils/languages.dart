@@ -1139,6 +1139,8 @@ class Languages extends Translations {
       AppStrings.editPrice: "Edit Price",
       AppStrings.open: "Open",
       AppStrings.book: "Book",
+      AppStrings.languages: "Languages",
+      AppStrings.acceptedPaymentMethod: "Accepted Payment Method",
     },
     'fr_FR': {
       AppStrings.langSupport: "Support Linguistique",
@@ -2303,6 +2305,8 @@ class Languages extends Translations {
       AppStrings.editPrice: "Modifier le prix",
       AppStrings.open: "Ouvrir",
       AppStrings.book: "Réserver",
+      AppStrings.languages: "Les langues",
+      AppStrings.acceptedPaymentMethod: "Mode de paiement accepté",
     },
   };
 }

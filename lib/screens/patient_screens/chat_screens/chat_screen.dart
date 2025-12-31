@@ -7,6 +7,7 @@ import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../notifications_screens/notifications_screen.dart';
+import '../video_call_screens/help_center_screen.dart';
 import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -90,6 +91,20 @@ class ChatScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    5.horizontalSpace,
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(HelpCenterScreen());
+                        },
+                        child: Image.asset(
+                          "assets/images/help_center_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
+                    ),
+                    5.horizontalSpace,
                     Padding(
                       padding: EdgeInsets.only(bottom: 8.h),
                       child: InkWell(
@@ -145,6 +160,16 @@ class ChatScreen extends StatelessWidget {
                             ),
                           ),
                           const Spacer(),
+                          InkWell(
+                            onTap: () {
+                              Get.to(HelpCenterScreen());
+                            },
+                            child: Image.asset(
+                              "assets/images/help_center_icon.png",
+                              height: 25.h,
+                            ),
+                          ),
+                          5.horizontalSpace,
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());

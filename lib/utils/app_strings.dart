@@ -1073,4 +1073,6 @@ class AppStrings {
   static const String editPrice = "edit_price";
   static const String open = "open";
   static const String book = "book";
+  static const String languages = "languages";
+  static const String acceptedPaymentMethod = "accepted_payment_method";
 }

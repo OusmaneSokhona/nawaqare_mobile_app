@@ -70,6 +70,7 @@ class OrderScreen extends StatelessWidget {
                         onTap: () {
                           orderController.orderType.value = "ongoingOrders";
                           orderController.searchQuery.value = '';
+                          orderController.currentPage.value = 1;
                         },
                         child: Container(
                           height: 55.h,
@@ -100,6 +101,7 @@ class OrderScreen extends StatelessWidget {
                         onTap: () {
                           orderController.orderType.value = "deliveryHistory";
                           orderController.searchQuery.value = '';
+                          orderController.currentPage.value = 1;
                         },
                         child: Container(
                           height: 55.h,
@@ -141,6 +143,7 @@ class OrderScreen extends StatelessWidget {
                   },
                   onChanged: (value) {
                     orderController.searchQuery.value = value;
+                    orderController.currentPage.value = 1;
                   },
                   decoration: InputDecoration(
                     hintText: AppStrings.searchOrderHint.tr,
@@ -164,41 +167,108 @@ class OrderScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Obx(
-                    () {
-                  final filteredList = orderController.filteredOrders;
+              10.verticalSpace,
+              Expanded(
+                child: Obx(() {
+                  final filteredList = orderController.paginatedList;
                   final isHistory = orderController.orderType.value == "deliveryHistory";
 
                   if (filteredList.isEmpty) {
-                    return Expanded(
-                      child: Center(
-                        child: Text(
-                          AppStrings.noOrdersFound.tr,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: Colors.grey,
-                          ),
+                    return Center(
+                      child: Text(
+                        AppStrings.noOrdersFound.tr,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.grey,
                         ),
                       ),
                     );
                   }
 
-                  return Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.only(top: 20.h, bottom: 20.h, left: 0, right: 0),
-                      itemCount: filteredList.length,
-                      itemBuilder: (context, index) {
-                        return OrderWidget(
-                          isComplete: isHistory,
-                          order: filteredList[index],
-                        );
-                      },
-                    ),
+                  return ListView.builder(
+                    padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
+                    itemCount: filteredList.length,
+                    itemBuilder: (context, index) {
+                      return OrderWidget(
+                        isComplete: isHistory,
+                        order: filteredList[index],
+                      );
+                    },
                   );
-                },
+                }),
               ),
+              10.verticalSpace,
+              _buildPagination(),
+              20.verticalSpace,
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPagination() {
+    return Obx(
+          () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _paginationArrow(Icons.arrow_back, () {
+            if (orderController.currentPage.value > 1) {
+              orderController.currentPage.value--;
+            }
+          }),
+          15.horizontalSpace,
+          ...List.generate(orderController.totalPages, (index) {
+            int page = index + 1;
+            return GestureDetector(
+              onTap: () => orderController.currentPage.value = page,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Text(
+                  "$page",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: AppFonts.jakartaMedium,
+                    fontWeight: FontWeight.w600,
+                    color: orderController.currentPage.value == page
+                        ? AppColors.primaryColor
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+            );
+          }),
+          15.horizontalSpace,
+          _paginationArrow(Icons.arrow_forward, () {
+            if (orderController.currentPage.value < orderController.totalPages) {
+              orderController.currentPage.value++;
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _paginationArrow(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(5.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(3.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          size: 17.h,
+          color: Colors.black,
         ),
       ),
     );

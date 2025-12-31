@@ -1,35 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../models/appointment_model.dart';
 
-class SearchControllerCustom extends GetxController{
-  ScrollController scrollController=ScrollController();
-  RxDouble scrollValue=0.0.obs;
+class SearchControllerCustom extends GetxController {
+  ScrollController scrollController = ScrollController();
+  RxDouble scrollValue = 0.0.obs;
   final RxString _searchQuery = ''.obs;
-  RxString selectedCategory="All".obs;
+  RxString selectedCategory = "All".obs;
+
+  RxInt currentPage = 1.obs;
+  final int itemsPerPage = 4;
 
   @override
   void onInit() {
     super.onInit();
-    // Re-initialize scroll listener in onInit for better practice
     scrollChange();
-    // Add listeners to rebuild filteredList when search or category changes
-    ever(_searchQuery, (_) => update());
-    ever(selectedCategory, (_) => update());
-  }
-
-  void scrollChange(){
-    scrollController.addListener((){
-      scrollValue.value=scrollController.offset;
-      // print(scrollValue);
+    ever(_searchQuery, (_) {
+      currentPage.value = 1;
+      update();
+    });
+    ever(selectedCategory, (_) {
+      currentPage.value = 1;
+      update();
     });
   }
+
+  void scrollChange() {
+    scrollController.addListener(() {
+      scrollValue.value = scrollController.offset;
+    });
+  }
+
   void updateSearchQuery(String query) {
     _searchQuery.value = query;
   }
-
-  // --- Doctor List and Filtering Logic ---
 
   final List<AppointmentModel> _allDoctorList = [
     AppointmentModel(
@@ -89,22 +93,39 @@ class SearchControllerCustom extends GetxController{
     ),
   ];
 
-  List<AppointmentModel> get doctorList {
+  List<AppointmentModel> get filteredDoctorList {
     return _allDoctorList.where((doctor) {
       final String query = _searchQuery.value.toLowerCase();
       final bool matchesSearch = doctor.name.toLowerCase().contains(query) ||
           doctor.specialty.toLowerCase().contains(query);
-
       final bool matchesCategory = selectedCategory.value == "All" ||
           doctor.specialty == selectedCategory.value;
-
       return matchesSearch && matchesCategory;
     }).toList();
   }
 
-  List<String> doctorsTypeList=["All","General Practitioner","Gynecologist","Cardiologist","Orthopedic Surgery"];
+  List<AppointmentModel> get paginatedDoctorList {
+    List<AppointmentModel> list = filteredDoctorList;
+    int start = (currentPage.value - 1) * itemsPerPage;
+    int end = start + itemsPerPage;
+    if (start >= list.length) return [];
+    return list.sublist(start, end > list.length ? list.length : end);
+  }
 
-  // ........search filter bottom sheet ........//
+  int get totalPages {
+    int count = filteredDoctorList.length;
+    if (count == 0) return 1;
+    return (count / itemsPerPage).ceil();
+  }
+
+  List<String> doctorsTypeList = [
+    "All",
+    "General Practitioner",
+    "Gynecologist",
+    "Cardiologist",
+    "Orthopedic Surgery"
+  ];
+
   final Rx<DateTime?> selectedDate = Rx<DateTime?>(DateTime(2025, 9, 12));
   final RxString selectedReligion = 'Islam'.obs;
   final RxString selectedLocation = 'Women\'s Clinic, Seattle, USA'.obs;
@@ -113,8 +134,17 @@ class SearchControllerCustom extends GetxController{
   final Rx<Gender> selectedGender = Gender.male.obs;
   final RxDouble priceRange = 25.0.obs;
 
-  final List<String> religions = ['Islam', 'Christianity', 'Judaism', 'Hinduism'];
-  final List<String> locations = ['Women\'s Clinic, Seattle, USA', 'General Hospital, NY, USA', 'Family Health Center, London, UK'];
+  final List<String> religions = [
+    'Islam',
+    'Christianity',
+    'Judaism',
+    'Hinduism'
+  ];
+  final List<String> locations = [
+    'Women\'s Clinic, Seattle, USA',
+    'General Hospital, NY, USA',
+    'Family Health Center, London, UK'
+  ];
 
   void resetFilters() {
     selectedDate.value = DateTime(2025, 9, 12);
@@ -124,9 +154,11 @@ class SearchControllerCustom extends GetxController{
     distanceRange.value = 2.5;
     selectedGender.value = Gender.male;
     priceRange.value = 25.0;
+    currentPage.value = 1;
   }
 
   void applyFilters() {
+    currentPage.value = 1;
     Get.back();
   }
 
@@ -146,5 +178,7 @@ class SearchControllerCustom extends GetxController{
     }
   }
 }
+
 enum ConsultationMode { inPerson, remote }
+
 enum Gender { male, female }

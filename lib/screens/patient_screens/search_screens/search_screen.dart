@@ -9,11 +9,13 @@ import '../../../utils/app_fonts.dart';
 import '../../../widgets/patient_widgets/search_widgets/doctor_widget.dart';
 import '../../../widgets/patient_widgets/search_widgets/search_bottom_sheet.dart';
 import '../notifications_screens/notifications_screen.dart';
+import '../video_call_screens/help_center_screen.dart';
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({super.key});
 
-  final SearchControllerCustom searchController = Get.put(SearchControllerCustom());
+  final SearchControllerCustom searchController =
+  Get.put(SearchControllerCustom());
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +39,7 @@ class SearchScreen extends StatelessWidget {
             Obx(() {
               final bool isScrolledPastThreshold =
                   searchController.scrollValue.value >= 330;
-
               final double targetHeight = isScrolledPastThreshold ? 120.0 : 0.0;
-
               final Color targetColor = isScrolledPastThreshold
                   ? AppColors.primaryColor
                   : Colors.transparent;
@@ -107,6 +107,20 @@ class SearchScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    5.horizontalSpace,
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 8.h),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to(HelpCenterScreen());
+                        },
+                        child: Image.asset(
+                          "assets/images/help_center_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
+                    ),
+                    5.horizontalSpace,
                     Padding(
                       padding: EdgeInsets.only(bottom: 8.h),
                       child: InkWell(
@@ -133,16 +147,27 @@ class SearchScreen extends StatelessWidget {
                     children: [
                       60.verticalSpace,
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                           CircleAvatar(
+                          CircleAvatar(
                             radius: 35.h,
                             backgroundColor: Colors.white,
                             foregroundImage: AssetImage(
                               "assets/demo_images/home_demo_image.png",
                             ),
                           ),
+                          Spacer(),
+                          InkWell(
+                            onTap: () {
+                              Get.to(HelpCenterScreen());
+                            },
+                            child: Image.asset(
+                              "assets/images/help_center_icon.png",
+                              height: 25.h,
+                            ),
+                          ),
+                          5.horizontalSpace,
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());
@@ -274,7 +299,7 @@ class SearchScreen extends StatelessWidget {
                             () => Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "${searchController.doctorList.length} ${AppStrings.doctorsFound.tr}",
+                            "${searchController.filteredDoctorList.length} ${AppStrings.doctorsFound.tr}",
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -284,33 +309,106 @@ class SearchScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      Obx(
-                            () => ListView.builder(
+                      Obx(() {
+                        var list = searchController.paginatedDoctorList;
+                        return ListView.builder(
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          padding: EdgeInsets.only(top: 20.h, bottom: 20.h),
-                          itemCount: searchController.doctorList.length,
+                          padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
+                          itemCount: list.length,
                           itemBuilder: (context, index) {
                             return DoctorWidget(
                               onTap: () {
                                 Get.to(
                                   SearchDoctorDetailScreen(
-                                    model: searchController.doctorList[index],
+                                    model: list[index],
                                   ),
                                 );
                               },
-                              appointmentModel:
-                              searchController.doctorList[index],
+                              appointmentModel: list[index],
                             );
                           },
-                        ),
-                      ),
+                        );
+                      }),
+                      10.verticalSpace,
+                      _buildPagination(),
+                      20.verticalSpace,
                     ],
                   ),
                 ),
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPagination() {
+    return Obx(
+          () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _paginationArrow(Icons.arrow_back, () {
+            if (searchController.currentPage.value > 1) {
+              searchController.currentPage.value--;
+              searchController.scrollValue.value=0.0;
+            }
+          }),
+          15.horizontalSpace,
+          ...List.generate(searchController.totalPages, (index) {
+            int page = index + 1;
+            return GestureDetector(
+              onTap: () => searchController.currentPage.value = page,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Text(
+                  "$page",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: AppFonts.jakartaMedium,
+                    fontWeight: FontWeight.w600,
+                    color: searchController.currentPage.value == page
+                        ? AppColors.primaryColor
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+            );
+          }),
+          15.horizontalSpace,
+          _paginationArrow(Icons.arrow_forward, () {
+            if (searchController.currentPage.value <
+                searchController.totalPages) {
+              searchController.currentPage.value++;
+              searchController.scrollValue.value=0.0;
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _paginationArrow(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(5.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(3.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          size: 17.h,
+          color: Colors.black,
         ),
       ),
     );

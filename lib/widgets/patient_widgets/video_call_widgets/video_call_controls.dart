@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
@@ -113,7 +114,7 @@ class VideoCallControls extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
       child: Material(
         color: isActive ? Colors.grey[800] : Colors.red[600],
-        shape: const CircleBorder(),
+        shape:  CircleBorder(side: BorderSide(color:isActive?Colors.white:Colors.red,width:2.sp)),
         elevation: 5,
         child: InkWell(
           onTap: onPressed,

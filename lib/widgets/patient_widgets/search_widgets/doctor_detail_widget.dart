@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class DoctorDetailWidget extends StatelessWidget {
@@ -101,7 +102,36 @@ class DoctorDetailWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _buildDivider(),
-
+          _buildSectionTitle(AppStrings.clinicAddress.tr),
+          Text(
+            "Degree College road, near Zarai Tarqiati Bank Limited, Bahawalnagar, Punjab",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey[900],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildDivider(),
+          _buildSectionTitle(AppStrings.languages.tr),
+          Text(
+            "English, French, Arabic",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey[900],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildDivider(),
+          _buildSectionTitle(AppStrings.acceptedPaymentMethod.tr),
+          Text(
+            "Credit / Debit card, Cash, Bank transfer",
+            style: TextStyle(
+              fontSize: 15,
+              color: Colors.grey[900],
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildDivider(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -111,7 +141,9 @@ class DoctorDetailWidget extends StatelessWidget {
                 child: Text(
                   AppStrings.seeAll.tr,
                   style: const TextStyle(
-                    color: Color(0xFF4285F4),
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primaryColor,
+                    color:AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

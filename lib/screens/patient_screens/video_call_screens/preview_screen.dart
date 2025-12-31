@@ -9,6 +9,7 @@ import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart'; // Added import
 import '../../../widgets/patient_widgets/appointment_widgets/appintment_detail_widget.dart';
 import '../../../widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
+import '../../../widgets/patient_widgets/video_call_widgets/consultation_card_widget.dart';
 
 class PreviewScreen extends StatelessWidget {
   final AppointmentModel appointmentModel;
@@ -78,7 +79,7 @@ class PreviewScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           CardHeader(title: AppStrings.remoteConsultation.tr), // Localized
-                          AppintmentDetailWidget(
+                          ConsultationCardWidget(
                             appointmentModel: appointmentModel,
                           ),
                           10.verticalSpace,

@@ -122,7 +122,7 @@ class OrderDetailCard extends StatelessWidget {
                 return Text(
                   stage,
                   style: TextStyle(
-                    color: idx <= 2 ? Colors.black : Colors.grey.shade500,
+                    color: Colors.black ,
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFonts.jakartaMedium,

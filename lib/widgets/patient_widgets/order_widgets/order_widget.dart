@@ -113,7 +113,7 @@ class OrderWidget extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 11.sp,
+                      fontSize: Get.locale?.languageCode == 'fr' ? 10.sp : 11.sp,
                     ),
                   ),
                 ),
@@ -121,7 +121,7 @@ class OrderWidget extends StatelessWidget {
                 Text(
                   '${AppStrings.lastUpdate.tr}: ${order.lastUpdate}',
                   style: TextStyle(
-                    fontSize: 10.sp,
+                    fontSize: Get.locale?.languageCode == 'fr' ? 9.sp : 11.sp,
                     color: Colors.grey.shade500,
                   ),
                 ),
@@ -189,7 +189,7 @@ class OrderWidget extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
-                      fontSize: 19.sp,
+                      fontSize: Get.locale?.languageCode == 'fr' ? 14.sp : 19.sp,
                       fontFamily: AppFonts.jakartaMedium,
                     ),
                   ),
@@ -214,7 +214,7 @@ class OrderWidget extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
-                      fontSize: 19.sp,
+                      fontSize: Get.locale?.languageCode == 'fr' ? 14.sp : 19.sp,
                       fontFamily: AppFonts.jakartaMedium,
                     ),
                   ),
@@ -243,7 +243,7 @@ class OrderWidget extends StatelessWidget {
                         : AppStrings.viewDetail.tr,
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 19.sp,
+                      fontSize: Get.locale?.languageCode == 'fr' ? 14.sp : 19.sp,
                       fontFamily: AppFonts.jakartaMedium,
                     ),
                   ),

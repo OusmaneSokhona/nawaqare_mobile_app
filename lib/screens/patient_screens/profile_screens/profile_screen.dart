@@ -77,6 +77,14 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     InkWell(
+                      onTap: () => Get.to(HelpCenterScreen()),
+                      child: Image.asset(
+                        "assets/images/help_center_icon.png",
+                        height: 30.h,
+                      ),
+                    ),
+                    10.horizontalSpace,
+                    InkWell(
                       onTap: () => Get.to(NotificationScreen()),
                       child: Image.asset(
                         "assets/images/bell_icon.png",

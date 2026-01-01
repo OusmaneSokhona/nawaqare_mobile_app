@@ -86,7 +86,7 @@ class TrackOrderScreen extends StatelessWidget {
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
-                              fontSize: 16.sp,
+                              fontSize: Get.locale?.languageCode == 'fr' ? 13.sp : 16.sp,
                               fontFamily: AppFonts.jakartaMedium,
                             ),
                           ),
@@ -114,7 +114,7 @@ class TrackOrderScreen extends StatelessWidget {
                                 AppStrings.contactDriver.tr,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 15.sp,
+                                  fontSize: Get.locale?.languageCode == 'fr' ? 10.sp : 15.sp,
                                   fontFamily: AppFonts.jakartaMedium,
                                 ),
                               ),
@@ -126,6 +126,7 @@ class TrackOrderScreen extends StatelessWidget {
                     10.verticalSpace,
                     CustomButton(
                       borderRadius: 15,
+                      fontSize: Get.locale?.languageCode == 'fr' ? 15 : 19,
                       text: AppStrings.contactPharmacy.tr,
                       onTap: (){},
                       icon: Icons.local_phone_outlined,

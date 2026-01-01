@@ -29,7 +29,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
           const SizedBox(height: 16),
           Center(
             child: Text(
-              '${"hello".tr}, ${controller.user.value.name.split(' ').first}',
+              '${"hello".tr} ${controller.user.value.name.split(' ').first}',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -53,19 +53,32 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(AppStrings.uploadLabel.tr,
-                  style: TextStyle(fontSize: 11.sp)),
+              child: Text(AppStrings.uploadNew.tr,
+                  style: TextStyle(fontSize: 14.sp)),
             ),
           ),
           15.verticalSpace,
-          ListView.builder(
-            shrinkWrap: true,
-            padding: EdgeInsets.zero,
-            itemCount: controller.documents.length,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return _buildDocumentItem(controller.documents[index]);
-            },
+          Container(
+            height: 0.26.sh,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade200,
+                  blurRadius: 5,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: controller.documents.length,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return _buildDocumentItem(controller.documents[index],index<2);
+              },
+            ),
           ),
           const SizedBox(height: 30),
           Text(
@@ -83,72 +96,74 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildDocumentItem(Document doc) {
+  Widget _buildDocumentItem(Document doc,bool showDivider) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade200,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Icon(
-            Icons.description,
-            color: const Color(0xFF3B82F6).withOpacity(0.8),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  doc.type,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                Row(
+          Row(
+            children: [
+              Icon(
+                Icons.description,
+                color: const Color(0xFF3B82F6).withOpacity(0.8),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 14,
-                      color: Colors.green.shade600,
-                    ),
-                    const SizedBox(width: 4),
                     Text(
-                      doc.date,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
+                      doc.type,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
                       ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          size: 14,
+                          color: Colors.green.shade600,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          doc.date,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.remove_red_eye_outlined,
+                  color: Colors.grey.shade600,
+                ),
+                onPressed: () => Get.snackbar(
+                    "action".tr, '${"viewing".tr} ${doc.type}'),
+              ),
+              IconButton(
+                icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
+                onPressed: () => Get.snackbar(
+                    "action".tr, '${"deleting".tr} ${doc.type}'),
+              ),
+            ],
           ),
-          IconButton(
-            icon: Icon(
-              Icons.remove_red_eye_outlined,
-              color: Colors.grey.shade600,
-            ),
-            onPressed: () => Get.snackbar(
-                "action".tr, '${"viewing".tr} ${doc.type}'),
-          ),
-          IconButton(
-            icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
-            onPressed: () => Get.snackbar(
-                "action".tr, '${"deleting".tr} ${doc.type}'),
-          ),
+          showDivider?Divider(
+            color: Colors.grey.shade300,
+            thickness: 1,
+            height: 20,
+          ):SizedBox.shrink(),
         ],
       ),
     );

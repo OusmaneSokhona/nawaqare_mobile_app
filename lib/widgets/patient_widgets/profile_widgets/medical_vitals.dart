@@ -28,7 +28,7 @@ class MedicalVitalsProfile extends GetView<ProfileController> {
           const SizedBox(height: 16),
           Center(
             child: Text(
-              '${AppStrings.hello.tr}, ${controller.user.value.name.split(' ').first}',
+              '${AppStrings.hello.tr} ${controller.user.value.name.split(' ').first}',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

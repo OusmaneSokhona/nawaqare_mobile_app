@@ -29,6 +29,7 @@ class AppStrings {
   static const String aboutMeHint = "about_me_hint";
   static const String docsAndReports = "docs_and_reports";
   static const String uploadLabel = "upload_label";
+  static const String uploadNew = "upload_new";
   static const String uploadFormat = "upload_format";
   static const String tapToSelectNew = "tap_to_select_new";
   static const String submit = "submit";

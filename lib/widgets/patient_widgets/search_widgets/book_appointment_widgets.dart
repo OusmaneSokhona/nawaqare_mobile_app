@@ -91,6 +91,15 @@ class ConsultationDetailsCard extends StatelessWidget {
               readOnly: true,
             ),
             10.verticalSpace,
+            Text(AppStrings.contact.tr,
+                style:
+                TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
+            SizedBox(height: 8.h),
+            InputField(
+              text: "03146314866",
+              readOnly: true,
+            ),
+            10.verticalSpace,
             Text(
               AppStrings.note.tr,
               style: TextStyle(

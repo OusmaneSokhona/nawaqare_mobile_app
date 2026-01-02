@@ -129,6 +129,7 @@ class AppStrings {
   static const String upcomingAppointment = "upcoming_appointment";
   static const String appointments = "appointments";
   static const String prescription = "prescription";
+  static const String prescriptionDoctor = "prescription_doctor";
   static const String orders = "orders";
   static const String heartSurgeon = "heart_surgeon";
   static const String gastroenterologist = "gastroenterologist";
@@ -441,6 +442,7 @@ class AppStrings {
   static const String downloadPdf = "download_pdf";
   static const String encryptionNote = "encryption_note";
   static const String activePrescriptions = "active_prescriptions";
+  static const String activePrescriptionsDoctor = "active_prescriptions_doctor";
   static const String pastPrescriptions = "past_prescriptions";
   static const String refillStatus = "refill_status";
   static const String approved = "approved";
@@ -1076,4 +1078,11 @@ class AppStrings {
   static const String book = "book";
   static const String languages = "languages";
   static const String acceptedPaymentMethod = "accepted_payment_method";
+  static const String homeVisitRequestDetail = 'home_visit_request_detail';
+  static const String requestedTimeslot = 'requested_timeslot';
+  static const String patientNote = 'patient_note';
+  static const String demoPatientName = 'dr_daniel_lee';
+  static const String demoAddress = 'demo_address_text';
+  static const String demoTimeslot = 'demo_timeslot_text';
+  static const String demoNoteValue = 'demo_note_description';
 }

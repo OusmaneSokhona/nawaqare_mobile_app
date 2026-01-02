@@ -263,9 +263,9 @@ class DoctorHomeScreen extends StatelessWidget {
                           ),
                           CategoryButton(
                             onTap: () {
-                              Get.to(PrescriptionScreen());
+                              Get.to(DoctorPrescriptionScreen());
                             },
-                            title: AppStrings.prescription.tr,
+                            title: AppStrings.prescriptionDoctor.tr,
                             icon: "assets/images/prescription_icon.png",
                             color: AppColors.secondryColor,
                           ),

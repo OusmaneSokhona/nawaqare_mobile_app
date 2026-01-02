@@ -82,12 +82,12 @@ class PrescriptionScreen extends StatelessWidget {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            AppStrings.activePrescriptions.tr,
+                            "${AppStrings.activePrescriptions.tr}(${prescriptionController.prescriptions.length})",
                             style: TextStyle(
                               color: prescriptionController.prescriptionType.value == "activePrescription"
                                   ? Colors.white
                                   : Colors.black,
-                              fontSize: 14.5.sp,
+                              fontSize: 13.5.sp,
                               fontWeight: FontWeight.w700,
                               fontFamily: AppFonts.jakartaMedium,
                             ),
@@ -112,7 +112,7 @@ class PrescriptionScreen extends StatelessWidget {
                           ),
                           alignment: Alignment.center,
                           child: Text(
-                            AppStrings.pastPrescriptions.tr,
+                            "${AppStrings.pastPrescriptions.tr}(${prescriptionController.postPrescriptions.length})",
                             style: TextStyle(
                               color: prescriptionController.prescriptionType.value == "pastPrescription"
                                   ? Colors.white

@@ -109,6 +109,9 @@ class ElectronicSignatureScreen extends StatelessWidget {
                 AppStrings.useSavedSignature.tr,
                 style: TextStyle(
                   color: Colors.blue.shade700,
+                  decoration: TextDecoration.underline,
+                  decorationColor: AppColors.primaryColor,
+                  decorationThickness: 0.7,
                   fontWeight: FontWeight.w600,
                 ),
               ),

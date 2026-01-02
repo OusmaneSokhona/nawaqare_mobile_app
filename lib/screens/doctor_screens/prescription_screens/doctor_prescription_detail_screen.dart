@@ -320,7 +320,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              AppStrings.prescription.tr + "s",
+                              AppStrings.prescriptionDoctor.tr + "s",
                               style: TextStyle(
                                 fontFamily: AppFonts.jakartaBold,
                                 fontSize: 18.sp,
@@ -398,12 +398,11 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Drsarah',
-                          style: GoogleFonts.dancingScript(
-                            textStyle: const TextStyle(
-                              fontSize: 40,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black87,
+                          'Dr.sarah',
+                          style: GoogleFonts.notoSans(
+                            textStyle:  TextStyle(
+                              fontSize: 27.sp,
+                              color: Colors.black54,
                               height: 1.0,
                             ),
                           ),

@@ -7,6 +7,7 @@ import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_ap
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_home_visit_status_dialog.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/home_visit_request_detail_screen.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -159,9 +160,12 @@ class DoctorAppointmentDetail extends StatelessWidget {
                             ],
                           ),
                         ),
+                        10.verticalSpace,
+                        HomeVisitRequestDetailScreen(),
+                        10.verticalSpace,
                         MedicalReportCard(
                             title: AppStrings.bloodTestReport.tr,
-                            date: "200/Sep/2025"
+                            date: "200/Sep/2025",onlyView: true,
                         ),
 
                         30.verticalSpace,

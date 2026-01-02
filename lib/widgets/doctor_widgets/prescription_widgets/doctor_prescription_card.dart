@@ -187,7 +187,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
                 _buildActionChip(
                     AppStrings.modify.tr,
                     const Color(0xFFE0E0E0),
-                        () => controller.modify(), Colors.black
+                        () {}, Colors.black
                 ),
               if (showRefillButton) 10.horizontalSpace,
               _buildActionChip(

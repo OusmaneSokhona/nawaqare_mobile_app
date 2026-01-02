@@ -11,7 +11,9 @@ import '../../../utils/app_strings.dart';
 
 class DoctorPastAppoinmentWidget extends StatelessWidget {
   DoctorPastAppoinmentWidget({super.key});
-  DoctorAppointmentController doctorAppointmentController = Get.find<DoctorAppointmentController>();
+
+  DoctorAppointmentController doctorAppointmentController =
+      Get.find<DoctorAppointmentController>();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +126,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           child: Column(
             children: [
               Obx(
-                    () => DiagnosisHistoryCard(
+                () => DiagnosisHistoryCard(
                   diagnosis: "Migraine without aura",
                   icd: "ICD-10",
                   notes: doctorAppointmentController.notesText.value,
@@ -143,6 +145,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
         MedicalReportCard(
           title: "Blood Test Report",
           date: "200/Sep/2025",
+          onlyView: false,
         ),
         15.verticalSpace,
         FollowUpRecommendationCard(
@@ -159,7 +162,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           reviewerName: "Emily Anderson",
           rating: 5,
           reviewText:
-          "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
+              "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
         ),
         15.verticalSpace,
         40.verticalSpace,
@@ -174,12 +177,13 @@ class CardHeader extends StatelessWidget {
   final FontWeight fontWeight;
   final Color color;
 
-  const CardHeader(
-      {required this.title,
-        super.key,
-        this.fontSize = 18,
-        this.fontWeight = FontWeight.w700,
-        this.color = Colors.black});
+  const CardHeader({
+    required this.title,
+    super.key,
+    this.fontSize = 18,
+    this.fontWeight = FontWeight.w700,
+    this.color = Colors.black,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -435,8 +439,14 @@ class PrescriptionHistoryCard extends StatelessWidget {
 class MedicalReportCard extends StatelessWidget {
   final String title;
   final String date;
+  final bool onlyView;
 
-  const MedicalReportCard({required this.title, required this.date, super.key});
+  const MedicalReportCard({
+    required this.title,
+    required this.date,
+    super.key,
+    required this.onlyView,
+  });
 
   static const Color _primaryColor = Color(0xFF1F2937);
   static const Color _secondaryColor = Color(0xFF6B7280);
@@ -450,10 +460,10 @@ class MedicalReportCard extends StatelessWidget {
         CardHeader(title: AppStrings.medicalReports.tr),
         5.verticalSpace,
         Container(
-          padding: EdgeInsets.all(10.sp),
+          padding: EdgeInsets.all(onlyView?0.sp:10.sp),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            border: Border.all(color: onlyView?Colors.transparent:AppColors.lightGrey.withOpacity(0.2)),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -463,7 +473,7 @@ class MedicalReportCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(
-                    color: AppColors.lightGrey.withOpacity(0.1),
+                    color: AppColors.lightGrey.withOpacity(0.2),
                   ),
                   borderRadius: BorderRadius.circular(13.0),
                   boxShadow: [
@@ -515,16 +525,41 @@ class MedicalReportCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    InkWell(
-                        onTap: () {
-                          Get.dialog(DeleteReportDialog());
-                        },
-                        child: Icon(Icons.delete_outline, color: AppColors.red)),
+                    onlyView
+                        ? Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.sp,
+                            vertical: 4.sp,
+                          ),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(9.sp),
+                          ),
+                          child: Text(
+                            AppStrings.view.tr,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontFamily: AppFonts.jakartaMedium,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        )
+                        : InkWell(
+                          onTap: () {
+                            Get.dialog(DeleteReportDialog());
+                          },
+                          child: Icon(
+                            Icons.delete_outline,
+                            color: AppColors.red,
+                          ),
+                        ),
                   ],
                 ),
               ),
-              12.verticalSpace,
-              Row(
+              onlyView?0.verticalSpace:12.verticalSpace,
+             onlyView?SizedBox():Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
@@ -612,7 +647,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
             ),
             10.verticalSpace,
             ...options.map(
-                  (option) => Padding(
+              (option) => Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Row(
                   children: [

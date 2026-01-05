@@ -56,48 +56,49 @@ class UploadDocumentWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: Obx(
-                  () {
-                // Check if the current value matches our default state strings
-                final bool isFileEmpty = selectedFileName.value == AppStrings.noFileSelected ||
-                    selectedFileName.value == AppStrings.fileSelectionCancelled ||
-                    selectedFileName.value == 'No file selected'; // Fallback for hardcoded initial values
+            child: Obx(() {
+              // Check if there is actually a valid string present
+              final String? fileName = selectedFileName.value;
 
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.cloud_upload_outlined,
-                      size: 40.h,
-                      color: Colors.blue.shade700,
+              // Logic: It's empty if it's null, OR if it matches your "No file" strings
+              final bool isFileEmpty = fileName == null ||
+                  fileName == AppStrings.noFileSelected ||
+                  fileName == AppStrings.fileSelectionCancelled;
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.cloud_upload_outlined,
+                    size: 40.h,
+                    color: Colors.blue.shade700,
+                  ),
+                  12.verticalSpace,
+                  Text(
+                    isFileEmpty ? centerText : fileName!, // Safe now because we checked for null
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontFamily: AppFonts.jakartaMedium,
                     ),
-                    12.verticalSpace,
-                    Text(
-                      isFileEmpty ? centerText : selectedFileName.value!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                        fontFamily: AppFonts.jakartaMedium,
-                      ),
-                    ),
-                    if (!isFileEmpty)
-                      Padding(
-                        padding: EdgeInsets.only(top:4.h),
-                        child: Text(
-                          AppStrings.tapToSelectNewFile.tr,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: Colors.grey,
-                            fontFamily: AppFonts.jakartaRegular,
-                          ),
+                  ),
+                  if (!isFileEmpty)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4.h),
+                      child: Text(
+                        AppStrings.tapToSelectNewFile.tr,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.grey,
+                          fontFamily: AppFonts.jakartaRegular,
                         ),
                       ),
-                  ],
-                );
-              },
-            ),
+                    ),
+                ],
+              );
+            }),
           ),
         ),
         3.verticalSpace,

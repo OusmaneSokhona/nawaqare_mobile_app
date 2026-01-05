@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 
@@ -23,7 +24,9 @@ class NotesWidget extends StatelessWidget {
         10.verticalSpace,
         _buildDiagnosisCard(),
         15.verticalSpace,
-        CustomButton(borderRadius: 15, text: AppStrings.addNewNotes.tr, onTap: (){}),
+        CustomButton(borderRadius: 15, text: AppStrings.addNewNotes.tr, onTap: (){
+          Get.to(AddNotesScreen());
+        }),
         30.verticalSpace,
       ],
     );

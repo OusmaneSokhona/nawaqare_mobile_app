@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_health_space_grid.dart';
@@ -31,13 +32,21 @@ class Revalidation extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Center(
-            child: Text(
-              controller.user.value.title,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  controller.user.value.title,
+                  style:  TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1F2937),
+                    fontFamily: AppFonts.jakartaBold,
+                  ),
+                ),
+                5.horizontalSpace,
+                Image.asset("assets/images/verified_tick_icon.png",height: 21.sp,),
+              ],
             ),
           ),
           Center(

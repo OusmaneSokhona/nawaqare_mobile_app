@@ -1085,4 +1085,9 @@ class AppStrings {
   static const String demoAddress = 'demo_address_text';
   static const String demoTimeslot = 'demo_timeslot_text';
   static const String demoNoteValue = 'demo_note_description';
+  static const String managePersonalInfo = "manage_personal_info";
+  static const String professionalCredentialsDetails = "professional_credentials_details";
+  static const String officialDocumentsVerification = "official_documents_verification";
+  static const String revalidateStatusNote = "revalidate_status_note";
+  static const String updatePersonalInfoSub = "update_personal_info_sub";
 }

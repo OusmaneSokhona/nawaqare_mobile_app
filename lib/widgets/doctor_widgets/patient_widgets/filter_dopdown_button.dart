@@ -70,9 +70,7 @@ class FilterControlBar extends StatelessWidget {
           controller.setActivePill(pillTitle);
         }
       },
-      child: Obx(
-            () {
-          return Container(
+      child: Container(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: hasDropdown ? 0 : 8),
             margin: const EdgeInsets.symmetric(horizontal: 4),
             decoration: BoxDecoration(
@@ -96,9 +94,7 @@ class FilterControlBar extends StatelessWidget {
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
     );
   }
 

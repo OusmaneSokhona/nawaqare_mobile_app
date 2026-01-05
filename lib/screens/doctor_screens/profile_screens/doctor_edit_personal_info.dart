@@ -58,6 +58,8 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                   ),
                 ],
               ),
+              10.verticalSpace,
+              Text(AppStrings.updatePersonalInfoSub.tr,style:TextStyle(fontSize: 17.sp,fontFamily: AppFonts.jakartaMedium,fontWeight: FontWeight.w600),),
               20.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(

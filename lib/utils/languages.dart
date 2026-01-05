@@ -699,7 +699,7 @@ class Languages extends Translations {
       AppStrings.documents: "Documents",
       AppStrings.revalidation: "Revalidation",
       AppStrings.editExistingService: "Edit Existing Service",
-      AppStrings.editSupportingDocuments: "Edit Supporting Documents",
+      AppStrings.editSupportingDocuments: "Supporting Documents",
       AppStrings.uploadInsuranceDocument: "Upload insurance document",
       AppStrings.acceptedFilesText: "Accepted files: PDF, JPEG – max 5MB.",
       AppStrings.myServices: "My Services",
@@ -1151,6 +1151,11 @@ class Languages extends Translations {
       AppStrings.demoAddress: 'Xyz Street lahore Pakistan',
       AppStrings.demoTimeslot: '9:00 AM – 10:00 AM',
       AppStrings.demoNoteValue: 'Symptoms improving, headache frequency reduced from 5 to 2 times per week.\nAdvised patient to continue current regimen and maintain sleep hygiene',
+      AppStrings.managePersonalInfo: "Manage your personal information.",
+      AppStrings.professionalCredentialsDetails: "Professional credentials and practice details.",
+      AppStrings.officialDocumentsVerification: "Your official documents for verification",
+      AppStrings.revalidateStatusNote: "To maintain your professional status, please revalidate your information every 12 months",
+      AppStrings.updatePersonalInfoSub: "Update Your Personal Information Below",
     },
     'fr_FR': {
       AppStrings.langSupport: "Support Linguistique",
@@ -1863,7 +1868,7 @@ class Languages extends Translations {
       AppStrings.revalidation: "Revalidation",
       AppStrings.editExistingService: "Modifier le service existant",
       AppStrings.editSupportingDocuments:
-          "Modifier les documents justificatifs",
+          "les documents justificatifs",
       AppStrings.uploadInsuranceDocument: "Télécharger le document d'assurance",
       AppStrings.acceptedFilesText: "Fichiers acceptés : PDF, JPEG – max 5 Mo.",
       AppStrings.myServices: "Mes services",
@@ -2327,6 +2332,11 @@ class Languages extends Translations {
       AppStrings.demoAddress: 'Rue Xyz Lahore Pakistan',
       AppStrings.demoTimeslot: '09h00 – 10h00',
       AppStrings.demoNoteValue: 'Les symptômes s\'améliorent, la fréquence des maux de tête a diminué de 5 à 2 fois par semaine.\nConseillé au patient de continuer le régime actuel et de maintenir une hygiène du sommeil',
+      AppStrings.managePersonalInfo: "Gérer vos informations personnelles.",
+      AppStrings.professionalCredentialsDetails: "Titres professionnels et détails de la pratique.",
+      AppStrings.officialDocumentsVerification: "Vos documents officiels pour vérification",
+      AppStrings.revalidateStatusNote: "Pour maintenir votre statut professionnel, veuillez revalider vos informations tous les 12 mois",
+      AppStrings.updatePersonalInfoSub: "Mettez à jour vos informations personnelles ci-dessous",
     },
   };
 }

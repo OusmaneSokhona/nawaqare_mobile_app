@@ -77,13 +77,26 @@ class DoctorProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
+                    Padding(
+                      padding:  EdgeInsets.only(bottom: 4.sp),
+                      child: InkWell(
+                        onTap: () {
+                          Get.to( HelpCenterScreen());
+                        },
+                        child: Image.asset(
+                          "assets/images/help_center_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
+                    ),
+                    10.horizontalSpace,
                     InkWell(
                       onTap: () {
                         Get.to( NotificationScreen());
                       },
                       child: Image.asset(
                         "assets/images/bell_icon.png",
-                        height: 25.h,
+                        height: 30.h,
                       ),
                     ),
                   ],
@@ -116,7 +129,7 @@ class DoctorProfileScreen extends StatelessWidget {
                             },
                             child: Image.asset(
                               "assets/images/help_center_icon.png",
-                              height: 30.h,
+                              height: 25.h,
                             ),
                           ),
                           10.horizontalSpace,
@@ -146,14 +159,16 @@ class DoctorProfileScreen extends StatelessWidget {
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppStrings.profileSubtitle.tr,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFonts.jakartaMedium,
-                            color: AppColors.darkGrey,
+                        child: Obx(
+                          ()=> Text(
+                            controller.type.value == "Personal Info"?AppStrings.managePersonalInfo.tr:controller.type.value == "Professional Info"?AppStrings.professionalCredentialsDetails.tr:controller.type.value == "Documents"?AppStrings.officialDocumentsVerification.tr:AppStrings.revalidateStatusNote.tr,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFonts.jakartaMedium,
+                              color: AppColors.darkGrey,
+                            ),
                           ),
                         ),
                       ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/patient_controller.dart';
-import 'package:patient_app/models/patient_model.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_detail_screen.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
@@ -16,29 +15,6 @@ import '../../../widgets/doctor_widgets/patient_widgets/patient_card_widget.dart
 class PatientScreen extends StatelessWidget {
   PatientScreen({super.key});
   final PatientController patientController = Get.put(PatientController());
-  final List<PatientModel> samplePatients = [
-    PatientModel(
-      patientName: 'Mr. Alex Martin',
-      patientImageUrl: 'assets/demo_images/patient_1.png',
-      lastAppointmentDate: 'Sunday, 12 June',
-      consultationType: 'Remote Consultation',
-      period: 'This Week',
-    ),
-    PatientModel(
-      patientName: 'Ms. Sarah Johnson',
-      patientImageUrl: 'assets/demo_images/patient_2.png',
-      lastAppointmentDate: 'Monday, 13 June',
-      consultationType: 'In-Person Consultation',
-      period: 'This Month',
-    ),
-    PatientModel(
-      patientName: 'Mr. David Lee',
-      patientImageUrl: 'assets/demo_images/patient_3.png',
-      lastAppointmentDate: 'Wednesday, 15 June',
-      consultationType: 'Remote Consultation',
-      period: 'This Week',
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +37,7 @@ class PatientScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -105,11 +79,13 @@ class PatientScreen extends StatelessWidget {
                         suffixIconColor: AppColors.darkGrey,
                         onSuffixIconTap: () {
                           Get.bottomSheet(
-                              backgroundColor: Colors.white,
-                              PatientFilterBottomSheet(
-                                  initialStatus: "active",
-                                  onApply: () {},
-                                  onReset: () {}));
+                            backgroundColor: Colors.white,
+                            PatientFilterBottomSheet(
+                              initialStatus: "active",
+                              onApply: () {},
+                              onReset: () {},
+                            ),
+                          );
                         },
                       ),
                       10.verticalSpace,
@@ -124,30 +100,101 @@ class PatientScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      ListView.builder(
-                        padding: EdgeInsets.zero,
-                        itemBuilder: (context, index) {
-                          return PatientCardWidget(
-                            patientModel: samplePatients[index],
-                            onAddNoteTap: () {
-                              Get.to(AddNotesScreen());
-                            },
-                            onFollowUpTap: () {},
-                            onScheduleTap: () {
-                              Get.to(PatientDetailScreen());
+                      Obx(
+                            () {
+                          var list = patientController.paginatedPatients;
+                          return ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: list.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              return PatientCardWidget(
+                                patientModel: list[index],
+                                onAddNoteTap: () => Get.to(AddNotesScreen()),
+                                onFollowUpTap: () {},
+                                onScheduleTap: () => Get.to(PatientDetailScreen()),
+                              );
                             },
                           );
                         },
-                        itemCount: samplePatients.length,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
                       ),
+                      20.verticalSpace,
+                      _buildPagination(),
+                      20.verticalSpace,
                     ],
                   ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPagination() {
+    return Obx(
+          () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _paginationArrow(Icons.arrow_back, () {
+            if (patientController.currentPage.value > 1) {
+              patientController.currentPage.value--;
+            }
+          }),
+          15.horizontalSpace,
+          ...List.generate(patientController.totalPages, (index) {
+            int page = index + 1;
+            return GestureDetector(
+              onTap: () => patientController.currentPage.value = page,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                child: Text(
+                  "$page",
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontFamily: AppFonts.jakartaMedium,
+                    fontWeight: FontWeight.w600,
+                    color: patientController.currentPage.value == page
+                        ? AppColors.primaryColor
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+            );
+          }),
+          15.horizontalSpace,
+          _paginationArrow(Icons.arrow_forward, () {
+            if (patientController.currentPage.value < patientController.totalPages) {
+              patientController.currentPage.value++;
+            }
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _paginationArrow(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(5.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(3.r),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Icon(
+          icon,
+          size: 17.h,
+          color: Colors.black,
         ),
       ),
     );

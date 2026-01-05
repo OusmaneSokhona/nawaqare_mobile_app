@@ -58,6 +58,7 @@ class SettingScreen extends StatelessWidget {
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       30.verticalSpace,
                       AudioVideoSection(controller: controller),
@@ -66,13 +67,41 @@ class SettingScreen extends StatelessWidget {
                       10.verticalSpace,
                       DevicePermissionsSection(controller: controller),
                       10.verticalSpace,
-                      const OtherStepsSection(),
-                      50.verticalSpace,
+                      Text(
+                        'Device Permissions',
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      10.verticalSpace,
+                      Text(
+                        'If You’re Experiencing Call Or Device Issues, Try These Steps:',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Color(0xFF3C4043),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      10.verticalSpace,
+                      _LinkButton(
+                        text: 'Open Troubleshooting Guide',
+                        onTap: () {},
+                      ),
+                      _LinkButton(text: 'Restart Device Test', onTap: () {}),
+                      _LinkButton(
+                        text: 'Contact Technical Support',
+                        onTap: () {},
+                      ),
+                      10.verticalSpace,
+                      // const OtherStepsSection(),
+                      // 50.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           AppStrings.lastTested.trParams({
-                            'time': '2 ${AppStrings.minutesAgo.tr}'
+                            'time': '2 ${AppStrings.minutesAgo.tr}',
                           }), // Dynamic localization
                         ),
                       ),
@@ -85,7 +114,8 @@ class SettingScreen extends StatelessWidget {
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: AppStrings.restoreDefaults.tr, // Localized
+                        text: AppStrings.restoreDefaults.tr,
+                        // Localized
                         onTap: () {},
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
@@ -94,8 +124,35 @@ class SettingScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LinkButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+
+  const _LinkButton({required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: InkWell(
+        onTap: onTap,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 16.sp,
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.w600,
+            decoration: TextDecoration.underline,
+            decorationColor: AppColors.primaryColor,
           ),
         ),
       ),

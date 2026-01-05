@@ -53,6 +53,8 @@ class EditSupportingDocuments extends GetView<SignUpController> {
                   ),
                 ],
               ),
+              10.verticalSpace,
+              Text(AppStrings.uploadInstruction.tr,style:TextStyle(fontSize: 15.sp,fontFamily: AppFonts.jakartaMedium,color:AppColors.lightGrey,fontWeight: FontWeight.w600),),
               20.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(

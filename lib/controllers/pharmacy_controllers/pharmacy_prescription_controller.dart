@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/models/pharmacy_prescription_model.dart';
 
 class PharmacyPrescriptionController extends GetxController{
-  RxString slectedCompany="A".obs;
+  RxString slectedCompany="DHL".obs;
   RxString slectedReasons="Invalid Signature".obs;
 RxString type="myPrescription".obs;
 

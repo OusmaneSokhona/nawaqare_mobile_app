@@ -150,6 +150,7 @@ class AppStrings {
   static const String deliveredStep = "delivered_step";
   static const String nextActions = "next_actions";
   static const String uploadPrescription = "upload_prescription";
+  static const String uploadPrescriptionPharmacy = "upload_prescription_doctor";
   static const String dosage = "dosage";
   static const String morningEvening = "morning_evening";
   static const String refill = "refill";

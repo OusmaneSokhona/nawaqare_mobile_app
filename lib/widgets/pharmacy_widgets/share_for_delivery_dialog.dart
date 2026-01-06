@@ -20,40 +20,42 @@ class ShareForDeliveryDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15.0.r),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(20.0.r),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            _buildHeader(),
-            20.verticalSpace,
-            Obx(() => CustomDropdown(
-              label: AppStrings.deliveryCompany.tr,
-              options: const ["DHL", "FedEx", "Aramex", "Local Express"],
-              currentValue: controller.slectedCompany.value,
-              onChanged: (val) {
-                if (val != null) controller.slectedCompany.value = val;
-              },
-            )),
-            10.verticalSpace,
-            CustomTextField(
-              hintText: "+33 3 6 12 34 56 78",
-              labelText: AppStrings.phoneNumber.tr,
-            ),
-            5.verticalSpace,
-            Text(
-              AppStrings.deliveryAutoFillNote.tr,
-              style: TextStyle(
-                fontSize: 10.sp,
-                color: Colors.black54,
-                fontWeight: FontWeight.w400,
-                fontFamily: AppFonts.jakartaRegular,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(20.0.r),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _buildHeader(),
+              20.verticalSpace,
+              Obx(() => CustomDropdown(
+                label: AppStrings.deliveryCompany.tr,
+                options: const ["DHL", "FedEx", "Aramex", "Local Express"],
+                currentValue: controller.slectedCompany.value,
+                onChanged: (val) {
+                  if (val != null) controller.slectedCompany.value = val;
+                },
+              )),
+              10.verticalSpace,
+              CustomTextField(
+                hintText: "+33 3 6 12 34 56 78",
+                labelText: AppStrings.phoneNumber.tr,
               ),
-            ),
-            20.verticalSpace,
-            _buildActionButtons(),
-          ],
+              5.verticalSpace,
+              Text(
+                AppStrings.deliveryAutoFillNote.tr,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: AppFonts.jakartaRegular,
+                ),
+              ),
+              20.verticalSpace,
+              _buildActionButtons(),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import '../utils/app_strings.dart';
 import '../utils/app_fonts.dart';
 
@@ -19,7 +20,7 @@ class ValidationChecklist extends StatelessWidget {
           Text(
             AppStrings.passwordRequirementHeader.tr,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: isWeb?5.sp:14.sp,
               fontWeight: FontWeight.w500,
               fontFamily: AppFonts.jakartaMedium,
               color: Colors.black54,
@@ -34,14 +35,14 @@ class ValidationChecklist extends StatelessWidget {
                   Icon(
                     rule.isValid ? Icons.check_box : Icons.check_box_outline_blank,
                     color: rule.isValid ? const Color(0xFF4CAF50) : Colors.grey.shade400,
-                    size: 20.sp,
+                    size: isWeb?6.sp:20.sp,
                   ),
                   8.horizontalSpace,
                   Expanded(
                     child: Text(
                       rule.text, // Passed as AppStrings.someRule.tr from the controller
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: isWeb?5.sp:14.sp,
                         fontFamily: AppFonts.jakartaRegular,
                         color: rule.isValid ? Colors.black87 : Colors.grey.shade600,
                       ),

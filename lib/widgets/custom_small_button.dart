@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class CustomSmallButton extends StatelessWidget {
@@ -13,7 +14,7 @@ class CustomSmallButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        height: 45.h,
+        height: isWeb?55.h:45.h,
         width: 120.w,
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
@@ -31,7 +32,7 @@ class CustomSmallButton extends StatelessWidget {
         child: Text(text,
             style: TextStyle(
               color: Colors.white,
-              fontSize: 20.sp,
+              fontSize: isWeb?11.sp:20.sp,
               fontWeight: FontWeight.w700,
             )),
       ),

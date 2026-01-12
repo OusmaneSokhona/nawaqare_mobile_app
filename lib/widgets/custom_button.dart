@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 
 class CustomButton extends StatelessWidget {
@@ -19,7 +20,7 @@ class CustomButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: height.h,
-        width: 0.9.sw,
+        width: isWeb?0.6.sw:0.9.sw,
         decoration: BoxDecoration(
           color:bgColor,
           borderRadius: BorderRadius.circular(borderRadius.r??10.r),

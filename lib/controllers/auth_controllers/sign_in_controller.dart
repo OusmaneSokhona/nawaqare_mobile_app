@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/forgot_password.dart';
 import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
+import 'package:patient_app/screens/auth_screens/web_reset_password_screen.dart';
+import 'package:patient_app/screens/auth_screens/web_sign_up_screen.dart';
 import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/screens/patient_screens/main_screen.dart';
 import 'package:patient_app/screens/pharmacy_screens/main_screen_pharmacy.dart';
@@ -126,9 +128,15 @@ class SignInController extends GetxController {
   void goToForgotPasswordScreen() {
     Get.to(ForgotPassword());
   }
+  void goToForgotPasswordScreenWeb() {
+    Get.to(WebResetPasswordScreen());
+  }
 
   void goToSignUpScreen() {
     Get.to(SignUpScreen(), binding: AppBinding());
+  }
+  void goToSignUpScreenWeb() {
+    Get.to(WebSignUpScreen(), binding: AppBinding());
   }
 
   void goToMainScreen() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
@@ -74,7 +75,7 @@ class OnBoardingScreen extends StatelessWidget {
                     child: Text(
                       AppStrings.skip.tr,
                       style: TextStyle(
-                        fontSize: 20.sp,
+                        fontSize: isWeb?14.sp:20.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaMedium,

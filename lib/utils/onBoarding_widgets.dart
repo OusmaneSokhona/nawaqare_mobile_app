@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:patient_app/main.dart';
 import '../controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
 import 'app_colors.dart';
 import 'app_fonts.dart';
@@ -27,14 +28,14 @@ class OnboardingWidgets extends StatelessWidget {
             children: [
               Image.asset(
                 onBoardingController.onBoardingPages[index].image,
-                height: 210.h,
+                height: isWeb?120.h:210.h,
               ),
               40.verticalSpace,
               Text(
                 onBoardingController.onBoardingPages[index].title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 40.sp,
+                  fontSize: isWeb?14.sp:40.sp,
                   fontWeight: FontWeight.w700,
                   color: Colors.black,
                   fontFamily: AppFonts.jakartaBold,
@@ -51,7 +52,7 @@ class OnboardingWidgets extends StatelessWidget {
                       .subtitle!,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18.sp,
+                    fontSize: isWeb?9.sp:18.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.black,
                     fontFamily: AppFonts.jakartaRegular,
@@ -78,13 +79,13 @@ class OnboardingWidgets extends StatelessWidget {
                           Icon(
                             Icons.check_circle,
                             color: AppColors.primaryColor,
-                            size: 20.sp,
+                            size: isWeb?11.sp:20.sp,
                           ),
                           10.horizontalSpace,
                           Text(
                             pointList[index],
                             style: TextStyle(
-                              fontSize: 18.sp,
+                              fontSize: isWeb?10.sp:18.sp,
                               fontWeight: FontWeight.w400,
                               color: Colors.black,
                               fontFamily: AppFonts.jakartaRegular,

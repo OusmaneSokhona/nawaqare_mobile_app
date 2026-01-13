@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/reception_controller.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/absence_and_exception.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/calender_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
@@ -59,7 +60,7 @@ class ReceptionScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     CircleAvatar(
-                      radius: 20.h,
+                      radius: isWeb?15.h:20.h,
                       backgroundColor: Colors.white,
                       foregroundImage: const AssetImage(
                         "assets/demo_images/doctor_1.png",
@@ -112,7 +113,7 @@ class ReceptionScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
-                            radius: 35.h,
+                            radius: isWeb?22.h:35.h,
                             backgroundColor: Colors.white,
                             foregroundImage: const AssetImage(
                               "assets/demo_images/doctor_1.png",
@@ -147,7 +148,7 @@ class ReceptionScreen extends StatelessWidget {
                           AppStrings.reception.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 32.sp,
+                            fontSize: isWeb?12.sp:32.sp,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
@@ -160,7 +161,7 @@ class ReceptionScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 14.sp,
+                            fontSize: isWeb?6.sp:14.sp,
                             color: AppColors.lightGrey,
                           ),
                         ),
@@ -189,7 +190,7 @@ class ReceptionScreen extends StatelessWidget {
                             Text(
                               "${AppStrings.lastSync.tr}: 12/Sep/2025",
                               style: TextStyle(
-                                fontSize: 16.sp,
+                                fontSize: isWeb?6.sp:16.sp,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: AppFonts.jakartaMedium,
                                 color: Colors.black,
@@ -278,12 +279,12 @@ class ReceptionScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, color: const Color(0xFF1E88E5), size: 24.sp),
+            Icon(icon, color: const Color(0xFF1E88E5), size: isWeb?8.sp:24.sp),
             const SizedBox(height: 10),
             Text(
               title,
               style: TextStyle(
-                fontSize: 12.sp,
+                fontSize: isWeb?5.sp:12.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -293,7 +294,7 @@ class ReceptionScreen extends StatelessWidget {
             Text(
               value,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: isWeb?5.sp:14.sp,
                 fontWeight: FontWeight.w400,
                 color: AppColors.lightGrey,
               ),

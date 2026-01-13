@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
@@ -16,7 +17,7 @@ class QuickStatisticsCard extends StatelessWidget {
         children: [
           ImageIcon(
             AssetImage(icon),
-            size: 26.sp,
+            size: isWeb?10.sp:26.sp,
             color: primaryIconColor,
           ),
           const SizedBox(height: 8.0),
@@ -24,7 +25,7 @@ class QuickStatisticsCard extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style:  TextStyle(
-              fontSize: 13.sp,
+              fontSize: isWeb?5.sp:13.sp,
               fontWeight: FontWeight.w500,
               color: Colors.black,
             ),

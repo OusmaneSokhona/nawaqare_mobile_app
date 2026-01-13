@@ -180,4 +180,26 @@ class SignInController extends GetxController {
       markPasswordInteracted();
     }
   }
+  void webSignInTap() {
+    if (formKey.currentState!.validate()) {
+      if (isPasswordValid()) {
+        if (emailController.text == "doctor@gmail.com") {
+          goToMainScreenDocotor();
+          clearControllers();
+          LocalStorageUtils.setLoginedDoctor();
+        } else {
+          Get.snackbar(
+            "Warning",
+            "Wrong Credentials",
+          );
+        }
+      } else {
+        markPasswordInteracted();
+        FocusManager.instance.primaryFocus!.unfocus();
+      }
+    } else {
+      markPasswordInteracted();
+    }
+  }
+
 }

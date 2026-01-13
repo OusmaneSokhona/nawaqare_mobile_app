@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/appointment_controller.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../utils/app_fonts.dart';
@@ -91,7 +92,7 @@ class CardHeader extends StatelessWidget {
         title,
         style: TextStyle(
           color: Colors.black,
-          fontSize: 17.sp,
+          fontSize: isWeb?6.sp:17.sp,
           fontWeight: FontWeight.w700,
           fontFamily: AppFonts.jakartaBold,
         ),

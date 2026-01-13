@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import '../utils/app_fonts.dart';
 import '../utils/app_strings.dart';
 
@@ -29,8 +30,8 @@ class UploadDocumentWidget extends StatelessWidget {
           child: Text(
             title, // This should be passed as AppStrings.someTitle.tr from parent
             style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w600,
+              fontSize: isWeb?5.sp:15.sp,
+              fontWeight: FontWeight.w500,
               fontFamily: AppFonts.jakartaMedium,
               color: Colors.black87,
             ),
@@ -78,7 +79,7 @@ class UploadDocumentWidget extends StatelessWidget {
                     isFileEmpty ? centerText : fileName!, // Safe now because we checked for null
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      fontSize: 16.sp,
+                      fontSize: isWeb?5.sp:16.sp,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                       fontFamily: AppFonts.jakartaMedium,
@@ -90,7 +91,7 @@ class UploadDocumentWidget extends StatelessWidget {
                       child: Text(
                         AppStrings.tapToSelectNewFile.tr,
                         style: TextStyle(
-                          fontSize: 12.sp,
+                          fontSize: isWeb?5.sp:12.sp,
                           color: Colors.grey,
                           fontFamily: AppFonts.jakartaRegular,
                         ),
@@ -107,7 +108,7 @@ class UploadDocumentWidget extends StatelessWidget {
           child: Text(
             acceptedFile, // This should be passed as AppStrings.someAcceptedType.tr from parent
             style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: isWeb?5.sp:13.sp,
               fontWeight: FontWeight.w300,
               fontFamily: AppFonts.jakartaRegular,
               color: Colors.grey.shade600,

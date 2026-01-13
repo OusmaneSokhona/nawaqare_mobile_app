@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/setting_controller.dart';
 import '../../../utils/app_colors.dart';
@@ -43,7 +44,7 @@ class HelpCenterScreen extends StatelessWidget {
                     AppStrings.helpCenter.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 23.sp,
+                      fontSize: isWeb?12.sp:23.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),
@@ -61,7 +62,7 @@ class HelpCenterScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Image.asset('assets/images/help_center_image.png'),
+                      Image.asset('assets/images/help_center_image.png',height: 0.3.sh),
                       10.verticalSpace,
                       _buildContactCard(
                         icon: Icons.phone,

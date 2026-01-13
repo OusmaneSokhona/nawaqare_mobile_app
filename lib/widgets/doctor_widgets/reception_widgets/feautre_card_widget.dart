@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
@@ -33,7 +34,7 @@ class FeatureCard extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.sp),
               border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))),
-          padding: EdgeInsets.all(15.sp),
+          padding: EdgeInsets.all(isWeb?4.sp:15.sp),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [

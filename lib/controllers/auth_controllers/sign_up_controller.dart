@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -207,7 +208,45 @@ class SignUpController extends GetxController {
       backgroundColor: Colors.white,
     );
   }
+  Rxn<Uint8List> pickedImageBytes = Rxn<Uint8List>();
+  final ImagePicker webPicker = ImagePicker();
 
+  Future<void> webPickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(source: source);
+    if (image != null) {
+      final Uint8List bytes = await image.readAsBytes();
+      pickedImageBytes.value = bytes;
+    }
+  }
+
+  void webshowImageSourceOptions() {
+    Get.bottomSheet(
+      SafeArea(
+        child: Wrap(
+          children: <Widget>[
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Gallery'),
+              onTap: () {
+                pickImage(ImageSource.gallery);
+                Get.back();
+              },
+            ),
+            if (!kIsWeb)
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  pickImage(ImageSource.camera);
+                  Get.back();
+                },
+              ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.white,
+    );
+  }
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
   DateTime? get selectedDate => _selectedDate.value;
 

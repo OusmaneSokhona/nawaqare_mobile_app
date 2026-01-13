@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
@@ -40,9 +41,9 @@ class AppointmentCard extends StatelessWidget {
           child: Text(
             title,
             style: TextStyle(
-              fontSize: 18.sp,
+              fontSize: isWeb?6.sp:18.sp,
               fontFamily: AppFonts.jakartaMedium,
-              fontWeight: FontWeight.w700,
+              fontWeight: isWeb?FontWeight.w600:FontWeight.w700,
               color: Colors.black,
             ),
           ),
@@ -78,8 +79,8 @@ class AppointmentCard extends StatelessWidget {
                       children: <Widget>[
                         Image.asset(
                           imagePath,
-                          height: 70,
-                          width: 70,
+                          height: isWeb?50:70,
+                          width: isWeb?50:70,
                           fit: BoxFit.cover,
                         ),
                         showGreenDot
@@ -183,7 +184,7 @@ class AppointmentCard extends StatelessWidget {
             text,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontFamily: AppFonts.jakartaMedium,fontSize: 12.sp, color: Color(0xFF4B5563)),
+            style: TextStyle(fontFamily: AppFonts.jakartaMedium,fontSize: isWeb?4.sp:12.sp, color: Color(0xFF4B5563)),
           ),
         ),
       ],

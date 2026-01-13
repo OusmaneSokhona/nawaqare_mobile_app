@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
@@ -27,7 +28,7 @@ class RecentActivityCard extends StatelessWidget {
             child: Text(
               description,
               style:  TextStyle(
-                fontSize: 13.sp,
+                fontSize: isWeb?6.sp:13.sp,
                 color: primaryTextColor,
                 fontWeight: FontWeight.w500,
               ),

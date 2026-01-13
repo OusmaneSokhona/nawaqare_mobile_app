@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_screen.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_screen.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_screen.dart';
@@ -155,8 +156,8 @@ class DoctorHomeScreen extends StatelessWidget {
                           "${AppStrings.hello.tr}\nDr. Alex",
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.w800,
+                            fontSize: isWeb?8.sp:32.sp,
+                            fontWeight:isWeb?FontWeight.w500:FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
                         ),
@@ -166,9 +167,9 @@ class DoctorHomeScreen extends StatelessWidget {
                         child: Text(
                           "Tomorrow at 10:30 AM",
                           style: TextStyle(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: isWeb?FontWeight.w500:FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize: isWeb?6.sp:20.sp,
                             color: AppColors.darkGrey,
                           ),
                         ),
@@ -181,7 +182,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 20.sp,
+                            fontSize:isWeb?6.sp:20.sp,
                             color: AppColors.lightGrey,
                           ),
                         ),
@@ -209,8 +210,8 @@ class DoctorHomeScreen extends StatelessWidget {
                             Text(
                               AppStrings.offlineMode.tr,
                               style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w700,
+                                fontSize: isWeb?6.sp:16.sp,
+                                fontWeight: isWeb?FontWeight.w500:FontWeight.w700,
                                 fontFamily: AppFonts.jakartaMedium,
                                 color: Colors.black,
                               ),
@@ -287,7 +288,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 19.sp,
+                            fontSize: isWeb?6.sp:19.sp,
                             color: Colors.black,
                           ),
                         ),
@@ -302,7 +303,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: 19.sp,
+                            fontSize: isWeb?6.sp:19.sp,
                             color: Colors.black,
                           ),
                         ),

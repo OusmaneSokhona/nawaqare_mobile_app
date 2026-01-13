@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/notification_controller.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
@@ -52,7 +53,7 @@ class NotificationScreen extends StatelessWidget {
                     AppStrings.notifications.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 23.sp,
+                      fontSize: isWeb?12.sp:23.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),

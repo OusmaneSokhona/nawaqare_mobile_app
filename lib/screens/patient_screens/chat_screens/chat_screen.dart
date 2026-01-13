@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/chat_controller.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
@@ -188,7 +189,7 @@ class ChatScreen extends StatelessWidget {
                           AppStrings.chat.tr,
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 32.sp,
+                            fontSize: isWeb?13.sp:32.sp,
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
@@ -201,7 +202,7 @@ class ChatScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFonts.jakartaMedium,
-                            fontSize: 16.sp,
+                            fontSize: isWeb?6.sp:16.sp,
                             color: AppColors.darkGrey,
                           ),
                         ),

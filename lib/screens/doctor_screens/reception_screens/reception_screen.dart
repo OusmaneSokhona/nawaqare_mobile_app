@@ -21,6 +21,7 @@ class ReceptionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
+    bool isDesktop = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -39,8 +40,7 @@ class ReceptionScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(() {
-              final bool isScrolledPastThreshold =
-                  controller.scrollValue.value >= 280;
+              final bool isScrolledPastThreshold = isDesktop?controller.scrollValue.value >= 80:controller.scrollValue.value >= 280;
 
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
@@ -57,39 +57,54 @@ class ReceptionScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: isWeb?15.h:20.h,
+                      radius: 25.h,
                       backgroundColor: Colors.white,
-                      foregroundImage: const AssetImage(
+                      foregroundImage: AssetImage(
                         "assets/demo_images/doctor_1.png",
                       ),
                     ),
-                    20.horizontalSpace,
-                    Text(
-                      "Dr Alex",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFonts.jakartaBold,
-                        fontSize: 22.h,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    isDesktop?5.horizontalSpace:20.horizontalSpace,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Dr Alex",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 22.h,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        isDesktop?Text(
+                          "Reception",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 4.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ):SizedBox(),
+                      ],
                     ),
-                    const Spacer(),
+                    Spacer(),
                     InkWell(
                       onTap: () {
-                        Get.to( HelpCenterScreen());
+                        Get.to(HelpCenterScreen());
                       },
                       child: Image.asset(
                         "assets/images/help_center_icon.png",
                         height: 25.h,
                       ),
                     ),
-                    10.horizontalSpace,
+                    isDesktop?2.horizontalSpace:10.horizontalSpace,
                     InkWell(
                       onTap: () {
-                        Get.to( NotificationScreen());
+                        Get.to(NotificationScreen());
                       },
                       child: Image.asset(
                         "assets/images/bell_icon.png",
@@ -113,7 +128,7 @@ class ReceptionScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
-                            radius: isWeb?22.h:35.h,
+                            radius: 35.h,
                             backgroundColor: Colors.white,
                             foregroundImage: const AssetImage(
                               "assets/demo_images/doctor_1.png",
@@ -129,7 +144,7 @@ class ReceptionScreen extends StatelessWidget {
                               height: 25.h,
                             ),
                           ),
-                          10.horizontalSpace,
+                          isDesktop?2.horizontalSpace:10.horizontalSpace,
                           InkWell(
                             onTap: () {
                               Get.to( NotificationScreen());

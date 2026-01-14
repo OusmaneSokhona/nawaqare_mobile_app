@@ -20,6 +20,7 @@ class ChatScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     chatController.scrollChange();
+    bool isDesktop = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -38,8 +39,7 @@ class ChatScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(() {
-              final bool isScrolledPastThreshold =
-                  chatController.scrollValue.value >= 330;
+              final bool isScrolledPastThreshold = isWeb?chatController.scrollValue.value >= 120:chatController.scrollValue.value >= 280;
 
               final double targetHeight = isScrolledPastThreshold ? 120.0 : 0.0;
 
@@ -60,34 +60,69 @@ class ChatScreen extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    isDesktop?CircleAvatar(
+                      radius: 25.h,
+                      backgroundColor: Colors.white,
+                      foregroundImage: AssetImage(
+                        "assets/demo_images/doctor_1.png",
+                      ),
+                    ):SizedBox(),
+                    isDesktop?5.horizontalSpace:20.horizontalSpace,
+                    isDesktop?Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Dr Alex",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 22.h,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        isDesktop?Text(
+                          "Chat",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 4.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ):SizedBox(),
+                      ],
+                    ):SizedBox(),
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
+                      child: Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: isDesktop?18.w:8.w),
+                        child: Container(
+                          padding:  EdgeInsets.symmetric(
+                            horizontal: 10.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            onTapOutside: (_) {
+                              FocusManager.instance.primaryFocus!.unfocus();
+                            },
+                            onChanged: chatController.updateSearchQuery,
+                            decoration: InputDecoration(
+                              hintText: AppStrings.search.tr,
+                              border: InputBorder.none,
+                              icon: const Icon(Icons.search,
+                                  color: Colors.grey),
                             ),
-                          ],
-                        ),
-                        child: TextField(
-                          onTapOutside: (_) {
-                            FocusManager.instance.primaryFocus!.unfocus();
-                          },
-                          onChanged: chatController.updateSearchQuery,
-                          decoration: InputDecoration(
-                            hintText: AppStrings.search.tr,
-                            border: InputBorder.none,
-                            icon: const Icon(Icons.search,
-                                color: Colors.grey),
                           ),
                         ),
                       ),
@@ -105,7 +140,7 @@ class ChatScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    5.horizontalSpace,
+                    isDesktop?2.horizontalSpace:5.horizontalSpace,
                     Padding(
                       padding: EdgeInsets.only(bottom: 8.h),
                       child: InkWell(
@@ -170,7 +205,7 @@ class ChatScreen extends StatelessWidget {
                               height: 25.h,
                             ),
                           ),
-                          5.horizontalSpace,
+                          isDesktop?2.horizontalSpace:5.horizontalSpace,
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());

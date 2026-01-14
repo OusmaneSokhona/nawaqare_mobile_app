@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/web_verfication_dialog.dart';
-
 import '../utils/app_images.dart';
 
 class WebForgotPasswordDialog extends StatelessWidget {

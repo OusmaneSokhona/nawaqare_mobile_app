@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
+import 'package:patient_app/screens/auth_screens/web_sign_in_screen.dart';
 import 'package:patient_app/screens/doctor_screens/profile_screens/my_services_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import '../../../main.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../screens/patient_screens/profile_screens/privacy_security.dart';
 import '../../../screens/patient_screens/profile_screens/update_password.dart';
@@ -63,6 +65,7 @@ class DoctorHealthSpaceGrid extends StatelessWidget {
           textColor: AppColors.red,
           onTap: () {
             LocalStorageUtils.deleteUser();
+            isWeb?Get.offAll(WebSignInScreen(), binding: AppBinding()):
             Get.offAll(SignInScreen(), binding: AppBinding());
           },
         ),

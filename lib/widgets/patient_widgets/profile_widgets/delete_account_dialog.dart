@@ -3,8 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
+import 'package:patient_app/screens/auth_screens/web_sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/locat_storage.dart';
+import '../../../main.dart';
 import '../../../utils/app_strings.dart';
 
 class DeleteAccountDialog extends StatelessWidget {
@@ -88,6 +90,8 @@ class DeleteAccountDialog extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       LocalStorageUtils.deleteUser();
+                      isWeb?
+                      Get.offAll(WebSignInScreen(), binding: AppBinding()):
                       Get.offAll( SignInScreen(), binding: AppBinding());
                     },
                     style: ElevatedButton.styleFrom(

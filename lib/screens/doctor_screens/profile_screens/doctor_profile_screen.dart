@@ -8,6 +8,7 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_docume
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_personal_info.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_professional_info.dart';
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/revalidation.dart';
+import '../../../main.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../patient_screens/notifications_screens/notifications_screen.dart';
@@ -39,8 +40,7 @@ class DoctorProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(() {
-              final bool isScrolledPastThreshold =
-                  controller.scrollValue.value >= 280;
+              final bool isScrolledPastThreshold = isWeb?controller.scrollValue.value >= 120:controller.scrollValue.value >= 280;
 
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 

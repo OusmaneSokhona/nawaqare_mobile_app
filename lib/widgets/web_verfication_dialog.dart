@@ -30,12 +30,12 @@ class WebVerficationDialog extends StatelessWidget {
             20.verticalSpace,
             Text("A 6-Digit Code Has Been Sent To Whatsapp", style: TextStyle(fontSize: 6.sp, color: Colors.black87)),
             Text("+33 3 6 12 34 56 78", style: TextStyle(fontSize: 6.sp, fontFamily: AppFonts.jakartaBold, fontWeight: FontWeight.w800)),
-            25.verticalSpace,
+            15.verticalSpace,
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: List.generate(6, (index) => _buildOtpBox(controller, index)),
             ),
-            25.verticalSpace,
+            15.verticalSpace,
             Center(
               child: Obx(() => Column(
                 children: [
@@ -68,13 +68,14 @@ class WebVerficationDialog extends StatelessWidget {
 
   Widget _buildOtpBox(VerificationController controller, int index) {
     return SizedBox(
-      width: 30.w, // Adjusted for better web proportion
+      width: 15.w, // Adjusted for better web proportion
       height: 45.h,
       child: TextField(
         controller: controller.controllers[index],
         focusNode: controller.focusNodes[index],
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
+        cursorHeight: 15.h,
         maxLength: 1,
         style: TextStyle(
           fontSize: 8.sp,

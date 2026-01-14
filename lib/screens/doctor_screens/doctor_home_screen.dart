@@ -28,6 +28,7 @@ class DoctorHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     homeController.scrollChange();
+    bool isDesktop = MediaQuery.of(context).size.width > 600;
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -46,8 +47,7 @@ class DoctorHomeScreen extends StatelessWidget {
         child: Column(
           children: [
             Obx(() {
-              final bool isScrolledPastThreshold =
-                  homeController.scrollValue.value >= 280;
+              final bool isScrolledPastThreshold = isDesktop?homeController.scrollValue.value >= 120:homeController.scrollValue.value >= 280;
 
               final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
 
@@ -65,24 +65,39 @@ class DoctorHomeScreen extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CircleAvatar(
-                      radius: 20.h,
+                      radius: 25.h,
                       backgroundColor: Colors.white,
                       foregroundImage: AssetImage(
                         "assets/demo_images/doctor_1.png",
                       ),
                     ),
-                    20.horizontalSpace,
-                    Text(
-                      "Dr Alex",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFonts.jakartaBold,
-                        fontSize: 22.h,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    isDesktop?5.horizontalSpace:20.horizontalSpace,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Dr Alex",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 22.h,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        isDesktop?Text(
+                          "Home",
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontFamily: AppFonts.jakartaBold,
+                            fontSize: 4.sp,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ):SizedBox(),
+                      ],
                     ),
                     Spacer(),
                     InkWell(
@@ -94,7 +109,7 @@ class DoctorHomeScreen extends StatelessWidget {
                         height: 25.h,
                       ),
                     ),
-                    10.horizontalSpace,
+                    isDesktop?2.horizontalSpace:10.horizontalSpace,
                     InkWell(
                       onTap: () {
                         Get.to(NotificationScreen());
@@ -137,7 +152,7 @@ class DoctorHomeScreen extends StatelessWidget {
                               height: 25.h,
                             ),
                           ),
-                          10.horizontalSpace,
+                          isDesktop?2.horizontalSpace:10.horizontalSpace,
                           InkWell(
                             onTap: () {
                               Get.to(NotificationScreen());
@@ -156,8 +171,8 @@ class DoctorHomeScreen extends StatelessWidget {
                           "${AppStrings.hello.tr}\nDr. Alex",
                           textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: isWeb?8.sp:32.sp,
-                            fontWeight:isWeb?FontWeight.w500:FontWeight.w800,
+                            fontSize: isDesktop?8.sp:32.sp,
+                            fontWeight:isDesktop?FontWeight.w500:FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
                           ),
                         ),
@@ -167,9 +182,9 @@ class DoctorHomeScreen extends StatelessWidget {
                         child: Text(
                           "Tomorrow at 10:30 AM",
                           style: TextStyle(
-                            fontWeight: isWeb?FontWeight.w500:FontWeight.w800,
+                            fontWeight: isDesktop?FontWeight.w500:FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize: isWeb?6.sp:20.sp,
+                            fontSize: isDesktop?6.sp:20.sp,
                             color: AppColors.darkGrey,
                           ),
                         ),
@@ -182,7 +197,7 @@ class DoctorHomeScreen extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontFamily: AppFonts.jakartaBold,
-                            fontSize:isWeb?6.sp:20.sp,
+                            fontSize:isDesktop?6.sp:20.sp,
                             color: AppColors.lightGrey,
                           ),
                         ),

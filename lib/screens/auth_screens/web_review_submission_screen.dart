@@ -5,7 +5,7 @@ import 'package:patient_app/controllers/auth_controllers/sign_up_controller.dart
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:patient_app/widgets/web_verification_dialog.dart';
+import 'package:patient_app/widgets/web_submit_verification_dialog.dart';
 import '../../utils/app_fonts.dart';
 import '../../widgets/progress_stepper.dart';
 import '../../widgets/submit_for_verification_dialog.dart';
@@ -85,7 +85,7 @@ class WebReviewSubmissionScreen extends StatelessWidget {
                           fontSize: 8,
                           text: "Submit for Verification",
                           onTap: () {
-                            Get.dialog(WebVerificationDialog(),barrierDismissible: false);
+                            Get.dialog(WebSubmitVerificationDialog(),barrierDismissible: false);
                           },
                         ),
                       ),

@@ -5,7 +5,7 @@ import 'package:patient_app/screens/auth_screens/web_sign_in_screen.dart';
 import '../../utils/app_fonts.dart';
 import '../utils/app_bindings.dart';
 
-class WebVerificationDialog extends StatelessWidget{
+class WebSubmitVerificationDialog extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     return  Dialog(

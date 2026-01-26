@@ -24,14 +24,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       designSize: const Size(393, 812),
-      child: GetMaterialApp(
-        initialBinding: AppBinding(),
-          translations: Languages(),
-          locale: LocalStorageUtils.getLanguage()=="french"?Locale('fr', 'FR'):Locale('en', 'US'), // Default language
-          fallbackLocale: const Locale('en', 'US'),
-        debugShowCheckedModeBanner: false,
-        home: SplashScreen()
-      ),
+      builder: (__,_){
+        return GetMaterialApp(
+            initialBinding: AppBinding(),
+            translations: Languages(),
+            locale: LocalStorageUtils.getLanguage()=="french"?Locale('fr', 'FR'):Locale('en', 'US'), // Default language
+            fallbackLocale: const Locale('en', 'US'),
+            debugShowCheckedModeBanner: false,
+            home: SplashScreen()
+        );
+      },
     );
   }
 }

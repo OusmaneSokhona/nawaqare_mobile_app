@@ -13,6 +13,7 @@ import '../../controllers/auth_controllers/sign_up_controller.dart';
 
 class TwoFactorAuthentication extends StatelessWidget {
   TwoFactorAuthentication({super.key});
+
   final SignUpController signUpController = Get.find();
 
   @override
@@ -23,9 +24,10 @@ class TwoFactorAuthentication extends StatelessWidget {
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-              colors: [AppColors.onboardingBackground, AppColors.lightWhite],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter),
+            colors: [AppColors.onboardingBackground, AppColors.lightWhite],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -67,11 +69,13 @@ class TwoFactorAuthentication extends StatelessWidget {
                 subtitle: AppStrings.verifyEmailSub.tr,
                 iconPath: AppImages.mailIcon,
                 onTap: () {
-                  Get.to(VerificationScreen(
-                    authController: signUpController,
-                    title: AppStrings.emailCodeSent.tr,
-                    subTitle: "ali@gmail.com",
-                  ));
+                  Get.to(
+                    VerificationScreen(
+                      authController: signUpController,
+                      title: AppStrings.emailCodeSent.tr,
+                      subTitle: signUpController.emailController.text,
+                    ),
+                  );
                 },
                 iconColor: AppColors.darkGrey,
               ),
@@ -81,20 +85,23 @@ class TwoFactorAuthentication extends StatelessWidget {
                 subtitle: AppStrings.verifyWhatsappSub.tr,
                 iconPath: AppImages.whatsAppIcon,
                 onTap: () {
-                  Get.to(VerificationScreen(
-                    authController: signUpController,
-                    title: AppStrings.whatsappCodeSent.tr,
-                    subTitle: "+33 3 6 12 34 56 78",
-                  ));
+                  Get.to(
+                    VerificationScreen(
+                      authController: signUpController,
+                      title: AppStrings.whatsappCodeSent.tr,
+                      subTitle: "+33 3 6 12 34 56 78",
+                    ),
+                  );
                 },
               ),
               70.verticalSpace,
               CustomButton(
-                  borderRadius: 15,
-                  text: AppStrings.back.tr,
-                  onTap: () {
-                    Get.back();
-                  }),
+                borderRadius: 15,
+                text: AppStrings.back.tr,
+                onTap: () {
+                  signUpController.safeBack();
+                },
+              ),
             ],
           ),
         ),

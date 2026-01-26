@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -7,11 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
+import 'package:patient_app/utils/api_urls.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../widgets/validation_check_list.dart';
+import '../../services/api_service.dart';
 import '../../utils/app_strings.dart';
 
 class SignUpController extends GetxController {
+  final ApiService _apiService = ApiService();
   RxString type = "doctor".obs;
   SignInController signInController = Get.put(SignInController());
   TextEditingController nameController = TextEditingController();
@@ -25,8 +29,11 @@ class SignUpController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   bool get hasMinLength => currentPassword.value.length >= 8;
+
   bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
+
   bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
+
   bool get hasSpecialChar =>
       currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
@@ -40,18 +47,12 @@ class SignUpController extends GetxController {
 
   List<ValidationRule> getValidationRules() {
     return [
-      ValidationRule(
-        text: AppStrings.atLeast8Chars.tr,
-        isValid: hasMinLength,
-      ),
+      ValidationRule(text: AppStrings.atLeast8Chars.tr, isValid: hasMinLength),
       ValidationRule(
         text: AppStrings.atLeastOneUpper.tr,
         isValid: hasUppercase,
       ),
-      ValidationRule(
-        text: AppStrings.atLeastOneNumber.tr,
-        isValid: hasDigit,
-      ),
+      ValidationRule(text: AppStrings.atLeastOneNumber.tr, isValid: hasDigit),
       ValidationRule(
         text: AppStrings.atLeastOneSpecial.tr,
         isValid: hasSpecialChar,
@@ -61,8 +62,7 @@ class SignUpController extends GetxController {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return
-        AppStrings.password.tr;
+      return AppStrings.password.tr;
     }
     if (!isPasswordValid()) {
       return AppStrings.incompleteCodeMsg.tr;
@@ -208,6 +208,7 @@ class SignUpController extends GetxController {
       backgroundColor: Colors.white,
     );
   }
+
   Rxn<Uint8List> pickedImageBytes = Rxn<Uint8List>();
   final ImagePicker webPicker = ImagePicker();
 
@@ -247,7 +248,9 @@ class SignUpController extends GetxController {
       backgroundColor: Colors.white,
     );
   }
+
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
+
   DateTime? get selectedDate => _selectedDate.value;
 
   String get formattedDate {
@@ -264,18 +267,41 @@ class SignUpController extends GetxController {
 
   final List<String> genderList = ['Male', 'Female', 'Other'];
   final List<String> countryList = ['Pakistan', 'India', 'USA', 'UK', 'Canada'];
-  final List<String> religionList = ['Islam', 'Christianity', 'Hinduism', 'Buddhism', 'Other'];
-  final List<String> departmentList = ['Medical', 'Engineering', 'Arts', 'Business', 'Science'];
+  final List<String> religionList = [
+    'Islam',
+    'Christianity',
+    'Hinduism',
+    'Buddhism',
+    'Other',
+  ];
+  final List<String> departmentList = [
+    'Medical',
+    'Engineering',
+    'Arts',
+    'Business',
+    'Science',
+  ];
 
   final selectedGender = Rx<String?>('Female');
   final selectedCountry = Rx<String?>('Pakistan');
   final selectedReligion = Rx<String?>('Islam');
   final selectedDepartment = Rx<String?>('Medical');
 
-  void updateSelectedGender(String? newValue) { selectedGender.value = newValue; }
-  void updateSelectedCountry(String? newValue) { selectedCountry.value = newValue; }
-  void updateSelectedReligion(String? newValue) { selectedReligion.value = newValue; }
-  void updateSelectedDepartment(String? newValue) { selectedDepartment.value = newValue; }
+  void updateSelectedGender(String? newValue) {
+    selectedGender.value = newValue;
+  }
+
+  void updateSelectedCountry(String? newValue) {
+    selectedCountry.value = newValue;
+  }
+
+  void updateSelectedReligion(String? newValue) {
+    selectedReligion.value = newValue;
+  }
+
+  void updateSelectedDepartment(String? newValue) {
+    selectedDepartment.value = newValue;
+  }
 
   final selectedFileName = Rx<String?>(null);
   final selectedFileIdCard = Rx<String?>(null);
@@ -308,29 +334,141 @@ class SignUpController extends GetxController {
     emailController.clear();
     passwordController.clear();
     phoneNumberController.clear();
-    controllers.clear();
+    for (var controller in controllers) {
+      controller.clear();
+    }
     Get.to(SignInScreen());
   }
 
-  final List<String> medicalSpecialityList = ['Cardiology', 'Dermatology', 'Neurology', 'Oncology', 'Pediatrics', 'Gastroenterology', 'Orthopedics', 'Ophthalmology', 'Pulmonology', 'Endocrinology', 'Nephrology'];
+  final List<String> medicalSpecialityList = [
+    'Cardiology',
+    'Dermatology',
+    'Neurology',
+    'Oncology',
+    'Pediatrics',
+    'Gastroenterology',
+    'Orthopedics',
+    'Ophthalmology',
+    'Pulmonology',
+    'Endocrinology',
+    'Nephrology',
+  ];
   RxString selectedSpecialist = "Cardiology".obs;
-  void updateSpecialization(String? newValue) { selectedSpecialist.value = newValue!; }
 
-  final List<String> feeList = ['\$25/ 30 mint45', '\$50/ 60 mint75', '\$125/ 90 mint'];
+  void updateSpecialization(String? newValue) {
+    selectedSpecialist.value = newValue!;
+  }
+
+  final List<String> feeList = [
+    '\$25/ 30 mint45',
+    '\$50/ 60 mint75',
+    '\$125/ 90 mint',
+  ];
   RxString selectedFee = "\$25/ 30 mint45".obs;
-  void updateFee(String? newValue) { selectedFee.value = newValue!; }
+
+  void updateFee(String? newValue) {
+    selectedFee.value = newValue!;
+  }
 
   final isPersonalDataChecked = false.obs;
   final isSubmissionConsentChecked = false.obs;
 
-  void togglePersonalData(bool? value) { isPersonalDataChecked.value = value ?? false; }
-  void toggleSubmissionConsent(bool? value) { isSubmissionConsentChecked.value = value ?? false; }
+  void togglePersonalData(bool? value) {
+    isPersonalDataChecked.value = value ?? false;
+  }
+
+  void toggleSubmissionConsent(bool? value) {
+    isSubmissionConsentChecked.value = value ?? false;
+  }
 
   @override
   void onClose() {
     timer?.cancel();
-    for (var controller in controllers) { controller.dispose(); }
-    for (var node in focusNodes) { node.dispose(); }
+    nameController.dispose();
+    emailController.dispose();
+    phoneNumberController.dispose();
+    passwordController.dispose();
+    dateController.dispose();
+    for (var controller in controllers) {
+      controller.dispose();
+    }
+    for (var node in focusNodes) {
+      node.dispose();
+    }
     super.onClose();
+  }
+
+  RxBool isLoading = false.obs;
+
+  Future<bool> registerUser() async {
+    try {
+      isLoading.value = true;
+      final Map<String, dynamic> signupData = {
+        "fullName": nameController.text.trim(),
+        "email": emailController.text.trim(),
+        "password": passwordController.text,
+        "phoneNumber": phoneNumberController.text.trim(),
+      };
+
+      final response = await _apiService.post(
+        type.value == "doctor"
+            ? ApiUrls.signUpUrlDoctor
+            : type.value == "patient"
+            ? ApiUrls.signUpUrlPatient
+            : ApiUrls.signUpUrlPharmacist,
+        data: signupData,
+      );
+
+      isLoading.value = false;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          "Account created successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      String errorMessage = "An unexpected error occurred";
+
+      if (e is DioException) {
+        if (e.response != null && e.response!.data != null) {
+          if (e.response!.data is Map) {
+            errorMessage = e.response!.data["message"] ?? "Server Error";
+          } else {
+            errorMessage = e.response!.data.toString();
+          }
+        } else {
+          errorMessage = "No response from server";
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+
+      Get.snackbar(
+        "Error",
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      return false;
+    }
+  }
+
+  void safeBack() {
+    if (Get.isSnackbarOpen) {
+      Get.closeCurrentSnackbar();
+    }
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+    Get.back();
   }
 }

@@ -109,7 +109,7 @@ class DocumentsReports extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'
+                              signUpController.selectedFileName.value == null ||signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'
                                   ? AppStrings.uploadFormat.tr
                                   : signUpController.selectedFileName.value!,
                               textAlign: TextAlign.center,

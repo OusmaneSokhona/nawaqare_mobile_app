@@ -77,7 +77,7 @@ class SignInScreen extends StatelessWidget {
                       controller: signInController.passwordController,
                       prefixIcon: Icons.lock,
                       isPasswordField: true,
-                      isEnabled: !signInController.passwordVisibility.value,
+                      isEnabled: signInController.passwordVisibility.value,
                       onChanged: (value) {
                         signInController.currentPassword.value = value;
                       },
@@ -114,9 +114,17 @@ class SignInScreen extends StatelessWidget {
                 ),
                 40.verticalSpace,
 
-                CustomButton(borderRadius: 15, text: AppStrings.signIn.tr, onTap: (){
-                  signInController.signInTap();
-                },fontSize: 18),
+                Obx(() => signInController.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : CustomButton(
+                    borderRadius: 15,
+                    text: AppStrings.signIn.tr,
+                    onTap: (){
+                      signInController.signInTap();
+                    },
+                    fontSize: 18
+                )
+                ),
                 20.verticalSpace,
                 Row(mainAxisAlignment: MainAxisAlignment.center,children: [
                   Text(AppStrings.dontHaveAccount.tr,style: TextStyle(

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/pharmacy_professional_screen.dart';
-import 'package:patient_app/screens/auth_screens/professional_info.dart';
-
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
@@ -84,6 +82,7 @@ class BasicInfoScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: signUpController.registrationIdController,
                         labelText: AppStrings.registrationId.tr,
                         hintText: "#123RT56",
                       ),
@@ -94,6 +93,7 @@ class BasicInfoScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: signUpController.pharmacyAddressController,
                         labelText: AppStrings.pharmacyAddress.tr,
                         prefixIcon: Icons.location_on_outlined,
                         hintText: "32 Examaple St",
@@ -102,12 +102,14 @@ class BasicInfoScreen extends StatelessWidget {
                         labelText: AppStrings.city.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
+                        controller: signUpController.cityController,
                       ),
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.areaLocality.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
+                        controller: signUpController.areaLocalityController,
                       ),
                     ],
                   ),
@@ -119,6 +121,18 @@ class BasicInfoScreen extends StatelessWidget {
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
                 onTap: () {
+                  if(signUpController.registrationIdController.text.isEmpty||
+                      signUpController.pharmacyAddressController.text.isEmpty||
+                      signUpController.cityController.text.isEmpty||
+                      signUpController.areaLocalityController.text.isEmpty){
+                    Get.snackbar(
+                      AppStrings.warning.tr,
+                      AppStrings.pleaseFillAllFields.tr,
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
                   Get.to(PharmacyProfessionalScreen());
                 },
               ),

@@ -83,7 +83,7 @@ class DemographicInfo extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                            () => Column(
+                        () => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
@@ -93,8 +93,7 @@ class DemographicInfo extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
-                                  color:
-                                  Colors.black87,
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -114,17 +113,17 @@ class DemographicInfo extends StatelessWidget {
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
-                                        signUpController.selectedDate ==
-                                            null
-                                            ? Colors.grey
-                                            : Colors.black,
+                                            signUpController.selectedDate ==
+                                                    null
+                                                ? Colors.grey
+                                                : Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -173,11 +172,13 @@ class DemographicInfo extends StatelessWidget {
                         labelText: AppStrings.idNumber.tr,
                         prefixIcon: Icons.badge_outlined,
                         hintText: "31101-5678-9876",
+                        controller: signUpController.idNumberController,
                       ),
                       CustomTextField(
                         labelText: AppStrings.clinicAddress.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
+                        controller: signUpController.clinicAddressController,
                       ),
                       10.verticalSpace,
                       Align(
@@ -196,19 +197,25 @@ class DemographicInfo extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300, width: 1),
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
                         ),
                         child: TextField(
                           maxLines: 5,
-                          onTapOutside: (_){
+                          onTapOutside: (_) {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
+                          controller: signUpController.aboutMeController,
                           decoration: InputDecoration(
                             hintText: AppStrings.aboutMeHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 15,
+                            ),
                           ),
                         ),
                       ),
@@ -222,6 +229,21 @@ class DemographicInfo extends StatelessWidget {
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
                 onTap: () {
+                  if (signUpController.selectedDate == null ||
+                      signUpController.selectedGender.value == null ||
+                      signUpController.selectedCountry.value == null ||
+                      signUpController.selectedReligion.value == null ||
+                      signUpController.idNumberController.text.isEmpty ||
+                      signUpController.clinicAddressController.text.isEmpty ||
+                      signUpController.aboutMeController.text.isEmpty) {
+                    Get.snackbar(
+                      AppStrings.warning.tr,
+                      AppStrings.pleaseFillAllFields.tr,
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
                   Get.to(ProfessionalInfo());
                 },
               ),
@@ -270,7 +292,7 @@ class DemographicInfo extends StatelessWidget {
             ),
           ),
           Obx(
-                () => DropdownButtonFormField<String>(
+            () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
@@ -288,12 +310,12 @@ class DemographicInfo extends StatelessWidget {
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
               items:
-              items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+                  items.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
               onChanged: onChanged,
             ),
           ),

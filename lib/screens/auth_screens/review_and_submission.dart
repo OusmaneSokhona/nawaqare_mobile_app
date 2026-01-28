@@ -89,6 +89,10 @@ class ReviewAndSubmission extends GetView<SignUpController> {
                 borderRadius: 15,
                 text: AppStrings.submitForVerification.tr,
                 onTap: (){
+                  if(!controller.isPersonalDataChecked.value || !controller.isSubmissionConsentChecked.value){
+                    Get.snackbar("Warning", "Please provide all consents to proceed",snackPosition: SnackPosition.BOTTOM,backgroundColor: AppColors.red,colorText: Colors.white);
+                    return;
+                  }
                   Get.dialog(SubmitForVerificationDialog());
                 },
               ),

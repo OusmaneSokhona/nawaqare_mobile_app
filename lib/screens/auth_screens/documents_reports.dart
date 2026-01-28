@@ -134,15 +134,24 @@ class DocumentsReports extends StatelessWidget {
 
               40.verticalSpace,
               CustomButton(borderRadius: 15, text: AppStrings.submit.tr, onTap: () async {
+                if(signUpController.selectedFileName.value == null || signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'){
+                  Get.snackbar(
+                    AppStrings.warning.tr,
+                    AppStrings.pleaseUploadDocument.tr,
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
+                  );
+                  return;
+                }
                 Get.dialog(SuccessDialog());
                 await Future.delayed(Duration(seconds: 3),(){
                   signUpController.moveToSignInScreen();
                 });
               }),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: AppStrings.skip.tr, onTap: () {
-                signUpController.moveToSignInScreen();
-              },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+              // CustomButton(borderRadius: 15, text: AppStrings.skip.tr, onTap: () {
+              //   signUpController.moveToSignInScreen();
+              // },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
               50.verticalSpace,
             ],
           ),

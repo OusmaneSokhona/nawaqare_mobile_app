@@ -163,7 +163,7 @@ class CompleteProfile extends StatelessWidget {
                         selectedValue: signUpController.selectedDepartment,
                         onChanged: signUpController.updateSelectedDepartment,
                       ),
-                      CustomTextField(labelText: AppStrings.address.tr, hintText: "32 Examaple St",)
+                      CustomTextField(labelText: AppStrings.address.tr, hintText: "32 Examaple St",controller: signUpController.addressController,)
                     ],
                   ),
                 ),
@@ -171,7 +171,15 @@ class CompleteProfile extends StatelessWidget {
 
               20.verticalSpace,
               CustomButton(borderRadius: 15, text: AppStrings.continueText.tr, onTap: () {
-                Get.to(MedicalVitals());
+                if(signUpController.selectedDate == null||
+                    signUpController.selectedGender.value == null||
+                    signUpController.selectedCountry.value == null||
+                    signUpController.selectedReligion.value==null||
+                    signUpController.selectedDepartment.value == null||signUpController.addressController.text.isEmpty
+                ){
+                  Get.snackbar(AppStrings.warning.tr, AppStrings.pleaseFillAllFields.tr,snackPosition: SnackPosition.BOTTOM,backgroundColor: AppColors.red,colorText: Colors.white);
+                }else{
+                Get.to(MedicalVitals());}
               }),
               50.verticalSpace,
             ],

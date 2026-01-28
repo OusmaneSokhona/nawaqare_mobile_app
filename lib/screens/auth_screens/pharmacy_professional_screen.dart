@@ -74,11 +74,13 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                       ProgressStepper(currentStep: 3, totalSteps: 5),
                       15.verticalSpace,
                       CustomTextField(
+                        controller: signUpController.licenseNumberController,
                         labelText: AppStrings.licenseNumber.tr,
                         hintText: "LIC-20493",
                       ),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: signUpController.issuingAuthorityController,
                         labelText: AppStrings.issuingAuthority.tr,
                         hintText: "Punjab Pharmacy Council",
                       ),
@@ -199,9 +201,9 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.businessRegNo.tr,hintText: "BRN-99821",),
+                      CustomTextField(labelText: AppStrings.businessRegNo.tr,hintText: "BRN-99821",controller: signUpController.buisnessRegNoController,),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.registeredName.tr,hintText: "Alex Martin Healthcare (Pvt) Ltd",),
+                      CustomTextField(labelText: AppStrings.registeredName.tr,hintText: "Alex Martin Healthcare (Pvt) Ltd",controller: signUpController.registeredNameController,),
                     ],
                   ),
                 ),
@@ -212,6 +214,20 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
                 onTap: () {
+                  if(signUpController.licenseNumberController.text.isEmpty||
+                      signUpController.issuingAuthorityController.text.isEmpty||
+                      signUpController.buisnessRegNoController.text.isEmpty||
+                      signUpController.registeredNameController.text.isEmpty||
+                      signUpController.selectedDate==null
+                  ){
+                    Get.snackbar(
+                        AppStrings.warning.tr,
+                        AppStrings.pleaseFillAllFields.tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white);
+                    return;
+                  }
                   Get.to(PharmacySupportingDocuments());
                 },
               ),

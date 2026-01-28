@@ -70,14 +70,20 @@ class SupportingDocuments extends StatelessWidget {
                       _buildSectionTitle(AppStrings.identityDocuments.tr),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileIdCard,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileIdCard),
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFileIdCard,
+                            ),
                         title: AppStrings.nationalIdDoc.tr,
                         centerText: AppStrings.uploadDocument.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFilePassport,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFilePassport),
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFilePassport,
+                            ),
                         title: AppStrings.passportIdFront.tr,
                         centerText: AppStrings.uploadFrontSide.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
@@ -85,15 +91,22 @@ class SupportingDocuments extends StatelessWidget {
 
                       _buildSectionTitle(AppStrings.credentials.tr),
                       UploadDocumentWidget(
-                        selectedFileName: signUpController.selectedFileMedicalLicense,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileMedicalLicense),
+                        selectedFileName:
+                            signUpController.selectedFileMedicalLicense,
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFileMedicalLicense,
+                            ),
                         title: AppStrings.medicalLicense.tr,
                         centerText: AppStrings.uploadValidLicense.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileDiploma,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileDiploma),
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFileDiploma,
+                            ),
                         title: AppStrings.diplomaCertification.tr,
                         centerText: AppStrings.uploadDiplomaTranscript.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
@@ -101,15 +114,22 @@ class SupportingDocuments extends StatelessWidget {
 
                       _buildSectionTitle(AppStrings.legal.tr),
                       UploadDocumentWidget(
-                        selectedFileName: signUpController.selectedFileInsuranceProof,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileInsuranceProof),
+                        selectedFileName:
+                            signUpController.selectedFileInsuranceProof,
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFileInsuranceProof,
+                            ),
                         title: AppStrings.liabilityInsuranceProof.tr,
                         centerText: AppStrings.uploadInsuranceDoc.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
                         selectedFileName: signUpController.selectedFileCnpd,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileCnpd),
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFileCnpd,
+                            ),
                         title: AppStrings.cnpdGdprForm.tr,
                         centerText: AppStrings.attachComplianceForm.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
@@ -117,15 +137,25 @@ class SupportingDocuments extends StatelessWidget {
 
                       _buildSectionTitle(AppStrings.payment.tr),
                       UploadDocumentWidget(
-                        selectedFileName: signUpController.selectedFileBankVerification,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileBankVerification),
+                        selectedFileName:
+                            signUpController.selectedFileBankVerification,
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController.selectedFileBankVerification,
+                            ),
                         title: AppStrings.bankVerificationLetter.tr,
                         centerText: AppStrings.uploadBankConfirmation.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
                       ),
                       UploadDocumentWidget(
-                        selectedFileName: signUpController.selectedFileBankPaymentAuthorization,
-                        pickFile: () => signUpController.pickFile(signUpController.selectedFileBankPaymentAuthorization),
+                        selectedFileName:
+                            signUpController
+                                .selectedFileBankPaymentAuthorization,
+                        pickFile:
+                            () => signUpController.pickFile(
+                              signUpController
+                                  .selectedFileBankPaymentAuthorization,
+                            ),
                         title: AppStrings.paymentAuthorization.tr,
                         centerText: AppStrings.attachSignedForm.tr,
                         acceptedFile: AppStrings.acceptedFilesInfo.tr,
@@ -139,7 +169,26 @@ class SupportingDocuments extends StatelessWidget {
               CustomButton(
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
-                onTap: () => Get.to(ReviewAndSubmission()),
+                onTap: () {
+                  if(signUpController.selectedFileIdCard.value==null ||
+                      signUpController.selectedFilePassport.value==null ||
+                  signUpController.selectedFileMedicalLicense.value==null ||
+                      signUpController.selectedFileDiploma.value==null ||
+                      signUpController.selectedFileInsuranceProof.value==null ||
+                      signUpController.selectedFileCnpd.value==null ||
+                      signUpController.selectedFileBankPaymentAuthorization.value==null ||
+                      signUpController.selectedFileBankVerification.value==null){
+                    Get.snackbar(
+                      AppStrings.warning.tr,
+                      AppStrings.pleaseUploadDocument.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColors.red,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
+                  Get.to(ReviewAndSubmission());
+                },
               ),
               50.verticalSpace,
             ],

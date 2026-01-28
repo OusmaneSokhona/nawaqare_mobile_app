@@ -136,6 +136,19 @@ class PharmacySupportingDocuments extends StatelessWidget {
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
                 onTap: () {
+                  if(signUpController.selectedLicenseCertificate.value==null||
+                      signUpController.selectedTaxClearance.value==null||
+                      signUpController.selectedNocCertificate.value==null||
+                      signUpController.selectedPharmacyBankVerificationLetter.value==null||
+                      signUpController.selectedFileBankPaymentAuthorization.value==null
+
+                  ){
+                    Get.snackbar(AppStrings.warning.tr, AppStrings.uploadDocument.tr,
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white);
+                    return;
+                  }
                   Get.to(ReviewAndSubmission());
                 },
               ),

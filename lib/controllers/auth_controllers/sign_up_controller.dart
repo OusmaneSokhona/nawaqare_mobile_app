@@ -16,17 +16,54 @@ import '../../utils/app_strings.dart';
 
 class SignUpController extends GetxController {
   final ApiService _apiService = ApiService();
-  RxString type = "doctor".obs;
+  RxString type = "patient".obs;
   SignInController signInController = Get.put(SignInController());
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController bmiController = TextEditingController();
+  TextEditingController bloodPressureController = TextEditingController();
+  TextEditingController heartRateController = TextEditingController();
+  TextEditingController idNumberController = TextEditingController();
+  TextEditingController clinicAddressController = TextEditingController();
+  TextEditingController aboutMeController = TextEditingController();
+  TextEditingController experienceController = TextEditingController();
+  TextEditingController placeOfPracticeController = TextEditingController();
+  TextEditingController yearOfWorkController = TextEditingController();
+  TextEditingController registrationIdController = TextEditingController();
+  TextEditingController pharmacyAddressController = TextEditingController();
+  TextEditingController cityController = TextEditingController();
+  TextEditingController areaLocalityController = TextEditingController();
+  TextEditingController licenseNumberController = TextEditingController();
+  TextEditingController issuingAuthorityController = TextEditingController();
+  TextEditingController buisnessRegNoController = TextEditingController();
+  TextEditingController registeredNameController = TextEditingController();
   RxBool passwordVisibility = false.obs;
   RxBool isPasswordActive = false.obs;
+  RxBool isVerifiedEmail = false.obs;
+  RxBool isVerifiedPhone = false.obs;
   RxBool isRegisteredProfessional = false.obs;
   final RxString currentPassword = ''.obs;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    emailController.addListener(() {
+      if (isVerifiedEmail.value) {
+        isVerifiedEmail.value = false;
+      }
+    });
+    phoneNumberController.addListener(() {
+      if (isVerifiedPhone.value) {
+        isVerifiedPhone.value = false;
+      }
+    });
+  }
 
   bool get hasMinLength => currentPassword.value.length >= 8;
 
@@ -99,13 +136,6 @@ class SignUpController extends GetxController {
       } else {
         timer.cancel();
         isTimerActive.value = false;
-        Get.snackbar(
-          AppStrings.verification.tr,
-          AppStrings.requestNewCode.tr,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFFF44336),
-          colorText: const Color(0xFFFFFFFF),
-        );
       }
     });
   }
@@ -250,8 +280,14 @@ class SignUpController extends GetxController {
   }
 
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
+  final Rx<DateTime?> _registrationDate = Rx<DateTime?>(DateTime.now());
+  final Rx<DateTime?> _issueDate = Rx<DateTime?>(DateTime.now());
+  final Rx<DateTime?> _expiryDate = Rx<DateTime?>(DateTime.now());
 
   DateTime? get selectedDate => _selectedDate.value;
+  DateTime? get dateOfRegistration => _registrationDate.value;
+  DateTime? get issueDate => _registrationDate.value;
+  DateTime? get expiryDate => _registrationDate.value;
 
   String get formattedDate {
     if (_selectedDate.value == null) {
@@ -264,7 +300,15 @@ class SignUpController extends GetxController {
   void updateDate(DateTime? newDate) {
     _selectedDate.value = newDate;
   }
-
+  void updateRegistrationDate(DateTime? newDate) {
+    _registrationDate.value = newDate;
+  }
+  void updateIssueDate(DateTime? newDate) {
+    _issueDate.value = newDate;
+  }
+  void updateExpiryDate(DateTime? newDate) {
+    _expiryDate.value = newDate;
+  }
   final List<String> genderList = ['Male', 'Female', 'Other'];
   final List<String> countryList = ['Pakistan', 'India', 'USA', 'UK', 'Canada'];
   final List<String> religionList = [
@@ -408,14 +452,11 @@ class SignUpController extends GetxController {
         "email": emailController.text.trim(),
         "password": passwordController.text,
         "phoneNumber": phoneNumberController.text.trim(),
+        "role": type.value,
       };
 
       final response = await _apiService.post(
-        type.value == "doctor"
-            ? ApiUrls.signUpUrlDoctor
-            : type.value == "patient"
-            ? ApiUrls.signUpUrlPatient
-            : ApiUrls.signUpUrlPharmacist,
+        ApiUrls.signUpUrl,
         data: signupData,
       );
 
@@ -470,5 +511,231 @@ class SignUpController extends GetxController {
       Get.back();
     }
     Get.back();
+  }
+
+  Future<bool> sendEmailOtp() async {
+    try {
+      isLoading.value = true;
+      final Map<String, dynamic> data = {
+        "email": emailController.text.trim(),
+      };
+
+      final response = await _apiService.post(
+        ApiUrls.sendEmailOtpUrl,
+        data: data,
+      );
+
+      isLoading.value = false;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          "OTP sent to your email",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        startTimer();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      String errorMessage = "An unexpected error occurred";
+
+      if (e is DioException) {
+        if (e.response != null && e.response!.data != null) {
+          if (e.response!.data is Map) {
+            errorMessage = e.response!.data["message"] ?? "Server Error";
+          } else {
+            errorMessage = e.response!.data.toString();
+          }
+        } else {
+          errorMessage = "No response from server";
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+
+      Get.snackbar(
+        "Error",
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      return false;
+    }
+  }
+
+  Future<bool> verifyEmailOtp() async {
+    try {
+      isLoading.value = true;
+      final Map<String, dynamic> data = {
+        "email": emailController.text.trim(),
+        "otp": completeCode,
+      };
+
+      final response = await _apiService.post(
+        ApiUrls.verifyEmailOtpUrl,
+        data: data,
+      );
+
+      isLoading.value = false;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          "Email verified successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        isVerifiedEmail.value = true;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      String errorMessage = "An unexpected error occurred";
+
+      if (e is DioException) {
+        if (e.response != null && e.response!.data != null) {
+          if (e.response!.data is Map) {
+            errorMessage = e.response!.data["message"] ?? "Server Error";
+          } else {
+            errorMessage = e.response!.data.toString();
+          }
+        } else {
+          errorMessage = "No response from server";
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+
+      Get.snackbar(
+        "Error",
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      return false;
+    }
+  }
+  Future<bool> sendPhoneOtp() async {
+    try {
+      isLoading.value = true;
+      final Map<String, dynamic> data = {
+        "phoneNumber": phoneNumberController.text.trim(),
+      };
+
+      final response = await _apiService.post(
+        ApiUrls.sendPhoneOtpUrl,
+        data: data,
+      );
+
+      isLoading.value = false;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("object ${response.data}");
+        Get.snackbar(
+          "Success",
+          "OTP sent to your phone number",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        startTimer();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      String errorMessage = "An unexpected error occurred";
+
+      if (e is DioException) {
+        if (e.response != null && e.response!.data != null) {
+          if (e.response!.data is Map) {
+            errorMessage = e.response!.data["message"] ?? "Server Error";
+          } else {
+            errorMessage = e.response!.data.toString();
+          }
+        } else {
+          errorMessage = "No response from server";
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+
+      Get.snackbar(
+        "Error",
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      return false;
+    }
+  }
+
+  Future<bool> verifyPhoneOtp() async {
+    try {
+      isLoading.value = true;
+      final Map<String, dynamic> data = {
+        "phoneNumber": phoneNumberController.text.trim(),
+        "otp": completeCode,
+      };
+
+      final response = await _apiService.post(
+        ApiUrls.verifyPhoneOtpUrl,
+        data: data,
+      );
+
+      isLoading.value = false;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          "Success",
+          "Phone number verified successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        isVerifiedPhone.value = true;
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      String errorMessage = "An unexpected error occurred";
+
+      if (e is DioException) {
+        if (e.response != null && e.response!.data != null) {
+          if (e.response!.data is Map) {
+            errorMessage = e.response!.data["message"] ?? "Server Error";
+          } else {
+            errorMessage = e.response!.data.toString();
+          }
+        } else {
+          errorMessage = "No response from server";
+        }
+      } else {
+        errorMessage = e.toString();
+      }
+
+      Get.snackbar(
+        "Error",
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+
+      return false;
+    }
   }
 }

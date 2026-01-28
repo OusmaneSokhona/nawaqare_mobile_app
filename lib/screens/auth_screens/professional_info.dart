@@ -71,11 +71,6 @@ class ProfessionalInfo extends StatelessWidget {
                     children: [
                       20.verticalSpace,
                       ProgressStepper(currentStep: 3, totalSteps: 5),
-                      15.verticalSpace,
-                      CustomTextField(
-                        labelText: AppStrings.nationalIdDoc.tr,
-                        hintText: "MA-PK-451271",
-                      ),
                       10.verticalSpace,
                       buildDropdownField(
                         title: AppStrings.medicalSpeciality.tr,
@@ -86,6 +81,7 @@ class ProfessionalInfo extends StatelessWidget {
                       CustomTextField(
                         labelText: AppStrings.experienceYears.tr,
                         hintText: "7",
+                        controller: signUpController.experienceController,
                       ),
                       buildDropdownField(
                         title: AppStrings.fee.tr,
@@ -129,7 +125,7 @@ class ProfessionalInfo extends StatelessWidget {
                                       signUpController.formattedDate,
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color: signUpController.selectedDate == null
+                                        color: signUpController.dateOfRegistration == null
                                             ? Colors.grey
                                             : Colors.black,
                                         fontWeight: FontWeight.w500,
@@ -150,12 +146,15 @@ class ProfessionalInfo extends StatelessWidget {
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.placeOfPractice.tr,
-                        hintText: "Allied Hospital, Faisalabad",
+                        hintText: "asd Hospital, abc",
+                        controller: signUpController.placeOfPracticeController,
+
                       ),
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.year.tr,
                         hintText: "2008",
+                        controller: signUpController.yearOfWorkController,
                       ),
                     ],
                   ),
@@ -166,6 +165,17 @@ class ProfessionalInfo extends StatelessWidget {
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
                 onTap: () {
+                  if (signUpController.selectedSpecialist.value == null ||
+                      signUpController.selectedFee.value == null ||
+                      signUpController.dateOfRegistration == null||signUpController.experienceController.text.isEmpty||signUpController.placeOfPracticeController.text.isEmpty||signUpController.yearOfWorkController.text.isEmpty) {
+                    Get.snackbar(
+                      AppStrings.warning.tr,
+                      AppStrings.pleaseFillAllFields.tr,
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
                   Get.to(SupportingDocuments());
                 },
               ),
@@ -186,7 +196,7 @@ class ProfessionalInfo extends StatelessWidget {
         centerAlignModePicker: true,
       ),
       dialogSize: const Size(325, 400),
-      value: [signUpController.selectedDate],
+      value: [signUpController.dateOfRegistration],
       borderRadius: BorderRadius.circular(15),
     );
   }

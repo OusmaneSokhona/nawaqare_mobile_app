@@ -67,20 +67,22 @@ class MedicalVitals extends StatelessWidget {
                       20.verticalSpace,
                       ProgressStepper(currentStep: 3, totalSteps: 4),
                       15.verticalSpace,
-                      CustomTextField(labelText: AppStrings.height.tr, hintText: "165cm"),
+                      CustomTextField(labelText: AppStrings.height.tr, hintText: "165cm",controller: signUpController.heightController,),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.weight.tr, hintText: "60kg"),
+                      CustomTextField(labelText: AppStrings.weight.tr, hintText: "60kg",controller: signUpController.weightController,),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.bmi.tr, hintText: "22.0"),
+                      CustomTextField(labelText: AppStrings.bmi.tr, hintText: "22.0",controller: signUpController.bmiController,),
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.bloodPressure.tr,
                         hintText: "120/80 mmHg",
+                        controller: signUpController.bloodPressureController,
                       ),
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.heartRate.tr,
                         hintText: "72bpm",
+                        controller: signUpController.heartRateController,
                       ),
                     ],
                   ),
@@ -89,6 +91,17 @@ class MedicalVitals extends StatelessWidget {
 
               20.verticalSpace,
               CustomButton(borderRadius: 15, text: AppStrings.continueText.tr, onTap: () {
+                if(signUpController.heightController.text.isEmpty||
+                    signUpController.weightController.text.isEmpty||
+                    signUpController.bmiController.text.isEmpty||
+                    signUpController.bloodPressureController.text.isEmpty||
+                    signUpController.heartRateController.text.isEmpty){
+                  Get.snackbar(AppStrings.warning.tr,AppStrings.pleaseFillAllFields.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: AppColors.red,
+                      colorText: Colors.white);
+                  return;
+                }
                 Get.to(DocumentsReports());
               }),
               50.verticalSpace,

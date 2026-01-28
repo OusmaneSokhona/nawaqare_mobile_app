@@ -121,6 +121,7 @@ class AppStrings {
   static const String requestNewCode = "request_new_code";
   static const String codeExpiresSoon = "code_expires_soon";
   static const String resendToWhatsapp = "resend_to_whatsapp";
+  static const String resendToEmail = "resend_to_email";
   static const String incompleteCode = "incomplete_code";
   static const String incompleteCodeMsg = "incomplete_code_msg";
   static const String hello = "hello";
@@ -1091,4 +1092,7 @@ class AppStrings {
   static const String officialDocumentsVerification = "official_documents_verification";
   static const String revalidateStatusNote = "revalidate_status_note";
   static const String updatePersonalInfoSub = "update_personal_info_sub";
+  static const String pleaseFillAllFields = "please_fill_all_fields";
+  static const String pleaseVerifyYourEmailFirst = "please_verify_your_email_first";
+  static const String pleaseUploadDocument = "please_upload_document";
 }

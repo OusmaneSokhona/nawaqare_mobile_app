@@ -125,16 +125,16 @@ class WebResetPasswordScreen extends StatelessWidget {
                                   isPasswordField: true,
                                   controller: resetController.newPassword,
                                   isEnabled: resetController.newPasswordVisibility.value,
-                                  onFocusChange: resetController.setPasswordActive,
-                                  validator: resetController.validatePassword,
+                                  // onFocusChange: resetController.setPasswordActive,
+                                  // validator: resetController.validatePassword,
                                   onChanged: (value) => resetController.currentPassword.value = value,
-                                  validationView: resetController.isPasswordActive.value
-                                      ? Obx(
-                                        () => ValidationChecklist(
-                                      rules: resetController.getValidationRules(),
-                                    ),
-                                  )
-                                      : null,
+                                  // validationView: resetController.isPasswordActive.value
+                                  //     ? Obx(
+                                  //       () => ValidationChecklist(
+                                  //     rules: resetController.getValidationRules(),
+                                  //   ),
+                                  // )
+                                  //     : null,
                                   onTapEye: () {
                                     resetController.newPasswordVisibility.value =
                                     !resetController.newPasswordVisibility.value;
@@ -150,9 +150,9 @@ class WebResetPasswordScreen extends StatelessWidget {
                                   labelText: AppStrings.confirmPassword.tr,
                                   hintText: AppStrings.enterPasswordHint.tr,
                                   isPasswordField: true,
-                                  controller: resetController.confrimNewPassword,
+                                  // controller: resetController.confrimNewPassword,
                                   isEnabled: resetController.confirmNewPasswordVisibility.value,
-                                  validator: resetController.validateConfirmPassword,
+                                  // validator: resetController.validateConfirmPassword,
                                   onTapEye: () {
                                     resetController.confirmNewPasswordVisibility.value =
                                     !resetController.confirmNewPasswordVisibility.value;

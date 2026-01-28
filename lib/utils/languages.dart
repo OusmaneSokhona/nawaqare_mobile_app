@@ -131,6 +131,7 @@ class Languages extends Translations {
       AppStrings.requestNewCode: "You can request a new code now.",
       AppStrings.codeExpiresSoon: "Code expires soon.",
       AppStrings.resendToWhatsapp: "Re-send To Whatsapp",
+      AppStrings.resendToEmail: "Re-send To Email",
       AppStrings.incompleteCode: "Incomplete Code",
       AppStrings.incompleteCodeMsg:
           "Please enter the complete 6-digit verification code.",
@@ -1157,6 +1158,9 @@ class Languages extends Translations {
       AppStrings.officialDocumentsVerification: "Your official documents for verification",
       AppStrings.revalidateStatusNote: "To maintain your professional status, please revalidate your information every 12 months",
       AppStrings.updatePersonalInfoSub: "Update Your Personal Information Below",
+      AppStrings.pleaseFillAllFields: "Please Fill All Fields",
+      AppStrings.pleaseVerifyYourEmailFirst: "Please Verify Your Email First",
+      AppStrings.pleaseUploadDocument: "Please Upload Document",
     },
     'fr_FR': {
       AppStrings.langSupport: "Support Linguistique",
@@ -1292,6 +1296,7 @@ class Languages extends Translations {
           "Vous pouvez demander un nouveau code maintenant.",
       AppStrings.codeExpiresSoon: "Le code expire bientôt.",
       AppStrings.resendToWhatsapp: "Renvoyer sur Whatsapp",
+      AppStrings.resendToEmail: "Renvoyer sur Email",
       AppStrings.incompleteCode: "Code incomplet",
       AppStrings.incompleteCodeMsg:
           "Veuillez saisir le code de vérification complet à 6 chiffres.",
@@ -2339,6 +2344,9 @@ class Languages extends Translations {
       AppStrings.officialDocumentsVerification: "Vos documents officiels pour vérification",
       AppStrings.revalidateStatusNote: "Pour maintenir votre statut professionnel, veuillez revalider vos informations tous les 12 mois",
       AppStrings.updatePersonalInfoSub: "Mettez à jour vos informations personnelles ci-dessous",
+      AppStrings.pleaseFillAllFields: "Veuillez remplir tous les champs.",
+      AppStrings.pleaseVerifyYourEmailFirst: "Veuillez d'abord vérifier votre adresse e-mail.",
+      AppStrings.pleaseUploadDocument: "Veuillez télécharger le document",
     },
   };
 }

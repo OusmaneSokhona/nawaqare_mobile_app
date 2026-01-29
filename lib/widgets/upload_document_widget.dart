@@ -78,6 +78,7 @@ class UploadDocumentWidget extends StatelessWidget {
                   Text(
                     isFileEmpty ? centerText : fileName!, // Safe now because we checked for null
                     textAlign: TextAlign.center,
+                    maxLines: 3,
                     style: TextStyle(
                       fontSize: isWeb?5.sp:16.sp,
                       fontWeight: FontWeight.w500,

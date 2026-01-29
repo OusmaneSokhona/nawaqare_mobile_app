@@ -9,6 +9,7 @@ import 'package:patient_app/screens/patient_screens/home_screen.dart';
 import '../../screens/patient_screens/chat_screens/chat_screen.dart';
 import '../../screens/patient_screens/profile_screens/profile_screen.dart';
 import '../../screens/patient_screens/search_screens/search_screen.dart';
+import '../../utils/locat_storage.dart';
 
 class MainController extends GetxController{
   ProfileController profileController=Get.put(ProfileController());

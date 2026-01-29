@@ -5,10 +5,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
 import 'package:patient_app/utils/api_urls.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../widgets/validation_check_list.dart';
 import '../../services/api_service.dart';
@@ -66,11 +67,8 @@ class SignUpController extends GetxController {
   }
 
   bool get hasMinLength => currentPassword.value.length >= 8;
-
   bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
-
   bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
-
   bool get hasSpecialChar =>
       currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
@@ -85,15 +83,9 @@ class SignUpController extends GetxController {
   List<ValidationRule> getValidationRules() {
     return [
       ValidationRule(text: AppStrings.atLeast8Chars.tr, isValid: hasMinLength),
-      ValidationRule(
-        text: AppStrings.atLeastOneUpper.tr,
-        isValid: hasUppercase,
-      ),
+      ValidationRule(text: AppStrings.atLeastOneUpper.tr, isValid: hasUppercase),
       ValidationRule(text: AppStrings.atLeastOneNumber.tr, isValid: hasDigit),
-      ValidationRule(
-        text: AppStrings.atLeastOneSpecial.tr,
-        isValid: hasSpecialChar,
-      ),
+      ValidationRule(text: AppStrings.atLeastOneSpecial.tr, isValid: hasSpecialChar),
     ];
   }
 
@@ -129,7 +121,6 @@ class SignUpController extends GetxController {
     timerCount.value = _initialTime;
     isTimerActive.value = true;
     timer?.cancel();
-
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (timerCount.value > 0) {
         timerCount.value--;
@@ -140,12 +131,8 @@ class SignUpController extends GetxController {
     });
   }
 
-  final List<TextEditingController> controllers = List.generate(
-    6,
-        (index) => TextEditingController(),
-  );
+  final List<TextEditingController> controllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(6, (index) => FocusNode());
-
   final RxList<String> _currentCode = List.filled(6, '').obs;
 
   String get completeCode => _currentCode.join();
@@ -155,7 +142,6 @@ class SignUpController extends GetxController {
     if (value.isNotEmpty) {
       _currentCode[index] = value;
       isCodeComplete.value = completeCode.length == 6;
-
       if (index < controllers.length - 1) {
         FocusScope.of(Get.context!).requestFocus(focusNodes[index + 1]);
       } else {
@@ -175,11 +161,7 @@ class SignUpController extends GetxController {
     if (completeCode.length == 6) {
       print('Verification Code Ready: $completeCode');
     } else {
-      Get.snackbar(
-        AppStrings.incompleteCode.tr,
-        AppStrings.incompleteCodeMsg.tr,
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      Get.snackbar(AppStrings.incompleteCode.tr, AppStrings.incompleteCodeMsg.tr, snackPosition: SnackPosition.BOTTOM);
     }
   }
 
@@ -286,66 +268,34 @@ class SignUpController extends GetxController {
 
   DateTime? get selectedDate => _selectedDate.value;
   DateTime? get dateOfRegistration => _registrationDate.value;
-  DateTime? get issueDate => _registrationDate.value;
-  DateTime? get expiryDate => _registrationDate.value;
+  DateTime? get issueDate => _issueDate.value;
+  DateTime? get expiryDate => _expiryDate.value;
 
   String get formattedDate {
-    if (_selectedDate.value == null) {
-      return AppStrings.dob.tr;
-    }
+    if (_selectedDate.value == null) return AppStrings.dob.tr;
     final date = _selectedDate.value!;
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void updateDate(DateTime? newDate) {
-    _selectedDate.value = newDate;
-  }
-  void updateRegistrationDate(DateTime? newDate) {
-    _registrationDate.value = newDate;
-  }
-  void updateIssueDate(DateTime? newDate) {
-    _issueDate.value = newDate;
-  }
-  void updateExpiryDate(DateTime? newDate) {
-    _expiryDate.value = newDate;
-  }
+  void updateDate(DateTime? newDate) => _selectedDate.value = newDate;
+  void updateRegistrationDate(DateTime? newDate) => _registrationDate.value = newDate;
+  void updateIssueDate(DateTime? newDate) => _issueDate.value = newDate;
+  void updateExpiryDate(DateTime? newDate) => _expiryDate.value = newDate;
+
   final List<String> genderList = ['Male', 'Female', 'Other'];
   final List<String> countryList = ['Pakistan', 'India', 'USA', 'UK', 'Canada'];
-  final List<String> religionList = [
-    'Islam',
-    'Christianity',
-    'Hinduism',
-    'Buddhism',
-    'Other',
-  ];
-  final List<String> departmentList = [
-    'Medical',
-    'Engineering',
-    'Arts',
-    'Business',
-    'Science',
-  ];
+  final List<String> religionList = ['Islam', 'Christianity', 'Hinduism', 'Buddhism', 'Other'];
+  final List<String> departmentList = ['Medical', 'Engineering', 'Arts', 'Business', 'Science'];
 
   final selectedGender = Rx<String?>('Female');
   final selectedCountry = Rx<String?>('Pakistan');
   final selectedReligion = Rx<String?>('Islam');
   final selectedDepartment = Rx<String?>('Medical');
 
-  void updateSelectedGender(String? newValue) {
-    selectedGender.value = newValue;
-  }
-
-  void updateSelectedCountry(String? newValue) {
-    selectedCountry.value = newValue;
-  }
-
-  void updateSelectedReligion(String? newValue) {
-    selectedReligion.value = newValue;
-  }
-
-  void updateSelectedDepartment(String? newValue) {
-    selectedDepartment.value = newValue;
-  }
+  void updateSelectedGender(String? newValue) => selectedGender.value = newValue;
+  void updateSelectedCountry(String? newValue) => selectedCountry.value = newValue;
+  void updateSelectedReligion(String? newValue) => selectedReligion.value = newValue;
+  void updateSelectedDepartment(String? newValue) => selectedDepartment.value = newValue;
 
   final selectedFileName = Rx<String?>(null);
   final selectedFileIdCard = Rx<String?>(null);
@@ -367,9 +317,8 @@ class SignUpController extends GetxController {
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpeg', 'jpg'],
     );
-
-    if (result != null && result.files.single.name != null) {
-      file.value = result.files.single.name!;
+    if (result != null && result.files.single.path != null) {
+      file.value = result.files.single.path!;
     }
   }
 
@@ -384,46 +333,22 @@ class SignUpController extends GetxController {
     Get.to(SignInScreen());
   }
 
-  final List<String> medicalSpecialityList = [
-    'Cardiology',
-    'Dermatology',
-    'Neurology',
-    'Oncology',
-    'Pediatrics',
-    'Gastroenterology',
-    'Orthopedics',
-    'Ophthalmology',
-    'Pulmonology',
-    'Endocrinology',
-    'Nephrology',
-  ];
+  final List<String> medicalSpecialityList = ['Cardiology', 'Dermatology', 'Neurology', 'Oncology', 'Pediatrics', 'Gastroenterology', 'Orthopedics', 'Ophthalmology', 'Pulmonology', 'Endocrinology', 'Nephrology'];
   RxString selectedSpecialist = "Cardiology".obs;
+  void updateSpecialization(String? newValue) => selectedSpecialist.value = newValue!;
 
-  void updateSpecialization(String? newValue) {
-    selectedSpecialist.value = newValue!;
-  }
+  TextEditingController videoConsultationFeeController = TextEditingController();
+  TextEditingController inPersonConsultationFeeController = TextEditingController();
 
-  final List<String> feeList = [
-    '\$25/ 30 mint45',
-    '\$50/ 60 mint75',
-    '\$125/ 90 mint',
-  ];
+  final List<String> feeList = ['\$25/ 30 mint45', '\$50/ 60 mint75', '\$125/ 90 mint'];
   RxString selectedFee = "\$25/ 30 mint45".obs;
-
-  void updateFee(String? newValue) {
-    selectedFee.value = newValue!;
-  }
+  void updateFee(String? newValue) => selectedFee.value = newValue!;
 
   final isPersonalDataChecked = false.obs;
   final isSubmissionConsentChecked = false.obs;
 
-  void togglePersonalData(bool? value) {
-    isPersonalDataChecked.value = value ?? false;
-  }
-
-  void toggleSubmissionConsent(bool? value) {
-    isSubmissionConsentChecked.value = value ?? false;
-  }
+  void togglePersonalData(bool? value) => isPersonalDataChecked.value = value ?? false;
+  void toggleSubmissionConsent(bool? value) => isSubmissionConsentChecked.value = value ?? false;
 
   @override
   void onClose() {
@@ -433,12 +358,10 @@ class SignUpController extends GetxController {
     phoneNumberController.dispose();
     passwordController.dispose();
     dateController.dispose();
-    for (var controller in controllers) {
-      controller.dispose();
-    }
-    for (var node in focusNodes) {
-      node.dispose();
-    }
+    videoConsultationFeeController.dispose();
+    inPersonConsultationFeeController.dispose();
+    for (var controller in controllers) controller.dispose();
+    for (var node in focusNodes) node.dispose();
     super.onClose();
   }
 
@@ -454,117 +377,43 @@ class SignUpController extends GetxController {
         "phoneNumber": phoneNumberController.text.trim(),
         "role": type.value,
       };
-
-      final response = await _apiService.post(
-        ApiUrls.signUpUrl,
-        data: signupData,
-      );
-
+      final response = await _apiService.post(ApiUrls.signUpUrl, data: signupData);
       isLoading.value = false;
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          "Account created successfully",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        print("Registration Response: ${response.data}");
+        Get.snackbar("Success", "Account created successfully", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        LocalStorageUtils.setToken(response.data["token"]);
         return true;
       }
       return false;
     } catch (e) {
+      print("Error during registration: $e");
       isLoading.value = false;
-      String errorMessage = "An unexpected error occurred";
-
-      if (e is DioException) {
-        if (e.response != null && e.response!.data != null) {
-          if (e.response!.data is Map) {
-            errorMessage = e.response!.data["message"] ?? "Server Error";
-          } else {
-            errorMessage = e.response!.data.toString();
-          }
-        } else {
-          errorMessage = "No response from server";
-        }
-      } else {
-        errorMessage = e.toString();
-      }
-
-      Get.snackbar(
-        "Error",
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-
+      _handleError(e);
       return false;
     }
   }
 
   void safeBack() {
-    if (Get.isSnackbarOpen) {
-      Get.closeCurrentSnackbar();
-    }
-    if (Get.isDialogOpen ?? false) {
-      Get.back();
-    }
+    if (Get.isSnackbarOpen) Get.closeCurrentSnackbar();
+    if (Get.isDialogOpen ?? false) Get.back();
     Get.back();
   }
 
   Future<bool> sendEmailOtp() async {
     try {
       isLoading.value = true;
-      final Map<String, dynamic> data = {
-        "email": emailController.text.trim(),
-      };
-
-      final response = await _apiService.post(
-        ApiUrls.sendEmailOtpUrl,
-        data: data,
-      );
-
+      final response = await _apiService.post(ApiUrls.sendEmailOtpUrl, data: {"email": emailController.text.trim()});
       isLoading.value = false;
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          "OTP sent to your email",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        Get.snackbar("Success", "OTP sent to your email", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         startTimer();
         return true;
       }
       return false;
     } catch (e) {
       isLoading.value = false;
-      String errorMessage = "An unexpected error occurred";
-
-      if (e is DioException) {
-        if (e.response != null && e.response!.data != null) {
-          if (e.response!.data is Map) {
-            errorMessage = e.response!.data["message"] ?? "Server Error";
-          } else {
-            errorMessage = e.response!.data.toString();
-          }
-        } else {
-          errorMessage = "No response from server";
-        }
-      } else {
-        errorMessage = e.toString();
-      }
-
-      Get.snackbar(
-        "Error",
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-
+      _handleError(e);
       return false;
     }
   }
@@ -572,112 +421,36 @@ class SignUpController extends GetxController {
   Future<bool> verifyEmailOtp() async {
     try {
       isLoading.value = true;
-      final Map<String, dynamic> data = {
-        "email": emailController.text.trim(),
-        "otp": completeCode,
-      };
-
-      final response = await _apiService.post(
-        ApiUrls.verifyEmailOtpUrl,
-        data: data,
-      );
-
+      final response = await _apiService.post(ApiUrls.verifyEmailOtpUrl, data: {"email": emailController.text.trim(), "otp": completeCode});
       isLoading.value = false;
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          "Email verified successfully",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        Get.snackbar("Success", "Email verified successfully", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         isVerifiedEmail.value = true;
         return true;
       }
       return false;
     } catch (e) {
       isLoading.value = false;
-      String errorMessage = "An unexpected error occurred";
-
-      if (e is DioException) {
-        if (e.response != null && e.response!.data != null) {
-          if (e.response!.data is Map) {
-            errorMessage = e.response!.data["message"] ?? "Server Error";
-          } else {
-            errorMessage = e.response!.data.toString();
-          }
-        } else {
-          errorMessage = "No response from server";
-        }
-      } else {
-        errorMessage = e.toString();
-      }
-
-      Get.snackbar(
-        "Error",
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-
+      _handleError(e);
       return false;
     }
   }
+
   Future<bool> sendPhoneOtp() async {
     try {
       isLoading.value = true;
-      final Map<String, dynamic> data = {
-        "phoneNumber": phoneNumberController.text.trim(),
-      };
-
-      final response = await _apiService.post(
-        ApiUrls.sendPhoneOtpUrl,
-        data: data,
-      );
-
+      final response = await _apiService.post(ApiUrls.sendPhoneOtpUrl, data: {"phoneNumber": phoneNumberController.text.trim()});
       isLoading.value = false;
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("object ${response.data}");
-        Get.snackbar(
-          "Success",
-          "OTP sent to your phone number",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        print("Phone OTP Response: ${response.data}");
+        Get.snackbar("Success", "OTP sent to your phone number", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         startTimer();
         return true;
       }
       return false;
     } catch (e) {
       isLoading.value = false;
-      String errorMessage = "An unexpected error occurred";
-
-      if (e is DioException) {
-        if (e.response != null && e.response!.data != null) {
-          if (e.response!.data is Map) {
-            errorMessage = e.response!.data["message"] ?? "Server Error";
-          } else {
-            errorMessage = e.response!.data.toString();
-          }
-        } else {
-          errorMessage = "No response from server";
-        }
-      } else {
-        errorMessage = e.toString();
-      }
-
-      Get.snackbar(
-        "Error",
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-
+      _handleError(e);
       return false;
     }
   }
@@ -685,57 +458,328 @@ class SignUpController extends GetxController {
   Future<bool> verifyPhoneOtp() async {
     try {
       isLoading.value = true;
-      final Map<String, dynamic> data = {
-        "phoneNumber": phoneNumberController.text.trim(),
-        "otp": completeCode,
-      };
-
-      final response = await _apiService.post(
-        ApiUrls.verifyPhoneOtpUrl,
-        data: data,
-      );
-
+      final response = await _apiService.post(ApiUrls.verifyPhoneOtpUrl, data: {"phoneNumber": phoneNumberController.text.trim(), "otp": completeCode});
       isLoading.value = false;
-
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Get.snackbar(
-          "Success",
-          "Phone number verified successfully",
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
+        Get.snackbar("Success", "Phone number verified successfully", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         isVerifiedPhone.value = true;
         return true;
       }
       return false;
     } catch (e) {
       isLoading.value = false;
-      String errorMessage = "An unexpected error occurred";
-
-      if (e is DioException) {
-        if (e.response != null && e.response!.data != null) {
-          if (e.response!.data is Map) {
-            errorMessage = e.response!.data["message"] ?? "Server Error";
-          } else {
-            errorMessage = e.response!.data.toString();
-          }
-        } else {
-          errorMessage = "No response from server";
-        }
-      } else {
-        errorMessage = e.toString();
-      }
-
-      Get.snackbar(
-        "Error",
-        errorMessage,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-
+      _handleError(e);
       return false;
     }
+  }
+
+  Future<bool> updatePatientProfile() async {
+    try {
+      isLoading.value = true;
+      Map<String, dynamic> data = {
+        "fullName": nameController.text.trim(),
+        "phoneNumber": phoneNumberController.text.trim(),
+        "email": emailController.text.trim(),
+        "dob": _selectedDate.value?.toIso8601String(),
+        "gender": selectedGender.value?.toLowerCase(),
+        "country": selectedCountry.value,
+        "religion": selectedReligion.value,
+        "address": addressController.text.trim(),
+        "height": heightController.text.trim(),
+        "weight": weightController.text.trim(),
+        "bmi": double.tryParse(bmiController.text.trim()),
+        "bloodPressure": bloodPressureController.text.trim(),
+        "heartRate": heartRateController.text.trim(),
+      };
+
+      FormData formData = FormData.fromMap({});
+      data.forEach((key, value) {
+        if (value != null) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      });
+
+      if (pickedImage.value != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(pickedImage.value!.path),
+        ));
+      }
+      if (selectedFileName.value != null) {
+        formData.files.add(MapEntry(
+          'reports',
+          await MultipartFile.fromFile(selectedFileName.value!),
+        ));
+      }
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar("Success", "Patient profile Created", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      print("Error updating patient profile: $e");
+      _handleError(e);
+      return false;
+    }
+  }
+
+  Future<bool> updateDoctorProfile() async {
+    try {
+      isLoading.value = true;
+
+      FormData formData = FormData.fromMap({
+        "fullName": nameController.text.trim(),
+        "phoneNumber": phoneNumberController.text.trim(),
+        "email": emailController.text.trim(),
+        "dob": _selectedDate.value?.toIso8601String(),
+        "gender": selectedGender.value?.toLowerCase(),
+        "nationality": selectedCountry.value,
+        "idNumber": idNumberController.text.trim(),
+        "clinicAddress": clinicAddressController.text.trim(),
+        "aboutMe": aboutMeController.text.trim(),
+        "experience": experienceController.text.trim().isNotEmpty ? int.tryParse(experienceController.text.trim()) : null,
+        "dateOfRegistration": _registrationDate.value?.toIso8601String(),
+        "placeOfPractice": placeOfPracticeController.text.trim(),
+        "year": yearOfWorkController.text.trim().isNotEmpty ? int.tryParse(yearOfWorkController.text.trim()) : null,
+        "country": selectedCountry.value,
+        "ratings": "0"
+      });
+
+      // Add fee fields separately
+      if (videoConsultationFeeController.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry(
+          "fee[videoconsultation]",
+          videoConsultationFeeController.text.trim(),
+        ));
+      }
+      if (inPersonConsultationFeeController.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry(
+          "fee[inpersonconsultation]",
+          inPersonConsultationFeeController.text.trim(),
+        ));
+      }
+
+      if (pickedImage.value != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(pickedImage.value!.path, filename: 'profileImage.jpg'),
+        ));
+      }
+      if (selectedFileIdCard.value != null && selectedFileIdCard.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'nationalIdentityDocument',
+          await MultipartFile.fromFile(selectedFileIdCard.value!, filename: 'nationalIdentityDocument.jpg'),
+        ));
+      }
+      if (selectedFilePassport.value != null && selectedFilePassport.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'passportOrIdFront',
+          await MultipartFile.fromFile(selectedFilePassport.value!, filename: 'passportOrIdFront.jpg'),
+        ));
+      }
+      if (selectedFileMedicalLicense.value != null && selectedFileMedicalLicense.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'medicalLicence',
+          await MultipartFile.fromFile(selectedFileMedicalLicense.value!, filename: 'medicalLicence.jpg'),
+        ));
+      }
+      if (selectedFileDiploma.value != null && selectedFileDiploma.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'certification',
+          await MultipartFile.fromFile(selectedFileDiploma.value!, filename: 'certification.jpg'),
+        ));
+      }
+      if (selectedFileInsuranceProof.value != null && selectedFileInsuranceProof.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'liabilityInsuranceProof',
+          await MultipartFile.fromFile(selectedFileInsuranceProof.value!, filename: 'liabilityInsuranceProof.jpg'),
+        ));
+      }
+      if (selectedFileCnpd.value != null && selectedFileCnpd.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'cnpd',
+          await MultipartFile.fromFile(selectedFileCnpd.value!, filename: 'cnpd.jpg'),
+        ));
+      }
+      if (selectedFileBankVerification.value != null && selectedFileBankVerification.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'bankVerificationLetter',
+          await MultipartFile.fromFile(selectedFileBankVerification.value!, filename: 'bankVerificationLetter.jpg'),
+        ));
+      }
+      if (selectedFileBankPaymentAuthorization.value != null && selectedFileBankPaymentAuthorization.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'paymentAuthorization',
+          await MultipartFile.fromFile(selectedFileBankPaymentAuthorization.value!, filename: 'paymentAuthorization.jpg'),
+        ));
+      }
+
+      print("Sending Doctor Data: ${formData.fields.map((e) => '${e.key}: ${e.value}').toList()}");
+      print("Sending Doctor Files: ${formData.files.length} files");
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+
+      print("Doctor Profile Update Response Status: ${response.statusCode}");
+      print("Doctor Profile Update Response Data: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar("Success", "Doctor profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error updating doctor profile: $e");
+      isLoading.value = false;
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> updatePharmacyProfile() async {
+    try {
+      isLoading.value = true;
+
+      FormData formData = FormData.fromMap({
+        "fullName": nameController.text.trim(),
+        "email": emailController.text.trim(),
+        "registrationID": registrationIdController.text.trim(),
+        "phoneNumber": phoneNumberController.text.trim(),
+        "address": pharmacyAddressController.text.trim(),
+        "city": cityController.text.trim(),
+        "area": areaLocalityController.text.trim(),
+        "operatingHours": "", // Add this if you have a field for it
+        "licenseNumber": licenseNumberController.text.trim(),
+        "issuingAuthority": issuingAuthorityController.text.trim(),
+        "issueDate": _issueDate.value?.toIso8601String(),
+        "expiryDate": _expiryDate.value?.toIso8601String(),
+        "businessRegistrationNo": buisnessRegNoController.text.trim(),
+        "registerName": registeredNameController.text.trim(),
+      });
+
+      if (pickedImage.value != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(pickedImage.value!.path, filename: 'profileImage.jpg'),
+        ));
+      }
+      if (selectedTaxClearance.value != null && selectedTaxClearance.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'taxCertificate',
+          await MultipartFile.fromFile(selectedTaxClearance.value!, filename: 'taxCertificate.jpg'),
+        ));
+      }
+      if (selectedNocCertificate.value != null && selectedNocCertificate.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'nocCertificate',
+          await MultipartFile.fromFile(selectedNocCertificate.value!, filename: 'nocCertificate.jpg'),
+        ));
+      }
+      if (selectedPharmacyBankVerificationLetter.value != null && selectedPharmacyBankVerificationLetter.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'paymentBankVerificationLetter',
+          await MultipartFile.fromFile(selectedPharmacyBankVerificationLetter.value!, filename: 'paymentBankVerificationLetter.jpg'),
+        ));
+      }
+      if (selectedPharmacyBankPaymentAuthorization.value != null && selectedPharmacyBankPaymentAuthorization.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'paymentAuthorization',
+          await MultipartFile.fromFile(selectedPharmacyBankPaymentAuthorization.value!, filename: 'paymentAuthorization.jpg'),
+        ));
+      }
+
+      print("Sending Pharmacy Data: ${formData.fields.map((e) => '${e.key}: ${e.value}').toList()}");
+      print("Sending Pharmacy Files: ${formData.files.length} files");
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+
+      print("Pharmacy Profile Update Response Status: ${response.statusCode}");
+      print("Pharmacy Profile Update Response Data: ${response.data}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar("Success", "Pharmacy profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      _handleError(e);
+      return false;
+    }
+  }
+  void _handleError(dynamic e) {
+    String errorMessage = "An unexpected error occurred";
+    if (e is DioException) {
+      if (e.response != null && e.response!.data != null) {
+        if (e.response!.data is Map) {
+          errorMessage = e.response!.data["message"] ?? "Server Error";
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+      } else {
+        errorMessage = "No response from server";
+      }
+    } else {
+      errorMessage = e.toString();
+    }
+    Get.snackbar("Error", errorMessage, snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
+  }
+  void clearAllControllersAndFields() {
+    nameController.clear();
+    emailController.clear();
+    phoneNumberController.clear();
+    passwordController.clear();
+    addressController.clear();
+    heightController.clear();
+    weightController.clear();
+    bmiController.clear();
+    bloodPressureController.clear();
+    heartRateController.clear();
+    idNumberController.clear();
+    clinicAddressController.clear();
+    aboutMeController.clear();
+    experienceController.clear();
+    placeOfPracticeController.clear();
+    yearOfWorkController.clear();
+    registrationIdController.clear();
+    pharmacyAddressController.clear();
+    cityController.clear();
+    areaLocalityController.clear();
+    licenseNumberController.clear();
+    issuingAuthorityController.clear();
+    buisnessRegNoController.clear();
+    registeredNameController.clear();
+    videoConsultationFeeController.clear();
+    inPersonConsultationFeeController.clear();
+
+    pickedImage.value = null;
+    pickedImageBytes.value = null;
+
+    selectedFileName.value = null;
+    selectedFileIdCard.value = null;
+    selectedFilePassport.value = null;
+    selectedFileMedicalLicense.value = null;
+    selectedFileDiploma.value = null;
+    selectedFileInsuranceProof.value = null;
+    selectedFileCnpd.value = null;
+    selectedFileBankVerification.value = null;
+    selectedFileBankPaymentAuthorization.value = null;
+    selectedLicenseCertificate.value = null;
+    selectedTaxClearance.value = null;
+    selectedNocCertificate.value = null;
+    selectedPharmacyBankVerificationLetter.value = null;
+    selectedPharmacyBankPaymentAuthorization.value = null;
+
+    _selectedDate.value = DateTime.now();
+    _registrationDate.value = DateTime.now();
+    _issueDate.value = DateTime.now();
+    _expiryDate.value = DateTime.now();
+
+    isVerifiedEmail.value = false;
+    isVerifiedPhone.value = false;
   }
 }

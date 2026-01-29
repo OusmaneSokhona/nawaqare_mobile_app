@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/client/api_client.dart';
 import 'package:patient_app/controllers/auth_controllers/sign_up_controller.dart';
 import 'package:patient_app/widgets/submit_for_verification_dialog.dart';
+import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dialog.dart';
 
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
@@ -12,6 +14,112 @@ import '../../widgets/progress_stepper.dart';
 
 class ReviewAndSubmission extends GetView<SignUpController> {
   const ReviewAndSubmission({super.key});
+
+  Future<void> _handleDoctorRegistration() async {
+    try {
+      bool isSuccessRegister = await controller.registerUser();
+      print("isSuccessRegister: $isSuccessRegister");
+
+      if (isSuccessRegister) {
+        await Future.delayed(const Duration(seconds: 1));
+        ApiClient.getToken();
+        await Future.delayed(const Duration(seconds: 1));
+
+        bool isSuccessUpdate = await controller.updateDoctorProfile();
+        if (isSuccessUpdate) {
+          Get.dialog(
+            barrierDismissible: false,
+            SubmitForVerificationDialog(
+              onConfirm: () {
+                Get.back();
+                Get.dialog(const SuccessDialog());
+                Future.delayed(const Duration(seconds: 3), () {
+                  controller.signInController.moveToMainScreenBasedOnRole(controller.type.value);
+                });
+              },
+            ),
+          );
+        } else {
+          Get.snackbar(
+            "Error",
+            "Failed to update doctor profile",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          "Error",
+          "Failed to register user",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "An error occurred during registration",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> _handlePharmacyRegistration() async {
+    try {
+      bool isSuccessRegister = await controller.registerUser();
+      print("isSuccessRegister: $isSuccessRegister");
+
+      if (isSuccessRegister) {
+        await Future.delayed(const Duration(seconds: 1));
+        ApiClient.getToken();
+        await Future.delayed(const Duration(seconds: 1));
+
+        bool isSuccessUpdate = await controller.updatePharmacyProfile();
+        if (isSuccessUpdate) {
+          Get.dialog(
+            barrierDismissible: false,
+            SubmitForVerificationDialog(
+              onConfirm: () {
+                Get.back();
+                Get.dialog(const SuccessDialog());
+                Future.delayed(const Duration(seconds: 3), () {
+                  controller.signInController.moveToMainScreenBasedOnRole(controller.type.value);
+                });
+              },
+            ),
+          );
+        } else {
+          Get.snackbar(
+            "Error",
+            "Failed to update pharmacy profile",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          "Error",
+          "Failed to register user",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        "An error occurred during registration",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,16 +193,32 @@ class ReviewAndSubmission extends GetView<SignUpController> {
               ),
 
               40.verticalSpace,
-              CustomButton(
-                borderRadius: 15,
-                text: AppStrings.submitForVerification.tr,
-                onTap: (){
-                  if(!controller.isPersonalDataChecked.value || !controller.isSubmissionConsentChecked.value){
-                    Get.snackbar("Warning", "Please provide all consents to proceed",snackPosition: SnackPosition.BOTTOM,backgroundColor: AppColors.red,colorText: Colors.white);
-                    return;
-                  }
-                  Get.dialog(SubmitForVerificationDialog());
-                },
+              Obx(
+                    () => controller.isLoading.value
+                    ? CircularProgressIndicator(color: AppColors.primaryColor)
+                    : CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.submitForVerification.tr,
+                  onTap: () async {
+                    if (!controller.isPersonalDataChecked.value ||
+                        !controller.isSubmissionConsentChecked.value) {
+                      Get.snackbar(
+                        AppStrings.warning.tr,
+                        "Please provide all consents to proceed",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: AppColors.red,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
+
+                    if (controller.type.value == "doctor") {
+                      await _handleDoctorRegistration();
+                    } else if (controller.type.value == "pharmacy") {
+                      await _handlePharmacyRegistration();
+                    }
+                  },
+                ),
               ),
               50.verticalSpace,
             ],
@@ -134,9 +258,9 @@ class InfoCard extends StatelessWidget {
                 color: Color(0xFF333333),
               ),
             ),
-            const Icon(
-              Icons.keyboard_arrow_down,
-              color: Color(0xFF757575),
+            Icon(
+              Icons.check_box,
+              color: AppColors.green,
               size: 24.0,
             ),
           ],

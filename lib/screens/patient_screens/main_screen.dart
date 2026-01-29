@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/main_controller.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 import '../../utils/app_colors.dart';
 
 class MainScreen extends StatelessWidget {

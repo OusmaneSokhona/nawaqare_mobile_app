@@ -20,6 +20,14 @@ class ProfessionalInfo extends StatelessWidget {
 
   final SignUpController signUpController = Get.find();
 
+  String getFormattedRegistrationDate() {
+    if (signUpController.dateOfRegistration == null) {
+      return AppStrings.dateOfRegistration.tr;
+    }
+    final date = signUpController.dateOfRegistration!;
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,6 +89,7 @@ class ProfessionalInfo extends StatelessWidget {
                       CustomTextField(
                         labelText: AppStrings.experienceYears.tr,
                         hintText: "7",
+                        keyboardType: TextInputType.number,
                         controller: signUpController.experienceController,
                       ),
                       buildDropdownField(
@@ -122,7 +131,7 @@ class ProfessionalInfo extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      signUpController.formattedDate,
+                                      getFormattedRegistrationDate(),
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: signUpController.dateOfRegistration == null
@@ -148,12 +157,12 @@ class ProfessionalInfo extends StatelessWidget {
                         labelText: AppStrings.placeOfPractice.tr,
                         hintText: "asd Hospital, abc",
                         controller: signUpController.placeOfPracticeController,
-
                       ),
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.year.tr,
                         hintText: "2008",
+                        keyboardType: TextInputType.number,
                         controller: signUpController.yearOfWorkController,
                       ),
                     ],
@@ -167,7 +176,10 @@ class ProfessionalInfo extends StatelessWidget {
                 onTap: () {
                   if (signUpController.selectedSpecialist.value == null ||
                       signUpController.selectedFee.value == null ||
-                      signUpController.dateOfRegistration == null||signUpController.experienceController.text.isEmpty||signUpController.placeOfPracticeController.text.isEmpty||signUpController.yearOfWorkController.text.isEmpty) {
+                      signUpController.dateOfRegistration == null ||
+                      signUpController.experienceController.text.isEmpty ||
+                      signUpController.placeOfPracticeController.text.isEmpty ||
+                      signUpController.yearOfWorkController.text.isEmpty) {
                     Get.snackbar(
                       AppStrings.warning.tr,
                       AppStrings.pleaseFillAllFields.tr,
@@ -176,7 +188,7 @@ class ProfessionalInfo extends StatelessWidget {
                     );
                     return;
                   }
-                  Get.to(SupportingDocuments());
+                  Get.to( SupportingDocuments());
                 },
               ),
               50.verticalSpace,
@@ -188,7 +200,7 @@ class ProfessionalInfo extends StatelessWidget {
   }
 
   void _showDatePicker(BuildContext context) async {
-    await showCalendarDatePicker2Dialog(
+    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -199,6 +211,10 @@ class ProfessionalInfo extends StatelessWidget {
       value: [signUpController.dateOfRegistration],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      signUpController.updateRegistrationDate(dates[0]);
+    }
   }
 
   static Widget buildDropdownField({

@@ -6,9 +6,15 @@ import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import '../../widgets/custom_button.dart';
 
 class SubmitForVerificationDialog extends StatelessWidget {
-  const SubmitForVerificationDialog({super.key});
+  final VoidCallback onConfirm;
+
+  const SubmitForVerificationDialog({
+    super.key,
+    required this.onConfirm,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,65 +55,22 @@ class SubmitForVerificationDialog extends StatelessWidget {
                   ),
                 ),
                 30.verticalSpace,
-                _buildVerifyingIndicator(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.confirm.tr,
+                        onTap: onConfirm,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          _buildCloseButton(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildVerifyingIndicator() {
-    return SizedBox(
-      width: 100.h,
-      height: 100.h,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          SizedBox(
-            width: 90.h,
-            height: 90.h,
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(
-                AppColors.primaryColor,
-              ),
-              strokeWidth: 5.0,
-              backgroundColor: AppColors.onboardingBackground,
-            ),
-          ),
-          Text(
-            AppStrings.verifying.tr,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCloseButton() {
-    return Positioned(
-      top: 15.h,
-      right: 15.w,
-      child: InkWell(
-        onTap: () {
-          Get.offAll(() => SignInScreen(), binding: AppBinding());
-        },
-        child: Container(
-          height: 30.h,
-          width: 30.w,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.primaryColor,
-          ),
-          alignment: Alignment.center,
-          child: const Icon(Icons.close, color: Colors.white, size: 18),
-        ),
       ),
     );
   }

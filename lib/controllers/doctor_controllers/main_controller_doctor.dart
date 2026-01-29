@@ -11,9 +11,9 @@ import '../../screens/patient_screens/profile_screens/profile_screen.dart';
 
 
 class MainControllerDoctor extends GetxController{
-  ChatController chatController=Get.find();
-  DoctorHomeController homeController=Get.find();
-  DoctorProfileController profileController=Get.find();
+  ChatController chatController=Get.put(ChatController());
+  DoctorHomeController homeController=Get.put(DoctorHomeController());
+  DoctorProfileController profileController=Get.put(DoctorProfileController());
   var currentIndex = 0.obs;
   var currentTitle = 'Home'.obs;
   final List<Widget> screens = [

@@ -20,7 +20,14 @@ class LocalStorageUtils {
     }
     return _preferences!.getString(key);
   }
-
+  static Future setToken(String token) async {
+    if (_preferences == null) await init();
+    _preferences!.setString("token", token);
+  }
+  static Future<String?> getToken() async {
+    if (_preferences == null) await init();
+    return _preferences!.getString("token");
+  }
   // --- Bool Operations ---
   static Future<bool> setBool(String key, bool value) async {
     if (_preferences == null) await init();
@@ -139,6 +146,7 @@ class LocalStorageUtils {
     remove("setLogined");
     remove("setLoginedDoctor");
     remove("setLoginedPharmacy");
+    remove("token");
   }
   static Future<bool> setLanguage(String value) async {
     if (_preferences == null) await init();

@@ -83,7 +83,7 @@ class DemographicInfo extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Obx(
-                        () => Column(
+                            () => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
@@ -113,17 +113,17 @@ class DemographicInfo extends StatelessWidget {
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
-                                            signUpController.selectedDate ==
-                                                    null
-                                                ? Colors.grey
-                                                : Colors.black,
+                                        signUpController.selectedDate ==
+                                            null
+                                            ? Colors.grey
+                                            : Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -267,6 +267,10 @@ class DemographicInfo extends StatelessWidget {
       value: [signUpController.selectedDate],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      signUpController.updateDate(dates[0]);
+    }
   }
 
   static Widget buildDropdownField({
@@ -292,7 +296,7 @@ class DemographicInfo extends StatelessWidget {
             ),
           ),
           Obx(
-            () => DropdownButtonFormField<String>(
+                () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(
@@ -310,12 +314,12 @@ class DemographicInfo extends StatelessWidget {
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
               items:
-                  items.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+              items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
               onChanged: onChanged,
             ),
           ),

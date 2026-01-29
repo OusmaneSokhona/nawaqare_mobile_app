@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:patient_app/utils/api_urls.dart';
+import 'package:patient_app/utils/locat_storage.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -11,8 +12,9 @@ class ApiClient {
   ApiClient._internal() {
     BaseOptions options = BaseOptions(
       baseUrl: ApiUrls.baseUrl,
-      connectTimeout: const Duration(seconds: 20),
-      receiveTimeout: const Duration(seconds: 20),
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 60),
+      sendTimeout: const Duration(seconds: 30),
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -22,8 +24,8 @@ class ApiClient {
     dio = Dio(options);
 
     dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        final token = "get_token_from_storage";
+      onRequest: (options, handler) async {
+        final token =getToken();
         if (token.isNotEmpty) {
           options.headers['Authorization'] = 'Bearer $token';
         }
@@ -36,7 +38,10 @@ class ApiClient {
       },
     ));
   }
-
+  static String getToken() {
+    String? token = LocalStorageUtils.getString("token");
+    return token ?? "";
+  }
   String _handleError(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:

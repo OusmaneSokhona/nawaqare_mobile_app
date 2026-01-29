@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_access_log_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import 'package:patient_app/widgets/patient_widgets/profile_widgets/delete_account_dialog.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
 import '../../../screens/patient_screens/profile_screens/privacy_security.dart';
@@ -60,7 +61,7 @@ class PharmacyHealthSpaceGrid extends StatelessWidget {
           title: AppStrings.deleteAccount.tr,
           color: AppColors.red,
           textColor: AppColors.red,
-          onTap: () => _handleLogout(), // Assuming same logic for now
+          onTap: () => Get.dialog(DeleteAccountDialog()), // Assuming same logic for now
         ),
       ],
     );

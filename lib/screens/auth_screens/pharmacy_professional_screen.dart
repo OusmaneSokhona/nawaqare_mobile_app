@@ -21,6 +21,18 @@ class PharmacyProfessionalScreen extends StatelessWidget {
 
   SignUpController signUpController = Get.find();
 
+  String getFormattedIssueDate() {
+    if (signUpController.issueDate == null) return AppStrings.issueDate.tr;
+    final date = signUpController.issueDate!;
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String getFormattedExpiryDate() {
+    if (signUpController.expiryDate == null) return AppStrings.expiryDate.tr;
+    final date = signUpController.expiryDate!;
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -101,7 +113,7 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                               ),
                             ),
                             InkWell(
-                              onTap: () => _showDatePicker(context),
+                              onTap: () => _showIssueDatePicker(context),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -115,16 +127,13 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      signUpController.formattedDate,
+                                      getFormattedIssueDate(),
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color:
-                                        signUpController.selectedDate ==
-                                            null
+                                        color: signUpController.issueDate == null
                                             ? Colors.grey
                                             : Colors.black,
                                         fontWeight: FontWeight.w500,
@@ -159,7 +168,7 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                               ),
                             ),
                             InkWell(
-                              onTap: () => _showDatePicker(context),
+                              onTap: () => _showExpiryDatePicker(context),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -173,16 +182,13 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                                   ),
                                 ),
                                 child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      signUpController.formattedDate,
+                                      getFormattedExpiryDate(),
                                       style: TextStyle(
                                         fontSize: 18,
-                                        color:
-                                        signUpController.selectedDate ==
-                                            null
+                                        color: signUpController.expiryDate == null
                                             ? Colors.grey
                                             : Colors.black,
                                         fontWeight: FontWeight.w500,
@@ -201,31 +207,39 @@ class PharmacyProfessionalScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.businessRegNo.tr,hintText: "BRN-99821",controller: signUpController.buisnessRegNoController,),
+                      CustomTextField(
+                        labelText: AppStrings.businessRegNo.tr,
+                        hintText: "BRN-99821",
+                        controller: signUpController.buisnessRegNoController,
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.registeredName.tr,hintText: "Alex Martin Healthcare (Pvt) Ltd",controller: signUpController.registeredNameController,),
+                      CustomTextField(
+                        labelText: AppStrings.registeredName.tr,
+                        hintText: "Alex Martin Healthcare (Pvt) Ltd",
+                        controller: signUpController.registeredNameController,
+                      ),
                     ],
                   ),
                 ),
               ),
-
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
                 text: AppStrings.continueText.tr,
                 onTap: () {
-                  if(signUpController.licenseNumberController.text.isEmpty||
-                      signUpController.issuingAuthorityController.text.isEmpty||
-                      signUpController.buisnessRegNoController.text.isEmpty||
-                      signUpController.registeredNameController.text.isEmpty||
-                      signUpController.selectedDate==null
-                  ){
+                  if (signUpController.licenseNumberController.text.isEmpty ||
+                      signUpController.issuingAuthorityController.text.isEmpty ||
+                      signUpController.buisnessRegNoController.text.isEmpty ||
+                      signUpController.registeredNameController.text.isEmpty ||
+                      signUpController.issueDate == null ||
+                      signUpController.expiryDate == null) {
                     Get.snackbar(
-                        AppStrings.warning.tr,
-                        AppStrings.pleaseFillAllFields.tr,
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: Colors.red,
-                        colorText: Colors.white);
+                      AppStrings.warning.tr,
+                      AppStrings.pleaseFillAllFields.tr,
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
+                    );
                     return;
                   }
                   Get.to(PharmacySupportingDocuments());
@@ -239,7 +253,7 @@ class PharmacyProfessionalScreen extends StatelessWidget {
     );
   }
 
-  void _showDatePicker(BuildContext context) async {
+  void _showIssueDatePicker(BuildContext context) async {
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
@@ -248,9 +262,31 @@ class PharmacyProfessionalScreen extends StatelessWidget {
         centerAlignModePicker: true,
       ),
       dialogSize: const Size(325, 400),
-      value: [signUpController.selectedDate],
+      value: [signUpController.issueDate],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      signUpController.updateIssueDate(dates[0]);
+    }
+  }
+
+  void _showExpiryDatePicker(BuildContext context) async {
+    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+      context: context,
+      config: CalendarDatePicker2WithActionButtonsConfig(
+        calendarType: CalendarDatePicker2Type.single,
+        selectedDayHighlightColor: Colors.blue,
+        centerAlignModePicker: true,
+      ),
+      dialogSize: const Size(325, 400),
+      value: [signUpController.expiryDate],
+      borderRadius: BorderRadius.circular(15),
+    );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      signUpController.updateExpiryDate(dates[0]);
+    }
   }
 
   static Widget buildDropdownField({
@@ -293,8 +329,7 @@ class PharmacyProfessionalScreen extends StatelessWidget {
               isExpanded: true,
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items:
-              items.map<DropdownMenuItem<String>>((String value) {
+              items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

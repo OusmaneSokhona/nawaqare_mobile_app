@@ -5,13 +5,15 @@ import 'package:patient_app/controllers/patient_controllers/profile_controller.d
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/screens/auth_screens/web_sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
+import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/locat_storage.dart';
+import '../../../controllers/auth_controllers/delete_user_controller.dart';
 import '../../../main.dart';
 import '../../../utils/app_strings.dart';
 
 class DeleteAccountDialog extends StatelessWidget {
-  const DeleteAccountDialog({super.key});
-
+   DeleteAccountDialog({super.key});
+DeleteUserController deleteUserController = Get.put(DeleteUserController());
   @override
   Widget build(BuildContext context) {
     // Instantiate the controller for this widget's scope
@@ -63,53 +65,56 @@ class DeleteAccountDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Row(
-              children: <Widget>[
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Get.back(result: false);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+            Obx(
+                ()=>deleteUserController.isLoading.value?CircularProgressIndicator(color: AppColors.primaryColor,): Row(
+                children: <Widget>[
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Get.back(result: false);
+                      },
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        side: BorderSide(color: Colors.grey.shade300),
                       ),
-                      side: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    child: Text(
-                      AppStrings.cancel.tr, // Fixed typo and localized
-                      style: const TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold),
+                      child: Text(
+                        AppStrings.cancel.tr, // Fixed typo and localized
+                        style: const TextStyle(
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      LocalStorageUtils.deleteUser();
-                      isWeb?
-                      Get.offAll(WebSignInScreen(), binding: AppBinding()):
-                      Get.offAll( SignInScreen(), binding: AppBinding());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        bool isDeleted = await deleteUserController.deleteUserAccount();
+                        if(isDeleted){
+                          LocalStorageUtils.deleteUser();
+                          Get.offAll( SignInScreen(), binding: AppBinding());
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue[600],
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
                       ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      AppStrings.confirm.tr,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      child: Text(
+                        AppStrings.confirm.tr,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

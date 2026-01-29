@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/client/api_client.dart';
 import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dialog.dart';
 import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
@@ -113,6 +114,7 @@ class DocumentsReports extends StatelessWidget {
                                   ? AppStrings.uploadFormat.tr
                                   : signUpController.selectedFileName.value!,
                               textAlign: TextAlign.center,
+                              maxLines: 3,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -133,21 +135,34 @@ class DocumentsReports extends StatelessWidget {
               ),
 
               40.verticalSpace,
-              CustomButton(borderRadius: 15, text: AppStrings.submit.tr, onTap: () async {
-                if(signUpController.selectedFileName.value == null || signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'){
-                  Get.snackbar(
-                    AppStrings.warning.tr,
-                    AppStrings.pleaseUploadDocument.tr,
-                    backgroundColor: Colors.redAccent,
-                    colorText: Colors.white,
-                  );
-                  return;
-                }
-                Get.dialog(SuccessDialog());
-                await Future.delayed(Duration(seconds: 3),(){
-                  signUpController.moveToSignInScreen();
-                });
-              }),
+              Obx(
+                  ()=>signUpController.isLoading.value?CircularProgressIndicator(color: AppColors.primaryColor,):CustomButton(borderRadius: 15, text: AppStrings.submit.tr, onTap: () async {
+                  if(signUpController.selectedFileName.value == null || signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'){
+                    Get.snackbar(
+                      AppStrings.warning.tr,
+                      AppStrings.pleaseUploadDocument.tr,
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                    );
+                    return;
+                  }
+                  bool isSuccessRegister=await signUpController.registerUser();
+                  print("isSuccessRegister: $isSuccessRegister");
+                  if(isSuccessRegister){
+                    Future.delayed(Duration(seconds: 1));
+                    ApiClient.getToken();
+                    Future.delayed(Duration(seconds: 1));
+                    bool isSuccessUpdate=await signUpController.updatePatientProfile();
+                    if(isSuccessUpdate){
+                      Get.dialog(SuccessDialog());
+                      await Future.delayed(Duration(seconds: 3),(){
+                        signUpController.signInController.moveToMainScreenBasedOnRole(signUpController.type.value);
+                      });
+                    }
+                  }
+
+                }),
+              ),
               20.verticalSpace,
               // CustomButton(borderRadius: 15, text: AppStrings.skip.tr, onTap: () {
               //   signUpController.moveToSignInScreen();

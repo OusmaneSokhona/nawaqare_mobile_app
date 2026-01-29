@@ -68,8 +68,11 @@ class SignInController extends GetxController {
   final RxString currentPassword = ''.obs;
 
   bool get hasMinLength => currentPassword.value.length >= 8;
+
   bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
+
   bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
+
   bool get hasSpecialChar =>
       currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
@@ -80,9 +83,15 @@ class SignInController extends GetxController {
   List<ValidationRule> getValidationRules() {
     return [
       ValidationRule(text: AppStrings.atLeast8Chars.tr, isValid: hasMinLength),
-      ValidationRule(text: AppStrings.atLeastOneUpper.tr, isValid: hasUppercase),
+      ValidationRule(
+        text: AppStrings.atLeastOneUpper.tr,
+        isValid: hasUppercase,
+      ),
       ValidationRule(text: AppStrings.atLeastOneNumber.tr, isValid: hasDigit),
-      ValidationRule(text: AppStrings.atLeastOneSpecial.tr, isValid: hasSpecialChar),
+      ValidationRule(
+        text: AppStrings.atLeastOneSpecial.tr,
+        isValid: hasSpecialChar,
+      ),
     ];
   }
 
@@ -150,7 +159,7 @@ class SignInController extends GetxController {
             "email": emailController.text.trim(),
             "password": passwordController.text,
           };
-         print("Login Data: $loginData");
+          print("Login Data: $loginData");
           final response = await _apiService.post(
             ApiUrls.signInUrl,
             data: loginData,
@@ -158,17 +167,9 @@ class SignInController extends GetxController {
 
           if (response.statusCode == 200 || response.statusCode == 201) {
             final String role = response.data['user']['role'];
-           print("User role: $role");
-            if (role == "patient") {
-              LocalStorageUtils.setLogined();
-              goToMainScreen();
-            } else if (role == "doctor") {
-              LocalStorageUtils.setLoginedDoctor();
-              goToMainScreenDocotor();
-            } else if (role == "pharmacy") {
-              LocalStorageUtils.setLoginedPharmacy();
-              goToMainScreenPharmacist();
-            }
+            print("User role: $role");
+            LocalStorageUtils.setToken(response.data['token']);
+            moveToMainScreenBasedOnRole(role);
             clearControllers();
           }
         } catch (e) {
@@ -181,7 +182,12 @@ class SignInController extends GetxController {
               errorMessage = "No response from server";
             }
           }
-          Get.snackbar("Error", errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
+          Get.snackbar(
+            "Error",
+            errorMessage,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         } finally {
           isLoading.value = false;
         }
@@ -213,7 +219,12 @@ class SignInController extends GetxController {
             clearControllers();
           }
         } catch (e) {
-          Get.snackbar("Warning", "Wrong Credentials", backgroundColor: Colors.red, colorText: Colors.white);
+          Get.snackbar(
+            "Warning",
+            "Wrong Credentials",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         } finally {
           isLoading.value = false;
         }
@@ -223,6 +234,19 @@ class SignInController extends GetxController {
       }
     } else {
       markPasswordInteracted();
+    }
+  }
+
+  void moveToMainScreenBasedOnRole(String role) {
+    if (role == "patient") {
+      LocalStorageUtils.setLogined();
+      goToMainScreen();
+    } else if (role == "doctor") {
+      LocalStorageUtils.setLoginedDoctor();
+      goToMainScreenDocotor();
+    } else if (role == "pharmacy") {
+      LocalStorageUtils.setLoginedPharmacy();
+      goToMainScreenPharmacist();
     }
   }
 }

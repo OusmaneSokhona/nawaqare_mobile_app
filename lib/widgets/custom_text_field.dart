@@ -38,7 +38,7 @@ class CustomTextField extends StatelessWidget {
     this.isEnabled = false,
     this.onTapEye,
     this.onSuffixIconTap,
-    this.maxLength = 14,
+    this.maxLength = 140,
     this.isPasswordField = false,
     this.validationView,
     this.onFocusChange,

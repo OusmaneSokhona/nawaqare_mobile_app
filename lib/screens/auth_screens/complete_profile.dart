@@ -157,12 +157,6 @@ class CompleteProfile extends StatelessWidget {
                         selectedValue: signUpController.selectedReligion,
                         onChanged: signUpController.updateSelectedReligion,
                       ),
-                      buildDropdownField(
-                        title: AppStrings.department.tr,
-                        items: signUpController.departmentList,
-                        selectedValue: signUpController.selectedDepartment,
-                        onChanged: signUpController.updateSelectedDepartment,
-                      ),
                       CustomTextField(labelText: AppStrings.address.tr, hintText: "32 Examaple St",controller: signUpController.addressController,)
                     ],
                   ),
@@ -179,7 +173,7 @@ class CompleteProfile extends StatelessWidget {
                 ){
                   Get.snackbar(AppStrings.warning.tr, AppStrings.pleaseFillAllFields.tr,snackPosition: SnackPosition.BOTTOM,backgroundColor: AppColors.red,colorText: Colors.white);
                 }else{
-                Get.to(MedicalVitals());}
+                  Get.to(MedicalVitals());}
               }),
               50.verticalSpace,
             ],
@@ -201,7 +195,12 @@ class CompleteProfile extends StatelessWidget {
       value: [signUpController.selectedDate],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      signUpController.updateDate(dates[0]);
+    }
   }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,

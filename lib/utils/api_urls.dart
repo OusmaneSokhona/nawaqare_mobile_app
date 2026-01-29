@@ -10,4 +10,6 @@ class ApiUrls {
   static String sendResetPasswordEmailOtpUrl="/api/auth/send-otp";
   static String sendResetPasswordPhoneOtpUrl="/api/auth/sendotpwhatsapp";
   static String verifyResetPasswordEmailOtpUrl="/api/auth/verify-otp";
+  static String updateProfileUrl="/api/auth/update-profile";
+  static String deleteUserUrl="/api/auth/delete-profile";
 }

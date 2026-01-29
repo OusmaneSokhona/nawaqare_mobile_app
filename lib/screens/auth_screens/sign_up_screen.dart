@@ -41,7 +41,10 @@ class SignUpScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: () {
+          signUpController.clearAllControllersAndFields();
+          Get.back();
+                    },
                     child: Image.asset("assets/images/back_icon.png", height: 32.h, width: 32.w),
                   ),
                   7.horizontalSpace,
@@ -70,7 +73,7 @@ class SignUpScreen extends StatelessWidget {
                         5.verticalSpace,
                         Obx(() => CustomRadioTile(text: AppStrings.iAmPatient.tr, isSelected: signUpController.type.value == "patient", onTap: () => signUpController.type.value = "patient")),
                         5.verticalSpace,
-                        Obx(() => CustomRadioTile(text: AppStrings.iAmPharmacist.tr, isSelected: signUpController.type.value == "pharmacist", onTap: () => signUpController.type.value = "pharmacist")),
+                        Obx(() => CustomRadioTile(text: AppStrings.iAmPharmacist.tr, isSelected: signUpController.type.value == "pharmacy", onTap: () => signUpController.type.value = "pharmacy")),
                         15.verticalSpace,
                         Obx(() => ProgressStepper(currentStep: 1, totalSteps: signUpController.type.value == "patient" ? 4 : 5)),
                         15.verticalSpace,
@@ -120,6 +123,7 @@ class SignUpScreen extends StatelessWidget {
                           labelText: AppStrings.phoneNumber.tr,
                           hintText: "+33 3 6 12 34 56 78",
                           prefixIcon: Icons.phone,
+                          keyboardType: TextInputType.phone,
                           controller: signUpController.phoneNumberController,
                           validator: (value) => signUpController.signInController.phoneNumberValidator(value),
                           suffixWidget: SizedBox(
@@ -186,7 +190,7 @@ class SignUpScreen extends StatelessWidget {
                                 if (signUpController.isVerifiedEmail.value && signUpController.isVerifiedPhone.value) {
                                   if (signUpController.type.value == "doctor") {
                                     Get.to(() => DemographicInfo());
-                                  } else if (signUpController.type.value == "pharmacist") {
+                                  } else if (signUpController.type.value == "pharmacy") {
                                     Get.to(() => BasicInfoScreen());
                                   } else {
                                     Get.to(() => CompleteProfile());

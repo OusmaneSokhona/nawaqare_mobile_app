@@ -103,12 +103,28 @@ class ForgotPassword extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    isEmail ? AppStrings.verifyEmail.tr : AppStrings.verifyWhatsapp.tr,
-                    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        isEmail ? AppStrings.verifyEmail.tr : AppStrings.verifyWhatsapp.tr,
+                        style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
+                      ),
+                      InkWell(
+                        onTap: () => Get.back(),
+                        child: Container(
+                          padding: EdgeInsets.all(5.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.black54),
+                          ),
+                          child: Icon(Icons.close, size: 20.sp, color: Colors.black),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                15.verticalSpace,
+                25.verticalSpace,
                 CustomTextField(
                   maxLength: 30,
                   controller: isEmail
@@ -142,13 +158,6 @@ class ForgotPassword extends StatelessWidget {
                   borderRadius: 15,
                 )),
                 10.verticalSpace,
-                CustomButton(
-                  borderRadius: 15,
-                  text: "Cancel",
-                  onTap: () {
-                    Get.back();
-                  },
-                ),
               ],
             ),
           ),

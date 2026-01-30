@@ -27,7 +27,7 @@ class UpdatePassword extends StatelessWidget {
           ],begin: Alignment.topCenter,end: Alignment.bottomCenter),
         ),
         child: Form(
-          key: controller.formKeyForget,
+          key: controller.formKeyUpdate,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(

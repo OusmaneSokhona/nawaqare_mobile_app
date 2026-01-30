@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalStorageUtils {
@@ -7,6 +9,33 @@ class LocalStorageUtils {
     _preferences = await SharedPreferences.getInstance();
   }
 
+  static Future<void> setUser(Map<String, dynamic> userData) async {
+    if (_preferences == null) await init();
+    final userJson = jsonEncode(userData);
+    await _preferences!.setString("currentUser", userJson);
+  }
+
+  static dynamic getUser() {
+    if (_preferences == null) {
+      print("Warning: SharedPreferences not initialized. Call init() first.");
+      return null;
+    }
+    final userJson = _preferences!.getString("currentUser");
+    if (userJson != null && userJson.isNotEmpty) {
+      try {
+        return jsonDecode(userJson);
+      } catch (e) {
+        print("Error decoding user data: $e");
+        return null;
+      }
+    }
+    return null;
+  }
+
+  static Future<void> removeUser() async {
+    if (_preferences == null) await init();
+    await _preferences!.remove("currentUser");
+  }
   static Future<bool> setString(String key, String value) async {
     if (_preferences == null) await init();
     return _preferences!.setString(key, value);
@@ -143,6 +172,7 @@ class LocalStorageUtils {
     return _preferences!.getKeys();
   }
   static deleteUser(){
+    remove("currentUser");
     remove("setLogined");
     remove("setLoginedDoctor");
     remove("setLoginedPharmacy");

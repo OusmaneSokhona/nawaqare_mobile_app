@@ -184,12 +184,18 @@ class CompleteProfile extends StatelessWidget {
   }
 
   void _showDatePicker(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime maxDate = DateTime(now.year - 18, now.month, now.day);
+    final DateTime minDate = DateTime(now.year - 120, now.month, now.day); // Optional: set a reasonable minimum age
+
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
         selectedDayHighlightColor: Colors.blue,
         centerAlignModePicker: true,
+        firstDate: minDate,
+        lastDate: maxDate,
       ),
       dialogSize: const Size(325, 400),
       value: [signUpController.selectedDate],
@@ -197,8 +203,56 @@ class CompleteProfile extends StatelessWidget {
     );
 
     if (dates != null && dates.isNotEmpty && dates[0] != null) {
-      signUpController.updateDate(dates[0]);
+      final selectedDate = dates[0]!;
+
+      if (_isAtLeast18YearsOld(selectedDate)) {
+        signUpController.updateDate(selectedDate);
+      } else {
+        _showAgeErrorDialog(context);
+      }
     }
+  }
+
+  bool _isAtLeast18YearsOld(DateTime birthDate) {
+    final DateTime now = DateTime.now();
+    final DateTime eighteenYearsAgo = DateTime(now.year - 18, now.month, now.day);
+    return birthDate.isBefore(eighteenYearsAgo) ||
+        (birthDate.year == eighteenYearsAgo.year &&
+            birthDate.month == eighteenYearsAgo.month &&
+            birthDate.day == eighteenYearsAgo.day);
+  }
+
+  void _showAgeErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Age Restriction',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'You must be at least 18 years old to register.',
+          style: TextStyle(
+            fontSize: 16.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   static Widget buildDropdownField({

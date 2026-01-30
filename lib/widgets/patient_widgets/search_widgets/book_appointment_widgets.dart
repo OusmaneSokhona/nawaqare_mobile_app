@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/doctor_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/utils/app_strings.dart';
@@ -8,7 +9,25 @@ import '../../../controllers/patient_controllers/appointment_controllers/book_ap
 
 class ConsultationDetailsCard extends StatelessWidget {
   final BookAppointmentController controller;
-  const ConsultationDetailsCard({required this.controller});
+  final DoctorModel doctor;
+
+  const ConsultationDetailsCard({
+    required this.controller,
+    required this.doctor,
+  });
+
+  String _getFeeBasedOnType() {
+    switch (controller.appointmentType.value) {
+      case "inPerson":
+        return doctor.fee?.displayInPersonFee ?? '\$N/A';
+      case "remote":
+        return doctor.fee?.displayVideoFee ?? '\$N/A';
+      case "homeVisit":
+        return '\$100'; // Default home visit fee
+      default:
+        return '\$N/A';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,70 +52,97 @@ class ConsultationDetailsCard extends StatelessWidget {
             ),
             SizedBox(height: 16.h),
             Obx(
-                  ()=> controller.appointmentType.value!="homeVisit"?
-              Text(AppStrings.typeOfAppointment.tr,
-                  style: TextStyle(
-                      color: const Color(0xFF666666), fontSize: 14.sp)):SizedBox(),
+                  () => controller.appointmentType.value != "homeVisit"
+                  ? Text(
+                AppStrings.typeOfAppointment.tr,
+                style: TextStyle(
+                  color: const Color(0xFF666666),
+                  fontSize: 14.sp,
+                ),
+              )
+                  : SizedBox(),
             ),
-            Obx(()=>controller.appointmentType.value!="homeVisit"?SizedBox(height: 8.h):SizedBox()),
+            Obx(() => controller.appointmentType.value != "homeVisit" ? SizedBox(height: 8.h) : SizedBox()),
             Obx(
-                  () => controller.appointmentType.value!="homeVisit"?Container(
+                  () => controller.appointmentType.value != "homeVisit"
+                  ? Container(
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                      color: const Color(0xFFE5E5E5), width: 1.w),
+                  border: Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     isExpanded: true,
                     value: controller.appointmentType.value,
-                    icon: Icon(Icons.keyboard_arrow_down,
-                        size: 24.sp, color: const Color(0xFF666666)),
+                    icon: Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 24.sp,
+                      color: const Color(0xFF666666),
+                    ),
                     onChanged: controller.selectAppointmentType,
-                    items: controller.appointmentOptions
-                        .map((String value) {
+                    items: controller.appointmentOptions.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value.tr,
-                            style: TextStyle(
-                                color: const Color(0xFF333333),
-                                fontSize: 14.sp)),
+                        child: Text(
+                          value.tr,
+                          style: TextStyle(
+                            color: const Color(0xFF333333),
+                            fontSize: 14.sp,
+                          ),
+                        ),
                       );
                     }).toList(),
                   ),
                 ),
-              ):SizedBox(),
+              )
+                  : SizedBox(),
             ),
             Obx(
-                  ()=> controller.appointmentType.value=="homeVisit"?CustomTextField(labelText: AppStrings.consultationAddress.tr, hintText: AppStrings.addressHint.tr):
-              SizedBox(),
+                  () => controller.appointmentType.value == "homeVisit"
+                  ? CustomTextField(
+                labelText: AppStrings.consultationAddress.tr,
+                hintText: AppStrings.addressHint.tr,
+              )
+                  : SizedBox(),
             ),
             SizedBox(height: 16.h),
-            Text(AppStrings.duration.tr,
-                style:
-                TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
+            Text(
+              AppStrings.duration.tr,
+              style: TextStyle(
+                color: const Color(0xFF666666),
+                fontSize: 14.sp,
+              ),
+            ),
             SizedBox(height: 8.h),
             InputField(
               text: controller.duration.value,
               readOnly: true,
             ),
             SizedBox(height: 16.h),
-            Text(AppStrings.fee.tr,
-                style:
-                TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
+            Text(
+              AppStrings.fee.tr,
+              style: TextStyle(
+                color: const Color(0xFF666666),
+                fontSize: 14.sp,
+              ),
+            ),
             SizedBox(height: 8.h),
             InputField(
-              text: controller.fee.value,
+              text: _getFeeBasedOnType(),
               readOnly: true,
             ),
             10.verticalSpace,
-            Text(AppStrings.contact.tr,
-                style:
-                TextStyle(color: const Color(0xFF666666), fontSize: 14.sp)),
+            Text(
+              AppStrings.contact.tr,
+              style: TextStyle(
+                color: const Color(0xFF666666),
+                fontSize: 14.sp,
+              ),
+            ),
             SizedBox(height: 8.h),
             InputField(
-              text: "03146314866",
+              text: doctor.phoneNumber,
               readOnly: true,
             ),
             10.verticalSpace,
@@ -117,15 +163,14 @@ class ConsultationDetailsCard extends StatelessWidget {
               ),
               child: TextField(
                 maxLines: 5,
-                onTapOutside: (_){
+                onTapOutside: (_) {
                   FocusManager.instance.primaryFocus!.unfocus();
                 },
                 decoration: InputDecoration(
                   hintText: AppStrings.noteHint.tr,
                   hintStyle: TextStyle(color: Colors.grey.shade500),
                   border: InputBorder.none,
-                  contentPadding:
-                  EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                 ),
               ),
             ),
@@ -163,6 +208,7 @@ class InputField extends StatelessWidget {
   }
 }
 
+
 class CalendarWidget extends StatelessWidget {
   final BookAppointmentController controller;
   const CalendarWidget({required this.controller});
@@ -198,16 +244,14 @@ class CalendarWidget extends StatelessWidget {
               ),
               Row(
                 children: [
-                  _CalendarArrowButton(
-                      icon: Icons.arrow_back_ios_new, onTap: () {}),
-                  _CalendarArrowButton(
-                      icon: Icons.arrow_forward_ios, onTap: () {}),
+                  _CalendarArrowButton(icon: Icons.arrow_back_ios_new, onTap: () {}),
+                  _CalendarArrowButton(icon: Icons.arrow_forward_ios, onTap: () {}),
                 ],
               )
             ],
           ),
           5.verticalSpace,
-           _DayLabels(),
+          _DayLabels(),
           5.verticalSpace,
           _DateGrid(controller: controller),
         ],
@@ -239,8 +283,8 @@ class _CalendarArrowButton extends StatelessWidget {
 }
 
 class _DayLabels extends StatelessWidget {
-   _DayLabels();
-  final List<String> days =  [
+  _DayLabels();
+  final List<String> days = [
     'sun'.tr,
     'mon'.tr,
     'tue'.tr,
@@ -255,17 +299,19 @@ class _DayLabels extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: days
-          .map((day) => Expanded(
-        child: Text(
-          day.tr,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 13.sp,
-            color: const Color(0xFF666666),
+          .map(
+            (day) => Expanded(
+          child: Text(
+            day.tr,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 13.sp,
+              color: const Color(0xFF666666),
+            ),
           ),
         ),
-      ))
+      )
           .toList(),
     );
   }
@@ -276,8 +322,7 @@ class _DateGrid extends StatelessWidget {
   const _DateGrid({required this.controller});
 
   List<int> get dates => [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5
   ];
 
   @override
@@ -299,8 +344,7 @@ class _DateGrid extends StatelessWidget {
         final date = DateTime(2023, 6, dayNumber);
 
         return Obx(() {
-          final isSelected =
-              controller.selectedDate.value.day == dayNumber && !isNextMonth;
+          final isSelected = controller.selectedDate.value.day == dayNumber && !isNextMonth;
           return _DateTile(
             dayNumber: dayNumber,
             isSelected: isSelected,
@@ -339,11 +383,7 @@ class _DateTile extends StatelessWidget {
         child: Text(
           '$dayNumber',
           style: TextStyle(
-            color: isSelected
-                ? Colors.white
-                : isNextMonth
-                ? const Color(0xFFCCCCCC)
-                : const Color(0xFF333333),
+            color: isSelected ? Colors.white : isNextMonth ? const Color(0xFFCCCCCC) : const Color(0xFF333333),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             fontSize: 14.sp,
           ),
@@ -355,15 +395,52 @@ class _DateTile extends StatelessWidget {
 
 class TimeSlotsGrid extends StatelessWidget {
   final BookAppointmentController controller;
-  const TimeSlotsGrid({required this.controller});
+  final DoctorModel doctor;
+
+  const TimeSlotsGrid({
+    super.key,
+    required this.controller,
+    required this.doctor,
+  });
+
+  List<String> _getAvailableTimeSlots() {
+    if (doctor.availableSlots.isNotEmpty) {
+      return doctor.availableSlots;
+    }
+    return [
+      "09:00 AM",
+      "10:00 AM",
+      "11:00 AM",
+      "12:00 PM",
+      "02:00 PM",
+      "03:00 PM",
+      "04:00 PM",
+      "05:00 PM",
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Wrap(
+    final timeSlots = _getAvailableTimeSlots();
+
+    return Container(
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 3.h),
+          ),
+        ],
+      ),
+      child: Wrap(
         spacing: 10.w,
         runSpacing: 10.h,
-        children: controller.availableTimes.map((time) {
+        children: timeSlots.map((time) {
           final isSelected = controller.selectedTime.value == time;
           return _TimeSlotButton(
             time: time,
@@ -395,9 +472,7 @@ class _TimeSlotButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF4285F4) : Colors.white,
           borderRadius: BorderRadius.circular(10.r),
-          border: isSelected
-              ? null
-              : Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
+          border: isSelected ? null : Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
           boxShadow: isSelected
               ? [
             BoxShadow(

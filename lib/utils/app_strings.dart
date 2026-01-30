@@ -10,6 +10,9 @@ class AppStrings {
   static const String fullName = "full_name";
   static const String registrationId = "registration_id";
   static const String phoneNumber = "phone_number";
+  static const String noDocuments = "no_document";
+  static const String user = "user";
+  static const String  notAvailable = 'not_available';
   static const String pharmacyAddress = "pharmacy_address";
   static const String city = "city";
   static const String areaLocality = "area_locality";
@@ -1095,4 +1098,8 @@ class AppStrings {
   static const String pleaseFillAllFields = "please_fill_all_fields";
   static const String pleaseVerifyYourEmailFirst = "please_verify_your_email_first";
   static const String pleaseUploadDocument = "please_upload_document";
+  static const String noSlots = "no_slot";
+  static const String slots = "slots";
+  static const String aboutDoctor = "about_doctor";
+  static const String aboutDoctorDescription = "about_doctor_description";
 }

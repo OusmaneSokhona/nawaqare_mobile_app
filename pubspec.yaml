@@ -16,7 +16,10 @@ dependencies:
   calendar_date_picker2: ^2.0.1
   shared_preferences: ^2.5.3
   google_fonts: ^6.3.2
+  url_launcher: ^6.3.2
+  clipboard: ^3.0.14
   dio: ^5.9.0
+  flutter_inappwebview: ^6.1.5
 
 
 

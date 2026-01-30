@@ -153,12 +153,6 @@ class EditPersonalInfo extends GetView<SignUpController> {
                         selectedValue: controller.selectedReligion,
                         onChanged: controller.updateSelectedReligion,
                       ),
-                      buildDropdownField(
-                        title: AppStrings.department.tr,
-                        items: controller.departmentList,
-                        selectedValue: controller.selectedDepartment,
-                        onChanged: controller.updateSelectedDepartment,
-                      ),
                       CustomTextField(
                         labelText: AppStrings.address.tr,
                         hintText: "32 Example St",

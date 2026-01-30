@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/doctor_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class DoctorDetailWidget extends StatelessWidget {
-  // These would typically come from a model, but I've kept them here as per your snippet
-  final String aboutMeText =
-      'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.';
-  final String experienceText = 'Charles Medical Office 2018 - Present';
-  final String reviewerName = 'Emily Anderson';
-  final double rating = 5.0;
-  final String reviewText =
-      'Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.';
-  final String reviewerImageUrl = 'assets/demo_images/Frame 1000000981.png';
+  final DoctorModel doctor;
 
-  const DoctorDetailWidget({super.key});
+  const DoctorDetailWidget({super.key, required this.doctor});
 
   Widget _buildSectionTitle(String title) {
     return Padding(
@@ -51,6 +44,43 @@ class DoctorDetailWidget extends StatelessWidget {
     );
   }
 
+  String _getExperienceText() {
+    if (doctor.experience != null && doctor.experience! > 0) {
+      return '${doctor.experience} ${AppStrings.years.tr}';
+    }
+    return AppStrings.notAvailable.tr;
+  }
+
+  String _getFeeText() {
+    if (doctor.fee != null) {
+      String videoFee = doctor.fee!.displayVideoFee;
+      String inPersonFee = doctor.fee!.displayInPersonFee;
+
+      if (videoFee != 'N/A' && inPersonFee != 'N/A') {
+        return 'Video Consultation: $videoFee\nIn-Person Consultation: $inPersonFee';
+      } else if (videoFee != 'N/A') {
+        return 'Video Consultation: $videoFee';
+      } else if (inPersonFee != 'N/A') {
+        return 'In-Person Consultation: $inPersonFee';
+      }
+    }
+    return AppStrings.notAvailable.tr;
+  }
+
+  String _getLanguages() {
+    final languages = <String>[];
+    if (doctor.nationality != null && doctor.nationality!.isNotEmpty) {
+      languages.add(doctor.nationality!);
+    }
+    if (doctor.country != null && doctor.country!.isNotEmpty) {
+      languages.add(doctor.country!);
+    }
+    if (languages.isEmpty) {
+      return 'English';
+    }
+    return languages.join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,7 +101,7 @@ class DoctorDetailWidget extends StatelessWidget {
         children: [
           _buildSectionTitle(AppStrings.aboutMe.tr),
           Text(
-            aboutMeText.tr, // Translating the dynamic bio if keys exist
+            doctor.aboutMe?.isNotEmpty == true ? doctor.aboutMe! : AppStrings.aboutDoctorDescription.tr,
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[700],
@@ -83,7 +113,7 @@ class DoctorDetailWidget extends StatelessWidget {
 
           _buildSectionTitle(AppStrings.experienceLabel.tr),
           Text(
-            experienceText.tr,
+            _getExperienceText(),
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[900],
@@ -94,7 +124,7 @@ class DoctorDetailWidget extends StatelessWidget {
 
           _buildSectionTitle(AppStrings.feesLabel.tr),
           Text(
-            AppStrings.consultationFeeText.tr,
+            _getFeeText(),
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[900],
@@ -102,9 +132,10 @@ class DoctorDetailWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _buildDivider(),
+
           _buildSectionTitle(AppStrings.clinicAddress.tr),
           Text(
-            "Degree College road, near Zarai Tarqiati Bank Limited, Bahawalnagar, Punjab",
+            doctor.clinicAddress?.isNotEmpty == true ? doctor.clinicAddress! : AppStrings.notAvailable.tr,
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[900],
@@ -112,9 +143,10 @@ class DoctorDetailWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _buildDivider(),
+
           _buildSectionTitle(AppStrings.languages.tr),
           Text(
-            "English, French, Arabic",
+            _getLanguages(),
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[900],
@@ -122,6 +154,7 @@ class DoctorDetailWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _buildDivider(),
+
           _buildSectionTitle(AppStrings.acceptedPaymentMethod.tr),
           Text(
             "Credit / Debit card, Cash, Bank transfer",
@@ -132,6 +165,7 @@ class DoctorDetailWidget extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           _buildDivider(),
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -143,7 +177,7 @@ class DoctorDetailWidget extends StatelessWidget {
                   style: const TextStyle(
                     decoration: TextDecoration.underline,
                     decorationColor: AppColors.primaryColor,
-                    color:AppColors.primaryColor,
+                    color: AppColors.primaryColor,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -157,22 +191,44 @@ class DoctorDetailWidget extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 25,
-                backgroundImage: AssetImage(reviewerImageUrl),
                 backgroundColor: Colors.grey[200],
+                child: doctor.displayImage.startsWith('http')
+                    ? ClipOval(
+                  child: Image.network(
+                    doctor.displayImage,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/demo_images/doctor_1.png',
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                )
+                    : Image.asset(
+                  doctor.displayImage,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
               ),
               const SizedBox(width: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    reviewerName,
+                    doctor.fullName,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  _buildStarRating(rating),
+                  _buildStarRating(doctor.ratingValue),
                 ],
               ),
             ],
@@ -180,7 +236,9 @@ class DoctorDetailWidget extends StatelessWidget {
           const SizedBox(height: 12),
 
           Text(
-            reviewText.tr,
+            doctor.aboutMe?.isNotEmpty == true
+                ? doctor.aboutMe!
+                : '${doctor.fullName} is a professional doctor providing quality healthcare services.',
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[700],

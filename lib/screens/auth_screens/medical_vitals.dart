@@ -8,12 +8,13 @@ import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
+import '../../widgets/display_field.dart';
 import '../../widgets/progress_stepper.dart';
 
 class MedicalVitals extends StatelessWidget {
   MedicalVitals({super.key});
 
-  SignUpController signUpController = Get.find();
+  final SignUpController signUpController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +73,15 @@ class MedicalVitals extends StatelessWidget {
                         hintText: "165cm",
                         controller: signUpController.heightController,
                         keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          if (value.isNotEmpty && signUpController.weightController.text.isNotEmpty) {
+                            signUpController.calculateAndUpdateBMI(value, signUpController.weightController.text);
+                          } else if (value.isEmpty) {
+                            // Clear BMI if height is cleared
+                            signUpController.bmiController.clear();
+                            signUpController.update();
+                          }
+                        },
                       ),
                       10.verticalSpace,
                       CustomTextField(
@@ -79,13 +89,27 @@ class MedicalVitals extends StatelessWidget {
                         hintText: "60kg",
                         controller: signUpController.weightController,
                         keyboardType: TextInputType.number,
+                        onChanged: (value) {
+                          if (value.isNotEmpty && signUpController.heightController.text.isNotEmpty) {
+                            signUpController.calculateAndUpdateBMI(signUpController.heightController.text, value);
+                          } else if (value.isEmpty) {
+                            // Clear BMI if weight is cleared
+                            signUpController.bmiController.clear();
+                            signUpController.update();
+                          }
+                        },
                       ),
                       10.verticalSpace,
-                      CustomTextField(
-                        labelText: AppStrings.bmi.tr,
-                        hintText: "22.0",
-                        controller: signUpController.bmiController,
-                        keyboardType: TextInputType.number,
+                      GetBuilder<SignUpController>(
+                        builder: (controller) {
+                          return DisplayFieldContainer(
+                            label: AppStrings.bmi.tr,
+                            value: controller.bmiController.text.isEmpty
+                                ? "Enter height and weight"
+                                : "${controller.bmiController.text} (${controller.getBMICategory()})",
+                            valueColor: _getBMICategoryColor(controller.getBMICategory()),
+                          );
+                        },
                       ),
                       10.verticalSpace,
                       CustomTextField(
@@ -105,7 +129,6 @@ class MedicalVitals extends StatelessWidget {
                   ),
                 ),
               ),
-
               20.verticalSpace,
               CustomButton(
                 borderRadius: 15,
@@ -113,7 +136,6 @@ class MedicalVitals extends StatelessWidget {
                 onTap: () {
                   if (signUpController.heightController.text.isEmpty ||
                       signUpController.weightController.text.isEmpty ||
-                      signUpController.bmiController.text.isEmpty ||
                       signUpController.bloodPressureController.text.isEmpty ||
                       signUpController.heartRateController.text.isEmpty) {
                     Get.snackbar(
@@ -134,5 +156,20 @@ class MedicalVitals extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color _getBMICategoryColor(String category) {
+    switch (category) {
+      case 'Underweight':
+        return Colors.orange;
+      case 'Normal':
+        return Colors.green;
+      case 'Overweight':
+        return Colors.orange;
+      case 'Obese':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }

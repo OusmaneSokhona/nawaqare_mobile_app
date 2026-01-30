@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import '../../../controllers/patient_controllers/home_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../widgets/patient_widgets/profile_widgets/delete_account_dialog.dart';
@@ -18,192 +19,196 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final ProfileController controller = Get.put(ProfileController());
   final DoctorProfileController profileController = Get.put(DoctorProfileController());
+  final HomeController homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     controller.scrollChange();
-    return Scaffold(
-      body: Container(
-        height: 1.sh,
-        width: 1.sw,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.primaryColor,
-              AppColors.primaryColor.withOpacity(0.01),
-              AppColors.primaryColor.withOpacity(0.01),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: Column(
-          children: [
-            Obx(() {
-              final bool isScrolledPastThreshold =
-                  controller.scrollValue.value >= 280;
-              final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
-              final Color targetColor = isScrolledPastThreshold
-                  ? AppColors.primaryColor
-                  : Colors.transparent;
 
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                curve: Curves.easeInOut,
-                height: targetHeight,
-                width: 1.sw,
-                color: targetColor,
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    CircleAvatar(
-                      radius: 20.h,
-                      backgroundColor: Colors.white,
-                      foregroundImage: const AssetImage(
-                        "assets/demo_images/home_demo_image.png",
-                      ),
-                    ),
-                    20.horizontalSpace,
-                    Text(
-                      "Mr Alex", // Usually comes from a User model
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFonts.jakartaBold,
-                        fontSize: 22.h,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const Spacer(),
-                    InkWell(
-                      onTap: () => Get.to(HelpCenterScreen()),
-                      child: Image.asset(
-                        "assets/images/help_center_icon.png",
-                        height: 30.h,
-                      ),
-                    ),
-                    10.horizontalSpace,
-                    InkWell(
-                      onTap: () => Get.to(NotificationScreen()),
-                      child: Image.asset(
-                        "assets/images/bell_icon.png",
-                        height: 25.h,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-            Expanded(
-              child: SingleChildScrollView(
-                controller: controller.scrollController,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 18.sp),
-                  child: Column(
+    return Scaffold(
+      body: Obx(() {
+        final user = homeController.currentUser.value;
+        final userName = user?.fullName ?? 'User';
+        final userImage = user?.patientData?.profileImage;
+
+        return Container(
+          height: 1.sh,
+          width: 1.sw,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primaryColor,
+                AppColors.primaryColor.withOpacity(0.01),
+                AppColors.primaryColor.withOpacity(0.01),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Column(
+            children: [
+              Obx(() {
+                final bool isScrolledPastThreshold = controller.scrollValue.value >= 280;
+                final double targetHeight = isScrolledPastThreshold ? 100.0 : 0.0;
+                final Color targetColor = isScrolledPastThreshold ? AppColors.primaryColor : Colors.transparent;
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  curve: Curves.easeInOut,
+                  height: targetHeight,
+                  width: 1.sw,
+                  color: targetColor,
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      60.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           CircleAvatar(
-                            radius: 35.h,
-                            backgroundColor: Colors.white,
-                            foregroundImage: AssetImage(
-                              "assets/demo_images/home_demo_image.png",
-                            ),
-                          ),
-                          const Spacer(),
-                          InkWell(
-                            onTap: () => Get.to(HelpCenterScreen()),
-                            child: Image.asset(
-                              "assets/images/help_center_icon.png",
-                              height: 30.h,
-                            ),
-                          ),
-                          10.horizontalSpace,
-                          InkWell(
-                            onTap: () => Get.to(NotificationScreen()),
-                            child: Image.asset(
-                              "assets/images/bell_icon.png",
-                              height: 30.h,
-                            ),
-                          ),
-                        ],
+                      CircleAvatar(
+                        radius: 20.h,
+                        backgroundColor: Colors.white,
+                        backgroundImage: userImage != null && userImage.isNotEmpty
+                            ? NetworkImage(userImage)
+                            : AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
                       ),
-                      10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppStrings.profile.tr,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.w800,
-                            fontFamily: AppFonts.jakartaBold,
-                          ),
+                      20.horizontalSpace,
+                      Text(
+                        userName,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: AppFonts.jakartaBold,
+                          fontSize: 22.h,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppStrings.profileSub.tr,
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFonts.jakartaMedium,
-                            color: AppColors.darkGrey,
-                          ),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () => Get.to(HelpCenterScreen()),
+                        child: Image.asset(
+                          "assets/images/help_center_icon.png",
+                          height: 30.h,
                         ),
                       ),
-                      15.verticalSpace,
-                      SingleChildScrollView(
-                        padding: EdgeInsets.only(right: 35.w),
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
+                      10.horizontalSpace,
+                      InkWell(
+                        onTap: () => Get.to(NotificationScreen()),
+                        child: Image.asset(
+                          "assets/images/bell_icon.png",
+                          height: 25.h,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: controller.scrollController,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 18.sp),
+                    child: Column(
+                      children: [
+                        60.verticalSpace,
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            profileType(AppStrings.personalInfo, 80.w, "Personal Info"),
-                            9.horizontalSpace,
-                            profileType(AppStrings.medicalVitals, 100.w, "Medical Vitals"),
-                            9.horizontalSpace,
-                            profileType(AppStrings.documentsAndReports, 120.w, "Documents & Reports"),
+                            CircleAvatar(
+                              radius: 35.h,
+                              backgroundColor: Colors.white,
+                              backgroundImage: userImage != null && userImage.isNotEmpty
+                                  ? NetworkImage(userImage)
+                                  : AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
+                            ),
+                            const Spacer(),
+                            InkWell(
+                              onTap: () => Get.to(HelpCenterScreen()),
+                              child: Image.asset(
+                                "assets/images/help_center_icon.png",
+                                height: 30.h,
+                              ),
+                            ),
+                            10.horizontalSpace,
+                            InkWell(
+                              onTap: () => Get.to(NotificationScreen()),
+                              child: Image.asset(
+                                "assets/images/bell_icon.png",
+                                height: 30.h,
+                              ),
+                            ),
                           ],
                         ),
-                      ),
-                      15.verticalSpace,
-                      Obx(
-                            () => controller.type.value == "Personal Info"
-                            ? PersonalInfo()
-                            : controller.type.value == "Medical Vitals"
-                            ? MedicalVitalsProfile()
-                            : DocumentsAndReportsProfile(),
-                      ),
-                      10.verticalSpace,
-                      HealthSpaceCard(
-                        icon: "assets/images/delete_account_icon.png",
-                        title: AppStrings.deleteAccount.tr,
-                        onTap: () {
-                          Get.dialog(DeleteAccountDialog());
-                        },
-                        color: AppColors.red,
-                        textColor: AppColors.red,
-                      ),
-                      10.verticalSpace,
-                    ],
+                        10.verticalSpace,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "${AppStrings.hello.tr}\n${userName}",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 32.sp,
+                              fontWeight: FontWeight.w800,
+                              fontFamily: AppFonts.jakartaBold,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            AppStrings.profileSub.tr,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFonts.jakartaMedium,
+                              color: AppColors.darkGrey,
+                            ),
+                          ),
+                        ),
+                        15.verticalSpace,
+                        SingleChildScrollView(
+                          padding: EdgeInsets.only(right: 35.w),
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              profileType(AppStrings.personalInfo, 80.w, "Personal Info"),
+                              9.horizontalSpace,
+                              profileType(AppStrings.medicalVitals, 100.w, "Medical Vitals"),
+                              9.horizontalSpace,
+                              profileType(AppStrings.documentsAndReports, 120.w, "Documents & Reports"),
+                            ],
+                          ),
+                        ),
+                        15.verticalSpace,
+                        Obx(
+                              () => controller.type.value == "Personal Info"
+                              ? PersonalInfo()
+                              : controller.type.value == "Medical Vitals"
+                              ? MedicalVitalsProfile()
+                              : DocumentsAndReportsProfile(),
+                        ),
+                        10.verticalSpace,
+                        HealthSpaceCard(
+                          icon: "assets/images/delete_account_icon.png",
+                          title: AppStrings.deleteAccount.tr,
+                          onTap: () {
+                            Get.dialog(DeleteAccountDialog());
+                          },
+                          color: AppColors.red,
+                          textColor: AppColors.red,
+                        ),
+                        10.verticalSpace,
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 
-  // Updated profileType to accept both a display title and a logic key
   Widget profileType(String title, double width, String logicKey) {
     return Obx(
           () => InkWell(

@@ -162,12 +162,6 @@ class DemographicInfo extends StatelessWidget {
                         selectedValue: signUpController.selectedCountry,
                         onChanged: signUpController.updateSelectedCountry,
                       ),
-                      buildDropdownField(
-                        title: AppStrings.religion.tr,
-                        items: signUpController.religionList,
-                        selectedValue: signUpController.selectedReligion,
-                        onChanged: signUpController.updateSelectedReligion,
-                      ),
                       CustomTextField(
                         labelText: AppStrings.idNumber.tr,
                         prefixIcon: Icons.badge_outlined,

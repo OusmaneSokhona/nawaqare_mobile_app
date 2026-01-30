@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'heatlh_space_grid.dart';
@@ -11,28 +12,38 @@ class MedicalVitalsProfile extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    final HomeController homeController = Get.find();
+
+    return Obx(() {
+      final user = homeController.currentUser.value;
+      final userName = user?.fullName ?? '';
+      final userImage = user?.patientData?.profileImage;
+      final userHeight = user?.patientData?.height ?? '';
+      final userWeight = user?.patientData?.weight ?? '';
+      final userBmi = user?.patientData?.bmi ?? 0.0;
+      final userBloodPressure = user?.patientData?.bloodPressure ?? '';
+      final userHeartRate = user?.patientData?.heartRate ?? '';
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.w,
+              backgroundColor: Colors.white,
+              backgroundImage: userImage != null && userImage.isNotEmpty
+                  ? NetworkImage(userImage)
+                  : AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
             ),
           ),
           const SizedBox(height: 16),
           Center(
             child: Text(
-              '${AppStrings.hello.tr} ${controller.user.value.name.split(' ').first}',
-              style: const TextStyle(
-                fontSize: 20,
+              '${AppStrings.hello.tr} ${userName.isNotEmpty ? userName.split(' ').first : "user"}',
+              style: TextStyle(
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+                color: const Color(0xFF1F2937),
               ),
             ),
           ),
@@ -75,23 +86,23 @@ class MedicalVitalsProfile extends GetView<ProfileController> {
               children: [
                 InfoRow(
                   label: AppStrings.height.tr,
-                  value: '${controller.medicalVitals.value.heightCm} cm',
+                  value: userHeight.isNotEmpty ? '$userHeight cm' : AppStrings.notAvailable.tr,
                 ),
                 InfoRow(
                   label: AppStrings.weight.tr,
-                  value: '${controller.medicalVitals.value.weightKg} kg',
+                  value: userWeight.isNotEmpty ? '$userWeight kg' : AppStrings.notAvailable.tr,
                 ),
                 InfoRow(
                   label: AppStrings.bmi.tr,
-                  value: controller.medicalVitals.value.bmi.toStringAsFixed(1),
+                  value: userBmi > 0 ? userBmi.toStringAsFixed(1) : AppStrings.notAvailable.tr,
                 ),
                 InfoRow(
                   label: AppStrings.bloodPressure.tr,
-                  value: controller.medicalVitals.value.bloodPressure,
+                  value: userBloodPressure.isNotEmpty ? userBloodPressure : AppStrings.notAvailable.tr,
                 ),
                 InfoRow(
                   label: AppStrings.heartRate.tr,
-                  value: '${controller.medicalVitals.value.heartRateBpm} bpm',
+                  value: userHeartRate.isNotEmpty ? '$userHeartRate bpm' : AppStrings.notAvailable.tr,
                   showDivider: false,
                 ),
               ],
@@ -100,16 +111,16 @@ class MedicalVitalsProfile extends GetView<ProfileController> {
           const SizedBox(height: 30),
           Text(
             AppStrings.healthSpace.tr,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: const Color(0xFF1F2937),
             ),
           ),
           const SizedBox(height: 16),
           HeatlhSpaceGrid(profileController: controller),
         ],
-      ),
-    );
+      );
+    });
   }
 }

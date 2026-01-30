@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_strings.dart';
-
+import '../../../controllers/patient_controllers/home_controller.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
 import 'heatlh_space_grid.dart';
 import 'info_row.dart';
@@ -10,31 +10,41 @@ import 'info_row.dart';
 class PersonalInfo extends StatelessWidget {
   PersonalInfo({super.key});
   final ProfileController controller = Get.put(ProfileController());
+  final HomeController homeController = Get.find();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    return Obx(() {
+      final user = homeController.currentUser.value;
+      final userName = user?.fullName ?? '';
+      final userImage = user?.patientData?.profileImage;
+      final userEmail = user?.email ?? '';
+      final userPhone = user?.phoneNumber ?? '';
+      final userCountry = user?.patientData?.country ?? '';
+      final userGender = user?.patientData?.gender ?? '';
+      final userAddress = user?.patientData?.address ?? '';
+      final userDob = user?.patientData?.dob ?? DateTime.now();
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100.w,
-                height: 100.h,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.w,
+              backgroundColor: Colors.white,
+              backgroundImage: userImage != null && userImage.isNotEmpty
+                  ? NetworkImage(userImage)
+                  : AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
             ),
           ),
           const SizedBox(height: 16),
           Center(
             child: Text(
-              controller.user.value.title,
-              style: const TextStyle(
-                fontSize: 20,
+              userName,
+              style: TextStyle(
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+                color: const Color(0xFF1F2937),
               ),
             ),
           ),
@@ -42,7 +52,7 @@ class PersonalInfo extends StatelessWidget {
             child: Text(
               '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: Colors.grey.shade500,
               ),
             ),
@@ -83,29 +93,38 @@ class PersonalInfo extends StatelessWidget {
             child: Column(
               children: [
                 InfoRow(
-                    label: AppStrings.fullName.tr,
-                    value: controller.user.value.name),
+                  label: AppStrings.fullName.tr,
+                  value: userName,
+                ),
                 InfoRow(
-                    label: AppStrings.dob.tr,
-                    value: '02/Sep/2025'), // Consider making this dynamic in your model
+                  label: AppStrings.dob.tr,
+                  value: userDob != null
+                      ? '${userDob.day}/${userDob.month}/${userDob.year}'
+                      : AppStrings.notAvailable.tr,
+                ),
                 InfoRow(
-                    label: AppStrings.gender.tr,
-                    value: AppStrings.male.tr),
+                  label: AppStrings.gender.tr,
+                  value: userGender.isNotEmpty ? userGender : AppStrings.notAvailable.tr,
+                ),
                 InfoRow(
-                    label: AppStrings.patientId.tr,
-                    value: controller.user.value.patientId),
+                  label: AppStrings.patientId.tr,
+                  value: user?.id ?? AppStrings.notAvailable.tr,
+                ),
                 InfoRow(
-                    label: AppStrings.countryOfResidence.tr,
-                    value: controller.user.value.country),
+                  label: AppStrings.countryOfResidence.tr,
+                  value: userCountry.isNotEmpty ? userCountry : AppStrings.notAvailable.tr,
+                ),
                 InfoRow(
-                    label: AppStrings.email.tr,
-                    value: controller.user.value.email),
+                  label: AppStrings.email.tr,
+                  value: userEmail,
+                ),
                 InfoRow(
-                    label: AppStrings.phone.tr,
-                    value: controller.user.value.phone),
+                  label: AppStrings.phone.tr,
+                  value: userPhone,
+                ),
                 InfoRow(
                   label: AppStrings.address.tr,
-                  value: controller.user.value.address.replaceAll('\n', ' '),
+                  value: userAddress.isNotEmpty ? userAddress.replaceAll('\n', ' ') : AppStrings.notAvailable.tr,
                   showDivider: false,
                 ),
               ],
@@ -114,17 +133,17 @@ class PersonalInfo extends StatelessWidget {
           const SizedBox(height: 30),
           Text(
             AppStrings.healthSpace.tr,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: const Color(0xFF1F2937),
             ),
           ),
           SizedBox(height: 10.h),
           HeatlhSpaceGrid(profileController: controller),
           const SizedBox(height: 20),
         ],
-      ),
-    );
+      );
+    });
   }
 }

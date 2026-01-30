@@ -12,4 +12,6 @@ class ApiUrls {
   static String verifyResetPasswordEmailOtpUrl="/api/auth/verify-otp";
   static String updateProfileUrl="/api/auth/update-profile";
   static String deleteUserUrl="/api/auth/delete-profile";
+  static String meUrl="/api/auth/me";
+  static String getDoctorsUrl="/api/doctor/doctors";
 }

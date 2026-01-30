@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 class DisplayFieldContainer extends StatelessWidget {
   final String label;
   final String value;
+  final Color? valueColor;
 
   const DisplayFieldContainer({
     super.key,
     required this.label,
-    required this.value,
+    required this.value,this.valueColor=Colors.black,
   });
 
   @override
@@ -36,9 +37,9 @@ class DisplayFieldContainer extends StatelessWidget {
           ),
           child: Text(
             value,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 16,
-              color: Colors.black,
+              color:valueColor,
               fontWeight: FontWeight.normal,
             ),
             overflow: TextOverflow.ellipsis,

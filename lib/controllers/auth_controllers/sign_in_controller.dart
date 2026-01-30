@@ -76,7 +76,8 @@ class SignInController extends GetxController {
   bool get hasSpecialChar =>
       currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
-  void toggleVisibility() {
+  Future<void> toggleVisibility() async {
+    print("Local Storage Token: ${await LocalStorageUtils()}");
     passwordVisibility.value = !passwordVisibility.value;
   }
 

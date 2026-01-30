@@ -35,6 +35,7 @@ class ForgetPasswordController extends GetxController {
   RxBool newPasswordVisibility = false.obs;
   RxBool confirmNewPasswordVisibility = false.obs;
   final GlobalKey<FormState> formKeyForget = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKeyUpdate = GlobalKey<FormState>();
 
   void startTimer() {
     timerCount.value = _initialTime;

@@ -70,7 +70,10 @@ class SearchBottomSheet extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         InkWell(
-          onTap: () => Get.back(),
+          onTap: () {
+            searchController.scrollValue.value = 0.0;
+            Get.back();
+          },
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
@@ -124,33 +127,6 @@ class SearchBottomSheet extends StatelessWidget {
       children: [
         Text(AppStrings.religion.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
-        Obx(
-              () => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                isExpanded: true,
-                value: searchController.selectedReligion.value,
-                icon: const Icon(Icons.keyboard_arrow_down),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    searchController.selectedReligion.value = newValue;
-                  }
-                },
-                items: searchController.religions.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value, style: const TextStyle(fontSize: 16)),
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -192,6 +168,7 @@ class SearchBottomSheet extends StatelessWidget {
     );
   }
 
+  // In _buildConsultationMode(), add "All" option:
   Widget _buildConsultationMode() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,6 +179,16 @@ class SearchBottomSheet extends StatelessWidget {
             children: [
               Radio<ConsultationMode>(
                 activeColor: AppColors.primaryColor,
+                value: ConsultationMode.all,
+                groupValue: searchController.consultationMode.value,
+                onChanged: (ConsultationMode? value) {
+                  if (value != null) searchController.consultationMode.value = value;
+                },
+              ),
+              Text(AppStrings.all.tr),
+              const SizedBox(width: 10),
+              Radio<ConsultationMode>(
+                activeColor: AppColors.primaryColor,
                 value: ConsultationMode.inPerson,
                 groupValue: searchController.consultationMode.value,
                 onChanged: (ConsultationMode? value) {
@@ -209,7 +196,7 @@ class SearchBottomSheet extends StatelessWidget {
                 },
               ),
               Text(AppStrings.inPerson.tr),
-              const SizedBox(width: 20),
+              const SizedBox(width: 10),
               Radio<ConsultationMode>(
                 activeColor: AppColors.primaryColor,
                 value: ConsultationMode.remote,
@@ -219,6 +206,50 @@ class SearchBottomSheet extends StatelessWidget {
                 },
               ),
               Text(AppStrings.teleconsultation.tr),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderRadio() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(AppStrings.gender.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Obx(
+              () => Row(
+            children: [
+              Radio<Gender>(
+                activeColor: AppColors.primaryColor,
+                value: Gender.all,
+                groupValue: searchController.selectedGender.value,
+                onChanged: (Gender? value) {
+                  if (value != null) searchController.selectedGender.value = value;
+                },
+              ),
+              Text(AppStrings.all.tr),
+              const SizedBox(width: 10),
+              Radio<Gender>(
+                activeColor: AppColors.primaryColor,
+                value: Gender.male,
+                groupValue: searchController.selectedGender.value,
+                onChanged: (Gender? value) {
+                  if (value != null) searchController.selectedGender.value = value;
+                },
+              ),
+              Text(AppStrings.male.tr),
+              const SizedBox(width: 10),
+              Radio<Gender>(
+                activeColor: AppColors.primaryColor,
+                value: Gender.female,
+                groupValue: searchController.selectedGender.value,
+                onChanged: (Gender? value) {
+                  if (value != null) searchController.selectedGender.value = value;
+                },
+              ),
+              Text(AppStrings.female.tr),
             ],
           ),
         ),
@@ -257,39 +288,6 @@ class SearchBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildGenderRadio() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(AppStrings.gender.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        Obx(
-              () => Row(
-            children: [
-              Radio<Gender>(
-                activeColor: AppColors.primaryColor,
-                value: Gender.male,
-                groupValue: searchController.selectedGender.value,
-                onChanged: (Gender? value) {
-                  if (value != null) searchController.selectedGender.value = value;
-                },
-              ),
-              Text(AppStrings.male.tr),
-              const SizedBox(width: 20),
-              Radio<Gender>(
-                activeColor: AppColors.primaryColor,
-                value: Gender.female,
-                groupValue: searchController.selectedGender.value,
-                onChanged: (Gender? value) {
-                  if (value != null) searchController.selectedGender.value = value;
-                },
-              ),
-              Text(AppStrings.female.tr),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 
   Widget _buildPriceSlider() {
     return Column(

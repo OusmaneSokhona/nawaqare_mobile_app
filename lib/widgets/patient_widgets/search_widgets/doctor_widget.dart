@@ -2,34 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_strings.dart';
-import '../../../models/appointment_model.dart';
+import '../../../models/doctor_model.dart';
 import '../../../utils/app_colors.dart';
 
 class DoctorWidget extends StatelessWidget {
-  final AppointmentModel appointmentModel;
+  final DoctorModel doctor;
   final Function onTap;
   final bool isCompleted;
 
   const DoctorWidget({
     Key? key,
-    required this.appointmentModel,
+    required this.doctor,
     this.isCompleted = false,
     required this.onTap,
   }) : super(key: key);
 
-  String _getLocalizedStatus(String status) {
-    switch (status.toLowerCase()) {
-      case "follow up":
-        return AppStrings.followUpStatus.tr;
-      case "renewal":
-        return AppStrings.renewalStatus.tr;
-      case "exam review":
-        return AppStrings.examReviewStatus.tr;
-      case "initial":
-        return AppStrings.initialStatus.tr;
-      default:
-        return status;
+  String _getConsultationTypeText() {
+    if (doctor.fee?.videoConsultation != null && doctor.fee?.inPersonConsultation != null) {
+      return 'Both Remote & In-Person';
+    } else if (doctor.fee?.videoConsultation != null) {
+      return 'Remote Consultation';
+    } else if (doctor.fee?.inPersonConsultation != null) {
+      return 'In-Person Consultation';
     }
+    return 'Consultation Available';
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   @override
@@ -57,30 +57,12 @@ class DoctorWidget extends StatelessWidget {
                         color: AppColors.primaryColor,
                       ),
                       const SizedBox(width: 6),
-                      Row(
-                        children: [
-                          Text(
-                            "${appointmentModel.date}",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                          8.horizontalSpace,
-                          const Icon(
-                            Icons.watch_later_outlined,
-                            size: 16,
-                            color: AppColors.primaryColor,
-                          ),
-                          4.horizontalSpace,
-                          Text(
-                            "${appointmentModel.time}",
-                            style: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 12.sp,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        _formatDate(doctor.dateOfRegistration),
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 12.sp,
+                        ),
                       ),
                     ],
                   ),
@@ -95,7 +77,7 @@ class DoctorWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "\$10",
+                        doctor.fee?.displayVideoFee ?? '\$N/A',
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -111,10 +93,45 @@ class DoctorWidget extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  Image.asset(
-                    appointmentModel.imageUrl,
+                  Container(
+                    width: 80.w,
                     height: 105.h,
-                    fit: BoxFit.fill,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: doctor.displayImage.startsWith('http')
+                        ? ClipRRect(
+                      borderRadius: BorderRadius.circular(10.r),
+                      child: Image.network(
+                        doctor.displayImage,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/demo_images/demo_doctor.jpeg',
+                            fit: BoxFit.cover,
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            color: Colors.grey[200],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                        : Image.asset(
+                      doctor.displayImage,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -122,35 +139,39 @@ class DoctorWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          appointmentModel.name,
+                          doctor.fullName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18.sp,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const Divider(thickness: 0.3, color: Colors.black45),
                         Text(
-                          appointmentModel.specialty.tr,
+                          doctor.medicalSpecialty ?? 'General Practitioner',
                           style: TextStyle(color: Colors.black, fontSize: 15.sp),
                         ),
                         const SizedBox(height: 4),
                         Row(
                           children: [
                             Icon(
-                              appointmentModel.consultationType
-                                  .toLowerCase()
-                                  .contains("remote")
+                              _getConsultationTypeText().toLowerCase().contains("remote")
                                   ? Icons.add_ic_call
                                   : Icons.meeting_room_outlined,
                               color: Colors.blue,
                               size: 16,
                             ),
                             const SizedBox(width: 6),
-                            Text(
-                              appointmentModel.consultationType.tr,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 13.sp,
+                            Expanded(
+                              child: Text(
+                                _getConsultationTypeText(),
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 13.sp,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -168,8 +189,8 @@ class DoctorWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  AppStrings.french.tr,
-                                  style: const TextStyle(fontSize: 13),
+                                  doctor.country ?? AppStrings.notAvailable.tr,
+                                  style: TextStyle(fontSize: 13.sp),
                                 ),
                               ],
                             ),
@@ -183,7 +204,7 @@ class DoctorWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  AppStrings.islam.tr,
+                                  doctor.gender ?? AppStrings.notAvailable.tr,
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
                                     fontWeight: FontWeight.w500,
@@ -207,8 +228,8 @@ class DoctorWidget extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  "${appointmentModel.rating}",
-                                  style: const TextStyle(fontSize: 13),
+                                  doctor.ratingValue.toStringAsFixed(1),
+                                  style: TextStyle(fontSize: 13.sp),
                                 ),
                               ],
                             ),
@@ -222,7 +243,9 @@ class DoctorWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  AppStrings.reviewsCount.trParams({'count': '1,872'}),
+                                  doctor.availableSlots.isEmpty
+                                      ? AppStrings.noSlots.tr
+                                      : '${doctor.availableSlots.length} ${AppStrings.slots.tr}',
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
                                     fontWeight: FontWeight.w500,

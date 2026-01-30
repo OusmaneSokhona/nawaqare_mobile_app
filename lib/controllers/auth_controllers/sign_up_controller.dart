@@ -79,6 +79,23 @@ class SignUpController extends GetxController {
   bool isPasswordValid() {
     return hasMinLength && hasUppercase && hasDigit && hasSpecialChar;
   }
+  final TextEditingController confirmPasswordController = TextEditingController();
+
+  RxBool isConfirmPasswordVisible = false.obs;
+
+  void toggleConfirmPasswordVisibility() {
+    isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
+  }
+
+  String? validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
+    }
+    if (value != passwordController.text) {
+      return 'Passwords do not match';
+    }
+    return null;
+  }
 
   List<ValidationRule> getValidationRules() {
     return [
@@ -260,8 +277,9 @@ class SignUpController extends GetxController {
       backgroundColor: Colors.white,
     );
   }
-
-  final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
+RxString isEmailValid="".obs;
+RxString isPhoneValid="".obs;
+  final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime(2000));
   final Rx<DateTime?> _registrationDate = Rx<DateTime?>(DateTime.now());
   final Rx<DateTime?> _issueDate = Rx<DateTime?>(DateTime.now());
   final Rx<DateTime?> _expiryDate = Rx<DateTime?>(DateTime.now());
@@ -731,6 +749,8 @@ class SignUpController extends GetxController {
   void clearAllControllersAndFields() {
     nameController.clear();
     emailController.clear();
+    confirmPasswordController.clear();
+    isConfirmPasswordVisible.value = false;
     phoneNumberController.clear();
     passwordController.clear();
     addressController.clear();
@@ -782,4 +802,41 @@ class SignUpController extends GetxController {
     isVerifiedEmail.value = false;
     isVerifiedPhone.value = false;
   }
+
+  void calculateAndUpdateBMI(String heightStr, String weightStr) {
+    try {
+      double height = double.tryParse(heightStr.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+      double weight = double.tryParse(weightStr.replaceAll(RegExp(r'[^0-9.]'), '')) ?? 0;
+
+      if (height > 100) { // Assuming cm if > 100
+        height = height / 100;
+      }
+
+      if (height > 0 && weight > 0) {
+        double bmi = weight / (height * height);
+        bmiController.text = bmi.toStringAsFixed(1);
+      }
+
+      update();
+
+    } catch (e) {
+      print('Error calculating BMI: $e');
+      update();
+    }
+  }
+
+  String getBMICategory() {
+    try {
+      double bmi = double.tryParse(bmiController.text) ?? 0;
+
+      if (bmi == 0) return '';
+      if (bmi < 18.5) return 'Underweight';
+      if (bmi >= 18.5 && bmi < 25) return 'Normal';
+      if (bmi >= 25 && bmi < 30) return 'Overweight';
+      return 'Obese';
+    } catch (e) {
+      return '';
+    }
+  }
+
 }

@@ -17,6 +17,9 @@ class Languages extends Translations {
       AppStrings.fullName: "Full Name",
       AppStrings.registrationId: "Registration ID",
       AppStrings.phoneNumber: "Phone Number",
+      AppStrings.noDocuments: "No Documents",
+      AppStrings.user: "User",
+      AppStrings.notAvailable: "Not Available",
       AppStrings.pharmacyAddress: "Pharmacy Address",
       AppStrings.city: "City",
       AppStrings.areaLocality: "Area / Locality",
@@ -1161,6 +1164,11 @@ class Languages extends Translations {
       AppStrings.pleaseFillAllFields: "Please Fill All Fields",
       AppStrings.pleaseVerifyYourEmailFirst: "Please Verify Your Email First",
       AppStrings.pleaseUploadDocument: "Please Upload Document",
+      AppStrings.noSlots: "No Slots",
+      AppStrings.slots: "Slots",
+      AppStrings.aboutDoctor: "About Doctor",
+      AppStrings.aboutDoctorDescription:
+          "Experienced cardiologist with over 10 years in treating heart conditions and promoting cardiovascular health.",
     },
     'fr_FR': {
       AppStrings.langSupport: "Support Linguistique",
@@ -2347,6 +2355,12 @@ class Languages extends Translations {
       AppStrings.pleaseFillAllFields: "Veuillez remplir tous les champs.",
       AppStrings.pleaseVerifyYourEmailFirst: "Veuillez d'abord vérifier votre adresse e-mail.",
       AppStrings.pleaseUploadDocument: "Veuillez télécharger le document",
+      AppStrings.notAvailable: "Non disponible",
+      AppStrings.noDocuments:"aucun document",
+      AppStrings.noSlots: "aucun créneau",
+      AppStrings.slots: "créneaux",
+      AppStrings.aboutDoctor: "À propos du médecin",
+      AppStrings.aboutDoctorDescription: "Le Dr X est un médecin expérimenté spécialisé en Y avec Z années de pratique. Il/elle est dédié(e) à fournir des soins de qualité et à améliorer la santé de ses patients.",
     },
   };
 }

@@ -128,30 +128,40 @@ class VerificationDialog extends StatelessWidget {
                   ? Text(AppStrings.codeExpiresSoon.tr, style: TextStyle(color: AppColors.red, fontSize: 12.sp))
                   : const SizedBox.shrink()),
               30.verticalSpace,
-              CustomButton(
-                borderRadius: 15,
-                text: AppStrings.confirm.tr,
-                onTap: _confirmAction,
+              Obx(
+                ()=>authController.isLoading.value?CircularProgressIndicator(color: AppColors.primaryColor,): CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.confirm.tr,
+                  onTap: _confirmAction,
+                ),
               ),
               15.verticalSpace,
-              InkWell(
-                onTap: (){
-                  authController.sendEmailOtp();
-                  authController.startTimer();},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(isEmail?AppImages.mailIcon:AppImages.whatsAppGreenIcon, height: 20.sp),
-                    5.horizontalSpace,
-                    Text(
-                      isEmail?AppStrings.resendToEmail.tr:AppStrings.resendToWhatsapp.tr,
-                      style: TextStyle(
-                        color: AppColors.darkGrey,
-                        fontSize: 14.sp,
-                        decoration: TextDecoration.underline,
+              Obx(
+                  ()=>authController.isTimerActive.value?SizedBox(): InkWell(
+                  onTap: (){
+                    if(isEmail){
+                      authController.sendEmailOtp();
+                      authController.startTimer();
+                    }else{
+                      authController.sendPhoneOtp();
+                      authController.startTimer();
+                    }
+                   },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(isEmail?AppImages.mailIcon:AppImages.whatsAppGreenIcon, height: 20.sp),
+                      5.horizontalSpace,
+                      Text(
+                        isEmail?AppStrings.resendToEmail.tr:AppStrings.resendToWhatsapp.tr,
+                        style: TextStyle(
+                          color: AppColors.darkGrey,
+                          fontSize: 14.sp,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],

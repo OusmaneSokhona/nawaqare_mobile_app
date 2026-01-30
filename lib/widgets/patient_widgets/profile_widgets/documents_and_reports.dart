@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/utils/app_strings.dart';
-
-import '../../../models/profile_models.dart';
+import '../../../screens/document_view_screen.dart';
 import 'heatlh_space_grid.dart';
 
 class DocumentsAndReportsProfile extends GetView<ProfileController> {
@@ -12,28 +12,34 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    final HomeController homeController = Get.find();
+
+    return Obx(() {
+      final user = homeController.currentUser.value;
+      final userName = user?.fullName ?? '';
+      final userImage = user?.patientData?.profileImage;
+      final userReports = user?.patientData?.reports ?? [];
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.w,
+              backgroundColor: Colors.white,
+              backgroundImage: userImage != null && userImage.isNotEmpty
+                  ? NetworkImage(userImage)
+                  : AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
             ),
           ),
           const SizedBox(height: 16),
           Center(
             child: Text(
-              '${"hello".tr} ${controller.user.value.name.split(' ').first}',
-              style: const TextStyle(
-                fontSize: 20,
+              '${AppStrings.hello.tr} ${userName.isNotEmpty ? userName.split(' ').first : AppStrings.user.tr}',
+              style: TextStyle(
+                fontSize: 20.sp,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
+                color: const Color(0xFF1F2937),
               ),
             ),
           ),
@@ -53,13 +59,15 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text(AppStrings.uploadNew.tr,
-                  style: TextStyle(fontSize: 14.sp)),
+              child: Text(
+                AppStrings.uploadNew.tr,
+                style: TextStyle(fontSize: 14.sp),
+              ),
             ),
           ),
           15.verticalSpace,
           Container(
-            height: 0.26.sh,
+            height: userReports.length<2?0.10.sh:0.26.sh,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -71,32 +79,48 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                 ),
               ],
             ),
-            child: ListView.builder(
+            child: userReports.isNotEmpty
+                ? ListView.builder(
               padding: EdgeInsets.zero,
-              itemCount: controller.documents.length,
+              itemCount: userReports.length,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return _buildDocumentItem(controller.documents[index],index<2);
+                return _buildDocumentItem(userReports[index], index < userReports.length - 1);
               },
+            )
+                : Center(
+              child: Padding(
+                padding: EdgeInsets.all(20.sp),
+                child: Text(
+                  AppStrings.noDocuments.tr,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 30),
           Text(
             AppStrings.docsAndReports.tr,
-            style: const TextStyle(
-              fontSize: 20,
+            style: TextStyle(
+              fontSize: 20.sp,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: const Color(0xFF1F2937),
             ),
           ),
           const SizedBox(height: 16),
           HeatlhSpaceGrid(profileController: controller),
         ],
-      ),
-    );
+      );
+    });
   }
 
-  Widget _buildDocumentItem(Document doc,bool showDivider) {
+  Widget _buildDocumentItem(String reportUrl, bool showDivider) {
+    final fileName = reportUrl.split('/').last;
+    final fileType = fileName.split('.').last.toUpperCase();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 16),
@@ -118,7 +142,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      doc.type,
+                      fileName.length > 30 ? '${fileName.substring(0, 30)}...' : fileName,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -133,7 +157,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          doc.date,
+                          fileType,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,
@@ -149,21 +173,32 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   Icons.remove_red_eye_outlined,
                   color: Colors.grey.shade600,
                 ),
-                onPressed: () => Get.snackbar(
-                    "action".tr, '${"viewing".tr} ${doc.type}'),
+                onPressed: () {
+                  // Get.to(
+                  //       () => DocumentViewerScreen(),
+                  // );
+
+                },
               ),
               IconButton(
                 icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
-                onPressed: () => Get.snackbar(
-                    "action".tr, '${"deleting".tr} ${doc.type}'),
+                onPressed: () {
+                  // Handle delete
+                  Get.snackbar(
+                    AppStrings.action.tr,
+                    '${AppStrings.deleting.tr} $fileName',
+                  );
+                },
               ),
             ],
           ),
-          showDivider?Divider(
+          showDivider
+              ? Divider(
             color: Colors.grey.shade300,
             thickness: 1,
             height: 20,
-          ):SizedBox.shrink(),
+          )
+              : const SizedBox.shrink(),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import 'package:patient_app/models/vaccination_history_model.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/locat_storage.dart';
 import '../../models/profile_models.dart';
+import '../../models/user_model.dart';
 import '../../screens/patient_screens/profile_screens/edit_medical_vitals.dart';
 import '../../screens/patient_screens/profile_screens/edit_personal_info.dart';
 import '../../utils/app_strings.dart';
@@ -25,11 +26,11 @@ class ProfileController extends GetxController {
   RxString type = "Personal Info".obs;
   final Rx<User> user =
       User(
-        name: 'Alex Martin',
-        title: 'Dr. Daniel Lee',
+        name: 'User',
+        title: 'user',
         lastUpdate: '12/Sep/2025',
         patientId: 'PT-00923',
-        country: 'Pakistan',
+        country: 'Country',
         email: 'abc@gmail.com',
         phone: '+1 234 567 890',
         address: '32 Examaple St',
@@ -51,8 +52,8 @@ class ProfileController extends GetxController {
         Document(type: 'Blood Test', date: 'Jan 2025'),
       ].obs;
 
-  void editPersonalInfo() {
-    Get.to(EditPersonalInfo(),binding: AppBinding());
+  void editPersonalInfo(UserModel user) {
+    Get.to(EditPersonalInfo(user: user,),binding: AppBinding());
   }
 
   void editMedicalVitals() {

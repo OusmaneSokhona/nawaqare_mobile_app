@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/doctor_model.dart';
+import 'package:patient_app/models/time_slot_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';
+import 'package:intl/intl.dart';
 
 class ConsultationDetailsCard extends StatelessWidget {
   final BookAppointmentController controller;
@@ -16,16 +19,16 @@ class ConsultationDetailsCard extends StatelessWidget {
     required this.doctor,
   });
 
-  String _getFeeBasedOnType() {
+  RxString _getFeeBasedOnType() {
     switch (controller.appointmentType.value) {
       case "inPerson":
-        return doctor.fee?.displayInPersonFee ?? '\$N/A';
+        return doctor.fee?.displayInPersonFee.obs?? '\$N/A'.obs;
       case "remote":
-        return doctor.fee?.displayVideoFee ?? '\$N/A';
+        return doctor.fee?.displayRemoteFee.obs ?? '\$N/A'.obs;
       case "homeVisit":
-        return '\$100'; // Default home visit fee
+        return doctor.fee?.displayHomeVisitFee.obs ?? '\$N/A'.obs;
       default:
-        return '\$N/A';
+        return '\$N/A'.obs;
     }
   }
 
@@ -101,6 +104,7 @@ class ConsultationDetailsCard extends StatelessWidget {
             Obx(
                   () => controller.appointmentType.value == "homeVisit"
                   ? CustomTextField(
+                    controller: controller.addressController,
                 labelText: AppStrings.consultationAddress.tr,
                 hintText: AppStrings.addressHint.tr,
               )
@@ -128,9 +132,11 @@ class ConsultationDetailsCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8.h),
-            InputField(
-              text: _getFeeBasedOnType(),
-              readOnly: true,
+            Obx(
+                ()=> InputField(
+                text: _getFeeBasedOnType().value,
+                readOnly: true,
+              ),
             ),
             10.verticalSpace,
             Text(
@@ -142,7 +148,7 @@ class ConsultationDetailsCard extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             InputField(
-              text: doctor.phoneNumber,
+              text: doctor.phoneNumber ?? 'N/A',
               readOnly: true,
             ),
             10.verticalSpace,
@@ -164,7 +170,7 @@ class ConsultationDetailsCard extends StatelessWidget {
               child: TextField(
                 maxLines: 5,
                 onTapOutside: (_) {
-                  FocusManager.instance.primaryFocus!.unfocus();
+                  FocusManager.instance.primaryFocus?.unfocus();
                 },
                 decoration: InputDecoration(
                   hintText: AppStrings.noteHint.tr,
@@ -207,59 +213,151 @@ class InputField extends StatelessWidget {
     );
   }
 }
-
-
 class CalendarWidget extends StatelessWidget {
   final BookAppointmentController controller;
   const CalendarWidget({required this.controller});
 
+  String _getMonthYearText(DateTime month) {
+    return '${_getMonthName(month.month)} ${month.year}';
+  }
+
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1: return AppStrings.january.tr;
+      case 2: return AppStrings.february.tr;
+      case 3: return AppStrings.march.tr;
+      case 4: return AppStrings.april.tr;
+      case 5: return AppStrings.may.tr;
+      case 6: return AppStrings.june.tr;
+      case 7: return AppStrings.july.tr;
+      case 8: return AppStrings.august.tr;
+      case 9: return AppStrings.september.tr;
+      case 10: return AppStrings.october.tr;
+      case 11: return AppStrings.november.tr;
+      case 12: return AppStrings.december.tr;
+      default: return '';
+    }
+  }
+
+  List<DateTime> _getDaysInMonth(DateTime month) {
+    final firstDay = DateTime(month.year, month.month, 1);
+    final lastDay = DateTime(month.year, month.month + 1, 0);
+    final daysInMonth = lastDay.day;
+    final firstWeekday = firstDay.weekday;
+
+    List<DateTime> days = [];
+
+    // Add days from previous month
+    for (int i = 1; i < firstWeekday; i++) {
+      days.add(DateTime(firstDay.year, firstDay.month, 0 - (firstWeekday - i - 1)));
+    }
+
+    // Add current month days
+    for (int i = 1; i <= daysInMonth; i++) {
+      days.add(DateTime(month.year, month.month, i));
+    }
+
+    // Add days from next month to fill the grid
+    final totalCells = 42;
+    final remainingCells = totalCells - days.length;
+    for (int i = 1; i <= remainingCells; i++) {
+      days.add(DateTime(month.year, month.month + 1, i));
+    }
+
+    return days;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3.h),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${AppStrings.june.tr} 2025',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                  color: AppColors.primaryColor,
+    return Obx(() {
+      final currentMonth = controller.focusedMonth;
+      final selectedDate = controller.selectedDate.value;
+
+      return Container(
+        padding: EdgeInsets.all(16.r),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.05),
+              spreadRadius: 1,
+              blurRadius: 5,
+              offset: Offset(0, 3.h),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _getMonthYearText(currentMonth),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.sp,
+                    color: AppColors.primaryColor,
+                  ),
                 ),
+                Row(
+                  children: [
+                    _CalendarArrowButton(
+                      icon: Icons.arrow_back_ios_new,
+                      onTap: controller.previousMonth,
+                    ),
+                    _CalendarArrowButton(
+                      icon: Icons.arrow_forward_ios,
+                      onTap: controller.nextMonth,
+                    ),
+                  ],
+                )
+              ],
+            ),
+            5.verticalSpace,
+            _DayLabels(),
+            5.verticalSpace,
+            GridView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                childAspectRatio: 1.0,
+                mainAxisSpacing: 8.h,
+                crossAxisSpacing: 0,
               ),
-              Row(
-                children: [
-                  _CalendarArrowButton(icon: Icons.arrow_back_ios_new, onTap: () {}),
-                  _CalendarArrowButton(icon: Icons.arrow_forward_ios, onTap: () {}),
-                ],
-              )
-            ],
-          ),
-          5.verticalSpace,
-          _DayLabels(),
-          5.verticalSpace,
-          _DateGrid(controller: controller),
-        ],
-      ),
-    );
+              itemCount: _getDaysInMonth(currentMonth).length,
+              itemBuilder: (context, index) {
+                final date = _getDaysInMonth(currentMonth)[index];
+                final isCurrentMonth = date.month == currentMonth.month;
+                final isSelected = selectedDate != null &&
+                    date.year == selectedDate.year &&
+                    date.month == selectedDate.month &&
+                    date.day == selectedDate.day;
+                final isToday = date.year == DateTime.now().year &&
+                    date.month == DateTime.now().month &&
+                    date.day == DateTime.now().day;
+
+                return _DateTile(
+                  dayNumber: date.day,
+                  date: date,
+                  isCurrentMonth: isCurrentMonth,
+                  isToday: isToday,
+                  onTap: () {
+                    if (isCurrentMonth) {
+                      controller.selectDate(date);
+                    }
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
-
 class _CalendarArrowButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
@@ -317,82 +415,65 @@ class _DayLabels extends StatelessWidget {
   }
 }
 
-class _DateGrid extends StatelessWidget {
-  final BookAppointmentController controller;
-  const _DateGrid({required this.controller});
-
-  List<int> get dates => [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 1, 2, 3, 4, 5
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 7,
-        childAspectRatio: 1.0,
-        mainAxisSpacing: 8.h,
-        crossAxisSpacing: 0,
-      ),
-      itemCount: dates.length,
-      itemBuilder: (context, index) {
-        final dayNumber = dates[index];
-        final isNextMonth = index >= 30;
-        final date = DateTime(2023, 6, dayNumber);
-
-        return Obx(() {
-          final isSelected = controller.selectedDate.value.day == dayNumber && !isNextMonth;
-          return _DateTile(
-            dayNumber: dayNumber,
-            isSelected: isSelected,
-            isNextMonth: isNextMonth,
-            onTap: isNextMonth ? () {} : () => controller.selectDate(date),
-          );
-        });
-      },
-    );
-  }
-}
-
 class _DateTile extends StatelessWidget {
   final int dayNumber;
-  final bool isSelected;
-  final bool isNextMonth;
+  final DateTime date;
+  final bool isCurrentMonth;
+  final bool isToday;
   final VoidCallback onTap;
+
   const _DateTile({
     required this.dayNumber,
-    required this.isSelected,
-    required this.isNextMonth,
+    required this.date,
+    required this.isCurrentMonth,
+    required this.isToday,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF4285F4) : Colors.transparent,
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: Text(
-          '$dayNumber',
-          style: TextStyle(
-            color: isSelected ? Colors.white : isNextMonth ? const Color(0xFFCCCCCC) : const Color(0xFF333333),
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            fontSize: 14.sp,
+    final controller = Get.find<BookAppointmentController>();
+
+    return Obx(() {
+      final selectedDate = controller.selectedDate.value;
+      final isSelected = selectedDate != null &&
+          date.year == selectedDate.year &&
+          date.month == selectedDate.month &&
+          date.day == selectedDate.day;
+
+      return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(horizontal: 4.w),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.primaryColor
+                : isToday
+                ? AppColors.primaryColor.withOpacity(0.1)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8.r),
+            border: isToday && !isSelected
+                ? Border.all(color: AppColors.primaryColor.withOpacity(0.3))
+                : null,
+          ),
+          child: Text(
+            '$dayNumber',
+            style: TextStyle(
+              color: isSelected
+                  ? Colors.white
+                  : isCurrentMonth
+                  ? const Color(0xFF333333)
+                  : const Color(0xFFCCCCCC),
+              fontWeight: isSelected || isToday ? FontWeight.bold : FontWeight.normal,
+              fontSize: 14.sp,
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
-
 class TimeSlotsGrid extends StatelessWidget {
   final BookAppointmentController controller;
   final DoctorModel doctor;
@@ -403,96 +484,77 @@ class TimeSlotsGrid extends StatelessWidget {
     required this.doctor,
   });
 
-  List<String> _getAvailableTimeSlots() {
-    if (doctor.availableSlots.isNotEmpty) {
-      return doctor.availableSlots;
-    }
-    return [
-      "09:00 AM",
-      "10:00 AM",
-      "11:00 AM",
-      "12:00 PM",
-      "02:00 PM",
-      "03:00 PM",
-      "04:00 PM",
-      "05:00 PM",
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
-    final timeSlots = _getAvailableTimeSlots();
-
-    return Container(
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 3.h),
+    return Obx(() {
+      if (controller.selectedDate.value == null) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 20.h),
+          alignment: Alignment.center,
+          child: Text(
+            'Please select a date first',
+            style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
           ),
-        ],
-      ),
-      child: Wrap(
+        );
+      }
+
+      final selectedDate = controller.selectedDate.value!;
+      final dateString = DateFormat('yyyy-MM-dd').format(selectedDate);
+
+      final filteredSlots = controller.availableTimeSlots.where((slot) {
+        return slot.slotDate == dateString && slot.status == 'available';
+      }).toList();
+
+      if (filteredSlots.isEmpty) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 20.h),
+          alignment: Alignment.center,
+          child: Text(
+            'No time slots available for selected date',
+            style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+          ),
+        );
+      }
+
+      return Wrap(
         spacing: 10.w,
         runSpacing: 10.h,
-        children: timeSlots.map((time) {
-          final isSelected = controller.selectedTime.value == time;
-          return _TimeSlotButton(
-            time: time,
-            isSelected: isSelected,
-            onTap: () => controller.selectTime(time),
+        children: filteredSlots.map((TimeSlot timeSlot) {
+          final startHour = timeSlot.startTime.hour % 12 == 0 ? 12 : timeSlot.startTime.hour % 12;
+          final startMinute = timeSlot.startTime.minute.toString().padLeft(2, '0');
+          final startPeriod = timeSlot.startTime.hour < 12 ? 'AM' : 'PM';
+          final timeText = '$startHour:$startMinute $startPeriod';
+          final isSelected = controller.selectedTime.value == timeSlot.id;
+
+          return GestureDetector(
+            onTap: () => controller.selectTime(timeSlot.id),
+            child: Container(
+              width: 0.285.sw,
+              height: 50.h,
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primaryColor : Colors.white,
+                borderRadius: BorderRadius.circular(12.sp),
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primaryColor
+                      : AppColors.lightGrey.withOpacity(0.5),
+                  width: 1.sp,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                timeText,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: AppFonts.jakartaMedium,
+                ),
+              ),
+            ),
           );
         }).toList(),
-      ),
-    );
-  }
-}
-
-class _TimeSlotButton extends StatelessWidget {
-  final String time;
-  final bool isSelected;
-  final VoidCallback onTap;
-  const _TimeSlotButton({
-    required this.time,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-        decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF4285F4) : Colors.white,
-          borderRadius: BorderRadius.circular(10.r),
-          border: isSelected ? null : Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
-          boxShadow: isSelected
-              ? [
-            BoxShadow(
-              color: const Color(0xFF4285F4).withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 5,
-              offset: Offset(0, 2.h),
-            ),
-          ]
-              : null,
-        ),
-        child: Text(
-          time,
-          style: TextStyle(
-            color: isSelected ? Colors.white : const Color(0xFF333333),
-            fontWeight: FontWeight.w500,
-            fontSize: 14.sp,
-          ),
-        ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/doctor_model.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
@@ -19,12 +18,27 @@ class SearchDoctorDetailScreen extends StatelessWidget {
   const SearchDoctorDetailScreen({super.key, required this.doctor});
 
   String _getConsultationTypeText() {
-    if (doctor.fee?.videoConsultation != null && doctor.fee?.inPersonConsultation != null) {
+    final fee = doctor.fee;
+    if (fee == null) return 'Consultation Available';
+
+    bool hasRemote = fee.remoteConsultation != null;
+    bool hasInPerson = fee.inPersonConsultation != null;
+    bool hasHomeVisit = fee.homeVisitConsultation != null;
+
+    if (hasRemote && hasInPerson && hasHomeVisit) {
+      return 'Remote, In-Person & Home Visit';
+    } else if (hasRemote && hasInPerson) {
       return 'Both Remote & In-Person';
-    } else if (doctor.fee?.videoConsultation != null) {
+    } else if (hasRemote && hasHomeVisit) {
+      return 'Remote & Home Visit';
+    } else if (hasInPerson && hasHomeVisit) {
+      return 'In-Person & Home Visit';
+    } else if (hasRemote) {
       return 'Remote Consultation';
-    } else if (doctor.fee?.inPersonConsultation != null) {
+    } else if (hasInPerson) {
       return 'In-Person Consultation';
+    } else if (hasHomeVisit) {
+      return 'Home Visit Consultation';
     }
     return 'Consultation Available';
   }
@@ -108,7 +122,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Text(
-                        doctor.fullName,
+                        doctor.displayName, // Updated to use displayName getter
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w700,
@@ -138,7 +152,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                       InkWell(
                         onTap: () {
                           _showPhoneNumberDialog(context);
-                         },
+                        },
                         child: Container(
                           height: 50.h,
                           width: 160.w,
@@ -196,7 +210,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                         borderRadius: 15,
                         text: AppStrings.bookAppointment.tr,
                         onTap: () {
-                          Get.to(BookAppointmentScreen( doctor: doctor,));
+                          Get.to(BookAppointmentScreen(doctor: doctor));
                         },
                       ),
                       30.verticalSpace,
@@ -210,7 +224,23 @@ class SearchDoctorDetailScreen extends StatelessWidget {
       ),
     );
   }
+
   void _showPhoneNumberDialog(BuildContext context) async {
+    final phoneNumber = doctor.phoneNumber;
+
+    // Check if phone number exists
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      Get.snackbar(
+        "No Phone Number",
+        "Doctor's phone number is not available.",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 2),
+      );
+      return;
+    }
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -228,7 +258,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
             ),
             15.verticalSpace,
             Text(
-              "Doctors Phone Number",
+              "Doctor's Phone Number",
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -245,19 +275,22 @@ class SearchDoctorDetailScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    doctor.phoneNumber,
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryColor,
-                      fontFamily: AppFonts.jakartaBold,
+                  Expanded(
+                    child: Text(
+                      phoneNumber,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryColor,
+                        fontFamily: AppFonts.jakartaBold,
+                      ),
                     ),
                   ),
                   10.horizontalSpace,
                   IconButton(
                     onPressed: () async {
-                      await FlutterClipboard.copy(doctor.phoneNumber);
+                      await FlutterClipboard.copy(phoneNumber);
                       Get.back();
                       Get.snackbar(
                         "Copied",
@@ -292,7 +325,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      "cancel",
+                      "Cancel",
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,

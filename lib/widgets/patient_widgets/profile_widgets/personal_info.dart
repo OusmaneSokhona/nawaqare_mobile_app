@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/profile_models.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/home_controller.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
@@ -61,7 +62,9 @@ class PersonalInfo extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
-              onPressed: controller.editPersonalInfo,
+              onPressed:(){
+                controller.editPersonalInfo(user!);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,

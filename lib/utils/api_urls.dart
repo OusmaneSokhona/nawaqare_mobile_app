@@ -1,5 +1,5 @@
 class ApiUrls {
-  static String baseUrl="http://localhost:4000";
+  static String baseUrl="http://54.219.14.133/";
   static String signUpUrl="/api/auth/signup";
   static String signInUrl="/api/auth/signin";
   static String sendEmailOtpUrl="/api/auth/send-email";
@@ -14,4 +14,6 @@ class ApiUrls {
   static String deleteUserUrl="/api/auth/delete-profile";
   static String meUrl="/api/auth/me";
   static String getDoctorsUrl="/api/doctor/doctors";
+  static String getDoctorTimeSlots="/api/timeslots/get-timeslot/";
+  static String createAppointment="/api/appointments/create-appointment";
 }

@@ -84,8 +84,9 @@ class HeatlhSpaceGrid extends StatelessWidget {
           title: AppStrings.logOut.tr,
           color: AppColors.red,
           textColor: AppColors.red,
-          onTap: () {
-            LocalStorageUtils.deleteUser();
+          onTap: () async {
+            Get.deleteAll(force: true);
+            await LocalStorageUtils.deleteUser();
             Get.offAll( SignInScreen(), binding: AppBinding());
           },
         ),

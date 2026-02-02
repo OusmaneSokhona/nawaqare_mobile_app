@@ -78,6 +78,7 @@ class ApiClient {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+      Get.deleteAll(force: true);
       Get.offAll(SignInScreen(), binding: AppBinding());
     });
   }

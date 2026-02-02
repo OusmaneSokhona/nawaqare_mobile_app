@@ -174,9 +174,12 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   color: Colors.grey.shade600,
                 ),
                 onPressed: () {
-                  // Get.to(
-                  //       () => DocumentViewerScreen(),
-                  // );
+                  Get.to(
+                        () => DocumentViewerScreen(
+                      documentUrl: reportUrl,
+                      fileName: 'My Report',
+                    ),
+                  );
 
                 },
               ),

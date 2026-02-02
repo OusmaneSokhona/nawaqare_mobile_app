@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/auth_controllers/sign_up_controller.dart';
+import '../../../models/user_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
@@ -13,8 +14,8 @@ import '../../../widgets/display_field.dart';
 import '../../../widgets/profile_picture_widget.dart';
 
 class EditPersonalInfo extends GetView<SignUpController> {
-  const EditPersonalInfo({super.key});
-
+  final UserModel user;
+  const EditPersonalInfo({super.key,required this.user});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +66,7 @@ class EditPersonalInfo extends GetView<SignUpController> {
                       ProfilePictureWidget(
                         onTap: controller.showImageSourceOptions,
                         pickedImage: controller.pickedImage,
+                        imageUrl: RxString(user.patientData?.profileImage ?? ''),
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
@@ -103,7 +105,7 @@ class EditPersonalInfo extends GetView<SignUpController> {
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      controller.formattedDate,
+                                     user.patientData!.dob!=null?user.patientData!.dob.toString():controller.formattedDate,
                                       style: TextStyle(
                                         fontSize: 18,
                                         color: controller.selectedDate == null

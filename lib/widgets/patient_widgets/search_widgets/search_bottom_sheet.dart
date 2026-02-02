@@ -42,7 +42,7 @@ class SearchBottomSheet extends StatelessWidget {
                 children: [
                   _buildDateField(context),
                   const SizedBox(height: 20),
-                  _buildReligionDropdown(),
+                  _buildCountryDropdown(),
                   const SizedBox(height: 20),
                   _buildLocationDropdown(),
                   const SizedBox(height: 20),
@@ -121,21 +121,11 @@ class SearchBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildReligionDropdown() {
+  Widget _buildCountryDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(AppStrings.religion.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
-
-  Widget _buildLocationDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(AppStrings.location.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        Text(AppStrings.country.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 8),
         Obx(
               () => Container(
@@ -154,7 +144,7 @@ class SearchBottomSheet extends StatelessWidget {
                     searchController.selectedLocation.value = newValue;
                   }
                 },
-                items: searchController.locations.map<DropdownMenuItem<String>>((String value) {
+                items: searchController.availableCountries.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
@@ -168,7 +158,39 @@ class SearchBottomSheet extends StatelessWidget {
     );
   }
 
-  // In _buildConsultationMode(), add "All" option:
+  Widget _buildLocationDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(AppStrings.location.tr, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: 'All',
+              icon: const Icon(Icons.keyboard_arrow_down),
+              onChanged: (String? newValue) {
+                // Placeholder for location filter
+              },
+              items: ['All', 'New York', 'London', 'Paris', 'Tokyo'].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 16)),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildConsultationMode() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,27 +289,27 @@ class SearchBottomSheet extends StatelessWidget {
             activeColor: AppColors.primaryColor,
             value: searchController.distanceRange.value,
             min: 0,
-            max: 5,
-            label: '${searchController.distanceRange.value.toStringAsFixed(1)}km',
+            max: 1000,
+            divisions: 10,
+            label: '${searchController.distanceRange.value.toStringAsFixed(0)}km',
             onChanged: (double value) {
               searchController.distanceRange.value = value;
             },
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('0km'),
-              Text('5km'),
+              Text('1000km'),
             ],
           ),
         ),
       ],
     );
   }
-
 
   Widget _buildPriceSlider() {
     return Column(
@@ -299,20 +321,21 @@ class SearchBottomSheet extends StatelessWidget {
             activeColor: AppColors.primaryColor,
             value: searchController.priceRange.value,
             min: 0,
-            max: 50,
+            max: 1000,
+            divisions: 20,
             label: '\$${searchController.priceRange.value.toStringAsFixed(0)}',
             onChanged: (double value) {
               searchController.priceRange.value = value;
             },
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('\$0'),
-              Text('\$50'),
+              Text('\$1000'),
             ],
           ),
         ),

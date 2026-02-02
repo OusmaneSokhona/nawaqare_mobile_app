@@ -53,15 +53,23 @@ class DoctorDetailWidget extends StatelessWidget {
 
   String _getFeeText() {
     if (doctor.fee != null) {
-      String videoFee = doctor.fee!.displayVideoFee;
-      String inPersonFee = doctor.fee!.displayInPersonFee;
+      final fee = doctor.fee!;
+      final List<String> feeLines = [];
 
-      if (videoFee != 'N/A' && inPersonFee != 'N/A') {
-        return 'Video Consultation: $videoFee\nIn-Person Consultation: $inPersonFee';
-      } else if (videoFee != 'N/A') {
-        return 'Video Consultation: $videoFee';
-      } else if (inPersonFee != 'N/A') {
-        return 'In-Person Consultation: $inPersonFee';
+      if (fee.remoteConsultation != null) {
+        feeLines.add('Remote Consultation: ${fee.displayRemoteFee}');
+      }
+
+      if (fee.inPersonConsultation != null) {
+        feeLines.add('In-Person Consultation: ${fee.displayInPersonFee}');
+      }
+
+      if (fee.homeVisitConsultation != null) {
+        feeLines.add('Home Visit Consultation: ${fee.displayHomeVisitFee}');
+      }
+
+      if (feeLines.isNotEmpty) {
+        return feeLines.join('\n');
       }
     }
     return AppStrings.notAvailable.tr;
@@ -69,10 +77,10 @@ class DoctorDetailWidget extends StatelessWidget {
 
   String _getLanguages() {
     final languages = <String>[];
-    if (doctor.nationality != null && doctor.nationality!.isNotEmpty) {
+    if (doctor.nationality?.isNotEmpty == true) {
       languages.add(doctor.nationality!);
     }
-    if (doctor.country != null && doctor.country!.isNotEmpty) {
+    if (doctor.country?.isNotEmpty == true) {
       languages.add(doctor.country!);
     }
     if (languages.isEmpty) {
@@ -221,7 +229,7 @@ class DoctorDetailWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    doctor.fullName,
+                    doctor.displayName,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -238,7 +246,7 @@ class DoctorDetailWidget extends StatelessWidget {
           Text(
             doctor.aboutMe?.isNotEmpty == true
                 ? doctor.aboutMe!
-                : '${doctor.fullName} is a professional doctor providing quality healthcare services.',
+                : '${doctor.displayName} is a professional doctor providing quality healthcare services.',
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[700],

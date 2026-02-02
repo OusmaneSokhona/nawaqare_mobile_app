@@ -1,13 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:patient_app/models/time_slot_model.dart';
+import 'package:patient_app/services/api_service.dart';
+import 'package:patient_app/utils/api_urls.dart';
 
-class BookAppointmentController extends GetxController{
-  RxString appointmentType="inPerson".obs;
+class BookAppointmentController extends GetxController {
+  RxString appointmentType = "inPerson".obs;
   final duration = '30 mint'.obs;
+  TextEditingController addressController=TextEditingController();
   final fee = '\$156'.obs;
-  final selectedDate = DateTime.now().obs;
-  final selectedTime = '10.00 AM'.obs;
+  final Rx<DateTime> selectedDate =   DateTime.now().obs;
+  final selectedTime = ''.obs;
   final Rx<DateTime> _focusedMonth = DateTime.now().obs;
+  final RxList<TimeSlot> availableTimeSlots = <TimeSlot>[].obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+  ApiService _apiService = ApiService();
 
   DateTime get focusedMonth => _focusedMonth.value;
 
@@ -17,20 +26,58 @@ class BookAppointmentController extends GetxController{
     "homeVisit",
   ];
 
-  final availableTimes = [
-    '09.00 AM',
-    '09.30 AM',
-    '10.00 AM',
-    '10.30 AM',
-    '11.00 AM',
-    '11.30 AM',
-    '02.00 PM',
-    '02.30 PM',
-    '03.00 PM',
-    '03.30 PM',
-    '04.00 PM',
-    '04.30 PM',
-  ];
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize with today's date if you want
+    selectDate(DateTime.now());
+  }
+
+  Future<void> fetchTimeSlots({required String doctorId}) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+      availableTimeSlots.clear();
+
+      final response = await _apiService.get(
+        '${ApiUrls.getDoctorTimeSlots}$doctorId',
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        if (data['slots'] != null) {
+          final timeSlotResponse = TimeSlotResponse.fromJson(data);
+          print("Fetched ${data} slots");
+          availableTimeSlots.assignAll(timeSlotResponse.slots);
+
+
+          // Auto-select first available time slot for today
+          if (availableTimeSlots.isNotEmpty && selectedDate.value != null) {
+            final todaySlots = _getTimeSlotsForDate(selectedDate.value!);
+            if (todaySlots.isNotEmpty) {
+              selectedTime.value = todaySlots.first.id;
+            }
+          }
+        } else {
+          errorMessage.value = 'No slots found in response';
+        }
+      } else {
+        errorMessage.value = 'Failed to load time slots: ${response.statusCode}';
+      }
+    } catch (e) {
+      errorMessage.value = 'Error: ${e.toString()}';
+      availableTimeSlots.clear();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  List<TimeSlot> _getTimeSlotsForDate(DateTime date) {
+    final dateString = DateFormat('yyyy-MM-dd').format(date);
+    return availableTimeSlots
+        .where((slot) => slot.slotDate == dateString && slot.status == 'available')
+        .toList();
+  }
 
   void selectAppointmentType(String? newValue) {
     if (newValue != null) {
@@ -40,33 +87,97 @@ class BookAppointmentController extends GetxController{
 
   void selectDate(DateTime date) {
     selectedDate.value = date;
+
+    // Auto-select first available time slot for the selected date
+    if (availableTimeSlots.isNotEmpty) {
+      final slotsForDate = _getTimeSlotsForDate(date);
+      if (slotsForDate.isNotEmpty) {
+        selectedTime.value = slotsForDate.first.id;
+      } else {
+        selectedTime.value = '';
+      }
+    }
   }
 
-  void selectTime(String time) {
-    selectedTime.value = time;
+  void selectTime(String timeId) {
+    selectedTime.value = timeId;
   }
+
   String get formattedMonthYear {
     return DateFormat('MMMM yyyy').format(_focusedMonth.value);
   }
 
-  // Method to move to the previous month
   void previousMonth() {
     _focusedMonth.value = DateTime(
       _focusedMonth.value.year,
       _focusedMonth.value.month - 1,
-      _focusedMonth.value.day,
+      1,
     );
-    // You might also need to call update() if not using GetX's .obs
-    // update();
   }
 
-  // Method to move to the next month
   void nextMonth() {
     _focusedMonth.value = DateTime(
       _focusedMonth.value.year,
       _focusedMonth.value.month + 1,
-      _focusedMonth.value.day,
+      1,
     );
-    // update();
+  }
+
+  TimeSlot? getSelectedTimeSlot() {
+    if (selectedDate.value == null || selectedTime.value.isEmpty) {
+      return null;
+    }
+
+    return availableTimeSlots.firstWhere(
+          (slot) => slot.id == selectedTime.value,
+      orElse: () => TimeSlot(
+        id: '',
+        startTime: DateTime.now(),
+        endTime: DateTime.now(),
+        status: '',
+      ),
+    );
+  }
+  // Add this to your BookAppointmentController class
+  RxBool isCreatingAppointment = false.obs;
+  RxString appointmentError = ''.obs;
+
+  Future<Map<String, dynamic>?> createAppointment({
+    required String doctorId,
+    required String timeslotId,
+    required String consultationType,
+  }) async {
+    try {
+      isCreatingAppointment.value = true;
+      appointmentError.value = '';
+
+      final Map<String, dynamic> requestBody = {
+        "doctorId": doctorId,
+        "timeslotId": timeslotId,
+        "consultationType": consultationType,
+      };
+
+      print('Creating appointment with data: $requestBody');
+
+      final response = await _apiService.post(
+        ApiUrls.createAppointment,
+        data: requestBody,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('Appointment created successfully: ${response.data}');
+        return response.data;
+      } else {
+        appointmentError.value = 'Failed to create appointment: ${response.statusCode} - ${response.data}';
+        print(appointmentError.value);
+        return null;
+      }
+    } catch (e) {
+      appointmentError.value = 'Error creating appointment: ${e.toString()}';
+      print(appointmentError.value);
+      return null;
+    } finally {
+      isCreatingAppointment.value = false;
+    }
   }
 }

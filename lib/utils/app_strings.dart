@@ -1102,4 +1102,33 @@ class AppStrings {
   static const String slots = "slots";
   static const String aboutDoctor = "about_doctor";
   static const String aboutDoctorDescription = "about_doctor_description";
+  // Months
+  static const String january = 'january';
+  static const String february = 'february';
+  static const String march = 'march';
+  static const String april = 'april';
+  static const String may = 'may';
+  static const String july = 'july';
+  static const String august = 'august';
+  static const String september = 'september';
+  static const String october = 'october';
+  static const String november = 'november';
+  static const String december = 'december';
+
+// Days of week (if not already present)
+  static const String monday = 'monday';
+  static const String tuesday = 'tuesday';
+  static const String wednesday = 'wednesday';
+  static const String thursday = 'thursday';
+  static const String friday = 'friday';
+  static const String saturday = 'saturday';
+
+// Days abbreviations (for calendar)
+  static const String sun = 'sun';
+  static const String mon = 'mon';
+  static const String tue = 'tue';
+  static const String wed = 'wed';
+  static const String thu = 'thu';
+  static const String fri = 'fri';
+  static const String sat = 'sat';
 }

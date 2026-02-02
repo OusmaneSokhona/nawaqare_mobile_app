@@ -5,12 +5,16 @@ import 'dart:io';
 class ProfilePictureWidget extends StatelessWidget {
   GestureTapCallback onTap;
   Rxn<File> pickedImage = Rxn<File>();
-  ProfilePictureWidget({super.key,required this.onTap,required this.pickedImage});
+  RxString? imageUrl = RxString('');
+  ProfilePictureWidget({super.key,required this.onTap,required this.pickedImage,this.imageUrl});
   @override
   Widget build(BuildContext context) {
     return Center(
       child: GestureDetector(
-        onTap: onTap,
+        onTap: (){
+          imageUrl!.value='';
+          onTap();
+        },
         child: Obx(
               () {
             return Container(
@@ -21,7 +25,7 @@ class ProfilePictureWidget extends StatelessWidget {
                 color: Colors.white,
               ),
               child: ClipOval(
-                child: pickedImage.value != null
+              child: (imageUrl!.value==null||imageUrl!.value.isNotEmpty)?Image.network(imageUrl!.value):pickedImage.value != null
                     ? Image.file(
                   pickedImage.value!,
                   fit: BoxFit.cover,

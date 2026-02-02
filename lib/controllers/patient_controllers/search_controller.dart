@@ -39,6 +39,7 @@ class SearchControllerCustom extends GetxController {
         }
       }
     } catch (e) {
+      print('Error loading doctors: $e');
     } finally {
       isLoading.value = false;
     }
@@ -60,9 +61,13 @@ class SearchControllerCustom extends GetxController {
     return _allDoctorList.where((doctor) {
       // Text search filter
       final String query = _searchQuery.value.toLowerCase();
-      final bool matchesSearch =
-          doctor.fullName.toLowerCase().contains(query) ||
-              (doctor.medicalSpecialty ?? '').toLowerCase().contains(query);
+      final String doctorName = doctor.displayName.toLowerCase();
+      final String specialty = (doctor.medicalSpecialty ?? '').toLowerCase();
+      final String clinicAddress = (doctor.clinicAddress ?? '').toLowerCase();
+
+      final bool matchesSearch = doctorName.contains(query) ||
+          specialty.contains(query) ||
+          clinicAddress.contains(query);
 
       // Category filter
       final bool matchesCategory = selectedCategory.value == "All" ||
@@ -70,17 +75,18 @@ class SearchControllerCustom extends GetxController {
 
       // Gender filter
       final bool matchesGender = selectedGender.value == Gender.all ||
-          doctor.gender?.toLowerCase() == selectedGender.value.name.toLowerCase();
+          (doctor.gender?.toLowerCase() ?? '') == selectedGender.value.name.toLowerCase();
 
       // Price filter
       final bool matchesPrice = _matchesPriceFilter(doctor);
 
-      // Distance filter (assuming doctors have location data)
+      // Distance filter
       final bool matchesDistance = _matchesDistanceFilter(doctor);
 
-      // Religion filter
-      final bool matchesReligion = selectedReligion.value == 'All' ||
-          doctor.country?.contains(selectedReligion.value) == true;
+      // Location filter (using country instead of religion)
+      final bool matchesLocation = selectedLocation.value == 'All' ||
+          (doctor.country ?? '').contains(selectedLocation.value) ||
+          (doctor.placeOfPractice ?? '').contains(selectedLocation.value);
 
       // Consultation mode filter
       final bool matchesConsultationMode = _matchesConsultationMode(doctor);
@@ -90,32 +96,58 @@ class SearchControllerCustom extends GetxController {
           matchesGender &&
           matchesPrice &&
           matchesDistance &&
-          matchesReligion &&
+          matchesLocation &&
           matchesConsultationMode;
     }).toList();
   }
 
   bool _matchesPriceFilter(DoctorModel doctor) {
-    if (priceRange.value >= 50) return true; // Show all if max price selected
+    if (priceRange.value >= 1000) return true; // Show all if max price selected
 
-    final double? doctorFee = doctor.fee?.videoConsultation ?? doctor.fee?.inPersonConsultation;
-    if (doctorFee == null) return true;
+    // Get the lowest available fee
+    double? lowestFee;
+    final fee = doctor.fee;
 
-    return doctorFee <= priceRange.value;
+    if (fee != null) {
+      final List<double?> fees = [
+        fee.remoteConsultation,
+        fee.inPersonConsultation,
+        fee.homeVisitConsultation,
+      ];
+
+      for (var f in fees) {
+        if (f != null) {
+          if (lowestFee == null || f < lowestFee) {
+            lowestFee = f;
+          }
+        }
+      }
+    }
+
+    // If no fee available, include in results
+    if (lowestFee == null) return true;
+
+    return lowestFee <= priceRange.value;
   }
 
   bool _matchesDistanceFilter(DoctorModel doctor) {
     // This is a simplified distance filter
-    // In a real app, you would calculate actual distance using coordinates
-    return true; // For now, return true for all
+    // You can implement actual distance calculation later
+    if (distanceRange.value >= 1000) return true; // Show all if max distance
+
+    // For now, using placeOfPractice as distance indicator
+    // You can replace this with actual coordinate-based distance calculation
+    return true;
   }
 
   bool _matchesConsultationMode(DoctorModel doctor) {
+    final fee = doctor.fee;
+
     switch (consultationMode.value) {
       case ConsultationMode.inPerson:
-        return doctor.fee?.inPersonConsultation != null;
+        return fee?.inPersonConsultation != null;
       case ConsultationMode.remote:
-        return doctor.fee?.videoConsultation != null;
+        return fee?.remoteConsultation != null;
       case ConsultationMode.all:
         return true;
     }
@@ -127,7 +159,9 @@ class SearchControllerCustom extends GetxController {
     int end = start + itemsPerPage;
 
     if (start >= list.length) return [];
-    return list.sublist(start, end > list.length ? list.length : end);
+    if (end > list.length) end = list.length;
+
+    return list.sublist(start, end);
   }
 
   int get totalPages {
@@ -135,17 +169,6 @@ class SearchControllerCustom extends GetxController {
     if (count == 0) return 1;
     return (count / itemsPerPage).ceil();
   }
-
-  List<String> doctorsTypeList = [
-    "All",
-    "Cardiologist",
-    "Gynecologist",
-    "Orthopedic Surgeon",
-    "General Practitioner",
-    "Dermatologist",
-    "Pediatrician",
-    "Neurologist",
-  ];
 
   // Extract unique specialties from doctor list
   List<String> get availableSpecialties {
@@ -155,35 +178,52 @@ class SearchControllerCustom extends GetxController {
         .toSet()
         .toList();
 
-    return ["All", ...specialties];
+    // Add "All" at the beginning
+    final result = ["All", ...specialties];
+
+    // Ensure unique values and sort alphabetically (excluding "All")
+    final sortedSpecialties = result
+        .toSet()
+        .toList()
+      ..sort((a, b) {
+        if (a == "All") return -1;
+        if (b == "All") return 1;
+        return a.compareTo(b);
+      });
+
+    return sortedSpecialties;
+  }
+
+  // Extract unique countries from doctor list for location filter
+  List<String> get availableCountries {
+    final countries = _allDoctorList
+        .map((doctor) => doctor.country ?? '')
+        .where((country) => country.isNotEmpty)
+        .toSet()
+        .toList();
+
+    return ["All", ...countries]..sort((a, b) {
+      if (a == "All") return -1;
+      if (b == "All") return 1;
+      return a.compareTo(b);
+    });
   }
 
   // Filter properties
   final Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
-  final RxString selectedReligion = 'All'.obs;
   final RxString selectedLocation = 'All'.obs;
   final Rx<ConsultationMode> consultationMode = ConsultationMode.all.obs;
-  final RxDouble distanceRange = 5.0.obs; // Default 5km
+  final RxDouble distanceRange = 1000.0.obs; // Default show all (1000 km/miles)
   final Rx<Gender> selectedGender = Gender.all.obs;
-  final RxDouble priceRange = 50.0.obs; // Default $50
-
-
-  final List<String> locations = [
-    'All',
-    'Women\'s Clinic, Seattle, USA',
-    'General Hospital, NY, USA',
-    'Family Health Center, London, UK',
-    'Cardiac Center, Boston, USA',
-  ];
+  final RxDouble priceRange = 1000.0.obs; // Default show all ($1000)
 
   void resetFilters() {
     selectedDate.value = null;
-    selectedReligion.value = 'All';
     selectedLocation.value = 'All';
     consultationMode.value = ConsultationMode.all;
-    distanceRange.value = 5.0;
+    distanceRange.value = 1000.0;
     selectedGender.value = Gender.all;
-    priceRange.value = 50.0;
+    priceRange.value = 1000.0;
     currentPage.value = 1;
     _searchQuery.value = '';
     selectedCategory.value = 'All';
@@ -216,6 +256,28 @@ class SearchControllerCustom extends GetxController {
   // Method to refresh doctor list
   Future<void> refreshDoctors() async {
     await loadDoctors();
+  }
+
+  // Get list of all doctors for external use
+  List<DoctorModel> get allDoctors => _allDoctorList;
+
+  // Get list of available time slots for a specific doctor
+  List<String> getAvailableSlotsForDoctor(String doctorId) {
+    final doctor = _allDoctorList.firstWhere(
+          (doc) => doc.id == doctorId,
+      orElse: () => DoctorModel(),
+    );
+
+    return doctor.availableSlots ?? [];
+  }
+
+  // Get doctor by ID
+  DoctorModel? getDoctorById(String id) {
+    try {
+      return _allDoctorList.firstWhere((doctor) => doctor.id == id);
+    } catch (e) {
+      return null;
+    }
   }
 }
 

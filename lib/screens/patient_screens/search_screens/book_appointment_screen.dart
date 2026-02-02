@@ -15,21 +15,36 @@ import 'my_appointment_screens.dart';
 
 class BookAppointmentScreen extends StatelessWidget {
   final DoctorModel doctor;
+  final BookAppointmentController controller = Get.put(BookAppointmentController());
 
-  BookAppointmentScreen({super.key, required this.doctor});
-
-  final BookAppointmentController controller = Get.put(
-    BookAppointmentController(),
-  );
+  BookAppointmentScreen({super.key, required this.doctor}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchTimeSlots(doctorId: doctor.id!);
+    });
+  }
 
   String _getConsultationTypeText() {
-    if (doctor.fee?.videoConsultation != null &&
-        doctor.fee?.inPersonConsultation != null) {
+    final fee = doctor.fee;
+    if (fee == null) return 'Consultation Available';
+
+    bool hasRemote = fee.remoteConsultation != null;
+    bool hasInPerson = fee.inPersonConsultation != null;
+    bool hasHomeVisit = fee.homeVisitConsultation != null;
+
+    if (hasRemote && hasInPerson && hasHomeVisit) {
+      return 'Remote, In-Person & Home Visit';
+    } else if (hasRemote && hasInPerson) {
       return 'Both Remote & In-Person';
-    } else if (doctor.fee?.videoConsultation != null) {
+    } else if (hasRemote && hasHomeVisit) {
+      return 'Remote & Home Visit';
+    } else if (hasInPerson && hasHomeVisit) {
+      return 'In-Person & Home Visit';
+    } else if (hasRemote) {
       return 'Remote Consultation';
-    } else if (doctor.fee?.inPersonConsultation != null) {
+    } else if (hasInPerson) {
       return 'In-Person Consultation';
+    } else if (hasHomeVisit) {
+      return 'Home Visit Consultation';
     }
     return 'Consultation Available';
   }
@@ -117,37 +132,10 @@ class BookAppointmentScreen extends StatelessWidget {
                         ],
                       ),
                       10.verticalSpace,
-                      CircleAvatar(
-                        radius: 50.r,
-                        backgroundColor: Colors.white,
-                        child:
-                            doctor.displayImage.startsWith('http')
-                                ? ClipOval(
-                                  child: Image.network(
-                                    doctor.displayImage,
-                                    width: 100.r,
-                                    height: 100.r,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Image.asset(
-                                        'assets/demo_images/doctor_1.png',
-                                        width: 100.r,
-                                        height: 100.r,
-                                        fit: BoxFit.cover,
-                                      );
-                                    },
-                                  ),
-                                )
-                                : Image.asset(
-                                  doctor.displayImage,
-                                  width: 100.r,
-                                  height: 100.r,
-                                  fit: BoxFit.cover,
-                                ),
-                      ),
+                      _buildDoctorAvatar(),
                       10.verticalSpace,
                       Text(
-                        doctor.fullName,
+                        doctor.displayName,
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w700,
@@ -187,37 +175,132 @@ class BookAppointmentScreen extends StatelessWidget {
                       10.verticalSpace,
                       _buildSectionLabel(AppStrings.availableTimes.tr),
                       5.verticalSpace,
-                      TimeSlotsGrid(controller: controller, doctor: doctor),
+                      _buildTimeSlotsSection(),
                       15.verticalSpace,
                       Obx(
-                        () =>
-                            controller.appointmentType.value == "homeVisit"
-                                ? _buildAlertBox()
-                                : const SizedBox(),
+                            () => controller.appointmentType.value == "homeVisit"
+                            ? _buildAlertBox()
+                            : const SizedBox(),
                       ),
                       15.verticalSpace,
+                      // Replace the existing CustomButton onTap section in BookAppointmentScreen
                       Obx(
-                        () => CustomButton(
+                            () => CustomButton(
                           borderRadius: 15,
-                          text:
-                              controller.appointmentType.value != "homeVisit"
-                                  ? AppStrings.confirmAppointment.tr
-                                  : AppStrings.submitRequest.tr,
-                          onTap: () {
-                            Get.to(
-                              MyAppointmentScreens(
-                                model: AppointmentModel(
-                                  name: "${doctor.fullName}",
-                                  specialty:
-                                      "${doctor.medicalSpecialty ?? 'General Practitioner'}",
-                                  imageUrl: doctor.displayImage,
-                                  consultationType:
-                                      controller.appointmentType.value,
-                                  date: "ontroller.selectedDate.value",
-                                  time: controller.selectedTime.value!,fee: 1,rating: 1.0,status: 'Pending',
-                                ),
-                              ),
+                          text: controller.appointmentType.value != "homeVisit"
+                              ? AppStrings.confirmAppointment.tr
+                              : AppStrings.submitRequest.tr,
+                          isLoading: controller.isCreatingAppointment.value,
+                          onTap: () async {
+                            // Validate required data
+                            if (controller.selectedTime.value.isEmpty) {
+                              Get.snackbar(
+                                'Error',
+                                'Please select a time slot',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
+                            if (controller.selectedDate.value == null) {
+                              Get.snackbar(
+                                'Error',
+                                'Please select a date',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
+                            // Get the selected timeslot
+                            final selectedSlot = controller.getSelectedTimeSlot();
+                            if (selectedSlot == null || selectedSlot.id.isEmpty) {
+                              Get.snackbar(
+                                'Error',
+                                'Please select a valid time slot',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+
+                            // Prepare data for API call
+                            String type = controller.appointmentType.value;
+                            double? fee;
+
+                            if (type == "remote") {
+                              fee = doctor.fee?.remoteConsultation;
+                            } else if (type == "inPerson") {
+                              fee = doctor.fee?.inPersonConsultation;
+                            } else if (type == "homeVisit") {
+                              fee = doctor.fee?.homeVisitConsultation;
+                            }
+
+                            String apiConsultationType;
+                            switch (type) {
+                              case "inPerson":
+                                apiConsultationType = "inperson";
+                                break;
+                              case "homeVisit":
+                                apiConsultationType = "homevisit";
+                                break;
+                              default:
+                                apiConsultationType = "remote";
+                            }
+                          if(apiConsultationType=="homevisit"&&controller.addressController.text.isEmpty){
+                              Get.snackbar(
+                                'Error',
+                                'Please enter your address for home visit',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                              return;
+                            }
+                            final result = await controller.createAppointment(
+                              doctorId: doctor.id!,
+                              timeslotId: selectedSlot.id,
+                              consultationType: apiConsultationType,
                             );
+
+                            if (result != null && result['success'] == true) {
+                              final appointmentData = result['appointment'];
+
+                              Get.snackbar(
+                                'Success',
+                                result['message'] ?? 'Appointment booked successfully',
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                              );
+
+                              Get.to(
+                                    () => MyAppointmentScreens(
+                                  model: AppointmentModel(
+                                    name: doctor.displayName,
+                                    specialty: doctor.medicalSpecialty ?? 'General Practitioner',
+                                    imageUrl: doctor.displayImage,
+                                    consultationType: controller.appointmentType.value,
+                                    date: controller.selectedDate.value?.toIso8601String() ?? '',
+                                    time: controller.selectedTime.value ?? '',
+                                    fee: fee ?? 0.0,
+                                    rating: doctor.ratingValue,
+                                    status: 'Pending',
+
+
+                                  ),
+                                ),
+                              );
+                            } else {
+                              // Show error message
+                              Get.snackbar(
+                                'Error',
+                                controller.appointmentError.value.isNotEmpty
+                                    ? controller.appointmentError.value
+                                    : 'Failed to create appointment',
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                            }
                           },
                         ),
                       ),
@@ -228,6 +311,92 @@ class BookAppointmentScreen extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoctorAvatar() {
+    return CircleAvatar(
+      radius: 50.r,
+      backgroundColor: Colors.white,
+      child: _buildDoctorImage(),
+    );
+  }
+
+  Widget _buildDoctorImage() {
+    if (doctor.displayImage.isEmpty) {
+      return _buildDefaultImage();
+    }
+
+    // Check if it's a network URL
+    if (doctor.displayImage.startsWith('http')) {
+      return _buildNetworkImageWithFallback();
+    }
+
+    // Try to load from assets
+    try {
+      return Image.asset(
+        doctor.displayImage,
+        width: 100.r,
+        height: 100.r,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildDefaultImage();
+        },
+      );
+    } catch (e) {
+      return _buildDefaultImage();
+    }
+  }
+
+  Widget _buildNetworkImageWithFallback() {
+    return ClipOval(
+      child: Image.network(
+        doctor.displayImage,
+        width: 100.r,
+        height: 100.r,
+        fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return _buildLoadingImage();
+        },
+        errorBuilder: (context, error, stackTrace) {
+          print('Error loading doctor image: $error');
+          return _buildDefaultImage();
+        },
+      ),
+    );
+  }
+
+  Widget _buildDefaultImage() {
+    return Container(
+      width: 100.r,
+      height: 100.r,
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor.withOpacity(0.1),
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.person,
+        size: 40.sp,
+        color: AppColors.primaryColor,
+      ),
+    );
+  }
+
+  Widget _buildLoadingImage() {
+    return Container(
+      width: 100.r,
+      height: 100.r,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: AppColors.primaryColor,
+          strokeWidth: 2,
         ),
       ),
     );
@@ -254,26 +423,24 @@ class BookAppointmentScreen extends StatelessWidget {
 
   Widget _toggleItem(String type, String label) {
     return Obx(
-      () => InkWell(
+          () => InkWell(
         onTap: () => controller.appointmentType.value = type,
         child: Container(
           height: 55.h,
           width: 0.280.sw,
           decoration: BoxDecoration(
-            color:
-                controller.appointmentType.value == type
-                    ? AppColors.primaryColor
-                    : Colors.white,
+            color: controller.appointmentType.value == type
+                ? AppColors.primaryColor
+                : Colors.white,
             borderRadius: BorderRadius.circular(14.sp),
           ),
           alignment: Alignment.center,
           child: Text(
             label,
             style: TextStyle(
-              color:
-                  controller.appointmentType.value == type
-                      ? Colors.white
-                      : Colors.black,
+              color: controller.appointmentType.value == type
+                  ? Colors.white
+                  : Colors.black,
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
               fontFamily: AppFonts.jakartaMedium,
@@ -289,11 +456,67 @@ class BookAppointmentScreen extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         text,
-        style: const TextStyle(
-          fontSize: 18,
+        style: TextStyle(
+          fontSize: 18.sp,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF333333),
+          color: const Color(0xFF333333),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTimeSlotsSection() {
+    return Obx(
+          () => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (controller.isLoading.value)
+            Container(
+              height: 100.h,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(color: AppColors.primaryColor),
+            )
+          else if (controller.errorMessage.isNotEmpty)
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  Text(
+                    controller.errorMessage.value,
+                    style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                  ),
+                  10.verticalSpace,
+                  ElevatedButton(
+                    onPressed: () {
+                      controller.fetchTimeSlots(doctorId: doctor.id!);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.sp),
+                      ),
+                    ),
+                    child: Text(
+                      'Retry',
+                      style: TextStyle(color: AppColors.primaryColor),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          else if (controller.availableTimeSlots.isEmpty)
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+                alignment: Alignment.center,
+                child: Text(
+                  'No time slots available',
+                  style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+                ),
+              )
+            else
+              TimeSlotsGrid(controller: controller, doctor: doctor),
+        ],
       ),
     );
   }
@@ -310,7 +533,11 @@ class BookAppointmentScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset("assets/images/alert_icon.png", height: 25.sp),
+          Icon(
+            Icons.info_outline,
+            color: Colors.orange,
+            size: 25.sp,
+          ),
           5.horizontalSpace,
           Expanded(
             child: Text(

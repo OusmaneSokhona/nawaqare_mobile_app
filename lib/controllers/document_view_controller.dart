@@ -3,7 +3,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 class DocumentViewerController extends GetxController {
-  // Reactive states
   RxBool isLoading = true.obs;
   RxString errorMessage = ''.obs;
   RxBool isSupportedFormat = true.obs;
@@ -12,24 +11,39 @@ class DocumentViewerController extends GetxController {
   RxBool canGoForward = false.obs;
   Rx<InAppWebViewController?> webViewController = Rx<InAppWebViewController?>(null);
 
-  // File info
-  late String fileExtension;
-  late String documentUrl;
-  late String fileName;
+  String fileExtension = '';
+  String documentUrl;
+  RxString fileName;
+
+  DocumentViewerController({
+    required this.documentUrl,
+    required this.fileName,
+  });
 
   @override
   void onInit() {
     super.onInit();
-    final arguments = Get.arguments as Map<String, dynamic>?;
-    if (arguments != null) {
-      documentUrl = arguments['documentUrl'];
-      fileName = arguments['fileName'];
-      fileExtension = documentUrl.split('.').last.toLowerCase();
-      checkFileFormat();
+
+    if (documentUrl.isNotEmpty) {
+      final parts = documentUrl.split('.');
+      fileExtension = parts.isNotEmpty ? parts.last.toLowerCase() : '';
+    } else {
+      fileExtension = '';
+      errorMessage.value = 'No document provided';
+      isLoading.value = false;
+      return;
     }
+
+    checkFileFormat();
   }
 
   void checkFileFormat() {
+    if (fileExtension.isEmpty) {
+      isSupportedFormat.value = false;
+      isLoading.value = false;
+      return;
+    }
+
     final supportedFormats = [
       'pdf',
       'jpg',
@@ -48,7 +62,6 @@ class DocumentViewerController extends GetxController {
     ];
     isSupportedFormat.value = supportedFormats.contains(fileExtension);
 
-    // For non-PDF files, don't show loading initially
     if (!['pdf'].contains(fileExtension)) {
       isLoading.value = false;
     }
@@ -70,11 +83,13 @@ class DocumentViewerController extends GetxController {
   void markAsLoaded() {
     isLoading.value = false;
     progress.value = 100.0;
+    update();
   }
 
   void setError(String error) {
     errorMessage.value = error;
     isLoading.value = false;
+    update();
   }
 
   void setWebViewController(InAppWebViewController controller) {
@@ -87,6 +102,7 @@ class DocumentViewerController extends GetxController {
       await webViewController.value!.reload();
       isLoading.value = true;
       errorMessage.value = '';
+      update();
     }
   }
 

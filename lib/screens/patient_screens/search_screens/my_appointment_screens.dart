@@ -7,7 +7,7 @@ import '../../../controllers/patient_controllers/appointment_controllers/book_ap
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../../utils/app_strings.dart'; // Added import
+import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/patient_widgets/search_widgets/my_appointment_doctor_card.dart';
 import '../../../widgets/patient_widgets/search_widgets/summary_card.dart';
@@ -52,7 +52,7 @@ class MyAppointmentScreens extends StatelessWidget {
                   ),
                   10.horizontalSpace,
                   Text(
-                    AppStrings.myAppointment.tr, // Localized
+                    AppStrings.myAppointment.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -77,7 +77,7 @@ class MyAppointmentScreens extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            AppStrings.section.tr, // Localized
+                            AppStrings.section.tr,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
@@ -85,7 +85,7 @@ class MyAppointmentScreens extends StatelessWidget {
                           ),
                           100.horizontalSpace,
                           Text(
-                            AppStrings.details.tr, // Localized
+                            AppStrings.details.tr,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
@@ -93,7 +93,7 @@ class MyAppointmentScreens extends StatelessWidget {
                           ),
                           const Spacer(),
                           Text(
-                            AppStrings.confirmation.tr, // Localized
+                            AppStrings.confirmation.tr,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
@@ -104,14 +104,14 @@ class MyAppointmentScreens extends StatelessWidget {
                       MyAppointmentDoctorCard(
                         doctorName: model.name,
                         specialization: model.specialty,
-                        consultationDuration: AppStrings.consultationDuration.tr, // Localized
+                        consultationDuration: AppStrings.consultationDuration.tr,
                         imageUrl: model.imageUrl,
                       ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          AppStrings.appointmentSummary.tr, // Localized
+                          AppStrings.appointmentSummary.tr,
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
@@ -119,13 +119,20 @@ class MyAppointmentScreens extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const AppointmentSummaryCard(), // Note: Ensure this widget and its children use .tr internally
+                      AppointmentSummaryCard(
+                        appointmentType: model.consultationType ?? 'Follow Up',
+                        date: model.date ?? DateTime.now().toIso8601String(),
+                        time: model.time ?? '3:00 PM',
+                        consultationFee: model.fee ?? 0.0,
+                        totalFee: (model.fee ?? 0.0) + 2.0, // Adding $2 service fee
+                      ),
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
-                        text: AppStrings.next.tr, // Localized
+                        text: AppStrings.next.tr,
                         onTap: () {
-                          Get.to( PaymentScreen());
+                          Get.to(() => PaymentScreen(
+                          ));
                         },
                       ),
                       30.verticalSpace,

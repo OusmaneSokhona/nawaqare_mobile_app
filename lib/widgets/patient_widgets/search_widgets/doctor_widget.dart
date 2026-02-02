@@ -18,17 +18,33 @@ class DoctorWidget extends StatelessWidget {
   }) : super(key: key);
 
   String _getConsultationTypeText() {
-    if (doctor.fee?.videoConsultation != null && doctor.fee?.inPersonConsultation != null) {
+    final fee = doctor.fee;
+    if (fee == null) return 'Consultation Available';
+
+    bool hasRemote = fee.remoteConsultation != null;
+    bool hasInPerson = fee.inPersonConsultation != null;
+    bool hasHomeVisit = fee.homeVisitConsultation != null;
+
+    if (hasRemote && hasInPerson && hasHomeVisit) {
+      return 'Remote, In-Person & Home Visit';
+    } else if (hasRemote && hasInPerson) {
       return 'Both Remote & In-Person';
-    } else if (doctor.fee?.videoConsultation != null) {
+    } else if (hasRemote && hasHomeVisit) {
+      return 'Remote & Home Visit';
+    } else if (hasInPerson && hasHomeVisit) {
+      return 'In-Person & Home Visit';
+    } else if (hasRemote) {
       return 'Remote Consultation';
-    } else if (doctor.fee?.inPersonConsultation != null) {
+    } else if (hasInPerson) {
       return 'In-Person Consultation';
+    } else if (hasHomeVisit) {
+      return 'Home Visit Consultation';
     }
     return 'Consultation Available';
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'N/A';
     return '${date.day}/${date.month}/${date.year}';
   }
 
@@ -77,7 +93,7 @@ class DoctorWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        doctor.fee?.displayVideoFee ?? '\$N/A',
+                        doctor.fee?.displayRemoteFee ?? '\$N/A',
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -139,7 +155,7 @@ class DoctorWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          doctor.fullName,
+                          doctor.displayName,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18.sp,
@@ -158,6 +174,8 @@ class DoctorWidget extends StatelessWidget {
                             Icon(
                               _getConsultationTypeText().toLowerCase().contains("remote")
                                   ? Icons.add_ic_call
+                                  : _getConsultationTypeText().toLowerCase().contains("home")
+                                  ? Icons.home
                                   : Icons.meeting_room_outlined,
                               color: Colors.blue,
                               size: 16,
@@ -243,9 +261,9 @@ class DoctorWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  doctor.availableSlots.isEmpty
+                                  doctor.availableSlots?.isEmpty == true
                                       ? AppStrings.noSlots.tr
-                                      : '${doctor.availableSlots.length} ${AppStrings.slots.tr}',
+                                      : '${doctor.availableSlots?.length ?? 0} ${AppStrings.slots.tr}',
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
                                     fontWeight: FontWeight.w500,

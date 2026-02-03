@@ -168,6 +168,7 @@ class ConsultationDetailsCard extends StatelessWidget {
                 border: Border.all(color: Colors.grey.shade300, width: 1),
               ),
               child: TextField(
+                controller: controller.notesController,
                 maxLines: 5,
                 onTapOutside: (_) {
                   FocusManager.instance.primaryFocus?.unfocus();

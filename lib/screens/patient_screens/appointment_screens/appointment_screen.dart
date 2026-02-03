@@ -52,6 +52,50 @@ class AppointmentScreen extends StatelessWidget {
                       fontFamily: AppFonts.jakartaBold,
                     ),
                   ),
+                  Spacer(),
+                  Obx(() => Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      '${appointmentController.totalCount}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  )),
+                  10.horizontalSpace,
+                  Obx(() => appointmentController.isLoading.value
+                      ? Padding(
+                    padding: EdgeInsets.only(right: 10.w),
+                    child: SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  )
+                      : InkWell(
+                    onTap: () => appointmentController.refreshAppointments(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 20.h,
+                      ),
+                    ),
+                  )),
                 ],
               ),
               20.verticalSpace,
@@ -71,12 +115,24 @@ class AppointmentScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Obx(
-                      () {
-                    var list = appointmentController.paginatedList;
-                    bool isPast = appointmentController.appointmentType.value == "past";
+                child: Obx(() {
+                  if (appointmentController.isLoading.value &&
+                      appointmentController.currentList.isEmpty) {
+                    return _buildLoadingState();
+                  }
 
-                    return ListView.builder(
+                  var list = appointmentController.paginatedList;
+                  bool isPast = appointmentController.appointmentType.value == "past";
+
+                  if (list.isEmpty) {
+                    return _buildEmptyState(isPast);
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      await appointmentController.refreshAppointments();
+                    },
+                    child: ListView.builder(
                       padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
                       itemCount: list.length,
                       itemBuilder: (context, index) {
@@ -85,22 +141,104 @@ class AppointmentScreen extends StatelessWidget {
                           onTap: () {
                             Get.to(AppointmentDetailScreen(
                               isCompleted: isPast,
-                              appointmentModel: list[index],
+                              appointment: list[index],
                             ));
                           },
-                          appointmentModel: list[index],
+                          appointment: list[index],
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  );
+                }),
               ),
-              10.verticalSpace,
-              _buildPagination(),
-              20.verticalSpace,
+              Obx(() {
+                if (appointmentController.currentList.isEmpty) {
+                  return SizedBox();
+                }
+                return Column(
+                  children: [
+                    10.verticalSpace,
+                    _buildPagination(),
+                    20.verticalSpace,
+                  ],
+                );
+              }),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: AppColors.primaryColor,
+          ),
+          20.verticalSpace,
+          Text(
+            'Loading appointments...',
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isPast) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.calendar_today,
+            size: 80.h,
+            color: Colors.grey.shade300,
+          ),
+          20.verticalSpace,
+          Text(
+            isPast ? 'No past appointments' : 'No upcoming appointments',
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey,
+            ),
+          ),
+          10.verticalSpace,
+          Text(
+            'You don\'t have any ${isPast ? 'past' : 'upcoming'} appointments',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey.shade500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          30.verticalSpace,
+          ElevatedButton(
+            onPressed: () => appointmentController.refreshAppointments(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+            ),
+            child: Text(
+              'Refresh',
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -140,43 +278,48 @@ class AppointmentScreen extends StatelessWidget {
 
   Widget _buildPagination() {
     return Obx(
-          () => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _paginationArrow(Icons.arrow_back, () {
-            if (appointmentController.currentPage.value > 1) {
-              appointmentController.currentPage.value--;
-            }
-          }),
-          15.horizontalSpace,
-          ...List.generate(appointmentController.totalPages, (index) {
-            int page = index + 1;
-            return GestureDetector(
-              onTap: () => appointmentController.currentPage.value = page,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text(
-                  "$page",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: AppFonts.jakartaMedium,
-                    fontWeight: FontWeight.w600,
-                    color: appointmentController.currentPage.value == page
-                        ? AppColors.primaryColor
-                        : Colors.grey,
+          () {
+        final totalPages = appointmentController.totalPages;
+        if (totalPages <= 1) return SizedBox(); // Don't show pagination if only 1 page
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _paginationArrow(Icons.arrow_back, () {
+              if (appointmentController.currentPage.value > 1) {
+                appointmentController.currentPage.value--;
+              }
+            }),
+            15.horizontalSpace,
+            ...List.generate(totalPages, (index) {
+              int page = index + 1;
+              return GestureDetector(
+                onTap: () => appointmentController.currentPage.value = page,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Text(
+                    "$page",
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontFamily: AppFonts.jakartaMedium,
+                      fontWeight: FontWeight.w600,
+                      color: appointmentController.currentPage.value == page
+                          ? AppColors.primaryColor
+                          : Colors.grey,
+                    ),
                   ),
                 ),
-              ),
-            );
-          }),
-          15.horizontalSpace,
-          _paginationArrow(Icons.arrow_forward, () {
-            if (appointmentController.currentPage.value < appointmentController.totalPages) {
-              appointmentController.currentPage.value++;
-            }
-          }),
-        ],
-      ),
+              );
+            }),
+            15.horizontalSpace,
+            _paginationArrow(Icons.arrow_forward, () {
+              if (appointmentController.currentPage.value < totalPages) {
+                appointmentController.currentPage.value++;
+              }
+            }),
+          ],
+        );
+      },
     );
   }
 

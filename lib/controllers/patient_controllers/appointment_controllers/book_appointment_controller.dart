@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +12,7 @@ class BookAppointmentController extends GetxController {
   RxString appointmentType = "inPerson".obs;
   final duration = '30 mint'.obs;
   TextEditingController addressController=TextEditingController();
+  TextEditingController notesController=TextEditingController();
   final fee = '\$156'.obs;
   final Rx<DateTime> selectedDate =   DateTime.now().obs;
   final selectedTime = ''.obs;
@@ -157,6 +161,14 @@ class BookAppointmentController extends GetxController {
         "consultationType": consultationType,
       };
 
+      if (consultationType == "homevisit") {
+        requestBody["visitAddress"] = addressController.text;
+      }
+
+      if (notesController.text.isNotEmpty) {
+        requestBody["notes"] = notesController.text;
+      }
+
       print('Creating appointment with data: $requestBody');
 
       final response = await _apiService.post(
@@ -168,10 +180,32 @@ class BookAppointmentController extends GetxController {
         print('Appointment created successfully: ${response.data}');
         return response.data;
       } else {
-        appointmentError.value = 'Failed to create appointment: ${response.statusCode} - ${response.data}';
+        final errorMessage = response.data?["message"] ?? 'Failed to create appointment';
+        appointmentError.value = 'Failed to create appointment: $errorMessage';
         print(appointmentError.value);
         return null;
       }
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.statusCode == 400) {
+        try {
+          final errorData = e.response!.data;
+          if (errorData is Map<String, dynamic>) {
+            final errorMessage = errorData["message"] ?? 'Bad request';
+            appointmentError.value = 'Failed to create appointment: $errorMessage';
+          } else if (errorData is String) {
+            final parsedError = jsonDecode(errorData);
+            appointmentError.value = 'Failed to create appointment: ${parsedError["message"]}';
+          } else {
+            appointmentError.value = 'Failed to create appointment: Bad request';
+          }
+        } catch (_) {
+          appointmentError.value = 'Failed to create appointment: Bad request';
+        }
+      } else {
+        appointmentError.value = 'Error creating appointment: ${e.message}';
+      }
+      print(appointmentError.value);
+      return null;
     } catch (e) {
       appointmentError.value = 'Error creating appointment: ${e.toString()}';
       print(appointmentError.value);

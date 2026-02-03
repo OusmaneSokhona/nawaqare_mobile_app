@@ -16,4 +16,5 @@ class ApiUrls {
   static String getDoctorsUrl="/api/doctor/doctors";
   static String getDoctorTimeSlots="/api/timeslots/get-timeslot/";
   static String createAppointment="/api/appointments/create-appointment";
+  static String getAppointmentsPatient="/api/appointments/patient-appointments";
 }

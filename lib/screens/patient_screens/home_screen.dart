@@ -192,21 +192,25 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        15.verticalSpace,
-                        AppointmentCard(
-                          title: AppStrings.ongoingAppointment.tr,
-                          imagePath: "assets/demo_images/doctor_2.png",
-                          name: "Dr. Maria Waston",
-                          type: AppStrings.heartSurgeon.tr,
-                          onTap: () {},
+                        Obx(()=> homeController.ongoingAppointment.value!=null? 15.verticalSpace:SizedBox()),
+                        Obx(
+        ()=> homeController.ongoingAppointment.value!=null?AppointmentCard(
+                            title: AppStrings.ongoingAppointment.tr,
+                            buttonText: AppStrings.join.tr,
+                            appointment: homeController.ongoingAppointment.value!,
+                            onTap: () {
+                            },
+                          ):SizedBox(),
                         ),
                         15.verticalSpace,
-                        AppointmentCard(
-                          title: AppStrings.upcomingAppointment.tr,
-                          imagePath: "assets/demo_images/doctor_1.png",
-                          name: "Dr. Daniel Lee",
-                          type: AppStrings.gastroenterologist.tr,
-                          onTap: () {},
+                        Obx(
+        ()=> homeController.upcomingAppointment.value!=null?AppointmentCard(
+                            title: AppStrings.upcomingAppointment.tr,
+                            buttonText: AppStrings.detail.tr,
+                            appointment: homeController.upcomingAppointment.value!,
+                            onTap: () {
+                            },
+                          ):SizedBox(),
                         ),
                         15.verticalSpace,
                         OrderTrackingCard(currentStep: 2),

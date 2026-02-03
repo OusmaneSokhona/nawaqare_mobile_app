@@ -6,14 +6,63 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
-import '../../../utils/app_strings.dart'; // Added import
-import '../../../widgets/patient_widgets/appointment_widgets/appintment_detail_widget.dart';
-import '../../../widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
-import '../../../widgets/patient_widgets/video_call_widgets/consultation_card_widget.dart';
+import '../../../utils/app_strings.dart';
+import '../../../widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 
 class PreviewScreen extends StatelessWidget {
-  final AppointmentModel appointmentModel;
-  const PreviewScreen({super.key, required this.appointmentModel});
+  final Appointment appointment;
+  const PreviewScreen({super.key, required this.appointment});
+
+  String _getFormattedDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final appointmentDay = DateTime(date.year, date.month, date.day);
+
+    if (appointmentDay == today) {
+      return "Today";
+    } else if (appointmentDay == today.add(Duration(days: 1))) {
+      return "Tomorrow";
+    } else {
+      final weekdayMap = {
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday',
+        7: 'Sunday',
+      };
+
+      final monthMap = {
+        1: 'January',
+        2: 'February',
+        3: 'March',
+        4: 'April',
+        5: 'May',
+        6: 'June',
+        7: 'July',
+        8: 'August',
+        9: 'September',
+        10: 'October',
+        11: 'November',
+        12: 'December',
+      };
+
+      final weekday = weekdayMap[date.weekday] ?? 'Day';
+      final month = monthMap[date.month] ?? 'Month';
+
+      return '$weekday, ${date.day} $month';
+    }
+  }
+
+  String _getFormattedTime(DateTime startTime, DateTime endTime) {
+    final startHour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
+    final startPeriod = startTime.hour < 12 ? 'AM' : 'PM';
+    final endHour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
+    final endPeriod = endTime.hour < 12 ? 'AM' : 'PM';
+
+    return '$startHour:${startTime.minute.toString().padLeft(2, '0')} $startPeriod - $endHour:${endTime.minute.toString().padLeft(2, '0')} $endPeriod';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +86,7 @@ class PreviewScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    AppStrings.preview.tr, // Localized
+                    AppStrings.preview.tr,
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 23.sp,
@@ -46,11 +95,9 @@ class PreviewScreen extends StatelessWidget {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Text(
-                      AppStrings.cancel.tr, // Localized
+                      AppStrings.cancel.tr,
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontSize: 17.sp,
@@ -78,51 +125,15 @@ class PreviewScreen extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Column(
                         children: [
-                          CardHeader(title: AppStrings.remoteConsultation.tr), // Localized
-                          ConsultationCardWidget(
-                            appointmentModel: appointmentModel,
-                          ),
+                          CardHeader(title: AppStrings.remoteConsultation.tr),
+                          _buildConsultationCard(),
                           10.verticalSpace,
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 16.w, vertical: 12.h),
-                            decoration: BoxDecoration(
-                              color: AppColors.orange.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(15.0),
-                              border: Border.all(
-                                color: AppColors.orange.withOpacity(0.3),
-                                width: 1,
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                const Icon(
-                                  Icons.error_outline,
-                                  color: AppColors.orange,
-                                  size: 24,
-                                ),
-                                const SizedBox(width: 12.0),
-                                Expanded(
-                                  child: Text(
-                                    AppStrings.encryptedCallNote.tr, // Localized
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF333333),
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          _buildEncryptedCallNote(),
                           30.verticalSpace,
                           CustomButton(
                             borderRadius: 15,
-                            text: AppStrings.launchVideo.tr, // Localized
-                            onTap: () {
-                              Get.to(VideoCallScreen());
-                            },
+                            text: AppStrings.launchVideo.tr,
+                            onTap: () => Get.to(VideoCallScreen()),
                           ),
                           30.verticalSpace,
                         ],
@@ -134,6 +145,161 @@ class PreviewScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildConsultationCard() {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _buildDoctorImage(),
+              15.horizontalSpace,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      appointment.doctor.fullName,
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: AppFonts.jakartaBold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    4.verticalSpace,
+                    Text(
+                      "General Practitioner",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFonts.jakartaMedium,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          15.verticalSpace,
+          Divider(thickness: 0.3, color: Colors.black45),
+          15.verticalSpace,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildDetailColumn(Icons.calendar_today_outlined, AppStrings.date.tr, _getFormattedDate(appointment.date)),
+              _buildDetailColumn(Icons.watch_later_outlined,"Time", _getFormattedTime(appointment.timeslot.startTime, appointment.timeslot.endTime)),
+              _buildDetailColumn(Icons.payment, AppStrings.fee.tr, "${appointment.fee} ${appointment.currency}"),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDoctorImage() {
+    if (appointment.doctor.profileImage != null && appointment.doctor.profileImage!.isNotEmpty) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: Image.network(
+          appointment.doctor.profileImage!,
+          height: 70.h,
+          width: 70.w,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _buildFallbackImage(),
+        ),
+      );
+    }
+    return _buildFallbackImage();
+  }
+
+  Widget _buildFallbackImage() {
+    return Container(
+      height: 70.h,
+      width: 70.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: AppColors.primaryColor.withOpacity(0.1),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.person,
+          size: 35.sp,
+          color: AppColors.primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDetailColumn(IconData icon, String title, String value) {
+    return Column(
+      children: [
+        Icon(icon, color: AppColors.primaryColor, size: 24.sp),
+        8.verticalSpace,
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
+        ),
+        4.verticalSpace,
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEncryptedCallNote() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.orange.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(15.r),
+        border: Border.all(
+          color: AppColors.orange.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error_outline, color: AppColors.orange, size: 24.sp),
+          12.horizontalSpace,
+          Expanded(
+            child: Text(
+              AppStrings.encryptedCallNote.tr,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Color(0xFF333333),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

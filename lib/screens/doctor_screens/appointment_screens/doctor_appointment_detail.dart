@@ -174,9 +174,9 @@ class DoctorAppointmentDetail extends StatelessWidget {
                           borderRadius: 15,
                           text: AppStrings.joinConsultation.tr,
                           onTap: () {
-                            Get.to(
-                              PreviewScreen(appointmentModel: appointmentModel),
-                            );
+                            // Get.to(
+                            //   // PreviewScreen(appointment: appointmentModel),
+                            // );
                           },
                         )
                             : CustomButton(

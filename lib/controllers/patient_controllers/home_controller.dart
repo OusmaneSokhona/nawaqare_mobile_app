@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/api_urls.dart';
 import 'package:patient_app/utils/locat_storage.dart';
+import '../../models/appointment_model.dart';
 import '../../models/user_model.dart';
 import '../../services/api_service.dart';
+import '../../utils/app_strings.dart';
 
 class HomeController extends GetxController {
   ScrollController scrollController = ScrollController();
@@ -11,12 +15,80 @@ class HomeController extends GetxController {
   ApiService apiService = ApiService();
   Rx<UserModel?> currentUser = Rx<UserModel?>(null);
   RxBool isLoading = true.obs;
+  RxList<Appointment> allAppointments = <Appointment>[].obs;
+  Rx<AppointmentResponse?> appointmentResponse = Rx<AppointmentResponse?>(null);
+  Rx<Appointment?> ongoingAppointment = Rx<Appointment?>(null);
+  Rx<Appointment?> upcomingAppointment = Rx<Appointment?>(null);
 
+  Future<void> fetchAppointments() async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiService().get(ApiUrls.getAppointmentsPatient);
+
+      if (response.statusCode == 200) {
+        final jsonResponse = response.data is String
+            ? json.decode(response.data)
+            : response.data;
+
+        appointmentResponse.value = AppointmentResponse.fromJson(jsonResponse);
+        final List<Appointment> appointments = appointmentResponse.value?.appointments ?? [];
+        allAppointments.value = appointments;
+
+        // Reset states
+        ongoingAppointment.value = null;
+        upcomingAppointment.value = null;
+
+        if (appointments.isNotEmpty) {
+          final now = DateTime.now();
+
+          // 1. Find Ongoing: The first one where 'now' is between start and end
+          try {
+            ongoingAppointment.value = appointments.firstWhere((appointment) {
+              final startTime = appointment.timeslot.startTime;
+              final endTime = appointment.timeslot.endTime;
+              final isActive = appointment.status == AppointmentStatus.confirmed ||
+                  appointment.status == AppointmentStatus.pending;
+
+              return isActive && now.isAfter(startTime) && now.isBefore(endTime);
+            });
+          } catch (_) {
+            ongoingAppointment.value = null; // No ongoing found
+          }
+
+          // 2. Find Upcoming: Filter for future appointments, then find the one with the earliest start time
+          List<Appointment> futureAppointments = appointments.where((appointment) {
+            final startTime = appointment.timeslot.startTime;
+            final isActive = appointment.status == AppointmentStatus.confirmed ||
+                appointment.status == AppointmentStatus.pending;
+
+            return isActive && startTime.isAfter(now);
+          }).toList();
+
+          if (futureAppointments.isNotEmpty) {
+            // Sort by start time to get the absolute next one
+            futureAppointments.sort((a, b) =>
+                a.timeslot.startTime.compareTo(b.timeslot.startTime));
+
+            upcomingAppointment.value = futureAppointments.first;
+          }
+        }
+      } else {
+        throw Exception('Failed to load appointments: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching appointments: $e');
+      Get.snackbar(AppStrings.warning.tr, 'Failed to fetch appointments: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
   @override
   void onInit() {
     super.onInit();
     scrollChange();
     loadUserData();
+    fetchAppointments();
   }
 
   void scrollChange() {

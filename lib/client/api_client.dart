@@ -16,6 +16,7 @@ class ApiClient {
 
   ApiClient._internal() {
     BaseOptions options = BaseOptions(
+      receiveDataWhenStatusError: true,
       baseUrl: ApiUrls.baseUrl,
       connectTimeout: const Duration(seconds: 30),
       receiveTimeout: const Duration(seconds: 60),

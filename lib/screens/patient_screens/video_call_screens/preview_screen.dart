@@ -1,12 +1,14 @@
+import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/screens/patient_screens/video_call_screens/video_call_screen.dart';
+import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-import '../../../models/appointment_model.dart';
-import '../../../utils/app_colors.dart';
-import '../../../utils/app_fonts.dart';
-import '../../../utils/app_strings.dart';
+import '../../../controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import '../../../widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 
 class PreviewScreen extends StatelessWidget {
@@ -17,10 +19,9 @@ class PreviewScreen extends StatelessWidget {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final appointmentDay = DateTime(date.year, date.month, date.day);
-
     if (appointmentDay == today) {
       return "Today";
-    } else if (appointmentDay == today.add(Duration(days: 1))) {
+    } else if (appointmentDay == today.add(const Duration(days: 1))) {
       return "Tomorrow";
     } else {
       final weekdayMap = {
@@ -32,7 +33,6 @@ class PreviewScreen extends StatelessWidget {
         6: 'Saturday',
         7: 'Sunday',
       };
-
       final monthMap = {
         1: 'January',
         2: 'February',
@@ -47,10 +47,8 @@ class PreviewScreen extends StatelessWidget {
         11: 'November',
         12: 'December',
       };
-
       final weekday = weekdayMap[date.weekday] ?? 'Day';
       final month = monthMap[date.month] ?? 'Month';
-
       return '$weekday, ${date.day} $month';
     }
   }
@@ -60,12 +58,13 @@ class PreviewScreen extends StatelessWidget {
     final startPeriod = startTime.hour < 12 ? 'AM' : 'PM';
     final endHour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
     final endPeriod = endTime.hour < 12 ? 'AM' : 'PM';
-
     return '$startHour:${startTime.minute.toString().padLeft(2, '0')} $startPeriod - $endHour:${endTime.minute.toString().padLeft(2, '0')} $endPeriod';
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(VideoCallController());
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -114,11 +113,83 @@ class PreviewScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     20.verticalSpace,
-                    Image.asset(
-                      "assets/demo_images/demo_video_image.png",
+                    SizedBox(
                       height: 300.h,
                       width: 1.sw,
-                      fit: BoxFit.fill,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Obx(() {
+                            if (controller.isCameraInitialized.value && !controller.cameraOff.value) {
+                              return CameraAwesomeBuilder.awesome(
+                                saveConfig: SaveConfig.photoAndVideo(
+                                  // photoPathBuilder: (sensors) => CaptureRequest(
+                                  //   filePath: '/storage/emulated/0/DCIM/CamerAwesome/photo_${DateTime.now().millisecondsSinceEpoch}.jpg',
+                                  // ),
+                                  // videoPathBuilder: (sensors) => CaptureRequest(
+                                  //   filePath: '/storage/emulated/0/DCIM/CamerAwesome/video_${DateTime.now().millisecondsSinceEpoch}.mp4',
+                                  // ),
+                                ),
+                                sensorConfig: SensorConfig.single(
+                                  aspectRatio: CameraAspectRatios.ratio_16_9,
+                                  flashMode: controller.flashMode.value,
+                                ),
+                                previewFit: CameraPreviewFit.fitWidth,
+                              );
+                            } else if (controller.cameraOff.value) {
+                              return Container(
+                                color: Colors.black,
+                                child: Center(
+                                  child: Icon(Icons.videocam_off, color: Colors.white, size: 50.sp),
+                                ),
+                              );
+                            }
+                            return const Center(child: CircularProgressIndicator());
+                          }),
+                          Positioned(
+                            bottom: 12.h,
+                            right: 12.w,
+                            child: GestureDetector(
+                              onTap: controller.switchCamera,
+                              child: Container(
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.black54,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Icon(
+                                  Icons.cameraswitch,
+                                  color: Colors.white,
+                                  size: 28.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 12.h,
+                            left: 0,
+                            right: 0,
+                            child: Obx(
+                                  () => Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _ControlButton(
+                                    icon: controller.micMuted.value ? Icons.mic_off : Icons.mic,
+                                    color: controller.micMuted.value ? Colors.red : AppColors.primaryColor,
+                                    onTap: controller.toggleMic,
+                                  ),
+                                  24.horizontalSpace,
+                                  _ControlButton(
+                                    icon: controller.cameraOff.value ? Icons.videocam_off : Icons.videocam,
+                                    color: controller.cameraOff.value ? Colors.red : AppColors.primaryColor,
+                                    onTap: controller.toggleCamera,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     30.verticalSpace,
                     Padding(
@@ -129,11 +200,23 @@ class PreviewScreen extends StatelessWidget {
                           _buildConsultationCard(),
                           10.verticalSpace,
                           _buildEncryptedCallNote(),
-                          30.verticalSpace,
+                          20.verticalSpace,
                           CustomButton(
                             borderRadius: 15,
                             text: AppStrings.launchVideo.tr,
-                            onTap: () => Get.to(VideoCallScreen()),
+                            onTap: () async {
+                              controller.initAgora();
+                              await Future.delayed(const Duration(seconds: 1));
+                              if (controller.isJoined.value) {
+                                Get.to(() => VideoCallScreen());
+                                return;
+                              }
+                              if (controller.engine != null) {
+                                Get.to(() => VideoCallScreen());
+                              } else {
+                                Get.snackbar('Error', 'Engine not initialized');
+                              }
+                            },
                           ),
                           30.verticalSpace,
                         ],
@@ -159,7 +242,7 @@ class PreviewScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.black12,
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -203,9 +286,15 @@ class PreviewScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDetailColumn(Icons.calendar_today_outlined, AppStrings.date.tr, _getFormattedDate(appointment.date)),
-              _buildDetailColumn(Icons.watch_later_outlined,"Time", _getFormattedTime(appointment.timeslot.startTime, appointment.timeslot.endTime)),
-              _buildDetailColumn(Icons.payment, AppStrings.fee.tr, "${appointment.fee} ${appointment.currency}"),
+              _buildDetailColumn(Icons.calendar_today_outlined,
+                  AppStrings.date.tr, _getFormattedDate(appointment.date)),
+              _buildDetailColumn(
+                  Icons.watch_later_outlined,
+                  "Time",
+                  _getFormattedTime(
+                      appointment.timeslot.startTime, appointment.timeslot.endTime)),
+              _buildDetailColumn(Icons.payment, AppStrings.fee.tr,
+                  "${appointment.fee} ${appointment.currency}"),
             ],
           ),
         ],
@@ -214,7 +303,8 @@ class PreviewScreen extends StatelessWidget {
   }
 
   Widget _buildDoctorImage() {
-    if (appointment.doctor.profileImage != null && appointment.doctor.profileImage!.isNotEmpty) {
+    if (appointment.doctor.profileImage != null &&
+        appointment.doctor.profileImage!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: Image.network(
@@ -294,12 +384,46 @@ class PreviewScreen extends StatelessWidget {
               AppStrings.encryptedCallNote.tr,
               style: TextStyle(
                 fontSize: 14.sp,
-                color: Color(0xFF333333),
+                color: const Color(0xFF333333),
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ControlButton extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _ControlButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Icon(icon, color: color, size: 32.sp),
       ),
     );
   }

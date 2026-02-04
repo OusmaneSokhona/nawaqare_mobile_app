@@ -175,20 +175,23 @@ class SignInController extends GetxController {
           }
         } catch (e) {
           String errorMessage = "An unexpected error occurred";
-          print("Error during sign-in: $e");
+
           if (e is DioException) {
-            if (e.response != null && e.response!.data != null) {
-              errorMessage = e.response!.data["message"] ?? "Server Error";
+            if (e.response != null) {
+              // If data is null, use the status code to determine the message
+              if (e.response?.data != null && e.response?.data is Map) {
+                errorMessage = e.response?.data["message"] ?? "Error occurred";
+              } else if (e.response?.statusCode == 401) {
+                errorMessage = "Invalid credentials"; // Hardcoded fallback for 401
+              } else {
+                errorMessage = "Server error: ${e.response?.statusCode}";
+              }
             } else {
-              errorMessage = "No response from server";
+              errorMessage = "Check your internet connection";
             }
           }
-          Get.snackbar(
-            "Error",
-            errorMessage,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
+
+          Get.snackbar("Error", errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
         } finally {
           isLoading.value = false;
         }

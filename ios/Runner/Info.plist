@@ -32,6 +32,14 @@
 	<string>This app needs camera access to take a new profile picture.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need access to your photo library to select images for upload.</string>
+	<key>NSCameraUsageDescription</key>
+    <string>We need access to your camera to allow you to have video preview and consultations with your doctor.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>We need access to your microphone so your doctor can hear you during the video call.</string>
+    <key>io.agora.rtc.video.NSCameraUsageDescription</key>
+    <string>Agora Video needs camera access</string>
+    <key>io.agora.rtc.audio.NSMicrophoneUsageDescription</key>
+    <string>Agora Audio needs microphone access</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

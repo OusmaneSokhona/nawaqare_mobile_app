@@ -10,24 +10,48 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/doctor_health
 import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_completion_loading.dart';
 import '../../patient_widgets/profile_widgets/info_row.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
+import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
+import '../../patient_widgets/profile_widgets/info_row.dart';
+
 class DoctorProfessionalInfo extends StatelessWidget {
   DoctorProfessionalInfo({super.key});
   final DoctorProfileController controller = Get.find();
+  final DoctorHomeController homeController = Get.find<DoctorHomeController>();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    return Obx(() {
+      final doctor = homeController.currentUser.value;
+      final doctorImage = doctor?.profileImage;
+      final doctorName = doctor?.fullName ?? 'Abc';
+      final doctorTitle = 'Dr. ${doctor?.fullName ?? 'Abc'}';
+      final doctorEmail = doctor?.email ?? 'abc@gmail.com';
+      final doctorPhone = doctor?.phoneNumber ?? '+1 234 567 890';
+      final doctorAddress = doctor?.clinicAddress ?? '32 Example St';
+      final doctorExperience = doctor?.experience?.toString() ?? '';
+      final doctorSpecialization = doctor?.medicalSpecialty! ?? '';
+      final doctorCountry = doctor?.country ?? '';
+      final doctorQualifications = doctor?.certification ?? '';
+      final doctorConsultationFee = doctor?.fee?.toString() ?? '0';
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100.w,
-                height: 100.h,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.h,
+              backgroundColor: Colors.white,
+              backgroundImage: doctorImage != null && doctorImage.isNotEmpty
+                  ? NetworkImage(doctorImage)
+                  : const AssetImage("assets/demo_images/home_demo_image.png")
+              as ImageProvider,
             ),
           ),
           const SizedBox(height: 10),
@@ -36,24 +60,24 @@ class DoctorProfessionalInfo extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  controller.user.value.title,
-                  style: const TextStyle(
-                    fontSize: 20,
+                  doctorTitle,
+                  style: TextStyle(
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
-                    fontFamily: AppFonts.jakartaBold
+                    color: const Color(0xFF1F2937),
+                    fontFamily: AppFonts.jakartaBold,
                   ),
                 ),
                 5.horizontalSpace,
-                Image.asset("assets/images/verified_tick_icon.png",height: 21.sp,),
+                Image.asset("assets/images/verified_tick_icon.png", height: 21.sp),
               ],
             ),
           ),
           Center(
             child: Text(
-              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: 12/Sep/2025',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: Colors.grey.shade500,
               ),
             ),
@@ -62,9 +86,7 @@ class DoctorProfessionalInfo extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 88.w),
             child: ElevatedButton(
-              onPressed: () {
-                controller.editProfessionalInfo();
-              },
+              onPressed: controller.editProfessionalInfo,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
@@ -116,21 +138,21 @@ class DoctorProfessionalInfo extends StatelessWidget {
                 ),
                 InfoRow(
                   label: AppStrings.medicalSpecialty.tr,
-                  value: AppStrings.cardiology.tr,
+                  value: doctorSpecialization,
                 ),
                 InfoRow(
                   label: AppStrings.placeOfPractice.tr,
-                  value: "Allied Hospital, Faisalabad",
+                  value: doctorAddress,
                   labelTextSize: 15,
                   valueTextSize: 12,
                 ),
                 InfoRow(
                   label: AppStrings.experience.tr,
-                  value: "7 ${AppStrings.years.tr}",
+                  value: "$doctorExperience ${AppStrings.years.tr}",
                 ),
-                InfoRow(label: AppStrings.year.tr, value: '5'),
+                InfoRow(label: AppStrings.year.tr, value: doctorExperience),
                 InfoRow(label: AppStrings.nationality.tr, value: AppStrings.pakistani.tr),
-                InfoRow(label: AppStrings.country.tr, value: AppStrings.pakistan.tr),
+                InfoRow(label: AppStrings.country.tr, value: doctorCountry),
                 InfoRow(
                   label: AppStrings.language.tr,
                   value: AppStrings.english.tr,
@@ -159,7 +181,7 @@ class DoctorProfessionalInfo extends StatelessWidget {
           DoctorHealthSpaceGrid(profileController: controller),
           const SizedBox(height: 20),
         ],
-      ),
-    );
+      );
+    });
   }
 }

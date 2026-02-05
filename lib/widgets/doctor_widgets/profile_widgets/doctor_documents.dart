@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
@@ -11,23 +12,27 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_compl
 
 class DoctorDocuments extends StatelessWidget {
   DoctorDocuments({super.key});
-
   final DoctorProfileController controller = Get.find();
+  final DoctorHomeController homeController = Get.find<DoctorHomeController>();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    return Obx(() {
+      final doctor = homeController.currentUser.value;
+      final doctorImage = doctor?.profileImage;
+      final doctorTitle = 'Dr. ${doctor?.fullName ?? 'Daniel Lee'}';
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100.w,
-                height: 100.h,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.h,
+              backgroundColor: Colors.white,
+              backgroundImage: doctorImage != null && doctorImage.isNotEmpty
+                  ? NetworkImage(doctorImage)
+                  : const AssetImage("assets/demo_images/home_demo_image.png")
+              as ImageProvider,
             ),
           ),
           const SizedBox(height: 10),
@@ -36,42 +41,35 @@ class DoctorDocuments extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  controller.user.value.title,
-                  style:  TextStyle(
-                    fontSize: 20,
+                  doctorTitle,
+                  style: TextStyle(
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
-                    fontFamily: AppFonts.jakartaBold
+                    color: const Color(0xFF1F2937),
+                    fontFamily: AppFonts.jakartaBold,
                   ),
                 ),
                 5.horizontalSpace,
-                Image.asset("assets/images/verified_tick_icon.png",height: 21.sp,),
+                Image.asset("assets/images/verified_tick_icon.png", height: 21.sp),
               ],
             ),
           ),
           Center(
             child: Text(
-              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              '${AppStrings.lastUpdate.tr}: 12/Sep/2025',
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
             ),
           ),
           const SizedBox(height: 10),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 52.w),
             child: ElevatedButton(
-              onPressed: (){
-                controller.editDocumentsInfo();
-              },
+              onPressed: controller.editDocumentsInfo,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
               child: Text(
                 AppStrings.reuploadExpiredDocument.tr,
@@ -129,23 +127,16 @@ class DoctorDocuments extends StatelessWidget {
                 ),
                 7.verticalSpace,
                 Container(
-                  padding:  EdgeInsets.symmetric(horizontal: 8.w,vertical: 8.h),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
                   decoration: BoxDecoration(
                     color: AppColors.orange.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(15.0),
-                    border: Border.all(
-                      color: AppColors.orange.withOpacity(0.3),
-                      width: 1,
-                    ),
+                    border: Border.all(color: AppColors.orange.withOpacity(0.3), width: 1),
                   ),
-                  child:  Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      const Icon(
-                        Icons.error_outline,
-                        color: AppColors.orange,
-                        size: 24,
-                      ),
+                      const Icon(Icons.error_outline, color: AppColors.orange, size: 24),
                       const SizedBox(width: 12.0),
                       Expanded(
                         child: Text(
@@ -166,17 +157,13 @@ class DoctorDocuments extends StatelessWidget {
           const SizedBox(height: 30),
           Text(
             AppStrings.actions.tr,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
           ),
           SizedBox(height: 10.h),
           DoctorHealthSpaceGrid(profileController: controller),
           const SizedBox(height: 20),
         ],
-      ),
-    );
+      );
+    });
   }
 }

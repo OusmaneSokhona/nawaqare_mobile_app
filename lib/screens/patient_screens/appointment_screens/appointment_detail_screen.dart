@@ -21,7 +21,7 @@ class AppointmentDetailScreen extends StatelessWidget {
     this.isCompleted = false,
   });
 
-  final AppointmentController appointmentController = Get.find<AppointmentController>();
+  final AppointmentController appointmentController = Get.put(AppointmentController());
 
   @override
   Widget build(BuildContext context) {

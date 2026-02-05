@@ -6,16 +6,17 @@ import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/appointment_model.dart';
+import '../../../models/doctor_appointment_model.dart';
 
-class AppointmentCard extends StatelessWidget {
-  final Appointment appointment;
+class DoctorAppointmentCard extends StatelessWidget {
+  final DoctorAppointment appointment;
   final String title;
   final bool showGreenDot;
   final bool showRating;
   final Function? onTap;
   final String buttonText;
 
-  const AppointmentCard({
+  const DoctorAppointmentCard({
     super.key,
     required this.appointment,
     required this.title,
@@ -31,7 +32,7 @@ class AppointmentCard extends StatelessWidget {
     final formattedDate = _formatDate(appointment.date);
     final timeRange = '${_formatTime(appointment.timeslot.startTime)}-${_formatTime(appointment.timeslot.endTime)}';
     final consultationTypeIcon = _getConsultationTypeIcon(appointment.consultationType);
-    final consultationTypeText = appointment.consultationType.displayName;
+    final consultationTypeText = appointment.consultationType;
 
     return Column(
       children: [
@@ -77,7 +78,7 @@ class AppointmentCard extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.network(
-                            appointment.doctor.profileImage ?? '',
+                            appointment.patientId.profileImage ?? '',
                             height: isWeb ? 50 : 90,
                             width: isWeb ? 50 : 90,
                             fit: BoxFit.cover,
@@ -111,7 +112,7 @@ class AppointmentCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            appointment.doctor.fullName,
+                            appointment.patientId.fullName,
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -120,7 +121,7 @@ class AppointmentCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            appointment.doctor.email ?? appointment.doctor.email,
+                            appointment.patientId.email ,
                             style: const TextStyle(
                               fontSize: 14,
                               color: Color(0xFF6B7280),
@@ -191,20 +192,20 @@ class AppointmentCard extends StatelessWidget {
 
   // --- Helper Methods ---
 
-  String _getConsultationTypeIcon(ConsultationType type) {
+  String _getConsultationTypeIcon(String type) {
     switch (type) {
-      case ConsultationType.remote: return "assets/images/call_icon.png";
-      case ConsultationType.homevisit: return "assets/images/home_icon.png";
-      case ConsultationType.inperson: return "assets/images/in_person_icon.png";
+      case "remote": return "assets/images/call_icon.png";
+      case "homevisit": return "assets/images/home_icon.png";
+      case "inperson": return "assets/images/in_person_icon.png";
       default: return "assets/images/call_icon.png";
     }
   }
 
-  Color _getStatusColor(AppointmentStatus status) {
+  Color _getStatusColor(String status) {
     switch (status) {
-      case AppointmentStatus.pending: return Colors.orange;
-      case AppointmentStatus.confirmed: return Colors.green;
-      case AppointmentStatus.cancelled: return Colors.red;
+      case "pending": return Colors.orange;
+      case "confirmed": return Colors.green;
+      case "cancelled": return Colors.red;
       default: return Colors.green;
     }
   }

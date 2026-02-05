@@ -1,167 +1,361 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../models/appointment_model.dart';
+import 'dart:convert';
+import '../../models/doctor_appointment_model.dart';
+import '../../services/api_service.dart';
+import '../../utils/api_urls.dart';
+import '../../utils/app_strings.dart';
 
 class DoctorAppointmentController extends GetxController {
+  RxBool isLoading = false.obs;
   final selectedDateIndex = 2.obs;
+  RxString appointmentType = "upcoming".obs;
+  RxInt currentPage = 1.obs;
+  final int itemsPerPage = 4;
+  RxList<DoctorAppointment> allAppointments = <DoctorAppointment>[].obs;
+  RxList<DoctorAppointment> upcomingAppointments = <DoctorAppointment>[].obs;
+  RxList<DoctorAppointment> pastAppointments = <DoctorAppointment>[].obs;
+  RxList<DoctorAppointment> currentList = <DoctorAppointment>[].obs;
+  RxList<DoctorAppointment> filteredList = <DoctorAppointment>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchDoctorAppointments();
+    ever(appointmentType, (_) {
+      currentPage.value = 1;
+      _updateCurrentList();
+    });
+  }
+
+  Future<void> fetchDoctorAppointments() async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiService().get(
+        ApiUrls.getAppointmentsDoctor,
+      );
+
+      if (response.statusCode == 200) {
+        print("Doctor Appointments response = ${response.data}");
+        final jsonResponse = response.data is String
+            ? json.decode(response.data)
+            : response.data;
+
+        print("Parsed response keys: ${jsonResponse.keys}");
+
+        if (jsonResponse.containsKey('appointements') || jsonResponse.containsKey('appointments')) {
+          List<dynamic> appointmentsJson = jsonResponse['appointements'] ?? jsonResponse['appointments'] ?? [];
+
+          print("Found ${appointmentsJson.length} appointments");
+
+          List<DoctorAppointment> appointments = [];
+
+          for (var json in appointmentsJson) {
+            try {
+              final appointment = DoctorAppointment.fromJson(json);
+              appointments.add(appointment);
+            } catch (e) {
+              print('Error parsing appointment: $e, JSON: $json');
+            }
+          }
+
+          allAppointments.value = appointments;
+
+          DateTime now = DateTime.now();
+
+          upcomingAppointments.value = appointments
+              .where((appointment) {
+            try {
+              final date = appointment.date is String
+                  ? DateTime.parse(appointment.date.toString())
+                  : DateTime.tryParse(appointment.date.toString());
+              return date != null && date.isAfter(now);
+            } catch (e) {
+              print('Error parsing date for upcoming: ${appointment.date}, error: $e');
+              return false;
+            }
+          })
+              .toList();
+
+          pastAppointments.value = appointments
+              .where((appointment) {
+            try {
+              final date = appointment.date is String
+                  ? DateTime.parse(appointment.date.toString())
+                  : DateTime.tryParse(appointment.date.toString());
+              return date != null && date.isBefore(now);
+            } catch (e) {
+              print('Error parsing date for past: ${appointment.date}, error: $e');
+              return false;
+            }
+          })
+              .toList();
+
+          print('Total appointments: ${appointments.length}');
+          print('Upcoming: ${upcomingAppointments.length}');
+          print('Past: ${pastAppointments.length}');
+
+          _updateCurrentList();
+
+          Get.snackbar(
+            "Success",
+            '${jsonResponse['message'] ?? 'Appointments fetched successfully'}',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: Duration(seconds: 2),
+          );
+        } else {
+          print('No appointments found in response');
+          allAppointments.value = [];
+          upcomingAppointments.value = [];
+          pastAppointments.value = [];
+          _updateCurrentList();
+
+          Get.snackbar(
+            "Info",
+            'No appointments found',
+            snackPosition: SnackPosition.BOTTOM,
+            duration: Duration(seconds: 2),
+          );
+        }
+      } else {
+        throw Exception('Failed to load appointments. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching appointments: $e');
+      Get.snackbar(
+        AppStrings.warning.tr,
+        'Failed to fetch appointments: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _updateCurrentList() {
+    currentList.value = appointmentType.value == "past"
+        ? pastAppointments
+        : upcomingAppointments;
+    filteredList.value = currentList;
+    update();
+  }
+
+  void searchPatients(String query) {
+    if (query.isEmpty) {
+      filteredList.value = currentList;
+    } else {
+      filteredList.value = currentList.where((appointment) {
+        return appointment.patientId.fullName.toLowerCase().contains(query.toLowerCase()) ||
+            appointment.patientId.email.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+    currentPage.value = 1;
+  }
+
+  void searchUpcomingPatients(String query) {
+    if (query.isEmpty) {
+      filteredList.value = upcomingAppointments;
+    } else {
+      filteredList.value = upcomingAppointments.where((appointment) {
+        return appointment.patientId.fullName.toLowerCase().contains(query.toLowerCase()) ||
+            appointment.patientId.email.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+    currentPage.value = 1;
+  }
+
+  List<DoctorAppointment> get paginatedList {
+    final sortedList = filteredList.toList()
+      ..sort((a, b) => DateTime.parse(a.date.toString()).compareTo(DateTime.parse(b.date.toString())));
+
+    int start = (currentPage.value - 1) * itemsPerPage;
+    if (start >= sortedList.length) return [];
+
+    int end = start + itemsPerPage;
+    end = end > sortedList.length ? sortedList.length : end;
+
+    return sortedList.sublist(start, end);
+  }
+
+  int get totalPages {
+    if (filteredList.isEmpty) return 1;
+    return (filteredList.length / itemsPerPage).ceil();
+  }
+
+  int get totalCount => currentList.length;
+
+  Future<void> refreshAppointments() async {
+    await fetchDoctorAppointments();
+  }
+
+  void showFilterBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Filter",
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Get.back(),
+                  icon: Icon(Icons.close),
+                ),
+              ],
+            ),
+            20.verticalSpace,
+            Obx(() => Column(
+              children: [
+                _buildFilterOption(
+                  AppStrings.consultationType.tr,
+                  selectedConsultationType,
+                  consultationTypes,
+                      (value) => updateConsultationType(value),
+                ),
+                20.verticalSpace,
+                _buildFilterOption(
+                  AppStrings.status.tr,
+                  selectedStatus,
+                  statuses,
+                      (value) => updateStatus(value),
+                ),
+                20.verticalSpace,
+                _buildFilterOption(
+                  AppStrings.period.tr,
+                  selectedPeriod,
+                  periods,
+                      (value) => updatePeriod(value),
+                ),
+              ],
+            )),
+            30.verticalSpace,
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: resetFilters,
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.reset.tr,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+                10.horizontalSpace,
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: applyFilters,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(vertical: 15.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                    ),
+                    child: Text(
+                      AppStrings.apply.tr,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterOption(String title, String currentValue, List<String> options, Function(String?) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        10.verticalSpace,
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: currentValue,
+              isExpanded: true,
+              icon: Icon(Icons.arrow_drop_down),
+              items: options.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   void selectDate(int index) {
     selectedDateIndex.value = index;
   }
 
-  RxString appointmentType = "upcoming".obs;
-  RxInt currentPage = 1.obs;
-  final int itemsPerPage = 4;
-
-  List<AppointmentModel> patientList = [
-    AppointmentModel(
-      name: "Mr. Daniel Lee",
-      specialty: "Cardiologist",
-      consultationType: "Remote Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Follow Up",
-      imageUrl: "assets/demo_images/patient_1.png",
-    ),
-    AppointmentModel(
-      name: "Mr. Daniel Lee",
-      specialty: "Cardiologist",
-      consultationType: "Remote Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Follow Up",
-      imageUrl: "assets/demo_images/patient_1.png",
-    ),
-    AppointmentModel(
-      name: "Mr. Daniel Lee",
-      specialty: "Cardiologist",
-      consultationType: "Remote Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Follow Up",
-      imageUrl: "assets/demo_images/patient_1.png",
-    ),
-    AppointmentModel(
-      name: "Mrs. Jessica Turner",
-      specialty: "Gynecologist",
-      consultationType: "Remote Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Renewal",
-      imageUrl: "assets/demo_images/patient_3.png",
-    ),
-    AppointmentModel(
-      name: "Mr. Michael Johnson",
-      specialty: "Orthopedic Surgery",
-      consultationType: "In person Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Exam Review",
-      imageUrl: "assets/demo_images/patient_2.png",
-    ),
-    AppointmentModel(
-      name: "Mrs. Jessica Turner",
-      specialty: "Orthopedic Surgery",
-      consultationType: "In person Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Initial",
-      imageUrl: "assets/demo_images/patient_3.png",
-    ),
-  ];
-
-  List<AppointmentModel> postPatientList = [
-    AppointmentModel(
-      name: "Mr. Daniel Lee",
-      specialty: "Cardiologist",
-      consultationType: "Remote Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Completed",
-      imageUrl: "assets/demo_images/patient_1.png",
-    ),
-    AppointmentModel(
-      name: "Mrs. Jessica Turner",
-      specialty: "Gynecologist",
-      consultationType: "Remote Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Cancelled",
-      imageUrl: "assets/demo_images/patient_3.png",
-    ),
-    AppointmentModel(
-      name: "Mr. Michael Johnson",
-      specialty: "Orthopedic Surgery",
-      consultationType: "In person Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Exam Review",
-      imageUrl: "assets/demo_images/patient_2.png",
-    ),
-    AppointmentModel(
-      name: "Mrs. Jessica Turner",
-      specialty: "Orthopedic Surgery",
-      consultationType: "In person Consultation",
-      rating: 5.0,
-      fee: 10,
-      date: "Sunday, 12 June",
-      time: "11:00-12:00 AM",
-      status: "Cancelled",
-      imageUrl: "assets/demo_images/patient_3.png",
-    ),
-  ];
-
-  List<AppointmentModel> get paginatedList {
-    List<AppointmentModel> currentList =
-    appointmentType.value == "upcoming" ? patientList : postPatientList;
-    int start = (currentPage.value - 1) * itemsPerPage;
-    int end = start + itemsPerPage;
-    if (start >= currentList.length) return [];
-    return currentList.sublist(
-        start, end > currentList.length ? currentList.length : end);
-  }
-
-  int get totalPages {
-    List<AppointmentModel> currentList =
-    appointmentType.value == "upcoming" ? patientList : postPatientList;
-    return (currentList.length / itemsPerPage).ceil();
-  }
-
   final List<String> consultationTypes = [
+    'All',
     'Follow Up',
     'Initial Consultation',
     'Review'
   ];
-  final List<String> statuses = ['Confirmed', 'Pending', 'Cancelled'];
+  final List<String> statuses = ['All', 'Confirmed', 'Pending', 'Cancelled'];
   final List<String> periods = [
+    'All',
     'This week',
     'Last week',
     'This month',
-    'All time'
+    'Last month'
   ];
 
-  final RxString _selectedConsultationType = 'Follow Up'.obs;
-  final RxString _selectedStatus = 'Confirmed'.obs;
-  final RxString _selectedPeriod = 'This week'.obs;
+  final RxString _selectedConsultationType = 'All'.obs;
+  final RxString _selectedStatus = 'All'.obs;
+  final RxString _selectedPeriod = 'All'.obs;
 
   String get selectedConsultationType => _selectedConsultationType.value;
   String get selectedStatus => _selectedStatus.value;
@@ -186,18 +380,77 @@ class DoctorAppointmentController extends GetxController {
   }
 
   void resetFilters() {
-    _selectedConsultationType.value = consultationTypes.first;
-    _selectedStatus.value = statuses.first;
-    _selectedPeriod.value = periods.first;
-  }
-
-  void applyFilters() {
+    _selectedConsultationType.value = 'All';
+    _selectedStatus.value = 'All';
+    _selectedPeriod.value = 'All';
+    filteredList.value = currentList;
     Get.back();
   }
 
-  RxString notesText =
-      "Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene"
-          .obs;
+  void applyFilters() {
+    List<DoctorAppointment> filtered = currentList;
+
+    if (_selectedConsultationType.value != 'All') {
+      filtered = filtered.where((appointment) =>
+      appointment.consultationType == _selectedConsultationType.value).toList();
+    }
+
+    if (_selectedStatus.value != 'All') {
+      filtered = filtered.where((appointment) =>
+      appointment.status == _selectedStatus.value).toList();
+    }
+
+    if (_selectedPeriod.value != 'All') {
+      filtered = _filterByPeriod(filtered, _selectedPeriod.value);
+    }
+
+    filteredList.value = filtered;
+    currentPage.value = 1;
+    Get.back();
+  }
+
+  List<DoctorAppointment> _filterByPeriod(List<DoctorAppointment> appointments, String period) {
+    DateTime now = DateTime.now();
+
+    switch (period) {
+      case 'This week':
+        DateTime startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        return appointments.where((app) {
+          DateTime appDate = DateTime.parse(app.date.toString());
+          return appDate.isAfter(startOfWeek) && appDate.isBefore(now.add(Duration(days: 1)));
+        }).toList();
+
+      case 'Last week':
+        DateTime startOfLastWeek = now.subtract(Duration(days: now.weekday + 6));
+        DateTime endOfLastWeek = now.subtract(Duration(days: now.weekday));
+        return appointments.where((app) {
+          DateTime appDate = DateTime.parse(app.date.toString());
+          return appDate.isAfter(startOfLastWeek) && appDate.isBefore(endOfLastWeek);
+        }).toList();
+
+      case 'This month':
+        DateTime startOfMonth = DateTime(now.year, now.month, 1);
+        return appointments.where((app) {
+          DateTime appDate = DateTime.parse(app.date.toString());
+          return appDate.isAfter(startOfMonth) && appDate.isBefore(now.add(Duration(days: 1)));
+        }).toList();
+
+      case 'Last month':
+        DateTime startOfLastMonth = now.month == 1
+            ? DateTime(now.year - 1, 12, 1)
+            : DateTime(now.year, now.month - 1, 1);
+        DateTime endOfLastMonth = DateTime(now.year, now.month, 0);
+        return appointments.where((app) {
+          DateTime appDate = DateTime.parse(app.date.toString());
+          return appDate.isAfter(startOfLastMonth) && appDate.isBefore(endOfLastMonth.add(Duration(days: 1)));
+        }).toList();
+
+      default:
+        return appointments;
+    }
+  }
+
+  RxString notesText = "Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene".obs;
   TextEditingController notesController = TextEditingController();
 
   void saveNotes() {
@@ -217,11 +470,22 @@ class DoctorAppointmentController extends GetxController {
   void pickFile(Rx<String?> file) async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpeg', 'jpg'],
+      allowedExtensions: ['pdf', 'jpeg', 'jpg', 'png'],
     );
 
     if (result != null && result.files.single.name != null) {
       file.value = result.files.single.name!;
+
+      if (result.files.single.path != null) {
+        String filePath = result.files.single.path!;
+        String fileName = result.files.single.name!;
+
+        Get.snackbar(
+          "File Selected",
+          "Selected file: $fileName",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } else {
       file.value = 'File selection cancelled';
     }

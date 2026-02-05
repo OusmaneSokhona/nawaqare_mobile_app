@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
@@ -11,23 +12,27 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/submit_revali
 
 class Revalidation extends StatelessWidget {
   Revalidation({super.key});
-
   final DoctorProfileController controller = Get.find();
+  final DoctorHomeController homeController = Get.find<DoctorHomeController>();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    return Obx(() {
+      final doctor = homeController.currentUser.value;
+      final doctorImage = doctor?.profileImage;
+      final doctorTitle = 'Dr. ${doctor?.fullName ?? ''}';
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100.w,
-                height: 100.h,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.h,
+              backgroundColor: Colors.white,
+              backgroundImage: doctorImage != null && doctorImage.isNotEmpty
+                  ? NetworkImage(doctorImage)
+                  : const AssetImage("assets/demo_images/home_demo_image.png")
+              as ImageProvider,
             ),
           ),
           const SizedBox(height: 10),
@@ -36,23 +41,23 @@ class Revalidation extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  controller.user.value.title,
-                  style:  TextStyle(
+                  doctorTitle,
+                  style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
+                    color: const Color(0xFF1F2937),
                     fontFamily: AppFonts.jakartaBold,
                   ),
                 ),
                 5.horizontalSpace,
-                Image.asset("assets/images/verified_tick_icon.png",height: 21.sp,),
+                Image.asset("assets/images/verified_tick_icon.png", height: 21.sp),
               ],
             ),
           ),
           Center(
             child: Text(
-              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              '${AppStrings.lastUpdate.tr}: 12/Sep/2025',
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
             ),
           ),
           const SizedBox(height: 10),
@@ -72,11 +77,7 @@ class Revalidation extends StatelessWidget {
                 ),
                 Text(
                   '30 ${AppStrings.days.tr}',
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                  style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold, color: Colors.black),
                 ),
               ],
             ),
@@ -94,10 +95,7 @@ class Revalidation extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.yellow.withOpacity(0.2),
               borderRadius: BorderRadius.circular(15.0),
-              border: Border.all(
-                color: AppColors.yellow.withOpacity(0.2),
-                width: 1,
-              ),
+              border: Border.all(color: AppColors.yellow.withOpacity(0.2), width: 1),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -107,11 +105,7 @@ class Revalidation extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '${AppStrings.revalidationWarning.tr} 30 ${AppStrings.days.tr}. ${AppStrings.pleaseRevalidate.tr}',
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      color: const Color(0xFF333333),
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 13.sp, color: const Color(0xFF333333), fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -129,17 +123,13 @@ class Revalidation extends StatelessWidget {
           10.verticalSpace,
           Text(
             AppStrings.actions.tr,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
           ),
           SizedBox(height: 10.h),
           DoctorHealthSpaceGrid(profileController: controller),
           const SizedBox(height: 20),
         ],
-      ),
-    );
+      );
+    });
   }
 }

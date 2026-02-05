@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
+import 'package:patient_app/screens/patient_screens/appointment_screens/appointment_detail_screen.dart';
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
 import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
@@ -209,6 +210,7 @@ class HomeScreen extends StatelessWidget {
                             buttonText: AppStrings.detail.tr,
                             appointment: homeController.upcomingAppointment.value!,
                             onTap: () {
+                              Get.to(AppointmentDetailScreen(appointment: homeController.upcomingAppointment.value!));
                             },
                           ):SizedBox(),
                         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
-import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/filtter_bottom_sheet.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class SchedulerWidget extends StatelessWidget {
@@ -10,7 +9,6 @@ class SchedulerWidget extends StatelessWidget {
 
   final DoctorAppointmentController controller = Get.find();
 
-  // Use translated keys for days
   final List<String> daysOfWeek = [
     AppStrings.mondayAbbr.tr,
     AppStrings.tuesdayAbbr.tr,
@@ -47,6 +45,9 @@ class SchedulerWidget extends StatelessWidget {
                 const SizedBox(width: 8.0),
                 Expanded(
                   child: TextField(
+                    onChanged: (value) {
+                      controller.searchUpcomingPatients(value);
+                    },
                     onTapOutside: (_) {
                       FocusManager.instance.primaryFocus?.unfocus();
                     },
@@ -65,7 +66,7 @@ class SchedulerWidget extends StatelessWidget {
         const SizedBox(width: 10.0),
         InkWell(
           onTap: () {
-            Get.bottomSheet(const FilterBottomSheet());
+            controller.showFilterBottomSheet();
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
@@ -77,13 +78,13 @@ class SchedulerWidget extends StatelessWidget {
             child: Row(
               children: [
                 const Icon(
-                  Icons.sort,
+                  Icons.filter_list,
                   color: Colors.black,
                   size: 24,
                 ),
                 const SizedBox(width: 8.0),
                 Text(
-                  AppStrings.sort.tr,
+                  "Filter",
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -104,7 +105,7 @@ class SchedulerWidget extends StatelessWidget {
       return GestureDetector(
         onTap: () => controller.selectDate(index),
         child: Container(
-          width: 50.w, // Added .w for consistency
+          width: 50.w,
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           decoration: BoxDecoration(

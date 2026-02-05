@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,8 @@ import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../services/api_service.dart';
+import '../../../utils/api_urls.dart';
 
 class DoctorAppointmentScreen extends StatelessWidget {
   DoctorAppointmentScreen({super.key});
@@ -59,6 +62,50 @@ class DoctorAppointmentScreen extends StatelessWidget {
                       fontFamily: AppFonts.jakartaBold,
                     ),
                   ),
+                  Spacer(),
+                  Obx(() => Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      '${controller.totalCount}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  )),
+                  10.horizontalSpace,
+                  Obx(() => controller.isLoading.value
+                      ? Padding(
+                    padding: EdgeInsets.only(right: 10.w),
+                    child: SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  )
+                      : InkWell(
+                    onTap: () => controller.refreshAppointments(),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.white,
+                        size: 20.h,
+                      ),
+                    ),
+                  )),
                 ],
               ),
               10.verticalSpace,
@@ -94,7 +141,7 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "${AppStrings.upcoming.tr}(${controller.patientList.length})",
+                                    "${AppStrings.upcoming.tr}(${controller.upcomingAppointments.length})",
                                     style: TextStyle(
                                       color: controller.appointmentType.value ==
                                           "upcoming"
@@ -126,7 +173,7 @@ class DoctorAppointmentScreen extends StatelessWidget {
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
-                                    "${AppStrings.past.tr}(${controller.postPatientList.length})",
+                                    "${AppStrings.past.tr}(${controller.pastAppointments.length})",
                                     style: TextStyle(
                                       color: controller.appointmentType.value ==
                                           "past"
@@ -147,18 +194,52 @@ class DoctorAppointmentScreen extends StatelessWidget {
                       Obx(
                             () => controller.appointmentType.value == "upcoming"
                             ? SchedulerWidget()
-                            : CustomTextField(
-                          labelText: "",
-                          hintText: AppStrings.searchPatientHint.tr,
-                          prefixIcon: Icons.search,
-                          suffixIcon: Icons.filter_list,
+                            : Row(
+                          children: [
+                            Expanded(
+                              child: CustomTextField(
+                                labelText: "",
+                                hintText: AppStrings.searchPatientHint.tr,
+                                prefixIcon: Icons.search,
+                                onChanged: (value) {
+                                  controller.searchPatients(value);
+                                },
+                              ),
+                            ),
+                            10.horizontalSpace,
+                            InkWell(
+                              onTap: () {
+                                controller.showFilterBottomSheet();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12.w),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(10.r),
+                                ),
+                                child: Icon(
+                                  Icons.filter_list,
+                                  color: Colors.white,
+                                  size: 24.h,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       Obx(
                             () {
+                          if (controller.isLoading.value && controller.currentList.isEmpty) {
+                            return _buildLoadingState();
+                          }
+
                           var list = controller.paginatedList;
-                          bool isPast =
-                              controller.appointmentType.value == "past";
+                          bool isPast = controller.appointmentType.value == "past";
+
+                          if (list.isEmpty) {
+                            return _buildEmptyState(isPast);
+                          }
+
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -184,14 +265,21 @@ class DoctorAppointmentScreen extends StatelessWidget {
                           );
                         },
                       ),
-                      _buildPagination(),
+                      Obx(() {
+                        if (controller.currentList.isEmpty) {
+                          return SizedBox();
+                        }
+                        return _buildPagination();
+                      }),
                       20.verticalSpace,
                       Obx(
                             () => controller.appointmentType.value == "upcoming"
                             ? CustomButton(
                           borderRadius: 15,
                           text: AppStrings.addAppointment.tr,
-                          onTap: () {},
+                          onTap: () {
+                            _showAddAppointmentDialog(context);
+                          },
                         )
                             : SizedBox(),
                       ),
@@ -202,6 +290,85 @@ class DoctorAppointmentScreen extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingState() {
+    return Container(
+      height: 200.h,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+            20.verticalSpace,
+            Text(
+              'Loading appointments...',
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(bool isPast) {
+    return Container(
+      height: 300.h,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.calendar_today,
+              size: 80.h,
+              color: Colors.grey.shade300,
+            ),
+            20.verticalSpace,
+            Text(
+              isPast ? 'No past appointments' : 'No upcoming appointments',
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey,
+              ),
+            ),
+            10.verticalSpace,
+            Text(
+              'You don\'t have any ${isPast ? 'past' : 'upcoming'} appointments',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.grey.shade500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            30.verticalSpace,
+            ElevatedButton(
+              onPressed: () => controller.refreshAppointments(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+              ),
+              child: Text(
+                'Refresh',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -270,6 +437,56 @@ class DoctorAppointmentScreen extends StatelessWidget {
           size: 17.h,
           color: Colors.black,
         ),
+      ),
+    );
+  }
+
+  void _showAddAppointmentDialog(BuildContext context) {
+    Get.defaultDialog(
+      title: "Add New Appointment",
+      content: Container(
+        width: 300.w,
+        child: Column(
+          children: [
+            CustomTextField(
+              labelText: "Patient ID",
+              hintText: "Enter patient ID",
+              controller: TextEditingController(),
+            ),
+            10.verticalSpace,
+            CustomTextField(
+              labelText: "Date",
+              hintText: "Select date",
+              suffixIcon: Icons.calendar_today,
+              controller: TextEditingController(),
+            ),
+            10.verticalSpace,
+            CustomTextField(
+              labelText: "Time Slot",
+              hintText: "Select time slot",
+              suffixIcon: Icons.access_time,
+              controller: TextEditingController(),
+            ),
+            10.verticalSpace,
+            CustomTextField(
+              labelText: "Reason",
+              hintText: "Enter appointment reason",
+              controller: TextEditingController(),
+            ),
+          ],
+        ),
+      ),
+      confirm: CustomButton(
+        text: "Schedule",
+        borderRadius: 15,
+        onTap: () {
+          Get.back();
+          Get.snackbar("Success", "Appointment scheduled successfully");
+        },
+      ),
+      cancel: TextButton(
+        onPressed: () => Get.back(),
+        child: Text("Cancel"),
       ),
     );
   }

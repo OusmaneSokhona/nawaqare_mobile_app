@@ -289,15 +289,15 @@ enum AppointmentStatus {
   String get displayName {
     switch (this) {
       case AppointmentStatus.pending:
-        return 'Pending';
+        return 'pending';
       case AppointmentStatus.confirmed:
-        return 'Confirmed';
+        return 'confirmed';
       case AppointmentStatus.completed:
-        return 'Completed';
+        return 'completed';
       case AppointmentStatus.cancelled:
-        return 'Cancelled';
+        return 'cancelled';
       case AppointmentStatus.rescheduled:
-        return 'Rescheduled';
+        return 'rescheduled';
     }
   }
 }

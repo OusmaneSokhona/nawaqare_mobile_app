@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/doctor_appointment_model.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/confirmation_dialog.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_detail_widget.dart';
@@ -8,15 +9,13 @@ import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_ho
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/home_visit_request_detail_screen.dart';
-import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../patient_screens/video_call_screens/preview_screen.dart';
 
 class DoctorAppointmentDetail extends StatelessWidget {
   final bool isCompleted;
-  final AppointmentModel appointmentModel;
+  final DoctorAppointment appointmentModel;
   final RxBool statusSetedHomeVisit = false.obs;
 
   DoctorAppointmentDetail({

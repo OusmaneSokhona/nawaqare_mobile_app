@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +9,6 @@ import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/doctor_not
 import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/recent_projects_drawer.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
 
-const String appId = "d7ea8ffc1313493385d9e27827ff633c";
-const String channelName = "nawa_qare";
-const String token = "007eJxTYPgctreOgzvl0sFpk/5MispTOOzb0nrvgX+8WOIrr2OpwWUKDCnmqYkWaWnJhsaGxiaWxsYWpimWqUbmFkbmaWlmxsbJP182ZTYEMjKsUZ7CwsgAgSA+J0NeYnlifGFiUSoDAwBS0CLM";
 
 class VideoCallScreen extends StatelessWidget {
   VideoCallScreen({super.key});
@@ -64,23 +60,36 @@ class VideoCallScreen extends StatelessWidget {
                 Positioned(
                   top: 60.h,
                   right: 16.w,
-                  child: Container(
-                    width: 140.w,
-                    height: 180.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: Colors.blueAccent, width: 2),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(14.r),
-                      child: AgoraVideoView(
-                        controller: VideoViewController(
-                          rtcEngine: controller.engine!,
-                          canvas: const VideoCanvas(uid: 0),
+                  child: Obx(() {
+                    if (controller.cameraOff.value) {
+                      return Container(
+                        width: 140.w,
+                        height: 180.h,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Icon(Icons.videocam_off, color: Colors.white, size: 30.sp),
+                      );
+                    }
+                    return Container(
+                      width: 140.w,
+                      height: 180.h,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(color: Colors.blueAccent, width: 2),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14.r),
+                        child: AgoraVideoView(
+                          controller: VideoViewController(
+                            rtcEngine: controller.engine!,
+                            canvas: const VideoCanvas(uid: 0),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ),
 
               if (!controller.isJoined.value)

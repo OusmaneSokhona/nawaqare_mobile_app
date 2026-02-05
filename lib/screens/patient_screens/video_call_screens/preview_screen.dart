@@ -1,4 +1,4 @@
-import 'package:camerawesome/camerawesome_plugin.dart';
+import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -25,27 +25,11 @@ class PreviewScreen extends StatelessWidget {
       return "Tomorrow";
     } else {
       final weekdayMap = {
-        1: 'Monday',
-        2: 'Tuesday',
-        3: 'Wednesday',
-        4: 'Thursday',
-        5: 'Friday',
-        6: 'Saturday',
-        7: 'Sunday',
+        1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday',
       };
       final monthMap = {
-        1: 'January',
-        2: 'February',
-        3: 'March',
-        4: 'April',
-        5: 'May',
-        6: 'June',
-        7: 'July',
-        8: 'August',
-        9: 'September',
-        10: 'October',
-        11: 'November',
-        12: 'December',
+        1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
+        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December',
       };
       final weekday = weekdayMap[date.weekday] ?? 'Day';
       final month = monthMap[date.month] ?? 'Month';
@@ -120,74 +104,46 @@ class PreviewScreen extends StatelessWidget {
                         fit: StackFit.expand,
                         children: [
                           Obx(() {
-                            if (controller.isCameraInitialized.value && !controller.cameraOff.value) {
-                              return CameraAwesomeBuilder.awesome(
-                                saveConfig: SaveConfig.photoAndVideo(
-                                  // photoPathBuilder: (sensors) => CaptureRequest(
-                                  //   filePath: '/storage/emulated/0/DCIM/CamerAwesome/photo_${DateTime.now().millisecondsSinceEpoch}.jpg',
-                                  // ),
-                                  // videoPathBuilder: (sensors) => CaptureRequest(
-                                  //   filePath: '/storage/emulated/0/DCIM/CamerAwesome/video_${DateTime.now().millisecondsSinceEpoch}.mp4',
-                                  // ),
-                                ),
-                                sensorConfig: SensorConfig.single(
-                                  aspectRatio: CameraAspectRatios.ratio_16_9,
-                                  flashMode: controller.flashMode.value,
-                                ),
-                                previewFit: CameraPreviewFit.fitWidth,
-                              );
-                            } else if (controller.cameraOff.value) {
+                            if (controller.cameraOff.value) {
                               return Container(
                                 color: Colors.black,
                                 child: Center(
                                   child: Icon(Icons.videocam_off, color: Colors.white, size: 50.sp),
                                 ),
                               );
+                            } else if (controller.isCameraInitialized.value && controller.engine != null) {
+                              return AgoraVideoView(
+                                controller: VideoViewController(
+                                  rtcEngine: controller.engine!,
+                                  canvas: const VideoCanvas(uid: 0),
+                                ),
+                              );
                             }
                             return const Center(child: CircularProgressIndicator());
                           }),
-                          Positioned(
-                            bottom: 12.h,
-                            right: 12.w,
-                            child: GestureDetector(
-                              onTap: controller.switchCamera,
-                              child: Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.black54,
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: Icon(
-                                  Icons.cameraswitch,
-                                  color: Colors.white,
-                                  size: 28.sp,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            bottom: 12.h,
-                            left: 0,
-                            right: 0,
-                            child: Obx(
-                                  () => Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _ControlButton(
-                                    icon: controller.micMuted.value ? Icons.mic_off : Icons.mic,
-                                    color: controller.micMuted.value ? Colors.red : AppColors.primaryColor,
-                                    onTap: controller.toggleMic,
-                                  ),
-                                  24.horizontalSpace,
-                                  _ControlButton(
-                                    icon: controller.cameraOff.value ? Icons.videocam_off : Icons.videocam,
-                                    color: controller.cameraOff.value ? Colors.red : AppColors.primaryColor,
-                                    onTap: controller.toggleCamera,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                          // Positioned(
+                          //   bottom: 12.h,
+                          //   left: 0,
+                          //   right: 0,
+                          //   child: Obx(
+                          //         () => Row(
+                          //       mainAxisAlignment: MainAxisAlignment.center,
+                          //       children: [
+                          //         _ControlButton(
+                          //           icon: controller.micMuted.value ? Icons.mic_off : Icons.mic,
+                          //           color: controller.micMuted.value ? Colors.red : AppColors.primaryColor,
+                          //           onTap: controller.toggleMic,
+                          //         ),
+                          //         24.horizontalSpace,
+                          //         _ControlButton(
+                          //           icon: controller.cameraOff.value ? Icons.videocam_off : Icons.videocam,
+                          //           color: controller.cameraOff.value ? Colors.red : AppColors.primaryColor,
+                          //           onTap: controller.toggleCamera,
+                          //         ),
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -205,17 +161,8 @@ class PreviewScreen extends StatelessWidget {
                             borderRadius: 15,
                             text: AppStrings.launchVideo.tr,
                             onTap: () async {
-                              controller.initAgora();
-                              await Future.delayed(const Duration(seconds: 1));
-                              if (controller.isJoined.value) {
-                                Get.to(() => VideoCallScreen());
-                                return;
-                              }
-                              if (controller.engine != null) {
-                                Get.to(() => VideoCallScreen());
-                              } else {
-                                Get.snackbar('Error', 'Engine not initialized');
-                              }
+                              await controller.joinMeeting();
+                              Get.to(() => VideoCallScreen());
                             },
                           ),
                           30.verticalSpace,

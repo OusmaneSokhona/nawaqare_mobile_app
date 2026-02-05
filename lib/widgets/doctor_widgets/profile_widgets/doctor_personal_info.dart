@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
@@ -14,21 +15,33 @@ import '../../patient_widgets/profile_widgets/info_row.dart';
 class DoctorPersonalInfo extends StatelessWidget {
   DoctorPersonalInfo({super.key});
   final DoctorProfileController controller = Get.find();
+  final DoctorHomeController homeController = Get.find<DoctorHomeController>();
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-          () => Column(
+    return Obx(() {
+      final doctor = homeController.currentUser.value;
+      final doctorImage = doctor?.profileImage;
+      final doctorName = doctor?.fullName ?? 'Alex Martin';
+      final doctorTitle = 'Dr. ${doctor?.fullName ?? 'Daniel Lee'}';
+      final doctorEmail = doctor?.email ?? 'abc@gmail.com';
+      final doctorPhone = doctor?.phoneNumber ?? '+1 234 567 890';
+      final doctorAddress = doctor?.clinicAddress ?? '32 Example St';
+      final doctorExperience = doctor?.experience?.toString() ?? '7';
+      final doctorSpecialization = doctor?.medicalSpecialty ?? 'Cardiology';
+      final doctorCountry = doctor?.country ?? 'Pakistan';
+
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
-            child: ClipOval(
-              child: Image.asset(
-                controller.user.value.profileImageUrl,
-                width: 100.w,
-                height: 100.h,
-                fit: BoxFit.cover,
-              ),
+            child: CircleAvatar(
+              radius: 50.h,
+              backgroundColor: Colors.white,
+              backgroundImage: doctorImage != null && doctorImage.isNotEmpty
+                  ? NetworkImage(doctorImage)
+                  : const AssetImage("assets/demo_images/home_demo_image.png")
+              as ImageProvider,
             ),
           ),
           const SizedBox(height: 10),
@@ -37,24 +50,24 @@ class DoctorPersonalInfo extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  controller.user.value.title,
-                  style:  TextStyle(
+                  doctorTitle,
+                  style: TextStyle(
                     fontSize: 20.sp,
                     fontFamily: AppFonts.jakartaBold,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
+                    color: const Color(0xFF1F2937),
                   ),
                 ),
                 5.horizontalSpace,
-                Image.asset("assets/images/verified_tick_icon.png",height: 21.sp,),
+                Image.asset("assets/images/verified_tick_icon.png", height: 21.sp),
               ],
             ),
           ),
           Center(
             child: Text(
-              '${AppStrings.lastUpdate.tr}: ${controller.user.value.lastUpdate}',
+              '${AppStrings.lastUpdate.tr}: 12/Sep/2025',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: Colors.grey.shade500,
               ),
             ),
@@ -94,12 +107,12 @@ class DoctorPersonalInfo extends StatelessWidget {
             child: Column(
               children: [
                 CardHeader(title: AppStrings.identity.tr, fontSize: 18.sp, fontWeight: FontWeight.w500),
-                InfoRow(label: AppStrings.fullName.tr, value: controller.user.value.name),
+                InfoRow(label: AppStrings.fullName.tr, value: doctorName),
                 InfoRow(label: AppStrings.dob.tr, value: '02/Sep/2025'),
                 CardHeader(title: AppStrings.contact.tr, fontSize: 18.sp, fontWeight: FontWeight.w500),
-                InfoRow(label: AppStrings.email.tr, value: controller.user.value.email),
-                InfoRow(label: AppStrings.phone.tr, value: controller.user.value.phone),
-                InfoRow(label: AppStrings.address.tr, value: controller.user.value.address.replaceAll('\n', ' ')),
+                InfoRow(label: AppStrings.email.tr, value: doctorEmail),
+                InfoRow(label: AppStrings.phone.tr, value: doctorPhone),
+                InfoRow(label: AppStrings.address.tr, value: doctorAddress.replaceAll('\n', ' ')),
                 CardHeader(title: AppStrings.demographics.tr, fontSize: 18.sp, fontWeight: FontWeight.w500),
                 InfoRow(label: AppStrings.gender.tr, value: AppStrings.male.tr),
                 InfoRow(label: AppStrings.nationality.tr, value: "Islam"),
@@ -133,7 +146,7 @@ class DoctorPersonalInfo extends StatelessWidget {
           DoctorHealthSpaceGrid(profileController: controller),
           const SizedBox(height: 20),
         ],
-      ),
-    );
+      );
+    });
   }
 }

@@ -1102,6 +1102,24 @@ class AppStrings {
   static const String slots = "slots";
   static const String aboutDoctor = "about_doctor";
   static const String aboutDoctorDescription = "about_doctor_description";
+  static const manageSchedule = 'manageSchedule';
+  static const timeSlots = 'timeSlots';
+  static const noSlotsAvailable = 'noSlotsAvailable';
+  static const createTimeSlot = 'createTimeSlot';
+  static const creating = 'creating';
+  static const createSlot = 'createSlot';
+  static const pleaseSelectTime = 'pleaseSelectTime';
+  static const endTimeMustBeAfterStartTime = 'endTimeMustBeAfterStartTime';
+  static const failedToLoadSlots = 'failedToLoadSlots';
+  static const failedToCreateSlot = 'failedToCreateSlot';
+  static const timeSlotCreated = 'timeSlotCreated';
+  static const deleteSlot = 'deleteSlot';
+  static const areYouSureDeleteSlot = 'areYouSureDeleteSlot';
+  static const slotDeleted = 'slotDeleted';
+  static const failedToDeleteSlot = 'failedToDeleteSlot';
+  static const availableSlots = 'availableSlots';
+  static const delete = 'delete';
+
   // Months
   static const String january = 'january';
   static const String february = 'february';

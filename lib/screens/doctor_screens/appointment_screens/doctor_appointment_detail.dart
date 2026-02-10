@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_appointment_detail_controller.dart';
 import 'package:patient_app/models/doctor_appointment_model.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/preview_screen_doctor.dart';
 import 'package:patient_app/widgets/appointment_statue_widget.dart';
@@ -14,12 +15,11 @@ import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/home_visi
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
-import '../../patient_screens/video_call_screens/preview_screen.dart';
 
 class DoctorAppointmentDetail extends StatelessWidget {
   final bool isCompleted;
   final DoctorAppointment appointmentModel;
-  final RxBool statusSetedHomeVisit = false.obs;
+  final DoctorAppointmentDetailController controller = Get.put(DoctorAppointmentDetailController());
 
   DoctorAppointmentDetail({
     super.key,
@@ -144,51 +144,106 @@ class DoctorAppointmentDetail extends StatelessWidget {
                         ),
                         10.verticalSpace,
                         if(appointmentModel.consultationType=="homevisit")
-                        HomeVisitRequestDetailScreen(appointment: appointmentModel,),
+                          HomeVisitRequestDetailScreen(appointment: appointmentModel,),
                         10.verticalSpace,
                         MedicalReportCard(
-                            title: AppStrings.bloodTestReport.tr,
-                            date: "200/Sep/2025",onlyView: true,
+                          title: AppStrings.bloodTestReport.tr,
+                          date: "200/Sep/2025",onlyView: true,
                         ),
 
                         30.verticalSpace,
-                        Obx(() => statusSetedHomeVisit.value
-                            ? CustomButton(
-                          borderRadius: 15,
-                          text: AppStrings.joinConsultation.tr,
-                          onTap: () {
-                            Get.to(
-                              PreviewScreenDoctor(appointment: appointmentModel),
-                            );
-                          },
-                        )
-                            : CustomButton(
-                          borderRadius: 15,
-                          text: AppStrings.accept.tr,
-                          onTap: () {
-                            Get.dialog(DoctorHomeVisitStatusDialog(status: true));
-                            statusSetedHomeVisit.value = true;
-                          },
-                        )),
-                        10.verticalSpace,
-                        Obx(() => statusSetedHomeVisit.value
-                            ? CustomButton(
-                          borderRadius: 15,
-                          text: AppStrings.reschedule.tr,
-                          onTap: () {},
-                          bgColor: AppColors.inACtiveButtonColor,
-                          fontColor: Colors.black,
-                        )
-                            : CustomButton(
-                          borderRadius: 15,
-                          text: AppStrings.decline.tr,
-                          onTap: () {
-                            Get.dialog(DoctorHomeVisitStatusDialog(status: false));
-                            statusSetedHomeVisit.value = true;
-                          },
-                          bgColor: AppColors.inACtiveButtonColor,
-                          fontColor: Colors.black,
-                        )),
+                        if (appointmentModel.consultationType == "homevisit" && appointmentModel.status == "pending")
+                          Obx(() => (controller.statusSetedHomeVisit.value == "accepted" || appointmentModel.homevisitstatus == "Accept" || appointmentModel.homevisitstatus == "accepted") && (appointmentModel.status == "pending" || appointmentModel.status == "Pending")
+                              ? Column(
+                            children: [
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.joinConsultation.tr,
+                                onTap: () {
+                                  Get.to(
+                                    PreviewScreenDoctor(appointment: appointmentModel),
+                                  );
+                                },
+                              ),
+                              10.verticalSpace,
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.reschedule.tr,
+                                onTap: () {},
+                                bgColor: AppColors.inACtiveButtonColor,
+                                fontColor: Colors.black,
+                              ),
+                            ],
+                          )
+                              : Column(
+                            children: [
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.accept.tr,
+                                onTap: () {
+                                  Get.dialog(DoctorHomeVisitStatusDialog(
+                                    status: true,
+                                    appointmentId: appointmentModel.id,
+                                  ));
+                                },
+                              ),
+                              10.verticalSpace,
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.decline.tr,
+                                onTap: () {
+                                  Get.dialog(DoctorHomeVisitStatusDialog(
+                                    status: false,
+                                    appointmentId: appointmentModel.id,
+                                  ));
+                                },
+                                bgColor: AppColors.inACtiveButtonColor,
+                                fontColor: Colors.black,
+                              ),
+                            ],
+                          )),
+                        if (appointmentModel.consultationType != "homevisit" && appointmentModel.status == "pending")
+                          Column(
+                            children: [
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.joinConsultation.tr,
+                                onTap: () async {
+                                  Get.to(PreviewScreenDoctor(appointment: appointmentModel));
+                                },
+                              ),
+                              10.verticalSpace,
+                            ],
+                          ),
+                        if (appointmentModel.status == "confirmed")
+                          Column(
+                            children: [
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.joinConsultation.tr,
+                                onTap: ()  {
+                                  Get.to(PreviewScreenDoctor(appointment: appointmentModel));
+                                },
+                              ),
+                              10.verticalSpace,
+                              if (appointmentModel.consultationType != "homevisit")
+                                CustomButton(
+                                  borderRadius: 15,
+                                  text: AppStrings.reschedule.tr,
+                                  onTap: () {},
+                                  bgColor: AppColors.inACtiveButtonColor,
+                                  fontColor: Colors.black,
+                                ),
+                            ],
+                          ),
+                        if (appointmentModel.status == "ongoing")
+                          CustomButton(
+                            borderRadius: 15,
+                            text: AppStrings.joinConsultation.tr,
+                            onTap: () {
+                              Get.to(PreviewScreenDoctor(appointment: appointmentModel));
+                            },
+                          ),
                         30.verticalSpace,
                       },
                     ],

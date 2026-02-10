@@ -23,12 +23,13 @@ class DoctorHomeController extends GetxController {
   Rx<DoctorAppointment?> upcomingAppointment = Rx<DoctorAppointment?>(null);
 
   Future<void> fetchAppointments() async {
+    print("token == ${await LocalStorageUtils.getToken()}");
     try {
       isLoading.value = true;
       ongoingAppointment.value = null;
       upcomingAppointment.value = null;
 
-      final response = await _apiService.get(ApiUrls.getAppointmentsDoctor);
+      final response = await _apiService.get(ApiUrls.getAppointments);
       print("Response status: ${response.statusCode}");
       print("Response data: ${response.data}");
 

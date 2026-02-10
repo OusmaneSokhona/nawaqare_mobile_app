@@ -1,6 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:patient_app/utils/locat_storage.dart';
-
 import '../client/api_client.dart';
 
 class ApiService {
@@ -47,4 +45,12 @@ class ApiService {
       rethrow;
     }
   }
+  Future<Response> patch(String path, {dynamic data}) async {
+    try {
+      return await _dio.patch(path, data: data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 }

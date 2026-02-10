@@ -24,7 +24,7 @@ class HomeController extends GetxController {
     try {
       isLoading.value = true;
 
-      final response = await ApiService().get(ApiUrls.getAppointmentsPatient);
+      final response = await ApiService().get(ApiUrls.getAppointments);
 
       if (response.statusCode == 200) {
         final jsonResponse = response.data is String

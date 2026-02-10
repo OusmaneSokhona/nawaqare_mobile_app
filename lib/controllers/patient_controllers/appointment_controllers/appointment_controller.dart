@@ -33,7 +33,7 @@ class AppointmentController extends GetxController {
       isLoading.value = true;
 
       final response = await ApiService().get(
-        ApiUrls.getAppointmentsPatient,
+        ApiUrls.getAppointments,
       );
 
       if (response.statusCode == 200) {

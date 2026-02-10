@@ -17,7 +17,7 @@ class DoctorAppointmentResponse {
     return DoctorAppointmentResponse(
       message: json['message'] as String? ?? '',
       total: json['total'] as int? ?? 0,
-      appointments: (json['appointements'] as List<dynamic>? ?? [])
+      appointments: (json['appointments'] as List<dynamic>? ?? [])
           .map((item) => DoctorAppointment.fromJson(item as Map<String, dynamic>))
           .toList(),
       upcomingAppointments: (json['upcomingAppointments'] as List<dynamic>? ?? [])
@@ -33,7 +33,7 @@ class DoctorAppointmentResponse {
     return {
       'message': message,
       'total': total,
-      'appointements': appointments.map((appointment) => appointment.toJson()).toList(),
+      'appointments': appointments.map((appointment) => appointment.toJson()).toList(),
       'upcomingAppointments': upcomingAppointments.map((appointment) => appointment.toJson()).toList(),
       'pastAppointments': pastAppointments.map((appointment) => appointment.toJson()).toList(),
     };
@@ -42,9 +42,9 @@ class DoctorAppointmentResponse {
 
 class DoctorAppointment {
   final String id;
-  final RescheduleInfo isReschedule;
+  final RescheduleInfo? isReschedule;
   final PatientInfo patientId;
-  final DoctorInfo doctorId;
+  final String doctorId;
   final TimeSlot timeslot;
   final double fee;
   final String currency;
@@ -57,10 +57,11 @@ class DoctorAppointment {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int v;
+  final String? homevisitstatus;
 
   DoctorAppointment({
     required this.id,
-    required this.isReschedule,
+    this.isReschedule,
     required this.patientId,
     required this.doctorId,
     required this.timeslot,
@@ -75,14 +76,19 @@ class DoctorAppointment {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    this.homevisitstatus,
   });
 
   factory DoctorAppointment.fromJson(Map<String, dynamic> json) {
     return DoctorAppointment(
       id: json['_id'] as String? ?? '',
-      isReschedule: RescheduleInfo.fromJson(json['isReschedule'] as Map<String, dynamic>? ?? {}),
+      isReschedule: json['isReschedule'] != null
+          ? RescheduleInfo.fromJson(json['isReschedule'] as Map<String, dynamic>)
+          : null,
       patientId: PatientInfo.fromJson(json['patientId'] as Map<String, dynamic>? ?? {}),
-      doctorId: DoctorInfo.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
+      doctorId: json['doctorId'] is String
+          ? json['doctorId'] as String
+          : (json['doctorId'] as Map<String, dynamic>?)?['_id'] as String? ?? '',
       timeslot: TimeSlot.fromJson(json['timeslot'] as Map<String, dynamic>? ?? {}),
       fee: (json['fee'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] as String? ?? '',
@@ -95,15 +101,16 @@ class DoctorAppointment {
       createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
       updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
       v: json['__v'] as int? ?? 0,
+      homevisitstatus: json['homevisitstatus'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'isReschedule': isReschedule.toJson(),
+      'isReschedule': isReschedule?.toJson(),
       'patientId': patientId.toJson(),
-      'doctorId': doctorId.toJson(),
+      'doctorId': doctorId,
       'timeslot': timeslot.toJson(),
       'fee': fee,
       'currency': currency,
@@ -116,6 +123,7 @@ class DoctorAppointment {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       '__v': v,
+      'homevisitstatus': homevisitstatus,
     };
   }
 }
@@ -175,38 +183,6 @@ class PatientInfo {
       '_id': id,
       'fullName': fullName,
       'email': email,
-      'profileImage': profileImage,
-    };
-  }
-}
-
-class DoctorInfo {
-  final String id;
-  final String email;
-  final String fullName;
-  final String profileImage;
-
-  DoctorInfo({
-    required this.id,
-    required this.email,
-    required this.fullName,
-    required this.profileImage,
-  });
-
-  factory DoctorInfo.fromJson(Map<String, dynamic> json) {
-    return DoctorInfo(
-      id: json['_id'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      fullName: json['fullName'] as String? ?? '',
-      profileImage: json['profileImage'] as String? ?? '',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'email': email,
-      'fullName': fullName,
       'profileImage': profileImage,
     };
   }

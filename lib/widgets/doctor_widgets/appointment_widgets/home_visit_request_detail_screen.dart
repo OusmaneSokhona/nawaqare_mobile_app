@@ -4,8 +4,11 @@ import 'package:get/get.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
+import '../../../models/doctor_appointment_model.dart';
+
 class HomeVisitRequestDetailScreen extends StatelessWidget {
-  const HomeVisitRequestDetailScreen({super.key});
+  final DoctorAppointment appointment;
+   HomeVisitRequestDetailScreen({super.key,required this.appointment});
 
   @override
   Widget build(BuildContext context) {
@@ -32,11 +35,11 @@ class HomeVisitRequestDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(AppStrings.patientName.tr, AppStrings.demoPatientName.tr),
+              _buildInfoRow(AppStrings.patientName.tr,appointment.patientId.fullName),
               const Divider(height: 32),
-              _buildInfoRow(AppStrings.address.tr, AppStrings.demoAddress.tr),
+              _buildInfoRow(AppStrings.address.tr,appointment.visitAddress??"not available"),
               const Divider(height: 32),
-              _buildInfoRow(AppStrings.requestedTimeslot.tr, AppStrings.demoTimeslot.tr),
+              _buildInfoRow(AppStrings.requestedTimeslot.tr, "${appointment.timeslot.startTime}"),
               const SizedBox(height: 24),
                Text(
                 AppStrings.patientNote.tr,
@@ -49,7 +52,7 @@ class HomeVisitRequestDetailScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
                Text(
-                AppStrings.demoNoteValue.tr,
+                appointment.notes??"not available",
                 style: TextStyle(
                   fontSize: 15,
                   fontFamily: AppFonts.jakartaMedium,

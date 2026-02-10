@@ -1,4 +1,3 @@
-
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,11 +8,10 @@ import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/doctor_not
 import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/recent_projects_drawer.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
 
-
 class VideoCallScreen extends StatelessWidget {
   VideoCallScreen({super.key});
 
-  final VideoCallController controller = Get.put(VideoCallController());
+  final VideoCallController controller = Get.find<VideoCallController>();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +43,7 @@ class VideoCallScreen extends StatelessWidget {
                       uid: controller.remoteUid.value,
                       renderMode: RenderModeType.renderModeFit,
                     ),
-                    connection: RtcConnection(channelId: channelName),
+                    connection: RtcConnection(channelId: controller.channelName.value),
                   ),
                 )
               else
@@ -56,7 +54,7 @@ class VideoCallScreen extends StatelessWidget {
                   ),
                 ),
 
-              if (controller.isJoined.value && engineReady)
+              if (controller.isJoined.value && engineReady && controller.showLocalPreview.value)
                 Positioned(
                   top: 60.h,
                   right: 16.w,
@@ -101,7 +99,20 @@ class VideoCallScreen extends StatelessWidget {
                 right: 0,
                 child: VideoCallControls(),
               ),
-              Positioned(top: 70.h,left: 30.w,child: InkWell(onTap: (){controller.switchCamera();},child: Icon(Icons.cameraswitch,color: Colors.white,))),
+              Positioned(
+                top: 70.h,
+                left: 30.w,
+                child: Obx(() {
+                  return InkWell(
+                    onTap: controller.cameraOff.value ? null : () => controller.switchCamera(),
+                    child: Icon(
+                      Icons.cameraswitch,
+                      color: controller.cameraOff.value ? Colors.grey : Colors.white,
+                      size: 30.sp,
+                    ),
+                  );
+                }),
+              ),
             ],
           ),
         );

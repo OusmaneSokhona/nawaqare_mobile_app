@@ -207,20 +207,23 @@ class DoctorAppointmentScreen extends StatelessWidget {
                               ),
                             ),
                             10.horizontalSpace,
-                            InkWell(
-                              onTap: () {
-                                controller.showFilterBottomSheet();
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12.w),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                child: Icon(
-                                  Icons.filter_list,
-                                  color: Colors.white,
-                                  size: 24.h,
+                            Padding(
+                              padding:  EdgeInsets.only(top: 22.h),
+                              child: InkWell(
+                                onTap: () {
+                                  controller.showFilterBottomSheet();
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.all(12.w),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                  child: Icon(
+                                    Icons.filter_list,
+                                    color: Colors.white,
+                                    size: 24.h,
+                                  ),
                                 ),
                               ),
                             ),

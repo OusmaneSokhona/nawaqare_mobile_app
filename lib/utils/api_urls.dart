@@ -18,4 +18,5 @@ class ApiUrls {
   static String createAppointment="/api/appointments/create-appointment";
   static String getAppointmentsPatient="/api/appointments/patient-appointments";
   static String getAppointmentsDoctor="api/appointments/doctor-appointments";
+  static String videoCallApi="api/appointments/generate_token";
 }

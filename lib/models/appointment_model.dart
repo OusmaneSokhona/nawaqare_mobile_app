@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+
 class AppointmentResponse {
   final String message;
   final int total;
@@ -17,17 +18,17 @@ class AppointmentResponse {
 
   factory AppointmentResponse.fromJson(Map<String, dynamic> json) {
     return AppointmentResponse(
-      message: json['message'] as String,
-      total: json['total'] as int,
-      appointments: (json['appointments'] as List)
-          .map((item) => Appointment.fromJson(item))
-          .toList(),
-      upcomingAppointments: (json['upcomingAppointments'] as List)
-          .map((item) => Appointment.fromJson(item))
-          .toList(),
-      pastAppointments: (json['pastAppointments'] as List)
-          .map((item) => Appointment.fromJson(item))
-          .toList(),
+      message: json['message']?.toString() ?? '',
+      total: (json['total'] as num?)?.toInt() ?? 0,
+      appointments: (json['appointments'] as List<dynamic>?)
+          ?.map((item) => Appointment.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      upcomingAppointments: (json['upcomingAppointments'] as List<dynamic>?)
+          ?.map((item) => Appointment.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      pastAppointments: (json['pastAppointments'] as List<dynamic>?)
+          ?.map((item) => Appointment.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
     );
   }
 
@@ -81,21 +82,21 @@ class Appointment {
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
-      id: json['_id'] as String,
-      patient: Patient.fromJson(json['patientId']),
-      doctor: Doctor.fromJson(json['doctorId']),
-      timeslot: Timeslot.fromJson(json['timeslot']),
-      fee: json['fee'] as int,
-      currency: json['currency'] as String,
-      date: DateTime.parse(json['date'] as String),
-      consultationType: ConsultationTypeExtension.fromString(json['consultationType'] as String),
-      status: AppointmentStatusExtension.fromString(json['status'] as String),
-      visitAddress: json['visitAddress'] as String?,
-      notes: json['notes'] as String?,
-      rescheduleReason: json['rescheduleReason'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      v: json['__v'] as int,
+      id: json['_id']?.toString() ?? '',
+      patient: Patient.fromJson(json['patientId'] as Map<String, dynamic>? ?? {}),
+      doctor: Doctor.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
+      timeslot: Timeslot.fromJson(json['timeslot'] as Map<String, dynamic>? ?? {}),
+      fee: (json['fee'] as num?)?.toInt() ?? 0,
+      currency: json['currency']?.toString() ?? 'USD',
+      date: DateTime.tryParse(json['date']?.toString() ?? '') ?? DateTime.now(),
+      consultationType: ConsultationTypeExtension.fromString(json['consultationType']?.toString() ?? 'remote'),
+      status: AppointmentStatusExtension.fromString(json['status']?.toString() ?? 'pending'),
+      visitAddress: json['visitAddress']?.toString(),
+      notes: json['notes']?.toString(),
+      rescheduleReason: json['rescheduleReason']?.toString() ?? '',
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      v: (json['__v'] as num?)?.toInt() ?? 0,
     );
   }
 
@@ -140,10 +141,10 @@ class Patient {
 
   factory Patient.fromJson(Map<String, dynamic> json) {
     return Patient(
-      id: json['_id'] as String,
-      fullName: json['fullName'] as String,
-      email: json['email'] as String,
-      profileImage: json['profileImage'] as String?,
+      id: json['_id']?.toString() ?? '',
+      fullName: json['fullName']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      profileImage: json['profileImage']?.toString(),
     );
   }
 
@@ -172,10 +173,10 @@ class Doctor {
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
-      id: json['_id'] as String,
-      email: json['email'] as String,
-      fullName: json['fullName'] as String,
-      profileImage: json['profileImage'] as String?,
+      id: json['_id']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      fullName: json['fullName']?.toString() ?? '',
+      profileImage: json['profileImage']?.toString(),
     );
   }
 
@@ -210,13 +211,13 @@ class Timeslot {
 
   factory Timeslot.fromJson(Map<String, dynamic> json) {
     return Timeslot(
-      id: json['_id'] as String,
-      startTime: DateTime.parse(json['startTime'] as String),
-      endTime: DateTime.parse(json['endTime'] as String),
-      status: TimeslotStatusExtension.fromString(json['status'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
-      v: json['__v'] as int,
+      id: json['_id']?.toString() ?? '',
+      startTime: DateTime.tryParse(json['startTime']?.toString() ?? '') ?? DateTime.now(),
+      endTime: DateTime.tryParse(json['endTime']?.toString() ?? '') ?? DateTime.now(),
+      status: TimeslotStatusExtension.fromString(json['status']?.toString() ?? 'booked'),
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      v: (json['__v'] as num?)?.toInt() ?? 0,
     );
   }
 

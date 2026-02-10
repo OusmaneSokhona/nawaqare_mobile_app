@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/main.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_detail.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_screen.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_screen.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_screen.dart';
@@ -244,7 +245,9 @@ class DoctorHomeScreen extends StatelessWidget {
                                           homeController
                                               .upcomingAppointment
                                               .value!,
-                                      onTap: () {},
+                                      onTap: () {
+                                        Get.to(DoctorAppointmentDetail(appointmentModel: homeController.upcomingAppointment.value!));
+                                      },
                                     )
                                     : SizedBox(),
                           ),

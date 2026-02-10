@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/doctor_appointment_model.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/preview_screen_doctor.dart';
+import 'package:patient_app/widgets/appointment_statue_widget.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/confirmation_dialog.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_detail_widget.dart';
@@ -12,6 +14,7 @@ import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/home_visi
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../patient_screens/video_call_screens/preview_screen.dart';
 
 class DoctorAppointmentDetail extends StatelessWidget {
   final bool isCompleted;
@@ -90,29 +93,9 @@ class DoctorAppointmentDetail extends StatelessWidget {
                           ),
                         ),
                         10.verticalSpace,
-                        Row(
-                          children: [
-                            Container(
-                              height: 30.h,
-                              width: 30.w,
-                              alignment: Alignment.center,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.green,
-                              ),
-                              child: const Icon(Icons.check, color: Colors.white),
-                            ),
-                            10.horizontalSpace,
-                            Text(
-                              AppStrings.confirmed.tr,
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: AppFonts.jakartaMedium,
-                              ),
-                            ),
-                          ],
+                        Align(
+                          alignment: AlignmentGeometry.centerLeft,
+                          child:  AppointmentStatusWidget(status: appointmentModel.status),
                         ),
                         10.verticalSpace,
                         Align(
@@ -160,7 +143,8 @@ class DoctorAppointmentDetail extends StatelessWidget {
                           ),
                         ),
                         10.verticalSpace,
-                        HomeVisitRequestDetailScreen(),
+                        if(appointmentModel.consultationType=="homevisit")
+                        HomeVisitRequestDetailScreen(appointment: appointmentModel,),
                         10.verticalSpace,
                         MedicalReportCard(
                             title: AppStrings.bloodTestReport.tr,
@@ -173,9 +157,9 @@ class DoctorAppointmentDetail extends StatelessWidget {
                           borderRadius: 15,
                           text: AppStrings.joinConsultation.tr,
                           onTap: () {
-                            // Get.to(
-                            //   // PreviewScreen(appointment: appointmentModel),
-                            // );
+                            Get.to(
+                              PreviewScreenDoctor(appointment: appointmentModel),
+                            );
                           },
                         )
                             : CustomButton(

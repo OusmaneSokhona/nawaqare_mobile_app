@@ -14,7 +14,7 @@ import '../../models/doctor_appointment_model.dart';
 class DoctorHomeController extends GetxController {
   ScrollController scrollController = ScrollController();
   RxDouble scrollValue = 0.0.obs;
-  ApiService apiService = ApiService();
+  ApiService _apiService = ApiService();
   Rx<DoctorModel?> currentUser = Rx<DoctorModel?>(null);
   RxBool isLoading = true.obs;
   RxList<DoctorAppointment> allAppointments = <DoctorAppointment>[].obs;
@@ -28,7 +28,7 @@ class DoctorHomeController extends GetxController {
       ongoingAppointment.value = null;
       upcomingAppointment.value = null;
 
-      final response = await ApiService().get(ApiUrls.getAppointmentsDoctor);
+      final response = await _apiService.get(ApiUrls.getAppointmentsDoctor);
       print("Response status: ${response.statusCode}");
       print("Response data: ${response.data}");
 
@@ -160,7 +160,7 @@ class DoctorHomeController extends GetxController {
         }
       }
 
-      final response = await apiService.get(ApiUrls.meUrl);
+      final response = await _apiService.get(ApiUrls.meUrl);
       if (response.statusCode == 200) {
         print('API Doctor data response received');
 

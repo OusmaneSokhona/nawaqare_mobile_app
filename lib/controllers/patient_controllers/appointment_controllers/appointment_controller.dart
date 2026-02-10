@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:patient_app/models/appointment_model.dart';
 import 'package:patient_app/services/api_service.dart';
 import 'package:patient_app/utils/api_urls.dart';

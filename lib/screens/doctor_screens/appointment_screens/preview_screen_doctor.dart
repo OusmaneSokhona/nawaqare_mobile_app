@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/appointment_model.dart';
+import 'package:patient_app/models/doctor_appointment_model.dart';
 import 'package:patient_app/screens/patient_screens/video_call_screens/video_call_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
@@ -11,9 +12,10 @@ import 'package:patient_app/widgets/custom_button.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import '../../../widgets/doctor_widgets/appointment_widgets/doctor_past_appoinment_widget.dart';
 
-class PreviewScreen extends StatelessWidget {
-  final Appointment appointment;
-  const PreviewScreen({super.key, required this.appointment});
+class PreviewScreenDoctor extends StatelessWidget {
+  final DoctorAppointment appointment;
+
+  const PreviewScreenDoctor({super.key, required this.appointment});
 
   String _getFormattedDate(DateTime date) {
     final now = DateTime.now();
@@ -25,11 +27,27 @@ class PreviewScreen extends StatelessWidget {
       return "Tomorrow";
     } else {
       final weekdayMap = {
-        1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday',
+        1: 'Monday',
+        2: 'Tuesday',
+        3: 'Wednesday',
+        4: 'Thursday',
+        5: 'Friday',
+        6: 'Saturday',
+        7: 'Sunday',
       };
       final monthMap = {
-        1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May', 6: 'June',
-        7: 'July', 8: 'August', 9: 'September', 10: 'October', 11: 'November', 12: 'December',
+        1: 'January',
+        2: 'February',
+        3: 'March',
+        4: 'April',
+        5: 'May',
+        6: 'June',
+        7: 'July',
+        8: 'August',
+        9: 'September',
+        10: 'October',
+        11: 'November',
+        12: 'December',
       };
       final weekday = weekdayMap[date.weekday] ?? 'Day';
       final month = monthMap[date.month] ?? 'Month';
@@ -49,6 +67,7 @@ class PreviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(VideoCallController());
 
+    // Initialize preview when widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.setAppointmentId(appointment.id);
       controller.initializePreview();
@@ -187,15 +206,16 @@ class PreviewScreen extends StatelessWidget {
                           10.verticalSpace,
                           _buildEncryptedCallNote(),
                           20.verticalSpace,
-                           CustomButton(
+                          CustomButton(
                             borderRadius: 15,
                             text: AppStrings.launchVideo.tr,
                             onTap: () async {
-                              if(controller.isLoading.value){
-
-                              }else{
-                              await controller.joinMeeting();
-                              Get.to(() => VideoCallScreen());}
+                              if (controller.isLoading.value) {
+                              } else {
+                                await controller.joinMeeting();
+                                Get.to(() => VideoCallScreen());
+                                Get.to(() => VideoCallScreen());
+                              }
                             },
                           ),
                           30.verticalSpace,
@@ -237,7 +257,7 @@ class PreviewScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      appointment.doctor.fullName,
+                      appointment.patientId.fullName,
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
@@ -247,7 +267,7 @@ class PreviewScreen extends StatelessWidget {
                     ),
                     4.verticalSpace,
                     Text(
-                      appointment.doctor.email,
+                      appointment.patientId.email,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
@@ -266,15 +286,24 @@ class PreviewScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildDetailColumn(Icons.calendar_today_outlined,
-                  AppStrings.date.tr, _getFormattedDate(appointment.date)),
               _buildDetailColumn(
-                  Icons.watch_later_outlined,
-                  "Time",
-                  _getFormattedTime(
-                      appointment.timeslot.startTime, appointment.timeslot.endTime)),
-              _buildDetailColumn(Icons.payment, AppStrings.fee.tr,
-                  "${appointment.fee} ${appointment.currency}"),
+                Icons.calendar_today_outlined,
+                AppStrings.date.tr,
+                _getFormattedDate(appointment.date),
+              ),
+              _buildDetailColumn(
+                Icons.watch_later_outlined,
+                "Time",
+                _getFormattedTime(
+                  appointment.timeslot.startTime,
+                  appointment.timeslot.endTime,
+                ),
+              ),
+              _buildDetailColumn(
+                Icons.payment,
+                AppStrings.fee.tr,
+                "${appointment.fee} ${appointment.currency}",
+              ),
             ],
           ),
         ],
@@ -283,12 +312,12 @@ class PreviewScreen extends StatelessWidget {
   }
 
   Widget _buildDoctorImage() {
-    if (appointment.doctor.profileImage != null &&
-        appointment.doctor.profileImage!.isNotEmpty) {
+    if (appointment.patientId.profileImage != null &&
+        appointment.patientId.profileImage!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: Image.network(
-          appointment.doctor.profileImage!,
+          appointment.patientId.profileImage!,
           height: 70.h,
           width: 70.w,
           fit: BoxFit.cover,
@@ -308,11 +337,7 @@ class PreviewScreen extends StatelessWidget {
         color: AppColors.primaryColor.withOpacity(0.1),
       ),
       child: Center(
-        child: Icon(
-          Icons.person,
-          size: 35.sp,
-          color: AppColors.primaryColor,
-        ),
+        child: Icon(Icons.person, size: 35.sp, color: AppColors.primaryColor),
       ),
     );
   }
@@ -349,10 +374,7 @@ class PreviewScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.orange.withOpacity(0.2),
         borderRadius: BorderRadius.circular(15.r),
-        border: Border.all(
-          color: AppColors.orange.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: AppColors.orange.withOpacity(0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -374,7 +396,6 @@ class PreviewScreen extends StatelessWidget {
     );
   }
 }
-
 class _ControlButton extends StatelessWidget {
   final IconData icon;
   final Color color;

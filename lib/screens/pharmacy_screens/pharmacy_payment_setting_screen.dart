@@ -80,79 +80,79 @@ class PharmacyPaymentSettingScreen extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: paymentController.payments.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: InkWell(
-                              onTap: () {
-                                String method = paymentController.payments[index];
-                                if (method == "Cash") {
-                                  if (paymentController.bookAppointmentController.appointmentType.value == "homeVisit") {
-                                    paymentController.selectedPayment.value = method;
-                                  } else {
-                                    Get.snackbar(
-                                      AppStrings.warning.tr,
-                                      AppStrings.onlyForHomeVisit.tr,
-                                      colorText: Colors.white,
-                                      backgroundColor: AppColors.red.withOpacity(0.6),
-                                      snackPosition: SnackPosition.BOTTOM,
-                                    );
-                                  }
-                                } else {
-                                  paymentController.selectedPayment.value = method;
-                                }
-                              },
-                              child: Obx(
-                                    () => Container(
-                                  height: 70.h,
-                                  width: 1.sw,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.r),
-                                    border: Border.all(
-                                      color: paymentController.selectedPayment.value == paymentController.payments[index]
-                                          ? AppColors.primaryColor
-                                          : AppColors.lightGrey.withOpacity(0.5),
-                                    ),
-                                    color: Colors.white,
-                                  ),
-                                  padding: EdgeInsets.symmetric(horizontal: 11.w),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        height: 55.h,
-                                        width: 55.w,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.lightGrey.withOpacity(0.2),
-                                          borderRadius: BorderRadius.circular(10.r),
-                                        ),
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.all(10.r),
-                                        child: Image.asset(paymentController.paymentIcons[index]),
-                                      ),
-                                      20.horizontalSpace,
-                                      Text(
-                                        paymentController.payments[index],
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16.sp,
-                                          fontFamily: AppFonts.jakartaMedium,
-                                        ),
-                                      ),
-                                      const Spacer(),
-                                      _buildRadioIndicator(index),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      // ListView.builder(
+                      //   padding: EdgeInsets.zero,
+                      //   shrinkWrap: true,
+                      //   physics: const NeverScrollableScrollPhysics(),
+                      //   itemCount: paymentController.payments.length,
+                      //   itemBuilder: (context, index) {
+                      //     return Padding(
+                      //       padding: EdgeInsets.only(bottom: 12.h),
+                      //       child: InkWell(
+                      //         onTap: () {
+                      //           String method = paymentController.payments[index];
+                      //           if (method == "Cash") {
+                      //             if (paymentController.bookAppointmentController.appointmentType.value == "homeVisit") {
+                      //               paymentController.selectedPayment.value = method;
+                      //             } else {
+                      //               Get.snackbar(
+                      //                 AppStrings.warning.tr,
+                      //                 AppStrings.onlyForHomeVisit.tr,
+                      //                 colorText: Colors.white,
+                      //                 backgroundColor: AppColors.red.withOpacity(0.6),
+                      //                 snackPosition: SnackPosition.BOTTOM,
+                      //               );
+                      //             }
+                      //           } else {
+                      //             paymentController.selectedPayment.value = method;
+                      //           }
+                      //         },
+                      //         child: Obx(
+                      //               () => Container(
+                      //             height: 70.h,
+                      //             width: 1.sw,
+                      //             decoration: BoxDecoration(
+                      //               borderRadius: BorderRadius.circular(10.r),
+                      //               border: Border.all(
+                      //                 color: paymentController.selectedPayment.value == paymentController.payments[index]
+                      //                     ? AppColors.primaryColor
+                      //                     : AppColors.lightGrey.withOpacity(0.5),
+                      //               ),
+                      //               color: Colors.white,
+                      //             ),
+                      //             padding: EdgeInsets.symmetric(horizontal: 11.w),
+                      //             child: Row(
+                      //               children: [
+                      //                 Container(
+                      //                   height: 55.h,
+                      //                   width: 55.w,
+                      //                   decoration: BoxDecoration(
+                      //                     color: AppColors.lightGrey.withOpacity(0.2),
+                      //                     borderRadius: BorderRadius.circular(10.r),
+                      //                   ),
+                      //                   alignment: Alignment.center,
+                      //                   padding: EdgeInsets.all(10.r),
+                      //                   child: Image.asset(paymentController.paymentIcons[index]),
+                      //                 ),
+                      //                 20.horizontalSpace,
+                      //                 Text(
+                      //                   paymentController.payments[index],
+                      //                   style: TextStyle(
+                      //                     fontWeight: FontWeight.w500,
+                      //                     fontSize: 16.sp,
+                      //                     fontFamily: AppFonts.jakartaMedium,
+                      //                   ),
+                      //                 ),
+                      //                 const Spacer(),
+                      //                 _buildRadioIndicator(index),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                       30.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
@@ -190,29 +190,29 @@ class PharmacyPaymentSettingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRadioIndicator(int index) {
-    bool isSelected = paymentController.selectedPayment.value == paymentController.payments[index];
-    return Container(
-      height: 20.h,
-      width: 20.w,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.transparent,
-        border: Border.all(
-          color: isSelected ? AppColors.primaryColor : AppColors.lightGrey,
-          width: 2,
-        ),
-      ),
-      padding: EdgeInsets.all(3.sp),
-      alignment: Alignment.center,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryColor : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-      ),
-    );
-  }
+  // Widget _buildRadioIndicator(int index) {
+  //   bool isSelected = paymentController.selectedPayment.value == paymentController.payments[index];
+  //   return Container(
+  //     height: 20.h,
+  //     width: 20.w,
+  //     decoration: BoxDecoration(
+  //       shape: BoxShape.circle,
+  //       color: Colors.transparent,
+  //       border: Border.all(
+  //         color: isSelected ? AppColors.primaryColor : AppColors.lightGrey,
+  //         width: 2,
+  //       ),
+  //     ),
+  //     padding: EdgeInsets.all(3.sp),
+  //     alignment: Alignment.center,
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: isSelected ? AppColors.primaryColor : Colors.transparent,
+  //         shape: BoxShape.circle,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Future<void> showHomeVisitStatusDialog() async {
     if (paymentController.bookAppointmentController.appointmentType.value == "homeVisit") {

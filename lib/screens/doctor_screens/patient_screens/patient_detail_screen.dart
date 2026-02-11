@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/patient_controller.dart';
+import 'package:patient_app/models/patient_model_doctor.dart';
 import 'package:patient_app/widgets/doctor_widgets/patient_widgets/medical_record_widgets.dart';
 import 'package:patient_app/widgets/doctor_widgets/patient_widgets/notes_widget.dart';
 import 'package:patient_app/widgets/doctor_widgets/patient_widgets/patient_detail_card.dart';
@@ -13,7 +14,8 @@ import '../../../utils/app_strings.dart';
 import '../../../widgets/patient_widgets/search_widgets/rating_widget.dart';
 
 class PatientDetailScreen extends StatelessWidget {
-  PatientDetailScreen({super.key});
+ final PatientSummary patient;
+  PatientDetailScreen({super.key,required this.patient});
 
   final PatientController patientController = Get.find();
 
@@ -64,7 +66,7 @@ class PatientDetailScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       20.verticalSpace,
-                      PatientDetailCard(),
+                      PatientDetailCard(patientSummary: patient,),
                       10.verticalSpace,
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -72,7 +74,7 @@ class PatientDetailScreen extends StatelessWidget {
                           RatingWidget(
                             icon: Icons.person_outline_outlined,
                             iconCircleColor: AppColors.primaryColor,
-                            metricText: "12",
+                            metricText: "${patient.totalAppointments}",
                             labelText: AppStrings.totalConsultations.tr,
                             width: 100,
                           ),

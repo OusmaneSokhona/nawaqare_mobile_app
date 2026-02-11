@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
+import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class CardDateCvvWidget extends StatelessWidget {
@@ -10,8 +13,7 @@ class CardDateCvvWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const fieldHeight = 56.0;
-    final borderRadius = BorderRadius.circular(12.0);
+    final borderRadius = BorderRadius.circular(12.r);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -22,45 +24,44 @@ class CardDateCvvWidget extends StatelessWidget {
             children: <Widget>[
               Text(
                 AppStrings.expirationDate.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  fontFamily: AppFonts.jakartaBold,
+                  color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 8.0),
+              SizedBox(height: 8.h),
               InkWell(
                 onTap: () => controller.selectDate(context),
                 borderRadius: borderRadius,
                 child: Container(
-                  height: fieldHeight,
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  height: 56.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: borderRadius,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
+                    border: Border.all(
+                      color: AppColors.lightGrey.withOpacity(0.3),
+                      width: 1,
+                    ),
                   ),
                   child: Row(
                     children: <Widget>[
-                      const Icon(
-                        Icons.calendar_today,
-                        color: Colors.blue,
-                        size: 20,
+                      Icon(
+                        Icons.calendar_today_outlined,
+                        color: AppColors.primaryColor,
+                        size: 20.sp,
                       ),
-                      const SizedBox(width: 10.0),
+                      SizedBox(width: 10.w),
                       Obx(
                             () => Text(
                           controller.formattedDate,
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: TextStyle(
+                            fontSize: 16.sp,
                             color: Colors.black87,
                             fontWeight: FontWeight.w500,
+                            fontFamily: AppFonts.jakartaMedium,
                           ),
                         ),
                       ),
@@ -71,48 +72,99 @@ class CardDateCvvWidget extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(width: 16.0),
+        SizedBox(width: 16.w),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 AppStrings.cvv.tr,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              const SizedBox(height: 8.0),
-              TextFormField(
-                controller: controller.cvvController,
-                keyboardType: TextInputType.number,
-                maxLength: 4,
-                obscureText: true,
-                textAlign: TextAlign.start,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14.sp,
+                  fontFamily: AppFonts.jakartaBold,
+                  color: Colors.black87,
                 ),
-                onChanged: (value) => controller.cvv.value = value,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  counterText: "",
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: AppStrings.cvvHint.tr,
-                  border: OutlineInputBorder(
-                    borderRadius: borderRadius,
-                    borderSide: BorderSide.none,
+              ),
+              SizedBox(height: 8.h),
+              Container(
+                height: 56.h,
+                child: TextFormField(
+                  controller: controller.cvvController,
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  obscureText: true,
+                  obscuringCharacter: '•',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: AppFonts.jakartaMedium,
+                    letterSpacing: 2,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: borderRadius,
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: borderRadius,
-                    borderSide: BorderSide(
-                      color: Colors.blue.shade200,
-                      width: 2,
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w),
+                    counterText: "",
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: AppStrings.cvvHint.tr,
+                    hintStyle: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.grey.withOpacity(0.5),
+                      fontFamily: AppFonts.jakartaRegular,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.security_outlined,
+                      color: AppColors.primaryColor,
+                      size: 20.sp,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: borderRadius,
+                      borderSide: BorderSide(
+                        color: AppColors.lightGrey.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: borderRadius,
+                      borderSide: BorderSide(
+                        color: AppColors.lightGrey.withOpacity(0.3),
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: borderRadius,
+                      borderSide: BorderSide(
+                        color: AppColors.primaryColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: borderRadius,
+                      borderSide: BorderSide(
+                        color: AppColors.red,
+                        width: 1,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: borderRadius,
+                      borderSide: BorderSide(
+                        color: AppColors.red,
+                        width: 1.5,
+                      ),
                     ),
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Required';
+                    }
+                    if (value.length < 3 || value.length > 4) {
+                      return 'Invalid';
+                    }
+                    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                      return 'Numbers only';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ],

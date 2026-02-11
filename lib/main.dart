@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/on_boarding_and_splash_screens/splash_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
@@ -9,6 +10,8 @@ import 'package:patient_app/utils/locat_storage.dart';
 bool isWeb=false;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = 'pk_test_51SuZPRLJmcY8uAQzqHTJTLKAUSKxTnMYMTcqVY2TypaZ8ikuOjnftgdrDcLs2tnoPiOt9VliWSltD0wFDl3Uh4g000bhBK6DDn';
+  await Stripe.instance.applySettings();
   await LocalStorageUtils.init();
   if(kIsWeb){
     isWeb=true;

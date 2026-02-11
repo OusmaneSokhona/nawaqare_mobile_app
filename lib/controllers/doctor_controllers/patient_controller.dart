@@ -1,66 +1,138 @@
 import 'package:get/get.dart';
-import '../../models/patient_model.dart';
-import '../../utils/app_strings.dart';
+import 'package:patient_app/services/api_service.dart';
+import 'package:patient_app/utils/api_urls.dart';
+import 'package:patient_app/utils/app_strings.dart';
+import '../../models/patient_model_doctor.dart';
 
 class PatientController extends GetxController {
+  final ApiService _apiService = ApiService();
+
   RxString selectedCategory = AppStrings.overview.tr.obs;
   RxInt currentPage = 1.obs;
-  final int itemsPerPage = 4;
+  final int itemsPerPage = 10;
 
-  RxList<PatientModel> allPatients = <PatientModel>[
-    PatientModel(
-      patientName: 'Mr. Alex Martin',
-      patientImageUrl: 'assets/demo_images/patient_1.png',
-      lastAppointmentDate: 'Sunday, 12 June',
-      consultationType: 'Remote Consultation',
-      period: 'This Week',
-    ),
-    PatientModel(
-      patientName: 'Ms. Sarah Johnson',
-      patientImageUrl: 'assets/demo_images/patient_2.png',
-      lastAppointmentDate: 'Monday, 13 June',
-      consultationType: 'In-Person Consultation',
-      period: 'This Month',
-    ),
-    PatientModel(
-      patientName: 'Mr. David Lee',
-      patientImageUrl: 'assets/demo_images/patient_3.png',
-      lastAppointmentDate: 'Wednesday, 15 June',
-      consultationType: 'Remote Consultation',
-      period: 'This Week',
-    ),
-    PatientModel(
-      patientName: 'Mrs. Jessica Turner',
-      patientImageUrl: 'assets/demo_images/patient_3.png',
-      lastAppointmentDate: 'Sunday, 12 June',
-      consultationType: 'In person Consultation',
-      period: 'This Month',
-    ),
-    PatientModel(
-      patientName: 'Mr. Michael Johnson',
-      patientImageUrl: 'assets/demo_images/patient_2.png',
-      lastAppointmentDate: 'Sunday, 12 June',
-      consultationType: 'Remote Consultation',
-      period: 'This Week',
-    ),
-  ].obs;
-
-  List<PatientModel> get paginatedPatients {
-    int start = (currentPage.value - 1) * itemsPerPage;
-    int end = start + itemsPerPage;
-    if (start >= allPatients.length) return [];
-    return allPatients.sublist(
-        start, end > allPatients.length ? allPatients.length : end);
-  }
-
-  int get totalPages => (allPatients.length / itemsPerPage).ceil();
-
-  List<String> statusOptions = [
-    AppStrings.all.tr,
-    AppStrings.active.tr,
-    AppStrings.expirySoon.tr,
-    AppStrings.expired.tr,
-  ];
+  RxList<PatientAppointmentModel> allAppointments = <PatientAppointmentModel>[].obs;
+  RxList<PatientSummary> patientSummaries = <PatientSummary>[].obs;
+  RxBool isLoading = false.obs;
 
   RxString selectedStatus = AppStrings.all.tr.obs;
+  List<String> statusOptions = [
+    AppStrings.all.tr,
+    AppStrings.pending.tr,
+    AppStrings.confirmed.tr,
+    "ongoing",
+    AppStrings.completed.tr,
+    AppStrings.cancelled.tr,
+  ];
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchPatients();
+  }
+
+  Future<void> fetchPatients() async {
+    try {
+      isLoading.value = true;
+      final response = await _apiService.get(ApiUrls.getAllPatients);
+
+      if (response.statusCode == 200) {
+        final appointmentsResponse = AppointmentsResponse.fromJson(response.data);
+        allAppointments.value = appointmentsResponse.appointments;
+        createPatientSummaries();
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to fetch appointments');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void createPatientSummaries() {
+    final Map<String, List<PatientAppointmentModel>> appointmentsByPatient = {};
+
+    for (final appointment in allAppointments) {
+      if (!appointmentsByPatient.containsKey(appointment.patientId)) {
+        appointmentsByPatient[appointment.patientId] = [];
+      }
+      appointmentsByPatient[appointment.patientId]!.add(appointment);
+    }
+
+    final List<PatientSummary> summaries = [];
+
+    appointmentsByPatient.forEach((patientId, appointments) {
+      appointments.sort((a, b) => b.date.compareTo(a.date));
+      final patient = appointments.first.patient;
+
+      double totalSpent = 0;
+      for (final app in appointments) {
+        if (app.status == 'completed' || app.status == 'confirmed') {
+          totalSpent += app.fee;
+        }
+      }
+
+      summaries.add(PatientSummary(
+        patientId: patientId,
+        fullName: patient?.fullName ?? 'Unknown Patient',
+        email: patient?.email ?? '',
+        lastAppointmentDate: appointments.first.date,
+        lastConsultationType: appointments.first.consultationType,
+        totalAppointments: appointments.length,
+        totalSpent: totalSpent,
+        imageUrl: patient?.profileImage ?? '',
+      ));
+    });
+
+    summaries.sort((a, b) {
+      if (a.lastAppointmentDate == null) return 1;
+      if (b.lastAppointmentDate == null) return -1;
+      return b.lastAppointmentDate!.compareTo(a.lastAppointmentDate!);
+    });
+
+    patientSummaries.assignAll(summaries);
+  }
+
+  List<PatientSummary> get filteredPatients {
+    if (selectedStatus.value == AppStrings.all.tr) {
+      return patientSummaries;
+    }
+
+    final statusMap = {
+      AppStrings.pending.tr: 'pending',
+      AppStrings.confirmed.tr: 'confirmed',
+      "ongoing": 'ongoing',
+      AppStrings.completed.tr: 'completed',
+      AppStrings.cancelled.tr: 'cancelled',
+    };
+
+    final statusValue = statusMap[selectedStatus.value];
+
+    final patientIdsWithStatus = allAppointments
+        .where((app) => app.status == statusValue)
+        .map((app) => app.patientId)
+        .toSet();
+
+    return patientSummaries
+        .where((patient) => patientIdsWithStatus.contains(patient.patientId))
+        .toList();
+  }
+
+  List<PatientSummary> get paginatedPatients {
+    final filtered = filteredPatients;
+    int start = (currentPage.value - 1) * itemsPerPage;
+    int end = start + itemsPerPage;
+
+    if (start >= filtered.length) return [];
+    return filtered.sublist(
+      start,
+      end > filtered.length ? filtered.length : end,
+    );
+  }
+
+  int get totalPages => (filteredPatients.length / itemsPerPage).ceil();
+
+  int get totalFilteredCount => filteredPatients.length;
+
+  void refreshData() => fetchPatients();
+
 }

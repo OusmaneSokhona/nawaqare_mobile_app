@@ -285,6 +285,24 @@ class TimeSlotScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final slot = controller.allSlots[index];
                     final isBooked = slot.status == 'booked';
+                    final isCancelled = slot.status == 'cancelled';
+
+                    Color statusColor = AppColors.primaryColor;
+                    Color statusBgColor = AppColors.primaryColor.withOpacity(0.1);
+                    IconData statusIcon = Icons.schedule;
+                    String statusText = AppStrings.available.tr;
+
+                    if (isBooked) {
+                      statusColor = Colors.green;
+                      statusBgColor = Colors.green.withOpacity(0.1);
+                      statusIcon = Icons.check_circle;
+                      statusText = AppStrings.booked.tr;
+                    } else if (isCancelled) {
+                      statusColor = Colors.red;
+                      statusBgColor = Colors.red.withOpacity(0.1);
+                      statusIcon = Icons.cancel_outlined;
+                      statusText = AppStrings.cancelled.tr;
+                    }
 
                     return Container(
                       margin: EdgeInsets.only(bottom: 12.h),
@@ -293,7 +311,7 @@ class TimeSlotScreen extends StatelessWidget {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(15.r),
                         border: Border.all(
-                          color: isBooked ? Colors.green.withOpacity(0.3) : AppColors.primaryColor.withOpacity(0.1),
+                          color: statusBgColor,
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -309,12 +327,12 @@ class TimeSlotScreen extends StatelessWidget {
                             width: 40.w,
                             height: 40.w,
                             decoration: BoxDecoration(
-                              color: isBooked ? Colors.green.withOpacity(0.1) : AppColors.primaryColor.withOpacity(0.1),
+                              color: statusBgColor,
                               borderRadius: BorderRadius.circular(10.r),
                             ),
                             child: Icon(
-                              isBooked ? Icons.check_circle : Icons.schedule,
-                              color: isBooked ? Colors.green : AppColors.primaryColor,
+                              statusIcon,
+                              color: statusColor,
                               size: 24.w,
                             ),
                           ),
@@ -344,49 +362,49 @@ class TimeSlotScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          if (isBooked)
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                            decoration: BoxDecoration(
+                              color: statusBgColor,
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  statusIcon,
+                                  color: statusColor,
+                                  size: 16.w,
+                                ),
+                                5.horizontalSpace,
+                                Text(
+                                  statusText,
+                                  style: TextStyle(
+                                    color: statusColor,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (!isBooked && !isCancelled)
+                            15.horizontalSpace,
+                          if(!isBooked&& !isCancelled)InkWell(
+                            onTap: () => controller.deleteTimeSlot(slot.id),
+                            child: Container(
+                              padding: EdgeInsets.all(8.w),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(20.r),
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10.r),
                               ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    color: Colors.green,
-                                    size: 16.w,
-                                  ),
-                                  5.horizontalSpace,
-                                  Text(
-                                    AppStrings.booked.tr,
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: AppFonts.jakartaMedium,
-                                    ),
-                                  ),
-                                ],
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                                size: 20.w,
                               ),
                             ),
-                          if (!isBooked)
-                            InkWell(
-                              onTap: () => controller.deleteTimeSlot(slot.id),
-                              child: Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.red.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                child: Icon(
-                                  Icons.delete_outline,
-                                  color: Colors.red,
-                                  size: 20.w,
-                                ),
-                              ),
-                            ),
+                          ),
                         ],
                       ),
                     );
@@ -509,7 +527,7 @@ class TimeSlotScreen extends StatelessWidget {
                               ),
                               10.horizontalSpace,
                               Text(
-                                _formatTimeOfDay(controller.startTime.value),
+                                _formatTimeOfDayForDisplay(controller.startTime.value),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 13.sp,
@@ -556,7 +574,7 @@ class TimeSlotScreen extends StatelessWidget {
                               ),
                               10.horizontalSpace,
                               Text(
-                                _formatTimeOfDay(controller.endTime.value),
+                                _formatTimeOfDayForDisplay(controller.endTime.value),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 13.sp,
@@ -615,7 +633,6 @@ class TimeSlotScreen extends StatelessWidget {
     );
 
     if (selectedDate != null) {
-      // Update both the dialog date AND the main selected date
       controller.selectedDateForSlot.value = selectedDate;
       controller.selectedDate.value = selectedDate;
     }
@@ -655,18 +672,18 @@ class TimeSlotScreen extends StatelessWidget {
     if (selectedTime != null) {
       if (isStartTime) {
         controller.startTime.value = selectedTime;
-        // Automatically set end time to 30 minutes after start time
-        controller.endTime.value = TimeOfDay(
-          hour: selectedTime.hour,
-          minute: selectedTime.minute + 30,
-        );
+        // Calculate end time by adding 30 minutes properly
+        final totalMinutes = selectedTime.hour * 60 + selectedTime.minute + 30;
+        final newHour = totalMinutes ~/ 60;
+        final newMinute = totalMinutes % 60;
+        controller.endTime.value = TimeOfDay(hour: newHour, minute: newMinute);
       } else {
         controller.endTime.value = selectedTime;
       }
     }
   }
 
-  String _formatTimeOfDay(TimeOfDay time) {
+  String _formatTimeOfDayForDisplay(TimeOfDay time) {
     final hour = time.hourOfPeriod;
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.period == DayPeriod.am ? 'AM' : 'PM';

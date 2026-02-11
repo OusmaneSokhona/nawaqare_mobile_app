@@ -47,7 +47,7 @@ class AppointmentResponse {
 
 class Appointment {
   final String id;
-  final Patient patient;
+  final String patientId; // Changed from Patient to String
   final Doctor doctor;
   final Timeslot timeslot;
   final int fee;
@@ -61,10 +61,13 @@ class Appointment {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int v;
+  // ADD THESE MISSING FIELDS
+  final String? homevisitstatus;
+  final RescheduleInfo? isReschedule;
 
   Appointment({
     required this.id,
-    required this.patient,
+    required this.patientId, // Changed from patient to patientId
     required this.doctor,
     required this.timeslot,
     required this.fee,
@@ -78,12 +81,15 @@ class Appointment {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
+    // ADD THESE MISSING FIELDS
+    this.homevisitstatus,
+    this.isReschedule,
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
       id: json['_id']?.toString() ?? '',
-      patient: Patient.fromJson(json['patientId'] as Map<String, dynamic>? ?? {}),
+      patientId: json['patientId']?.toString() ?? '', // Changed: directly get the string
       doctor: Doctor.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
       timeslot: Timeslot.fromJson(json['timeslot'] as Map<String, dynamic>? ?? {}),
       fee: (json['fee'] as num?)?.toInt() ?? 0,
@@ -97,13 +103,18 @@ class Appointment {
       createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
       v: (json['__v'] as num?)?.toInt() ?? 0,
+      // ADD THESE MISSING FIELDS
+      homevisitstatus: json['homevisitstatus']?.toString(),
+      isReschedule: json['isReschedule'] != null
+          ? RescheduleInfo.fromJson(json['isReschedule'] as Map<String, dynamic>)
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'patientId': patient.toJson(),
+      'patientId': patientId, // Changed from patient.toJson() to patientId
       'doctorId': doctor.toJson(),
       'timeslot': timeslot.toJson(),
       'fee': fee,
@@ -117,6 +128,9 @@ class Appointment {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       '__v': v,
+      // ADD THESE MISSING FIELDS
+      'homevisitstatus': homevisitstatus,
+      'isReschedule': isReschedule?.toJson(),
     };
   }
 
@@ -126,37 +140,37 @@ class Appointment {
   String get formattedTime => '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 }
 
-class Patient {
-  final String id;
-  final String fullName;
-  final String email;
-  final String? profileImage;
-
-  Patient({
-    required this.id,
-    required this.fullName,
-    required this.email,
-    this.profileImage,
-  });
-
-  factory Patient.fromJson(Map<String, dynamic> json) {
-    return Patient(
-      id: json['_id']?.toString() ?? '',
-      fullName: json['fullName']?.toString() ?? '',
-      email: json['email']?.toString() ?? '',
-      profileImage: json['profileImage']?.toString(),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'fullName': fullName,
-      'email': email,
-      'profileImage': profileImage,
-    };
-  }
-}
+// class Patient {
+//   final String id;
+//   final String fullName;
+//   final String email;
+//   final String? profileImage;
+//
+//   Patient({
+//     required this.id,
+//     required this.fullName,
+//     required this.email,
+//     this.profileImage,
+//   });
+//
+//   factory Patient.fromJson(Map<String, dynamic> json) {
+//     return Patient(
+//       id: json['_id']?.toString() ?? '',
+//       fullName: json['fullName']?.toString() ?? '',
+//       email: json['email']?.toString() ?? '',
+//       profileImage: json['profileImage']?.toString(),
+//     );
+//   }
+//
+//   Map<String, dynamic> toJson() {
+//     return {
+//       '_id': id,
+//       'fullName': fullName,
+//       'email': email,
+//       'profileImage': profileImage,
+//     };
+//   }
+// }
 
 class Doctor {
   final String id;
@@ -376,4 +390,23 @@ class AppointmentModel {
     required this.status,
     required this.imageUrl,
   });
+}
+class RescheduleInfo {
+  final String isAccept;
+
+  RescheduleInfo({
+    required this.isAccept,
+  });
+
+  factory RescheduleInfo.fromJson(Map<String, dynamic> json) {
+    return RescheduleInfo(
+      isAccept: json['isAccept']?.toString() ?? 'pending',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'isAccept': isAccept,
+    };
+  }
 }

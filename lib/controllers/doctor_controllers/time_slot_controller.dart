@@ -8,6 +8,7 @@ import 'package:patient_app/utils/api_urls.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 import '../../models/time_slot_model_doctor.dart';
+import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
 
 class TimeSlotController extends GetxController {
@@ -36,8 +37,17 @@ class TimeSlotController extends GetxController {
     return TimeOfDay(hour: newHour % 24, minute: newMinute);
   }
 
-  String _formatTimeOfDay(TimeOfDay time) {
+  // For API calls - 24-hour format
+  String _formatTimeOfDayForApi(TimeOfDay time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  // For display - 12-hour format with AM/PM
+  String formatTimeOfDayForDisplay(TimeOfDay time) {
+    final hour = time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return '$hour:$minute $period';
   }
 
   Future<void> fetchSlotsForDate(DateTime date) async {
@@ -49,6 +59,7 @@ class TimeSlotController extends GetxController {
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print("data =${data}");
         final doctorResponse = DoctorSlotsResponse.fromJson(data);
 
         final filteredSlots = doctorResponse.doctor.allSlots.where((slot) {
@@ -84,6 +95,7 @@ class TimeSlotController extends GetxController {
     try {
       isCreating.value = true;
 
+      // Create DateTime in local timezone
       final startDateTime = DateTime(
         selectedDateForSlot.value.year,
         selectedDateForSlot.value.month,
@@ -112,11 +124,25 @@ class TimeSlotController extends GetxController {
         return;
       }
 
+      // Debug logs
+      print("Selected start time: ${formatTimeOfDayForDisplay(startTime.value)}");
+      print("Selected end time: ${formatTimeOfDayForDisplay(endTime.value)}");
+      print("Local start time: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(startDateTime)}");
+      print("Local end time: ${DateFormat('yyyy-MM-dd HH:mm:ss').format(endDateTime)}");
+      print("Current timezone offset: ${DateTime.now().timeZoneOffset}");
+
+      // Convert to UTC for API
+      final startUtc = startDateTime.toUtc();
+      final endUtc = endDateTime.toUtc();
+
+      print("UTC start time: ${startUtc.toIso8601String()}");
+      print("UTC end time: ${endUtc.toIso8601String()}");
+
       final response = await _apiService.post(
         ApiUrls.createSlotApi,
         data: {
-          'startTime': startDateTime.toUtc().toIso8601String(),
-          'endTime': endDateTime.toUtc().toIso8601String(),
+          'startTime': startUtc.toIso8601String(),
+          'endTime': endUtc.toIso8601String(),
         },
       );
 
@@ -144,6 +170,7 @@ class TimeSlotController extends GetxController {
         );
       }
     } catch (e) {
+      print("Error creating time slot: $e");
       Get.snackbar(
         AppStrings.warning.tr,
         AppStrings.failedToCreateSlot.tr,
@@ -195,19 +222,28 @@ class TimeSlotController extends GetxController {
             ),
             TextButton(
               onPressed: () async {
-                Get.back();
-                print("Deleting slot with ID: $slotId");
+                Get.back(); // Close confirmation dialog
+
+                // Store original slots for rollback if needed
+                final originalSlots = List<TimeSlotModelDoctor>.from(allSlots);
+
+                // Optimistically remove the slot from UI immediately
+                allSlots.removeWhere((slot) => slot.id == slotId);
+
+                // Update available slots count
+                refresh();
 
                 // Show loading indicator
                 Get.dialog(
                   Center(
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
                   ),
                   barrierDismissible: false,
                 );
 
                 try {
-                  // Check if the URL is formed correctly
                   final deleteUrl = '${ApiUrls.deleteSlotApi}$slotId';
                   print("Delete URL: $deleteUrl");
 
@@ -218,16 +254,24 @@ class TimeSlotController extends GetxController {
                   if (response.statusCode == 200) {
                     print("Successfully deleted slot: ${response.data}");
 
-                    await fetchSlotsForDate(selectedDate.value);
+                    // Show success message
                     Get.snackbar(
                       "Success",
                       AppStrings.slotDeleted.tr,
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: Colors.green,
                       colorText: Colors.white,
+                      duration: Duration(seconds: 2),
                     );
+
+                    // Force refresh from server to ensure consistency
+                    await fetchSlotsForDate(selectedDate.value);
+
                   } else {
-                    // Handle different status codes
+                    // Server error - rollback UI changes
+                    allSlots.value = originalSlots;
+                    refresh();
+
                     print("Delete failed with status: ${response.statusCode}");
                     print("Response data: ${response.data}");
 
@@ -237,10 +281,16 @@ class TimeSlotController extends GetxController {
                       snackPosition: SnackPosition.BOTTOM,
                       backgroundColor: Colors.red,
                       colorText: Colors.white,
+                      duration: Duration(seconds: 3),
                     );
                   }
                 } catch (e) {
                   Get.back(); // Close loading dialog
+
+                  // Exception occurred - rollback UI changes
+                  allSlots.value = originalSlots;
+                  refresh();
+
                   print("Exception during delete: $e");
 
                   if (e is DioException) {
@@ -248,7 +298,6 @@ class TimeSlotController extends GetxController {
                     print("Dio Error Message: ${e.message}");
                     print("Dio Error Response: ${e.response?.data}");
 
-                    // Handle specific Dio errors
                     if (e.response != null) {
                       Get.snackbar(
                         AppStrings.warning.tr,

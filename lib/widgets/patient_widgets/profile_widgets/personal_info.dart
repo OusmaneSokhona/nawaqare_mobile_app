@@ -11,7 +11,7 @@ import 'info_row.dart';
 class PersonalInfo extends StatelessWidget {
   PersonalInfo({super.key});
   final ProfileController controller = Get.put(ProfileController());
-  final HomeController homeController = Get.find();
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {

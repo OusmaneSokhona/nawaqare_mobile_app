@@ -71,7 +71,7 @@ class ApiClient {
 
   Future<void> _handleTokenExpiration() async {
     await LocalStorageUtils.deleteUser();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       Get.snackbar(
         "Expired",
         "Session expired. Please login again.",
@@ -79,7 +79,7 @@ class ApiClient {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      Get.deleteAll(force: true);
+     await Get.deleteAll(force: true);
       Get.offAll(SignInScreen(), binding: AppBinding());
     });
   }

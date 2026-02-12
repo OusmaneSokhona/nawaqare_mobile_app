@@ -67,7 +67,8 @@ class PharmacyHealthSpaceGrid extends StatelessWidget {
     );
   }
 
-  void _handleLogout() {
+  Future<void> _handleLogout() async {
+    await Get.deleteAll(force: true);
     LocalStorageUtils.deleteUser();
     Get.offAll(() => SignInScreen(), binding: AppBinding());
   }

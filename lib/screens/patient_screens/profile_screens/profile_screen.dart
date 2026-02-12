@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
   ProfileScreen({super.key});
   final ProfileController controller = Get.put(ProfileController());
   final DoctorProfileController profileController = Get.put(DoctorProfileController());
-  final HomeController homeController = Get.find();
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +76,8 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: AppFonts.jakartaBold,
-                          fontSize: 22.h,
+                          fontSize: 19.h,
+                          overflow: TextOverflow.ellipsis,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

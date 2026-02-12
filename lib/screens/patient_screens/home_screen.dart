@@ -85,7 +85,7 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontFamily: AppFonts.jakartaBold,
-                          fontSize: 22.h,
+                          fontSize: 19.h,
                           fontWeight: FontWeight.w700,
                         ),
                       ),

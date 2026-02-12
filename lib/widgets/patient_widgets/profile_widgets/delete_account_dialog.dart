@@ -94,6 +94,7 @@ DeleteUserController deleteUserController = Get.put(DeleteUserController());
                       onPressed: () async {
                         bool isDeleted = await deleteUserController.deleteUserAccount();
                         if(isDeleted){
+                          await Get.deleteAll(force: true);
                           LocalStorageUtils.deleteUser();
                           Get.offAll( SignInScreen(), binding: AppBinding());
                         }

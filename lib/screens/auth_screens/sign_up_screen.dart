@@ -302,8 +302,7 @@ class SignUpScreen extends StatelessWidget {
                             controller: signUpController.passwordController,
                             prefixIcon: Icons.lock,
                             isPasswordField: true,
-                            isEnabled:
-                            signUpController.isPasswordActive.value,
+                                isEnabled: !signUpController.passwordVisibility.value, // Add this
                             onChanged: (value) =>
                             signUpController.currentPassword.value = value,
                             onTapEye: signUpController.toggleVisibility,
@@ -312,8 +311,7 @@ class SignUpScreen extends StatelessWidget {
                             validationView:
                             signUpController.isPasswordActive.value
                                 ? ValidationChecklist(
-                              rules: signUpController
-                                  .getValidationRules(),
+                              rules: signUpController.getValidationRules(),
                             )
                                 : null,
                           ),

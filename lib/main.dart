@@ -10,8 +10,8 @@ import 'package:patient_app/utils/locat_storage.dart';
 bool isWeb=false;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey = 'pk_test_51SuZPRLJmcY8uAQzqHTJTLKAUSKxTnMYMTcqVY2TypaZ8ikuOjnftgdrDcLs2tnoPiOt9VliWSltD0wFDl3Uh4g000bhBK6DDn';
-  await Stripe.instance.applySettings();
+  // Stripe.publishableKey = 'pk_test_51SuZPRLJmcY8uAQzqHTJTLKAUSKxTnMYMTcqVY2TypaZ8ikuOjnftgdrDcLs2tnoPiOt9VliWSltD0wFDl3Uh4g000bhBK6DDn';
+  // await Stripe.instance.applySettings();
   await LocalStorageUtils.init();
   if(kIsWeb){
     isWeb=true;

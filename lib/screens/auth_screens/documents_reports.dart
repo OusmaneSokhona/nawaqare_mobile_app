@@ -137,15 +137,6 @@ class DocumentsReports extends StatelessWidget {
               40.verticalSpace,
               Obx(
                   ()=>signUpController.isLoading.value?CircularProgressIndicator(color: AppColors.primaryColor,):CustomButton(borderRadius: 15, text: AppStrings.submit.tr, onTap: () async {
-                  if(signUpController.selectedFileName.value == null || signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'){
-                    Get.snackbar(
-                      AppStrings.warning.tr,
-                      AppStrings.pleaseUploadDocument.tr,
-                      backgroundColor: Colors.redAccent,
-                      colorText: Colors.white,
-                    );
-                    return;
-                  }
                   bool isSuccessRegister=await signUpController.registerUser();
                   print("isSuccessRegister: $isSuccessRegister");
                   if(isSuccessRegister){

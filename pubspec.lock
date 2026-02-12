@@ -782,7 +782,7 @@ packages:
     source: hosted
     version: "1.4.1"
   stripe_android:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: stripe_android
       sha256: "2bd3ad54a024701a3ef1d623c7ab81e6e8800c0586f91e4263530c47cdd19d82"
@@ -790,7 +790,7 @@ packages:
     source: hosted
     version: "12.2.0"
   stripe_ios:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: stripe_ios
       sha256: "948e2480182931c600ca07e2a132973503e9ba0f2caa8c7a94517ef861786f60"

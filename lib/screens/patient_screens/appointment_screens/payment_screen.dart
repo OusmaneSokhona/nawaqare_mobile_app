@@ -451,6 +451,7 @@ class PaymentScreen extends StatelessWidget {
                 child: Obx(
                       () => Container(
                     height: paymentController.selectedPayment.value ==
+
                         paymentController.payments[index]?100.h:70.h,
                     width: 1.sw,
                     decoration: BoxDecoration(

@@ -51,11 +51,20 @@ class BookAppointmentController extends GetxController {
         final data = response.data;
         if (data['slots'] != null) {
           final timeSlotResponse = TimeSlotResponse.fromJson(data);
-          print("Fetched ${data} slots");
+
+          // FIX: Remove duplicate conversion - fromJson already does toLocal()
+          // Directly assign the slots
+          print("Fetched ${timeSlotResponse.slots.length} slots");
+
+          // Debug: Check if times are already in local
+          if (timeSlotResponse.slots.isNotEmpty) {
+            print('Sample slot time (local): ${timeSlotResponse.slots.first.startTime}');
+            print('Is UTC? ${timeSlotResponse.slots.first.startTime.isUtc}');
+          }
+
           availableTimeSlots.assignAll(timeSlotResponse.slots);
 
-
-          // Auto-select first available time slot for today
+          // Auto-select first available time slot for selected date
           if (availableTimeSlots.isNotEmpty && selectedDate.value != null) {
             final todaySlots = _getTimeSlotsForDate(selectedDate.value!);
             if (todaySlots.isNotEmpty) {
@@ -69,13 +78,13 @@ class BookAppointmentController extends GetxController {
         errorMessage.value = 'Failed to load time slots: ${response.statusCode}';
       }
     } catch (e) {
+      print('Error fetching time slots: $e');
       errorMessage.value = 'Error: ${e.toString()}';
       availableTimeSlots.clear();
     } finally {
       isLoading.value = false;
     }
   }
-
   List<TimeSlot> _getTimeSlotsForDate(DateTime date) {
     final dateString = DateFormat('yyyy-MM-dd').format(date);
     return availableTimeSlots

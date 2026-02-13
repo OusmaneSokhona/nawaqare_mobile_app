@@ -9,6 +9,7 @@ import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/notification_model.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../video_call_screens/consultaion_finished_screen.dart';
 
 class NotificationScreen extends StatelessWidget {
   NotificationScreen({super.key});
@@ -49,13 +50,23 @@ class NotificationScreen extends StatelessWidget {
                     ),
                   ),
                   10.horizontalSpace,
-                  Text(
-                    AppStrings.notifications.tr,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: isWeb?12.sp:23.sp,
-                      fontWeight: FontWeight.w800,
-                      fontFamily: AppFonts.jakartaBold,
+                  InkWell(
+                    onTap: (){
+                      Get.to(
+                            () => ConsultaionFinishedScreen(
+                          appointmentId: '698088abd111b5b39c64f1f9',
+                          doctorName: 'Dr. Maria Waston',
+                        ),
+                      );
+                    },
+                    child: Text(
+                      AppStrings.notifications.tr,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: isWeb?12.sp:23.sp,
+                        fontWeight: FontWeight.w800,
+                        fontFamily: AppFonts.jakartaBold,
+                      ),
                     ),
                   ),
                   Spacer(),

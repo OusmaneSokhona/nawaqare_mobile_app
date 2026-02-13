@@ -60,13 +60,6 @@ class DoctorHealthSpaceGrid extends StatelessWidget {
           },
         ),
         HealthSpaceCard(
-          icon: "assets/images/calender_icon.png",
-          title: AppStrings.calendar.tr,
-          onTap: () {
-            Get.to(TimeSlotScreen());
-          },
-        ),
-        HealthSpaceCard(
           icon: "assets/images/log_out_icon.png",
           title: AppStrings.logout.tr,
           color: AppColors.red,

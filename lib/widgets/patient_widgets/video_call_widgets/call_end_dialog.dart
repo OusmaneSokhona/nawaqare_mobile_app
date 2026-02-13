@@ -7,6 +7,7 @@ import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/utils/locat_storage.dart';
 
+import '../../../screens/patient_screens/main_screen.dart';
 import '../../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
 import '../../../utils/app_colors.dart';
 
@@ -116,10 +117,11 @@ class CallEndDialog extends StatelessWidget {
                             MainScreenDoctor(),
                             binding: AppBinding(),
                           )
-                              : Get.to(
-                            ConsultaionFinishedScreen(),
-                            binding: AppBinding(),
-                          );
+                              :Get.offAll(MainScreen(),binding: AppBinding());
+                        //    Get.to(
+                          //                             ConsultaionFinishedScreen(),
+                          //                             binding: AppBinding(),
+                          //                           );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,

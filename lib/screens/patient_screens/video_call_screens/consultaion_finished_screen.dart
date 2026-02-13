@@ -4,18 +4,24 @@ import 'package:get/get.dart';
 
 import '../../../controllers/patient_controllers/appointment_controllers/feedback_controller.dart';
 import '../../../utils/app_colors.dart';
-import '../../../utils/app_strings.dart'; // Added import
+import '../../../utils/app_strings.dart';
 
 class ConsultaionFinishedScreen extends StatelessWidget {
-  ConsultaionFinishedScreen({super.key});
+  final String appointmentId;
+  final String doctorName;
 
-  @override
-  // Note: Standard practice is to use Get.find if it's already injected,
-  // or put it inside the build method/binding.
-  final FeedbackController controller = Get.put(FeedbackController());
+  const ConsultaionFinishedScreen({
+    super.key,
+    required this.appointmentId,
+    required this.doctorName,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final FeedbackController controller = Get.put(
+      FeedbackController(appointmentId: appointmentId),
+    );
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -46,7 +52,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  AppStrings.thankYouDoctor.trParams({'name': 'Dr. Maria Waston'}),
+                  AppStrings.thankYouDoctor.trParams({'name': doctorName}),
                   style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 50),
@@ -58,7 +64,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-                Obx(() => Center(child: _buildStarRating())),
+                Obx(() => Center(child: _buildStarRating(controller))),
                 const SizedBox(height: 40),
                 SizedBox(
                   height: 250.h,
@@ -81,7 +87,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildBottomButtons(),
+                _buildBottomButtons(controller),
               ],
             ),
           ),
@@ -90,7 +96,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStarRating() {
+  Widget _buildStarRating(FeedbackController controller) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
@@ -109,7 +115,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomButtons() {
+  Widget _buildBottomButtons(FeedbackController controller) {
     return Row(
       children: [
         Expanded(
@@ -145,7 +151,16 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: Text(
+              child: controller.isSubmitting.value
+                  ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+                  : Text(
                 AppStrings.send.tr,
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold, color: Colors.white),
               ),

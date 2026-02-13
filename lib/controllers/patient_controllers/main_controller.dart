@@ -16,6 +16,12 @@ class MainController extends GetxController{
   ChatController chatController=Get.put(ChatController());
   HomeController homeController=Get.put(HomeController());
   SearchControllerCustom searchController=Get.put(SearchControllerCustom());
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    currentIndex.value=0;
+  }
   var currentIndex = 0.obs;
   var currentTitle = 'Home'.obs;
   final List<Widget> screens = [

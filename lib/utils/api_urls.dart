@@ -23,4 +23,5 @@ class ApiUrls {
   static String createSlotApi = '/api/timeslots/create-timeslot';
   static String deleteSlotApi = '/api/timeslots/cancel-timeslot/';
   static String getAllPatients = '/api/appointments/doctor-patientsApp';
+  static String submitReviewApi = '/api/review/submit';
 }

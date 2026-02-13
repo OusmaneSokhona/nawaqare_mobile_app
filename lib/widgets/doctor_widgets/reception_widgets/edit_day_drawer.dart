@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:patient_app/controllers/doctor_controllers/calender_controller.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/duplicate_configuration.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_radio_tile.dart';
-import 'package:patient_app/widgets/custom_text_field.dart';
-
 import '../../../utils/app_fonts.dart';
 
 class EditDayDrawer extends StatelessWidget {
@@ -48,29 +47,169 @@ class EditDayDrawer extends StatelessWidget {
                       ),
                     ),
                     10.verticalSpace,
-                    CustomTextField(
-                      labelText: AppStrings.startTime.tr,
-                      hintText: "12:00PM",
-                      suffixIcon: Icons.calendar_today,
+                    Text(
+                      AppStrings.startTime.tr,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFonts.jakartaMedium,
+                      ),
                     ),
+                    5.verticalSpace,
+                    Obx(() => InkWell(
+                      onTap: () => controller.showTimePickerCustom(true),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: AppColors.lightGrey.withOpacity(0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: AppColors.primaryColor,
+                              size: 20.w,
+                            ),
+                            10.horizontalSpace,
+                            Text(
+                              controller.formatTimeOfDayForDisplay(controller.startTime.value),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
                     10.verticalSpace,
-                    CustomTextField(
-                      labelText: AppStrings.endTime.tr,
-                      hintText: "12:00PM",
-                      suffixIcon: Icons.calendar_today,
+                    Text(
+                      AppStrings.endTime.tr,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFonts.jakartaMedium,
+                      ),
                     ),
+                    5.verticalSpace,
+                    Obx(() => InkWell(
+                      onTap: () => controller.showTimePickerCustom(false),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: AppColors.lightGrey.withOpacity(0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: AppColors.primaryColor,
+                              size: 20.w,
+                            ),
+                            10.horizontalSpace,
+                            Text(
+                              controller.formatTimeOfDayForDisplay(controller.endTime.value),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
                     10.verticalSpace,
-                    CustomTextField(
-                      labelText: AppStrings.breaks.tr,
-                      hintText: "12:00PM",
-                      suffixIcon: Icons.calendar_today,
+                    Text(
+                      'Break Start',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFonts.jakartaMedium,
+                      ),
                     ),
+                    5.verticalSpace,
+                    Obx(() => InkWell(
+                      onTap: () => controller.showBreakTimePicker(true),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: AppColors.lightGrey.withOpacity(0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.free_breakfast,
+                              color: AppColors.primaryColor,
+                              size: 20.w,
+                            ),
+                            10.horizontalSpace,
+                            Text(
+                              controller.formatTimeOfDayForDisplay(controller.breakStartTime.value),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
                     10.verticalSpace,
-                    CustomTextField(
-                      labelText: AppStrings.buffers.tr,
-                      hintText: "12:00PM",
-                      suffixIcon: Icons.calendar_today,
+                    Text(
+                      'Break End',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFonts.jakartaMedium,
+                      ),
                     ),
+                    5.verticalSpace,
+                    Obx(() => InkWell(
+                      onTap: () => controller.showBreakTimePicker(false),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(15.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: AppColors.lightGrey.withOpacity(0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.free_breakfast,
+                              color: AppColors.primaryColor,
+                              size: 20.w,
+                            ),
+                            10.horizontalSpace,
+                            Text(
+                              controller.formatTimeOfDayForDisplay(controller.breakEndTime.value),
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14.sp,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
                     10.verticalSpace,
                     Align(
                       alignment: Alignment.centerLeft,
@@ -91,7 +230,8 @@ class EditDayDrawer extends StatelessWidget {
                           isSelected: controller.inPerson.value,
                           onTap: () {
                             controller.inPerson.value = !controller.inPerson.value;
-                          }),
+                          }
+                      ),
                     ),
                     10.verticalSpace,
                     Obx(
@@ -99,9 +239,9 @@ class EditDayDrawer extends StatelessWidget {
                           text: AppStrings.teleconsultation.tr,
                           isSelected: controller.teleConsultation.value,
                           onTap: () {
-                            controller.teleConsultation.value =
-                            !controller.teleConsultation.value;
-                          }),
+                            controller.teleConsultation.value = !controller.teleConsultation.value;
+                          }
+                      ),
                     ),
                     10.verticalSpace,
                     Obx(
@@ -110,7 +250,8 @@ class EditDayDrawer extends StatelessWidget {
                           isSelected: controller.mixed.value,
                           onTap: () {
                             controller.mixed.value = !controller.mixed.value;
-                          }),
+                          }
+                      ),
                     ),
                     10.verticalSpace,
                     Align(
@@ -131,8 +272,7 @@ class EditDayDrawer extends StatelessWidget {
                         text: AppStrings.consultation.tr,
                         isSelected: controller.consultation.value,
                         onTap: () {
-                          controller.consultation.value =
-                          !controller.consultation.value;
+                          controller.consultation.value = !controller.consultation.value;
                         },
                         isCircle: false,
                       ),
@@ -154,35 +294,45 @@ class EditDayDrawer extends StatelessWidget {
                         text: AppStrings.physiotherapy.tr,
                         isSelected: controller.physiotherapy.value,
                         onTap: () {
-                          controller.physiotherapy.value =
-                          !controller.physiotherapy.value;
+                          controller.physiotherapy.value = !controller.physiotherapy.value;
                         },
                         isCircle: false,
                       ),
                     ),
                     30.verticalSpace,
-                    CustomButton(
-                        borderRadius: 15, text: AppStrings.apply.tr, onTap: () {}),
+                    Obx(
+                          () => CustomButton(
+                          borderRadius: 15,
+                          text: controller.isCreating.value ? 'Creating...' : AppStrings.apply.tr,
+                          onTap: () {
+                            if (!controller.isCreating.value) {
+                              controller.createTimeSlotsForDay();
+                            }
+                          }
+                      ),
+                    ),
                     10.verticalSpace,
                     CustomButton(
                       borderRadius: 15,
                       text: AppStrings.duplicateConfiguration.tr,
                       onTap: () {
                         Get.back();
-                        Get.to( DuplicateConfiguration());
+                        Get.to(DuplicateConfiguration());
                       },
                       bgColor: AppColors.inACtiveButtonColor,
                       fontColor: Colors.black,
                     ),
                     10.verticalSpace,
                     Center(
-                        child: Text(
-                          "${AppStrings.autoSaved.tr}: ${AppStrings.lastSaved.tr} 14:25",
-                          style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.lightGrey),
-                        )),
+                      child: Text(
+                        "${AppStrings.autoSaved.tr}: ${AppStrings.lastSaved.tr} ${DateFormat('HH:mm').format(DateTime.now())}",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.lightGrey,
+                        ),
+                      ),
+                    ),
                     30.verticalSpace,
                   ],
                 ),

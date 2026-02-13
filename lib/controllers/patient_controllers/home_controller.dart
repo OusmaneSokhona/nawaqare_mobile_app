@@ -21,10 +21,11 @@ class HomeController extends GetxController {
   Rx<Appointment?> upcomingAppointment = Rx<Appointment?>(null);
 
   Future<void> fetchAppointments() async {
+    print("token= ${await LocalStorageUtils.getToken()}");
     try {
       isLoading.value = true;
 
-      final response = await ApiService().get(ApiUrls.getAppointments);
+      final response = await apiService.get(ApiUrls.getAppointments);
 
       if (response.statusCode == 200) {
         final jsonResponse = response.data is String

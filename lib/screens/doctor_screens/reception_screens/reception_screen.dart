@@ -17,17 +17,16 @@ import '../../patient_screens/video_call_screens/help_center_screen.dart';
 class ReceptionScreen extends StatelessWidget {
   ReceptionScreen({super.key});
   final ReceptionController controller = Get.put(ReceptionController());
-  final DoctorHomeController homeController = Get.find<DoctorHomeController>();
+  final DoctorHomeController homeController = Get.put(DoctorHomeController());
 
   @override
   Widget build(BuildContext context) {
-    controller.scrollChange();
     bool isDesktop = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
       body: Obx(() {
         final doctor = homeController.currentUser.value;
-        final doctorName = doctor?.fullName ?? 'Dr. Alex';
+        final doctorName = doctor?.fullName ?? 'Dr. Xyz';
         final doctorImage = doctor?.profileImage;
 
         return Container(
@@ -127,7 +126,7 @@ class ReceptionScreen extends StatelessWidget {
               }),
               Expanded(
                 child: SingleChildScrollView(
-                  controller: controller.scrollController,
+                  controller: controller.scrollControllerNew,
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 18.sp),
                     child: Column(

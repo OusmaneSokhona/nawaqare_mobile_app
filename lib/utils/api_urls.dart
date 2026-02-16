@@ -18,10 +18,11 @@ class ApiUrls {
   static String createAppointment="/api/appointments/create-appointment";
   static String getAppointments="/api/appointments/all-appointments";
   static String videoCallApi="api/appointments/generate_token";
-  static String homeVisitStatusApi="api/appointments/homevisitstatus/";
+  static String homeVisitStatusApi="api/appointments/update/";
   static String doctorSlotsApi = '/api/timeslots/doctorAll-timeslot';
   static String createSlotApi = '/api/timeslots/create-timeslot';
   static String deleteSlotApi = '/api/timeslots/cancel-timeslot/';
   static String getAllPatients = '/api/appointments/doctor-patientsApp';
   static String submitReviewApi = '/api/review/submit';
+  static String updateAppointmentStatus = '/api/appointments/update/';
 }

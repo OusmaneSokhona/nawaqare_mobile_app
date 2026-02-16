@@ -58,18 +58,18 @@ class DoctorHomeController extends GetxController {
               print("\nChecking appointment: ${appointment.id}");
               print("Appointment status: ${appointment.status}");
               print("Appointment date: ${appointment.date}");
-              print("Timeslot start: ${appointment.timeslot.startTime}");
-              print("Timeslot end: ${appointment.timeslot.endTime}");
+              print("Timeslot start: ${appointment.timeslot?.startTime}");
+              print("Timeslot end: ${appointment.timeslot?.endTime}");
 
               // Check if appointment is ongoing
               if (appointment.status == "ongoing" ||
                   appointment.status == "confirmed") {
 
-                final startTime = appointment.timeslot.startTime;
-                final endTime = appointment.timeslot.endTime;
+                final startTime = appointment.timeslot?.startTime;
+                final endTime = appointment.timeslot?.endTime;
 
-                print("Comparing: $now is after $startTime = ${now.isAfter(startTime)}");
-                print("Comparing: $now is before $endTime = ${now.isBefore(endTime)}");
+                print("Comparing: $now is after $startTime = ${now.isAfter(startTime!)}");
+                print("Comparing: $now is before $endTime = ${now.isBefore(endTime!)}");
 
                 if (now.isAfter(startTime) && now.isBefore(endTime)) {
                   print("Found ongoing appointment!");
@@ -89,14 +89,14 @@ class DoctorHomeController extends GetxController {
 
             for (var appointment in appointments) {
               try {
-                final startTime = appointment.timeslot.startTime;
+                final startTime = appointment.timeslot?.startTime;
                 final isActive = appointment.status == AppointmentStatus.confirmed ||
                     appointment.status == "pending" ||
                     appointment.status == "upcoming";
 
                 print("Appointment ${appointment.id}: start=$startTime, status=${appointment.status}, isActive=$isActive");
 
-                if (isActive && startTime.isAfter(now)) {
+                if (isActive && startTime!.isAfter(now)) {
                   futureAppointments.add(appointment);
                   print("Added as future appointment");
                 }
@@ -107,11 +107,11 @@ class DoctorHomeController extends GetxController {
 
             if (futureAppointments.isNotEmpty) {
               futureAppointments.sort((a, b) =>
-                  a.timeslot.startTime.compareTo(b.timeslot.startTime));
+                  a.timeslot!.startTime.compareTo(b.timeslot!.startTime));
 
               print("\nSorted future appointments:");
               for (var app in futureAppointments) {
-                print("${app.id} - ${app.timeslot.startTime}");
+                print("${app.id} - ${app.timeslot?.startTime}");
               }
 
               upcomingAppointment.value = futureAppointments.first;

@@ -46,8 +46,8 @@ class HomeController extends GetxController {
           // 1. Find Ongoing: The first one where 'now' is between start and end
           try {
             ongoingAppointment.value = appointments.firstWhere((appointment) {
-              final startTime = appointment.timeslot.startTime;
-              final endTime = appointment.timeslot.endTime;
+              final startTime = appointment.timeslot!.startTime;
+              final endTime = appointment.timeslot!.endTime;
               final isActive = appointment.status == AppointmentStatus.confirmed ||
                   appointment.status == AppointmentStatus.pending;
 
@@ -59,7 +59,7 @@ class HomeController extends GetxController {
 
           // 2. Find Upcoming: Filter for future appointments, then find the one with the earliest start time
           List<Appointment> futureAppointments = appointments.where((appointment) {
-            final startTime = appointment.timeslot.startTime;
+            final startTime = appointment.timeslot!.startTime;
             final isActive = appointment.status == AppointmentStatus.confirmed ||
                 appointment.status == AppointmentStatus.pending;
 
@@ -69,7 +69,7 @@ class HomeController extends GetxController {
           if (futureAppointments.isNotEmpty) {
             // Sort by start time to get the absolute next one
             futureAppointments.sort((a, b) =>
-                a.timeslot.startTime.compareTo(b.timeslot.startTime));
+                a.timeslot!.startTime.compareTo(b.timeslot!.startTime));
 
             upcomingAppointment.value = futureAppointments.first;
           }

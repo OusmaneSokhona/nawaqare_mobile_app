@@ -30,8 +30,10 @@ class AppointmentWidget extends StatelessWidget {
         return Colors.blue;
       case AppointmentStatus.cancelled:
         return Colors.red;
-      case AppointmentStatus.rescheduled:
+      case AppointmentStatus.ongoing:
         return Colors.purple;
+      case AppointmentStatus.rescheduled:
+        return Colors.amber;
     }
   }
 
@@ -45,6 +47,8 @@ class AppointmentWidget extends StatelessWidget {
         return 'Completed';
       case AppointmentStatus.cancelled:
         return 'Cancelled';
+      case AppointmentStatus.ongoing:
+        return 'Ongoing';
       case AppointmentStatus.rescheduled:
         return 'Rescheduled';
     }
@@ -58,6 +62,8 @@ class AppointmentWidget extends StatelessWidget {
         return '🏥';
       case ConsultationType.remote:
         return '📱';
+      case ConsultationType.video:
+        return '📹';
     }
   }
 
@@ -104,6 +110,11 @@ class AppointmentWidget extends StatelessWidget {
   }
 
   String _getFormattedTime(DateTime startTime, DateTime endTime) {
+    // Add null checks
+    if (startTime == null || endTime == null) {
+      return 'Time not available';
+    }
+
     final startHour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
     final startPeriod = startTime.hour < 12 ? 'AM' : 'PM';
     final endHour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
@@ -163,7 +174,10 @@ class AppointmentWidget extends StatelessWidget {
         const Icon(Icons.watch_later_outlined, size: 16, color: AppColors.primaryColor),
         4.horizontalSpace,
         Text(
-          _getFormattedTime(appointment.timeslot.startTime, appointment.timeslot.endTime),
+          // Fix: Safely handle null timeslot
+          appointment.timeslot != null
+              ? _getFormattedTime(appointment.timeslot!.startTime, appointment.timeslot!.endTime)
+              : 'Time not specified',
           style: TextStyle(color: Colors.black54, fontSize: 12.sp),
         ),
       ],

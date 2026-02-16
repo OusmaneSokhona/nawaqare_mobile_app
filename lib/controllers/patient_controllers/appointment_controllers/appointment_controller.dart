@@ -188,8 +188,12 @@ class AppointmentController extends GetxController {
         statusColor = Colors.red;
         statusText = 'Cancelled';
         break;
-      case AppointmentStatus.rescheduled:
+      case AppointmentStatus.ongoing:
         statusColor = Colors.purple;
+        statusText = 'Ongoing';
+        break;
+      case AppointmentStatus.rescheduled:
+        statusColor = Colors.amber;
         statusText = 'Rescheduled';
         break;
     }

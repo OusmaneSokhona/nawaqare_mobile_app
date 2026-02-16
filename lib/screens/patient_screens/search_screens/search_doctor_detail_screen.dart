@@ -17,6 +17,15 @@ class SearchDoctorDetailScreen extends StatelessWidget {
 
   const SearchDoctorDetailScreen({super.key, required this.doctor});
 
+  String _getSpecialtyAsString(dynamic specialty) {
+    if (specialty == null) return 'General Practitioner';
+    if (specialty is String) return specialty;
+    if (specialty is Map) {
+      return specialty['name']?.toString() ?? 'General Practitioner';
+    }
+    return 'General Practitioner';
+  }
+
   String _getConsultationTypeText() {
     final fee = doctor.fee;
     if (fee == null) return 'Consultation Available';
@@ -122,7 +131,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       Text(
-                        doctor.displayName, // Updated to use displayName getter
+                        doctor.displayName,
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.w700,
@@ -131,7 +140,7 @@ class SearchDoctorDetailScreen extends StatelessWidget {
                       ),
                       2.verticalSpace,
                       Text(
-                        doctor.medicalSpecialty ?? 'General Practitioner',
+                        _getSpecialtyAsString(doctor.medicalSpecialty),
                         style: TextStyle(
                           fontSize: 17.sp,
                           fontWeight: FontWeight.w600,
@@ -228,7 +237,6 @@ class SearchDoctorDetailScreen extends StatelessWidget {
   void _showPhoneNumberDialog(BuildContext context) async {
     final phoneNumber = doctor.phoneNumber;
 
-    // Check if phone number exists
     if (phoneNumber == null || phoneNumber.isEmpty) {
       Get.snackbar(
         "No Phone Number",

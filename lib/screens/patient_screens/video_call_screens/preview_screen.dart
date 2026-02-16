@@ -38,10 +38,16 @@ class PreviewScreen extends StatelessWidget {
   }
 
   String _getFormattedTime(DateTime startTime, DateTime endTime) {
+    // Add null checks
+    if (startTime == null || endTime == null) {
+      return 'Time not available';
+    }
+
     final startHour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
     final startPeriod = startTime.hour < 12 ? 'AM' : 'PM';
     final endHour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
     final endPeriod = endTime.hour < 12 ? 'AM' : 'PM';
+
     return '$startHour:${startTime.minute.toString().padLeft(2, '0')} $startPeriod - $endHour:${endTime.minute.toString().padLeft(2, '0')} $endPeriod';
   }
 
@@ -268,11 +274,14 @@ class PreviewScreen extends StatelessWidget {
             children: [
               _buildDetailColumn(Icons.calendar_today_outlined,
                   AppStrings.date.tr, _getFormattedDate(appointment.date)),
+              // Fix: Safely handle null timeslot
               _buildDetailColumn(
-                  Icons.watch_later_outlined,
-                  "Time",
-                  _getFormattedTime(
-                      appointment.timeslot.startTime, appointment.timeslot.endTime)),
+                Icons.watch_later_outlined,
+                "Time",
+                appointment.timeslot != null
+                    ? _getFormattedTime(appointment.timeslot!.startTime, appointment.timeslot!.endTime)
+                    : 'Time not specified',
+              ),
               _buildDetailColumn(Icons.payment, AppStrings.fee.tr,
                   "${appointment.fee} ${appointment.currency}"),
             ],

@@ -17,6 +17,15 @@ class DoctorWidget extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
+  String _getSpecialtyAsString(dynamic specialty) {
+    if (specialty == null) return 'specialty';
+    if (specialty is String) return specialty;
+    if (specialty is Map) {
+      return specialty['name']?.toString() ?? 'specialty';
+    }
+    return 'specialty';
+  }
+
   String _getConsultationTypeText() {
     final fee = doctor.fee;
     if (fee == null) return 'Consultation Available';
@@ -165,7 +174,7 @@ class DoctorWidget extends StatelessWidget {
                         ),
                         const Divider(thickness: 0.3, color: Colors.black45),
                         Text(
-                          doctor.medicalSpecialty ?? 'General Practitioner',
+                          _getSpecialtyAsString(doctor.medicalSpecialty),
                           style: TextStyle(color: Colors.black, fontSize: 15.sp),
                         ),
                         const SizedBox(height: 4),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-
 class AppointmentResponse {
   final String message;
   final int total;
@@ -47,9 +46,9 @@ class AppointmentResponse {
 
 class Appointment {
   final String id;
-  final String patientId; // Changed from Patient to String
+  final String patientId;
   final Doctor doctor;
-  final Timeslot timeslot;
+  final Timeslot? timeslot;
   final int fee;
   final String currency;
   final DateTime date;
@@ -61,15 +60,17 @@ class Appointment {
   final DateTime createdAt;
   final DateTime updatedAt;
   final int v;
-  // ADD THESE MISSING FIELDS
   final String? homevisitstatus;
   final RescheduleInfo? isReschedule;
+  final List<dynamic>? followUps;
+  final String? paymentStatus;
+  final Prescription? prescriptionId;
 
   Appointment({
     required this.id,
-    required this.patientId, // Changed from patient to patientId
+    required this.patientId,
     required this.doctor,
-    required this.timeslot,
+    this.timeslot,
     required this.fee,
     required this.currency,
     required this.date,
@@ -81,17 +82,21 @@ class Appointment {
     required this.createdAt,
     required this.updatedAt,
     required this.v,
-    // ADD THESE MISSING FIELDS
     this.homevisitstatus,
     this.isReschedule,
+    this.followUps,
+    this.paymentStatus,
+    this.prescriptionId,
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
       id: json['_id']?.toString() ?? '',
-      patientId: json['patientId']?.toString() ?? '', // Changed: directly get the string
+      patientId: json['patientId']?.toString() ?? '',
       doctor: Doctor.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
-      timeslot: Timeslot.fromJson(json['timeslot'] as Map<String, dynamic>? ?? {}),
+      timeslot: json['timeslot'] != null
+          ? Timeslot.fromJson(json['timeslot'] as Map<String, dynamic>)
+          : null,
       fee: (json['fee'] as num?)?.toInt() ?? 0,
       currency: json['currency']?.toString() ?? 'USD',
       date: DateTime.tryParse(json['date']?.toString() ?? '') ?? DateTime.now(),
@@ -103,10 +108,14 @@ class Appointment {
       createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
       v: (json['__v'] as num?)?.toInt() ?? 0,
-      // ADD THESE MISSING FIELDS
       homevisitstatus: json['homevisitstatus']?.toString(),
       isReschedule: json['isReschedule'] != null
           ? RescheduleInfo.fromJson(json['isReschedule'] as Map<String, dynamic>)
+          : null,
+      followUps: json['followUps'] as List<dynamic>?,
+      paymentStatus: json['paymentStatus']?.toString(),
+      prescriptionId: json['prescriptionId'] != null
+          ? Prescription.fromJson(json['prescriptionId'] as Map<String, dynamic>)
           : null,
     );
   }
@@ -114,9 +123,9 @@ class Appointment {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'patientId': patientId, // Changed from patient.toJson() to patientId
+      'patientId': patientId,
       'doctorId': doctor.toJson(),
-      'timeslot': timeslot.toJson(),
+      'timeslot': timeslot?.toJson(),
       'fee': fee,
       'currency': currency,
       'date': date.toIso8601String(),
@@ -128,9 +137,11 @@ class Appointment {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       '__v': v,
-      // ADD THESE MISSING FIELDS
       'homevisitstatus': homevisitstatus,
       'isReschedule': isReschedule?.toJson(),
+      'followUps': followUps,
+      'paymentStatus': paymentStatus,
+      'prescriptionId': prescriptionId?.toJson(),
     };
   }
 
@@ -139,38 +150,6 @@ class Appointment {
   String get formattedDate => '${date.day}/${date.month}/${date.year}';
   String get formattedTime => '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 }
-
-// class Patient {
-//   final String id;
-//   final String fullName;
-//   final String email;
-//   final String? profileImage;
-//
-//   Patient({
-//     required this.id,
-//     required this.fullName,
-//     required this.email,
-//     this.profileImage,
-//   });
-//
-//   factory Patient.fromJson(Map<String, dynamic> json) {
-//     return Patient(
-//       id: json['_id']?.toString() ?? '',
-//       fullName: json['fullName']?.toString() ?? '',
-//       email: json['email']?.toString() ?? '',
-//       profileImage: json['profileImage']?.toString(),
-//     );
-//   }
-//
-//   Map<String, dynamic> toJson() {
-//     return {
-//       '_id': id,
-//       'fullName': fullName,
-//       'email': email,
-//       'profileImage': profileImage,
-//     };
-//   }
-// }
 
 class Doctor {
   final String id;
@@ -262,19 +241,160 @@ class Timeslot {
   }
 }
 
+class RescheduleInfo {
+  final String isAccept;
+  final String? reason;
+  final String? role;
+
+  RescheduleInfo({
+    required this.isAccept,
+    this.reason,
+    this.role,
+  });
+
+  factory RescheduleInfo.fromJson(Map<String, dynamic> json) {
+    return RescheduleInfo(
+      isAccept: json['isAccept']?.toString() ?? 'pending',
+      reason: json['reason']?.toString(),
+      role: json['role']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'isAccept': isAccept,
+      'reason': reason,
+      'role': role,
+    };
+  }
+}
+
+class Prescription {
+  final String id;
+  final String doctorId;
+  final String patientId;
+  final String activestatus;
+  final String appointmentId;
+  final String diagnosis;
+  final String notes;
+  final List<Medication> medications;
+  final String prescriptionNumber;
+  final DateTime issueDate;
+  final DateTime validUntil;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
+
+  Prescription({
+    required this.id,
+    required this.doctorId,
+    required this.patientId,
+    required this.activestatus,
+    required this.appointmentId,
+    required this.diagnosis,
+    required this.notes,
+    required this.medications,
+    required this.prescriptionNumber,
+    required this.issueDate,
+    required this.validUntil,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+  });
+
+  factory Prescription.fromJson(Map<String, dynamic> json) {
+    return Prescription(
+      id: json['_id']?.toString() ?? '',
+      doctorId: json['doctorId']?.toString() ?? '',
+      patientId: json['patientId']?.toString() ?? '',
+      activestatus: json['activestatus']?.toString() ?? '',
+      appointmentId: json['appointmentId']?.toString() ?? '',
+      diagnosis: json['diagnosis']?.toString() ?? '',
+      notes: json['notes']?.toString() ?? '',
+      medications: (json['medications'] as List<dynamic>?)
+          ?.map((item) => Medication.fromJson(item as Map<String, dynamic>))
+          .toList() ?? [],
+      prescriptionNumber: json['prescriptionNumber']?.toString() ?? '',
+      issueDate: DateTime.tryParse(json['issueDate']?.toString() ?? '') ?? DateTime.now(),
+      validUntil: DateTime.tryParse(json['validUntil']?.toString() ?? '') ?? DateTime.now(),
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      v: (json['__v'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'doctorId': doctorId,
+      'patientId': patientId,
+      'activestatus': activestatus,
+      'appointmentId': appointmentId,
+      'diagnosis': diagnosis,
+      'notes': notes,
+      'medications': medications.map((med) => med.toJson()).toList(),
+      'prescriptionNumber': prescriptionNumber,
+      'issueDate': issueDate.toIso8601String(),
+      'validUntil': validUntil.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      '__v': v,
+    };
+  }
+}
+
+class Medication {
+  final String name;
+  final String dosage;
+  final String frequency;
+  final String duration;
+  final String id;
+
+  Medication({
+    required this.name,
+    required this.dosage,
+    required this.frequency,
+    required this.duration,
+    required this.id,
+  });
+
+  factory Medication.fromJson(Map<String, dynamic> json) {
+    return Medication(
+      name: json['name']?.toString() ?? '',
+      dosage: json['dosage']?.toString() ?? '',
+      frequency: json['frequency']?.toString() ?? '',
+      duration: json['duration']?.toString() ?? '',
+      id: json['_id']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'dosage': dosage,
+      'frequency': frequency,
+      'duration': duration,
+      '_id': id,
+    };
+  }
+}
+
 enum ConsultationType {
   homevisit,
   inperson,
-  remote;
+  remote,
+  video;
 
   String get displayName {
     switch (this) {
       case ConsultationType.homevisit:
-        return 'homevisit';
+        return 'Home Visit';
       case ConsultationType.inperson:
-        return 'inperson';
+        return 'In Person';
       case ConsultationType.remote:
-        return 'remote';
+        return 'Remote';
+      case ConsultationType.video:
+        return 'Video';
     }
   }
 }
@@ -288,6 +408,8 @@ class ConsultationTypeExtension {
         return ConsultationType.inperson;
       case 'remote':
         return ConsultationType.remote;
+      case 'video':
+        return ConsultationType.video;
       default:
         return ConsultationType.remote;
     }
@@ -299,20 +421,23 @@ enum AppointmentStatus {
   confirmed,
   completed,
   cancelled,
-  rescheduled;
+  rescheduled,
+  ongoing;
 
   String get displayName {
     switch (this) {
       case AppointmentStatus.pending:
-        return 'pending';
+        return 'Pending';
       case AppointmentStatus.confirmed:
-        return 'confirmed';
+        return 'Confirmed';
       case AppointmentStatus.completed:
-        return 'completed';
+        return 'Completed';
       case AppointmentStatus.cancelled:
-        return 'cancelled';
+        return 'Cancelled';
+      case AppointmentStatus.ongoing:
+        return 'Ongoing';
       case AppointmentStatus.rescheduled:
-        return 'rescheduled';
+        return "rescheduled";
     }
   }
 }
@@ -328,8 +453,8 @@ class AppointmentStatusExtension {
         return AppointmentStatus.completed;
       case 'cancelled':
         return AppointmentStatus.cancelled;
-      case 'rescheduled':
-        return AppointmentStatus.rescheduled;
+      case 'ongoing':
+        return AppointmentStatus.ongoing;
       default:
         return AppointmentStatus.pending;
     }
@@ -390,23 +515,4 @@ class AppointmentModel {
     required this.status,
     required this.imageUrl,
   });
-}
-class RescheduleInfo {
-  final String isAccept;
-
-  RescheduleInfo({
-    required this.isAccept,
-  });
-
-  factory RescheduleInfo.fromJson(Map<String, dynamic> json) {
-    return RescheduleInfo(
-      isAccept: json['isAccept']?.toString() ?? 'pending',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'isAccept': isAccept,
-    };
-  }
 }

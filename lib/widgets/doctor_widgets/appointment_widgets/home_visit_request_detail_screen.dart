@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
@@ -8,7 +9,12 @@ import '../../../models/doctor_appointment_model.dart';
 
 class HomeVisitRequestDetailScreen extends StatelessWidget {
   final DoctorAppointment appointment;
-   HomeVisitRequestDetailScreen({super.key,required this.appointment});
+  HomeVisitRequestDetailScreen({super.key,required this.appointment});
+
+  String _formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return 'Not scheduled';
+    return DateFormat('EEEE, MMMM d, yyyy - h:mm a').format(dateTime);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +41,25 @@ class HomeVisitRequestDetailScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(AppStrings.patientName.tr,appointment.patientId.fullName),
+              _buildInfoRow(AppStrings.patientName.tr, appointment.patientId.fullName),
               const Divider(height: 32),
-              _buildInfoRow(AppStrings.address.tr,appointment.visitAddress??"not available"),
+              _buildInfoRow(AppStrings.address.tr, appointment.visitAddress ?? "Not available"),
               const Divider(height: 32),
-              _buildInfoRow(AppStrings.requestedTimeslot.tr, "${appointment.timeslot.startTime}"),
+              _buildInfoRow(
+                AppStrings.requestedTimeslot.tr,
+                appointment.timeslot != null
+                    ? _formatDateTime(appointment.timeslot!.startTime)
+                    : "Not scheduled",
+              ),
+              if (appointment.timeslot != null) ...[
+                const SizedBox(height: 8),
+                _buildInfoRow(
+                  "End Time",
+                  _formatDateTime(appointment.timeslot!.endTime),
+                ),
+              ],
               const SizedBox(height: 24),
-               Text(
+              Text(
                 AppStrings.patientNote.tr,
                 style: TextStyle(
                   fontSize: 18,
@@ -51,8 +69,8 @@ class HomeVisitRequestDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 12),
-               Text(
-                appointment.notes??"not available",
+              Text(
+                appointment.notes ?? "No notes provided",
                 style: TextStyle(
                   fontSize: 15,
                   fontFamily: AppFonts.jakartaMedium,

@@ -55,7 +55,9 @@ class PreviewScreenDoctor extends StatelessWidget {
     }
   }
 
-  String _getFormattedTime(DateTime startTime, DateTime endTime) {
+  String _getFormattedTime(DateTime? startTime, DateTime? endTime) {
+    if (startTime == null || endTime == null) return 'Time not scheduled';
+
     final startHour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
     final startPeriod = startTime.hour < 12 ? 'AM' : 'PM';
     final endHour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
@@ -214,7 +216,6 @@ class PreviewScreenDoctor extends StatelessWidget {
                               } else {
                                 await controller.joinMeeting();
                                 Get.to(() => VideoCallScreen());
-                                Get.to(() => VideoCallScreen());
                               }
                             },
                           ),
@@ -233,6 +234,8 @@ class PreviewScreenDoctor extends StatelessWidget {
   }
 
   Widget _buildConsultationCard() {
+    final hasTimeslot = appointment.timeslot != null;
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -250,7 +253,7 @@ class PreviewScreenDoctor extends StatelessWidget {
         children: [
           Row(
             children: [
-              _buildDoctorImage(),
+              _buildPatientImage(),
               15.horizontalSpace,
               Expanded(
                 child: Column(
@@ -294,10 +297,12 @@ class PreviewScreenDoctor extends StatelessWidget {
               _buildDetailColumn(
                 Icons.watch_later_outlined,
                 "Time",
-                _getFormattedTime(
-                  appointment.timeslot.startTime,
-                  appointment.timeslot.endTime,
-                ),
+                hasTimeslot
+                    ? _getFormattedTime(
+                  appointment.timeslot!.startTime,
+                  appointment.timeslot!.endTime,
+                )
+                    : "Not scheduled",
               ),
               _buildDetailColumn(
                 Icons.payment,
@@ -306,18 +311,35 @@ class PreviewScreenDoctor extends StatelessWidget {
               ),
             ],
           ),
+          if (!hasTimeslot) ...[
+            10.verticalSpace,
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Text(
+                "Timeslot not assigned yet",
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.orange,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildDoctorImage() {
-    if (appointment.patientId.profileImage != null &&
-        appointment.patientId.profileImage!.isNotEmpty) {
+  Widget _buildPatientImage() {
+    if (appointment.patientId.profileImage.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: Image.network(
-          appointment.patientId.profileImage!,
+          appointment.patientId.profileImage,
           height: 70.h,
           width: 70.w,
           fit: BoxFit.cover,
@@ -396,6 +418,7 @@ class PreviewScreenDoctor extends StatelessWidget {
     );
   }
 }
+
 class _ControlButton extends StatelessWidget {
   final IconData icon;
   final Color color;
@@ -429,3 +452,4 @@ class _ControlButton extends StatelessWidget {
     );
   }
 }
+

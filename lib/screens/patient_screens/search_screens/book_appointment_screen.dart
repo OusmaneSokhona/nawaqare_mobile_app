@@ -23,6 +23,15 @@ class BookAppointmentScreen extends StatelessWidget {
     });
   }
 
+  String _getSpecialtyAsString(dynamic specialty) {
+    if (specialty == null) return 'General Practitioner';
+    if (specialty is String) return specialty;
+    if (specialty is Map) {
+      return specialty['name']?.toString() ?? 'General Practitioner';
+    }
+    return 'General Practitioner';
+  }
+
   String _getConsultationTypeText() {
     final fee = doctor.fee;
     if (fee == null) return 'Consultation Available';
@@ -144,7 +153,7 @@ class BookAppointmentScreen extends StatelessWidget {
                       ),
                       2.verticalSpace,
                       Text(
-                        doctor.medicalSpecialty ?? 'General Practitioner',
+                        _getSpecialtyAsString(doctor.medicalSpecialty),
                         style: TextStyle(
                           fontSize: 17.sp,
                           fontWeight: FontWeight.w600,
@@ -183,7 +192,6 @@ class BookAppointmentScreen extends StatelessWidget {
                             : const SizedBox(),
                       ),
                       15.verticalSpace,
-                      // Replace the existing CustomButton onTap section in BookAppointmentScreen
                       Obx(
                             () => CustomButton(
                           borderRadius: 15,
@@ -192,7 +200,6 @@ class BookAppointmentScreen extends StatelessWidget {
                               : AppStrings.submitRequest.tr,
                           isLoading: controller.isCreatingAppointment.value,
                           onTap: () async {
-                            // Validate required data
                             if (controller.selectedTime.value.isEmpty) {
                               Get.snackbar(
                                 'Error',
@@ -213,7 +220,6 @@ class BookAppointmentScreen extends StatelessWidget {
                               return;
                             }
 
-                            // Get the selected timeslot
                             final selectedSlot = controller.getSelectedTimeSlot();
                             if (selectedSlot == null || selectedSlot.id.isEmpty) {
                               Get.snackbar(
@@ -225,7 +231,6 @@ class BookAppointmentScreen extends StatelessWidget {
                               return;
                             }
 
-                            // Prepare data for API call
                             String type = controller.appointmentType.value;
                             double? fee;
 
@@ -248,7 +253,7 @@ class BookAppointmentScreen extends StatelessWidget {
                               default:
                                 apiConsultationType = "remote";
                             }
-                          if(apiConsultationType=="homevisit"&&controller.addressController.text.isEmpty){
+                            if(apiConsultationType=="homevisit"&&controller.addressController.text.isEmpty){
                               Get.snackbar(
                                 'Error',
                                 'Please enter your address for home visit',
@@ -277,7 +282,7 @@ class BookAppointmentScreen extends StatelessWidget {
                                     () => MyAppointmentScreens(
                                   model: AppointmentModel(
                                     name: doctor.displayName,
-                                    specialty: doctor.medicalSpecialty ?? 'General Practitioner',
+                                    specialty: _getSpecialtyAsString(doctor.medicalSpecialty),
                                     imageUrl: doctor.displayImage,
                                     consultationType: controller.appointmentType.value,
                                     date: controller.selectedDate.value?.toIso8601String() ?? '',
@@ -285,13 +290,10 @@ class BookAppointmentScreen extends StatelessWidget {
                                     fee: fee ?? 0.0,
                                     rating: doctor.ratingValue,
                                     status: 'Pending',
-
-
                                   ),
                                 ),
                               );
                             } else {
-                              // Show error message
                               Get.snackbar(
                                 'Error',
                                 controller.appointmentError.value.isNotEmpty
@@ -329,12 +331,10 @@ class BookAppointmentScreen extends StatelessWidget {
       return _buildDefaultImage();
     }
 
-    // Check if it's a network URL
     if (doctor.displayImage.startsWith('http')) {
       return _buildNetworkImageWithFallback();
     }
 
-    // Try to load from assets
     try {
       return Image.asset(
         doctor.displayImage,

@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/add_report_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_notes_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/delete_report_dialog.dart';
+import '../../../models/doctor_appointment_model.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart';
 
 class DoctorPastAppoinmentWidget extends StatelessWidget {
-  DoctorPastAppoinmentWidget({super.key});
+  final DoctorAppointment appointmentModel;
+  DoctorPastAppoinmentWidget({super.key,required this.appointmentModel});
 
   DoctorAppointmentController doctorAppointmentController =
-      Get.find<DoctorAppointmentController>();
+  Get.find<DoctorAppointmentController>();
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('dd MMM yyyy').format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +63,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
               ),
               10.verticalSpace,
               Text(
-                AppStrings.symptomsPlaceholder.tr,
+                appointmentModel.notes ?? AppStrings.symptomsPlaceholder.tr,
                 style: TextStyle(color: Colors.grey, fontSize: 14.sp),
               ),
             ],
@@ -126,27 +134,43 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           child: Column(
             children: [
               Obx(
-                () => DiagnosisHistoryCard(
-                  diagnosis: "Migraine without aura",
+                    () => DiagnosisHistoryCard(
+                  diagnosis: appointmentModel.prescriptionId?.diagnosis ?? "No diagnosis",
                   icd: "ICD-10",
-                  notes: doctorAppointmentController.notesText.value,
+                  notes: doctorAppointmentController.notesText.value.isEmpty
+                      ? (appointmentModel.prescriptionId?.notes ?? "No notes available")
+                      : doctorAppointmentController.notesText.value,
                 ),
               ),
               15.verticalSpace,
-              const PrescriptionHistoryCard(
-                medication: "Amoxicillin 500mg",
-                dosage: "Morning & Evening – 7 Days",
-                daysRemaining: 0,
-              ),
+              if (appointmentModel.prescriptionId != null)
+                ...appointmentModel.prescriptionId!.medications.map((medication) =>
+                    PrescriptionHistoryCard(
+                      medication: medication.name,
+                      dosage: "${medication.dosage} - ${medication.frequency} - ${medication.duration}",
+                      daysRemaining: _calculateDaysRemaining(appointmentModel.prescriptionId!.validUntil),
+                      prescriptionNumber: appointmentModel.prescriptionId!.prescriptionNumber,
+                      issueDate: appointmentModel.prescriptionId!.issueDate,
+                      validUntil: appointmentModel.prescriptionId!.validUntil,
+                    ),
+                ).toList()
+              else
+                const PrescriptionHistoryCard(
+                  medication: "No prescription available",
+                  dosage: "",
+                  daysRemaining: 0,
+                  prescriptionNumber: "",
+                ),
             ],
           ),
         ),
         15.verticalSpace,
-        MedicalReportCard(
-          title: "Blood Test Report",
-          date: "200/Sep/2025",
-          onlyView: false,
-        ),
+        if (appointmentModel.prescriptionId != null)
+          MedicalReportCard(
+            title: "Prescription #${appointmentModel.prescriptionId!.prescriptionNumber}",
+            date: _formatDate(appointmentModel.prescriptionId!.issueDate),
+            onlyView: false,
+          ),
         15.verticalSpace,
         FollowUpRecommendationCard(
           recommendation: AppStrings.chooseOptionFutureAction.tr,
@@ -162,12 +186,18 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           reviewerName: "Emily Anderson",
           rating: 5,
           reviewText:
-              "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
+          "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
         ),
         15.verticalSpace,
         40.verticalSpace,
       ],
     );
+  }
+
+  int _calculateDaysRemaining(DateTime validUntil) {
+    final now = DateTime.now();
+    final difference = validUntil.difference(now).inDays;
+    return difference > 0 ? difference : 0;
   }
 }
 
@@ -310,11 +340,17 @@ class PrescriptionHistoryCard extends StatelessWidget {
   final String medication;
   final String dosage;
   final int daysRemaining;
+  final String? prescriptionNumber;
+  final DateTime? issueDate;
+  final DateTime? validUntil;
 
   const PrescriptionHistoryCard({
     required this.medication,
     required this.dosage,
     required this.daysRemaining,
+    this.prescriptionNumber,
+    this.issueDate,
+    this.validUntil,
     super.key,
   });
 
@@ -322,6 +358,11 @@ class PrescriptionHistoryCard extends StatelessWidget {
   static const Color _secondaryColor = Color(0xFF6B7280);
   static const Color _blueColor = AppColors.primaryColor;
   static const Color _buttonBgColor = Color(0xFFE5E7EB);
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('dd MMM yyyy').format(date);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -335,13 +376,34 @@ class PrescriptionHistoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppStrings.prescriptions.tr,
-            style: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontFamily: AppFonts.jakartaBold,
-              fontSize: 16.sp,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppStrings.prescriptions.tr,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontFamily: AppFonts.jakartaBold,
+                  fontSize: 16.sp,
+                ),
+              ),
+              if (prescriptionNumber != null)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: _blueColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Text(
+                    prescriptionNumber!,
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: _blueColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -371,6 +433,26 @@ class PrescriptionHistoryCard extends StatelessWidget {
               const Icon(Icons.description, size: 16, color: _secondaryColor),
             ],
           ),
+          if (issueDate != null && validUntil != null) ...[
+            SizedBox(height: 8.h),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, size: 12.sp, color: _secondaryColor),
+                SizedBox(width: 4.w),
+                Text(
+                  "Issued: ${_formatDate(issueDate)}",
+                  style: TextStyle(fontSize: 11.sp, color: _secondaryColor),
+                ),
+                SizedBox(width: 12.w),
+                Icon(Icons.event_available, size: 12.sp, color: _secondaryColor),
+                SizedBox(width: 4.w),
+                Text(
+                  "Valid until: ${_formatDate(validUntil)}",
+                  style: TextStyle(fontSize: 11.sp, color: _secondaryColor),
+                ),
+              ],
+            ),
+          ],
           SizedBox(height: 8.h),
           Row(
             children: [
@@ -382,8 +464,26 @@ class PrescriptionHistoryCard extends StatelessWidget {
               ),
             ],
           ),
+          if (daysRemaining > 0) ...[
+            SizedBox(height: 8.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: daysRemaining > 5 ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Text(
+                "$daysRemaining days remaining",
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: daysRemaining > 5 ? Colors.green : Colors.orange,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
           SizedBox(height: 16.h),
-          Row(
+          if (prescriptionNumber!.isNotEmpty) Row(
             children: [
               Expanded(
                 child: ElevatedButton(
@@ -527,39 +627,39 @@ class MedicalReportCard extends StatelessWidget {
                     ),
                     onlyView
                         ? Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 12.sp,
-                            vertical: 4.sp,
-                          ),
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(9.sp),
-                          ),
-                          child: Text(
-                            AppStrings.view.tr,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15.sp,
-                              fontFamily: AppFonts.jakartaMedium,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        )
-                        : InkWell(
-                          onTap: () {
-                            Get.dialog(DeleteReportDialog());
-                          },
-                          child: Icon(
-                            Icons.delete_outline,
-                            color: AppColors.red,
-                          ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.sp,
+                        vertical: 4.sp,
+                      ),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(9.sp),
+                      ),
+                      child: Text(
+                        AppStrings.view.tr,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15.sp,
+                          fontFamily: AppFonts.jakartaMedium,
+                          fontWeight: FontWeight.w500,
                         ),
+                      ),
+                    )
+                        : InkWell(
+                      onTap: () {
+                        Get.dialog(DeleteReportDialog());
+                      },
+                      child: Icon(
+                        Icons.delete_outline,
+                        color: AppColors.red,
+                      ),
+                    ),
                   ],
                 ),
               ),
               onlyView?0.verticalSpace:12.verticalSpace,
-             onlyView?SizedBox():Row(
+              onlyView?SizedBox():Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
@@ -647,7 +747,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
             ),
             10.verticalSpace,
             ...options.map(
-              (option) => Padding(
+                  (option) => Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.h),
                 child: Row(
                   children: [

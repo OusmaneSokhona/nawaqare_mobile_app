@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/utils/appointment_status.dart';
 import 'dart:convert';
 import '../../models/doctor_appointment_model.dart';
 import '../../services/api_service.dart';
@@ -340,12 +341,12 @@ class DoctorAppointmentController extends GetxController {
   }
 
   final List<String> consultationTypes = [
-    'All',
-    'Follow Up',
-    'Initial Consultation',
-    'Review'
+    "All",
+    'homevisit',
+    'inperson',
+    'remote',
   ];
-  final List<String> statuses = ['All', 'Confirmed', 'Pending', 'Cancelled'];
+  final List<String> statuses = ['All',AppointmentStatus.CONFIRMED,AppointmentStatus.PENDING, AppointmentStatus.ONGOING,AppointmentStatus.MISSED,AppointmentStatus.COMPLETED,AppointmentStatus.CANCELLED];
   final List<String> periods = [
     'All',
     'This week',
@@ -489,6 +490,38 @@ class DoctorAppointmentController extends GetxController {
       }
     } else {
       file.value = 'File selection cancelled';
+    }
+  }
+  Future<void> updateAppointmentStatus(String appointmentId, String status) async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiService().patch(
+        '${ApiUrls.updateAppointmentStatus}$appointmentId',
+        data: {'status': status},
+      );
+
+      if (response.statusCode == 200) {
+        Get.snackbar(
+          "Success",
+          "Appointment status updated successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 2),
+        );
+        await fetchDoctorAppointments();
+      } else {
+        throw Exception('Failed to update appointment status');
+      }
+    } catch (e) {
+      print('Error updating appointment status: $e');
+      Get.snackbar(
+        "Error",
+        'Failed to update status: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 }

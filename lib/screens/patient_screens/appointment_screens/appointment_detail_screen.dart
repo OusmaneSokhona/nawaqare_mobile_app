@@ -71,7 +71,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                       _buildAppointmentDetailCard(),
                       10.verticalSpace,
                       isCompleted ? _buildTabs() : SizedBox.shrink(),
-                      isCompleted ? PastAppointmentWidgets() : _buildCurrentAppointmentContent(),
+                      isCompleted ? PastAppointmentWidgets(appointment: appointment,) : _buildCurrentAppointmentContent(),
                     ],
                   ),
                 ),
@@ -148,7 +148,14 @@ class AppointmentDetailScreen extends StatelessWidget {
           20.verticalSpace,
           _buildDetailRow(Icons.calendar_today_outlined, AppStrings.date.tr, _formatDate(appointment.date)),
           15.verticalSpace,
-          _buildDetailRow(Icons.watch_later_outlined,"Time", _formatTime(appointment.timeslot.startTime, appointment.timeslot.endTime)),
+          // Fix: Safely handle null timeslot
+          _buildDetailRow(
+            Icons.watch_later_outlined,
+            "Time",
+            appointment.timeslot != null
+                ? _formatTime(appointment.timeslot!.startTime, appointment.timeslot!.endTime)
+                : 'Time not specified',
+          ),
           15.verticalSpace,
           _buildDetailRow(Icons.medical_services, AppStrings.consultationType.tr, appointment.consultationType.displayName),
           if (appointment.consultationType == ConsultationType.homevisit && appointment.visitAddress != null) ...[
@@ -373,6 +380,8 @@ class AppointmentDetailScreen extends StatelessWidget {
         return '🏥';
       case ConsultationType.remote:
         return '📱';
+      case ConsultationType.video:
+        return '📹';
     }
   }
 
@@ -386,8 +395,10 @@ class AppointmentDetailScreen extends StatelessWidget {
         return Colors.blue;
       case AppointmentStatus.cancelled:
         return Colors.red;
-      case AppointmentStatus.rescheduled:
+      case AppointmentStatus.ongoing:
         return Colors.purple;
+      case AppointmentStatus.rescheduled:
+        return Colors.amber;
     }
   }
 
@@ -434,6 +445,11 @@ class AppointmentDetailScreen extends StatelessWidget {
   }
 
   String _formatTime(DateTime startTime, DateTime endTime) {
+    // Add null checks
+    if (startTime == null || endTime == null) {
+      return 'Time not available';
+    }
+
     final startHour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
     final startPeriod = startTime.hour < 12 ? 'AM' : 'PM';
     final endHour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;

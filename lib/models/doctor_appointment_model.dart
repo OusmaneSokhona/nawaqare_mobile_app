@@ -1,3 +1,6 @@
+import 'package:patient_app/models/appointment_model.dart';
+import 'package:patient_app/utils/appointment_status.dart';
+
 class DoctorAppointmentResponse {
   final String message;
   final int total;
@@ -45,7 +48,7 @@ class DoctorAppointment {
   final RescheduleInfo? isReschedule;
   final PatientInfo patientId;
   final String doctorId;
-  final TimeSlot timeslot;
+  final TimeSlot? timeslot;
   final double fee;
   final String currency;
   final DateTime date;
@@ -58,13 +61,15 @@ class DoctorAppointment {
   final DateTime updatedAt;
   final int v;
   final String? homevisitstatus;
+  final String? paymentStatus;
+  final PrescriptionInfo? prescriptionId;
 
   DoctorAppointment({
     required this.id,
     this.isReschedule,
     required this.patientId,
     required this.doctorId,
-    required this.timeslot,
+    this.timeslot,
     required this.fee,
     required this.currency,
     required this.date,
@@ -77,6 +82,8 @@ class DoctorAppointment {
     required this.updatedAt,
     required this.v,
     this.homevisitstatus,
+    this.paymentStatus,
+    this.prescriptionId,
   });
 
   factory DoctorAppointment.fromJson(Map<String, dynamic> json) {
@@ -89,7 +96,9 @@ class DoctorAppointment {
       doctorId: json['doctorId'] is String
           ? json['doctorId'] as String
           : (json['doctorId'] as Map<String, dynamic>?)?['_id'] as String? ?? '',
-      timeslot: TimeSlot.fromJson(json['timeslot'] as Map<String, dynamic>? ?? {}),
+      timeslot: json['timeslot'] != null
+          ? TimeSlot.fromJson(json['timeslot'] as Map<String, dynamic>)
+          : null,
       fee: (json['fee'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] as String? ?? '',
       date: DateTime.parse(json['date'] as String? ?? DateTime.now().toIso8601String()),
@@ -102,6 +111,10 @@ class DoctorAppointment {
       updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
       v: json['__v'] as int? ?? 0,
       homevisitstatus: json['homevisitstatus'] as String?,
+      paymentStatus: json['paymentStatus'] as String?,
+      prescriptionId: json['prescriptionId'] != null
+          ? PrescriptionInfo.fromJson(json['prescriptionId'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -111,7 +124,7 @@ class DoctorAppointment {
       'isReschedule': isReschedule?.toJson(),
       'patientId': patientId.toJson(),
       'doctorId': doctorId,
-      'timeslot': timeslot.toJson(),
+      'timeslot': timeslot?.toJson(),
       'fee': fee,
       'currency': currency,
       'date': date.toIso8601String(),
@@ -124,6 +137,8 @@ class DoctorAppointment {
       'updatedAt': updatedAt.toIso8601String(),
       '__v': v,
       'homevisitstatus': homevisitstatus,
+      'paymentStatus': paymentStatus,
+      'prescriptionId': prescriptionId?.toJson(),
     };
   }
 }
@@ -228,6 +243,116 @@ class TimeSlot {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       '__v': v,
+    };
+  }
+}
+
+class PrescriptionInfo {
+  final String id;
+  final String doctorId;
+  final String patientId;
+  final String activestatus;
+  final String appointmentId;
+  final String diagnosis;
+  final String notes;
+  final List<Medication> medications;
+  final String prescriptionNumber;
+  final DateTime issueDate;
+  final DateTime validUntil;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
+
+  PrescriptionInfo({
+    required this.id,
+    required this.doctorId,
+    required this.patientId,
+    required this.activestatus,
+    required this.appointmentId,
+    required this.diagnosis,
+    required this.notes,
+    required this.medications,
+    required this.prescriptionNumber,
+    required this.issueDate,
+    required this.validUntil,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+  });
+
+  factory PrescriptionInfo.fromJson(Map<String, dynamic> json) {
+    return PrescriptionInfo(
+      id: json['_id'] as String? ?? '',
+      doctorId: json['doctorId'] as String? ?? '',
+      patientId: json['patientId'] as String? ?? '',
+      activestatus: json['activestatus'] as String? ?? '',
+      appointmentId: json['appointmentId'] as String? ?? '',
+      diagnosis: json['diagnosis'] as String? ?? '',
+      notes: json['notes'] as String? ?? '',
+      medications: (json['medications'] as List<dynamic>? ?? [])
+          .map((item) => Medication.fromJson(item as Map<String, dynamic>))
+          .toList(),
+      prescriptionNumber: json['prescriptionNumber'] as String? ?? '',
+      issueDate: DateTime.parse(json['issueDate'] as String? ?? DateTime.now().toIso8601String()),
+      validUntil: DateTime.parse(json['validUntil'] as String? ?? DateTime.now().toIso8601String()),
+      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
+      v: json['__v'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'doctorId': doctorId,
+      'patientId': patientId,
+      'activestatus': activestatus,
+      'appointmentId': appointmentId,
+      'diagnosis': diagnosis,
+      'notes': notes,
+      'medications': medications.map((medication) => medication.toJson()).toList(),
+      'prescriptionNumber': prescriptionNumber,
+      'issueDate': issueDate.toIso8601String(),
+      'validUntil': validUntil.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      '__v': v,
+    };
+  }
+}
+
+class Medication {
+  final String name;
+  final String dosage;
+  final String frequency;
+  final String duration;
+  final String id;
+
+  Medication({
+    required this.name,
+    required this.dosage,
+    required this.frequency,
+    required this.duration,
+    required this.id,
+  });
+
+  factory Medication.fromJson(Map<String, dynamic> json) {
+    return Medication(
+      name: json['name'] as String? ?? '',
+      dosage: json['dosage'] as String? ?? '',
+      frequency: json['frequency'] as String? ?? '',
+      duration: json['duration'] as String? ?? '',
+      id: json['_id'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'dosage': dosage,
+      'frequency': frequency,
+      'duration': duration,
+      '_id': id,
     };
   }
 }

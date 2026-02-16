@@ -5,70 +5,79 @@ import 'package:patient_app/controllers/patient_controllers/appointment_controll
 import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
+import '../../../models/appointment_model.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart';
 
 class PastAppointmentWidgets extends StatelessWidget {
-  AppointmentController appointmentController =
-      Get.find<AppointmentController>();
+  final Appointment appointment;
+  final AppointmentController appointmentController = Get.find<AppointmentController>();
 
-  PastAppointmentWidgets({super.key});
+  PastAppointmentWidgets({super.key, required this.appointment});
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Column(
+          () => Column(
         children: [
-          if (appointmentController.selectedTab.value == "Diagnosis") ...{
+          if (appointmentController.selectedTab.value == "Diagnosis") ...[
             15.verticalSpace,
             DiagnosisHistoryCard(
-              notes:
-                  "Hypertension follow-up. Blood pressure stable, continue medication"
-                      .tr,
+              notes: appointment.notes ?? "No diagnosis notes available",
             ),
-          },
-          if (appointmentController.selectedTab.value == "Ordonnance") ...{
+          ],
+          if (appointmentController.selectedTab.value == "Ordonnance") ...[
             15.verticalSpace,
-            PrescriptionHistoryCard(
-              medication: "Amoxicillin 500mg".tr,
-              dosage: "Morning & Evening – 7 Days".tr,
-              daysRemaining: 5,
-            ),
-          },
-          if (appointmentController.selectedTab.value == "Medical Report") ...{
+            if (appointment.prescriptionId != null)
+              ...appointment.prescriptionId!.medications.map((medication) =>
+                  PrescriptionHistoryCard(
+                    medication: medication.name,
+                    dosage: "${medication.dosage} - ${medication.frequency}",
+                    daysRemaining: _calculateDaysRemaining(appointment.prescriptionId!.validUntil),
+                  )
+              ).toList()
+            else
+              PrescriptionHistoryCard(
+                medication: "No prescription available",
+                dosage: "",
+                daysRemaining: 0,
+              ),
+          ],
+          if (appointmentController.selectedTab.value == "Medical Report") ...[
             15.verticalSpace,
             MedicalReportCard(
-              title: "Blood Test Report".tr,
-              date: "20/Sep/2025",
+              title: "Medical Report - ${appointment.formattedDate}",
+              date: appointment.formattedDate,
             ),
-          },
+          ],
           15.verticalSpace,
           FollowUpRecommendationCard(
-            recommendation: "Schedule a follow-up in 3 months".tr,
+            recommendation: appointment.notes ?? "Schedule a follow-up as recommended by Dr. ${appointment.doctor.fullName}",
           ),
-          if (appointmentController.selectedTab.value == "Reviews") ...{
+          if (appointmentController.selectedTab.value == "Reviews") ...[
             15.verticalSpace,
             ReviewCard(
-              image: "assets/demo_images/Frame 1000000981.png",
-              reviewerName: "Emily Anderson",
-              rating: 4,
-              reviewText:
-                  "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care."
-                      .tr,
+              image: appointment.doctor.profileImage ?? "assets/demo_images/Frame 1000000981.png",
+              reviewerName: appointment.doctor.fullName,
+              rating: 4.5,
+              reviewText: "Consultation completed on ${appointment.formattedDate}. ${appointment.notes ?? 'No additional notes.'}",
             ),
-          },
-
+          ],
           15.verticalSpace,
           CustomButton(
             borderRadius: 15,
             text: AppStrings.bookAgain.tr,
-            onTap: () {},
+            onTap: () {
+              // Navigate to book again with same doctor
+            },
           ),
           15.verticalSpace,
           CustomButton(
             borderRadius: 15,
             text: AppStrings.downloadInvoicePdf.tr,
-            onTap: () {},
+            onTap: () {
+              // Download invoice PDF
+            },
             bgColor: AppColors.inACtiveButtonColor,
             fontColor: Colors.black,
           ),
@@ -76,6 +85,11 @@ class PastAppointmentWidgets extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  int _calculateDaysRemaining(DateTime validUntil) {
+    final difference = validUntil.difference(DateTime.now());
+    return difference.inDays > 0 ? difference.inDays : 0;
   }
 }
 
@@ -92,7 +106,7 @@ class CardHeader extends StatelessWidget {
         title,
         style: TextStyle(
           color: Colors.black,
-          fontSize: isWeb?6.sp:17.sp,
+          fontSize: isWeb ? 6.sp : 17.sp,
           fontWeight: FontWeight.w700,
           fontFamily: AppFonts.jakartaBold,
         ),
@@ -243,36 +257,38 @@ class PrescriptionHistoryCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
+                        if (dosage.isNotEmpty)
+                          Text(
+                            dosage,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: _secondaryColor,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  if (daysRemaining > 0)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(
+                          Icons.notifications_none,
+                          color: AppColors.primaryColor,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
                         Text(
-                          dosage,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: _secondaryColor,
+                          '$daysRemaining ${AppStrings.daysRemainingLabel.tr}',
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.lightGrey,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(
-                        Icons.notifications_none,
-                        color: AppColors.primaryColor,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '$daysRemaining- ${AppStrings.daysRemainingLabel.tr}',
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.lightGrey,
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
               const SizedBox(height: 8),
@@ -294,7 +310,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Row(
+             dosage.isNotEmpty?Row(
                 children: [
                   Expanded(
                     child: ElevatedButton(
@@ -340,7 +356,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
+              ):SizedBox(),
             ],
           ),
         ),
@@ -495,7 +511,9 @@ class FollowUpRecommendationCard extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  // Navigate to book follow-up
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _blueColor,
                   foregroundColor: Colors.white,
@@ -555,7 +573,12 @@ class ReviewCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(radius: 30, backgroundImage: AssetImage(image)),
+              CircleAvatar(
+                radius: 30,
+                backgroundImage: image.startsWith('assets')
+                    ? AssetImage(image) as ImageProvider
+                    : NetworkImage(image),
+              ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(

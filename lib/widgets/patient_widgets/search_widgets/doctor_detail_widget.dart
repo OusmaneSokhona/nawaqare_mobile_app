@@ -109,7 +109,7 @@ class DoctorDetailWidget extends StatelessWidget {
         children: [
           _buildSectionTitle(AppStrings.aboutMe.tr),
           Text(
-            doctor.aboutMe?.isNotEmpty == true ? doctor.aboutMe! : AppStrings.aboutDoctorDescription.tr,
+            doctor.aboutMe?.isNotEmpty == true ? doctor.aboutMe! : "Not Available",
             style: TextStyle(
               fontSize: 15,
               color: Colors.grey[700],

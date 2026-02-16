@@ -49,7 +49,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      Get.dialog(ConfirmationDialog());
+                      Get.back();
                     },
                     child: Image.asset(
                       AppImages.backIcon,
@@ -78,7 +78,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                         appointmentModel: appointmentModel,
                       ),
                       if (isCompleted) ...{
-                        DoctorPastAppoinmentWidget(),
+                        DoctorPastAppoinmentWidget(appointmentModel: appointmentModel,),
                       } else ...{
                         Align(
                           alignment: AlignmentDirectional.topStart,
@@ -145,6 +145,25 @@ class DoctorAppointmentDetail extends StatelessWidget {
                         10.verticalSpace,
                         if(appointmentModel.consultationType=="homevisit")
                           HomeVisitRequestDetailScreen(appointment: appointmentModel,),
+                        15.verticalSpace,
+                        if (appointmentModel.prescriptionId != null)
+                          ...appointmentModel.prescriptionId!.medications.map((medication) =>
+                              PrescriptionHistoryCard(
+                                medication: medication.name,
+                                dosage: "${medication.dosage} - ${medication.frequency} - ${medication.duration}",
+                                daysRemaining: _calculateDaysRemaining(appointmentModel.prescriptionId!.validUntil),
+                                prescriptionNumber: appointmentModel.prescriptionId!.prescriptionNumber,
+                                issueDate: appointmentModel.prescriptionId!.issueDate,
+                                validUntil: appointmentModel.prescriptionId!.validUntil,
+                              ),
+                          ).toList()
+                        else
+                          const PrescriptionHistoryCard(
+                            medication: "No prescription available",
+                            dosage: "",
+                            daysRemaining: 0,
+                            prescriptionNumber: "",
+                          ),
                         10.verticalSpace,
                         MedicalReportCard(
                           title: AppStrings.bloodTestReport.tr,
@@ -213,6 +232,13 @@ class DoctorAppointmentDetail extends StatelessWidget {
                                 },
                               ),
                               10.verticalSpace,
+                              CustomButton(
+                                borderRadius: 15,
+                                text: AppStrings.reschedule.tr,
+                                onTap: () {},
+                                bgColor: AppColors.inACtiveButtonColor,
+                                fontColor: Colors.black,
+                              ),
                             ],
                           ),
                         if (appointmentModel.status == "confirmed")
@@ -226,7 +252,6 @@ class DoctorAppointmentDetail extends StatelessWidget {
                                 },
                               ),
                               10.verticalSpace,
-                              if (appointmentModel.consultationType != "homevisit")
                                 CustomButton(
                                   borderRadius: 15,
                                   text: AppStrings.reschedule.tr,
@@ -255,5 +280,10 @@ class DoctorAppointmentDetail extends StatelessWidget {
         ),
       ),
     );
+  }
+  int _calculateDaysRemaining(DateTime validUntil) {
+    final now = DateTime.now();
+    final difference = validUntil.difference(now).inDays;
+    return difference > 0 ? difference : 0;
   }
 }

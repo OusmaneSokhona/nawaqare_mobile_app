@@ -56,11 +56,14 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
     }
   }
 
-  String _formatTime(DateTime time) {
+  String _formatTime(DateTime? time) {
+    if (time == null) return '';
     return DateFormat('h:mm a').format(time);
   }
 
-  String _getDuration(DateTime startTime, DateTime endTime) {
+  String _getDuration(DateTime? startTime, DateTime? endTime) {
+    if (startTime == null || endTime == null) return '';
+
     final duration = endTime.difference(startTime);
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
@@ -77,10 +80,10 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formattedDate = _formatDate(appointmentModel.date);
-    final formattedTime = _formatTime(appointmentModel.timeslot.startTime);
+    final formattedTime = _formatTime(appointmentModel.timeslot?.startTime);
     final duration = _getDuration(
-      appointmentModel.timeslot.startTime,
-      appointmentModel.timeslot.endTime,
+      appointmentModel.timeslot?.startTime,
+      appointmentModel.timeslot?.endTime,
     );
 
     return Card(
@@ -112,21 +115,23 @@ class DoctorAppoinmentDetailWidget extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    8.horizontalSpace,
-                    Icon(
-                      Icons.watch_later_outlined,
-                      size: 14.h,
-                      color: AppColors.primaryColor,
-                    ),
-                    4.horizontalSpace,
-                    Text(
-                      formattedTime,
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
+                    if (formattedTime.isNotEmpty) ...[
+                      8.horizontalSpace,
+                      Icon(
+                        Icons.watch_later_outlined,
+                        size: 14.h,
+                        color: AppColors.primaryColor,
                       ),
-                    ),
+                      4.horizontalSpace,
+                      Text(
+                        formattedTime,
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                     if (duration.isNotEmpty) ...[
                       4.horizontalSpace,
                       Container(

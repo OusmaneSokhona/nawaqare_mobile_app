@@ -10,13 +10,17 @@ import '../../../utils/app_colors.dart';
 class DoctorAppoinmentWidget extends StatelessWidget {
   final DoctorAppointment appointmentModel;
   final Function onTap;
+  final Function? onTapCancel;
   final bool isCompleted;
+  final bool isCancelled;
 
   DoctorAppoinmentWidget({
     Key? key,
     required this.appointmentModel,
     this.isCompleted = false,
+    this.isCancelled = false,
     required this.onTap,
+    this.onTapCancel,
   }) : super(key: key);
 
   Color _getStatusColor(String status) {
@@ -63,7 +67,8 @@ class DoctorAppoinmentWidget extends StatelessWidget {
     }
   }
 
-  String _formatTime(DateTime time) {
+  String _formatTime(DateTime? time) {
+    if (time == null) return '';
     return DateFormat('h:mm a').format(time);
   }
 
@@ -71,11 +76,13 @@ class DoctorAppoinmentWidget extends StatelessWidget {
     return _formatDate(date);
   }
 
-  String _getFormattedTime(DateTime time) {
+  String _getFormattedTime(DateTime? time) {
     return _formatTime(time);
   }
 
-  String _getDuration(DateTime startTime, DateTime endTime) {
+  String _getDuration(DateTime? startTime, DateTime? endTime) {
+    if (startTime == null || endTime == null) return '';
+
     final duration = endTime.difference(startTime);
 
     final hours = duration.inHours;
@@ -93,10 +100,10 @@ class DoctorAppoinmentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final formattedDate = _getFormattedDate(appointmentModel.date);
-    final formattedTime = _getFormattedTime(appointmentModel.timeslot.startTime);
+    final formattedTime = _getFormattedTime(appointmentModel.timeslot?.startTime);
     final duration = _getDuration(
-      appointmentModel.timeslot.startTime,
-      appointmentModel.timeslot.endTime,
+      appointmentModel.timeslot?.startTime,
+      appointmentModel.timeslot?.endTime,
     );
 
     return Card(
@@ -128,21 +135,23 @@ class DoctorAppoinmentWidget extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    8.horizontalSpace,
-                    Icon(
-                      Icons.watch_later_outlined,
-                      size: 14.h,
-                      color: AppColors.primaryColor,
-                    ),
-                    4.horizontalSpace,
-                    Text(
-                      formattedTime,
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
+                    if (formattedTime.isNotEmpty) ...[
+                      8.horizontalSpace,
+                      Icon(
+                        Icons.watch_later_outlined,
+                        size: 14.h,
+                        color: AppColors.primaryColor,
                       ),
-                    ),
+                      4.horizontalSpace,
+                      Text(
+                        formattedTime,
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                     if (duration.isNotEmpty) ...[
                       4.horizontalSpace,
                       Container(
@@ -286,9 +295,10 @@ class DoctorAppoinmentWidget extends StatelessWidget {
             ),
             12.verticalSpace,
             Row(
-              children: [
-                _buildButton(
-                  onTap: () {},
+              children: [isCancelled?SizedBox():_buildButton(
+                  onTap: () {
+                    isCompleted?(){}:onTapCancel!();
+                  },
                   text: isCompleted
                       ? AppStrings.clinicalNote.tr
                       : AppStrings.cancel.tr,

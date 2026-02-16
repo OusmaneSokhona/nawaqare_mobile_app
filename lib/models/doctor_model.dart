@@ -10,13 +10,14 @@ class DoctorModel {
   final String? idNumber;
   final String? clinicAddress;
   final String? aboutMe;
-  final String? medicalSpecialty;
+  final dynamic medicalSpecialty; // Can be String or Object
   final int? experience;
   final ConsultationFee? fee;
   final String? currency;
   final DateTime? dateOfRegistration;
   final String? placeOfPractice;
   final int? year;
+  final List<String>? allSlots;
   final List<String>? availableSlots;
   final String? country;
   final String? nationalIdentityDocument;
@@ -29,6 +30,8 @@ class DoctorModel {
   final String? paymentAuthorization;
   final String? profileImage;
   final String? ratings;
+  final double? averageRating;
+  final int? ratingCount;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int? v;
@@ -52,6 +55,7 @@ class DoctorModel {
     this.dateOfRegistration,
     this.placeOfPractice,
     this.year,
+    this.allSlots,
     this.availableSlots,
     this.country,
     this.nationalIdentityDocument,
@@ -64,6 +68,8 @@ class DoctorModel {
     this.paymentAuthorization,
     this.profileImage,
     this.ratings = '0',
+    this.averageRating,
+    this.ratingCount,
     this.createdAt,
     this.updatedAt,
     this.v,
@@ -72,24 +78,41 @@ class DoctorModel {
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
     return DoctorModel(
       id: json['_id']?.toString(),
-      userId: json['userId']?.toString(),
+      userId: json['userId'] != null
+          ? (json['userId'] is Map<String, dynamic>
+          ? json['userId']['_id']?.toString()
+          : json['userId'].toString())
+          : null,
       email: json['email']?.toString(),
       fullName: json['fullName']?.toString(),
       phoneNumber: json['phoneNumber']?.toString(),
-      dob: json['dob'] != null ? DateTime.parse(json['dob'].toString()) : null,
+      dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
       gender: json['gender']?.toString(),
       nationality: json['nationality']?.toString(),
       idNumber: json['idNumber']?.toString(),
       clinicAddress: json['clinicAddress']?.toString(),
       aboutMe: json['aboutMe']?.toString(),
-      medicalSpecialty: json['medicalSpecialty']?.toString(),
-      experience: json['experience'] != null ? (json['experience'] is int ? json['experience'] : int.tryParse(json['experience'].toString())) : null,
-      fee: json['fee'] != null ? ConsultationFee.fromJson(json['fee'] is Map<String, dynamic> ? json['fee'] : {}) : null,
+      medicalSpecialty: json['medicalSpecialty'],
+      experience: json['experience'] != null
+          ? (json['experience'] is int ? json['experience'] : int.tryParse(json['experience'].toString()))
+          : null,
+      fee: json['fee'] != null
+          ? ConsultationFee.fromJson(json['fee'] is Map<String, dynamic> ? json['fee'] : {})
+          : null,
       currency: json['currency']?.toString() ?? 'USD',
-      dateOfRegistration: json['dateOfRegistration'] != null ? DateTime.parse(json['dateOfRegistration'].toString()) : null,
+      dateOfRegistration: json['dateOfRegistration'] != null
+          ? DateTime.tryParse(json['dateOfRegistration'].toString())
+          : null,
       placeOfPractice: json['placeOfPractice']?.toString(),
-      year: json['year'] != null ? (json['year'] is int ? json['year'] : int.tryParse(json['year'].toString())) : null,
-      availableSlots: (json['availableSlots'] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      year: json['year'] != null
+          ? (json['year'] is int ? json['year'] : int.tryParse(json['year'].toString()))
+          : null,
+      allSlots: json['allSlots'] != null
+          ? (json['allSlots'] as List<dynamic>?)?.map((e) => e.toString()).toList()
+          : null,
+      availableSlots: json['availableSlots'] != null
+          ? (json['availableSlots'] as List<dynamic>?)?.map((e) => e.toString()).toList()
+          : null,
       country: json['country']?.toString(),
       nationalIdentityDocument: json['nationalIdentityDocument']?.toString(),
       passportOrIdFront: json['passportOrIdFront']?.toString(),
@@ -101,9 +124,17 @@ class DoctorModel {
       paymentAuthorization: json['paymentAuthorization']?.toString(),
       profileImage: json['profileImage']?.toString(),
       ratings: json['ratings']?.toString() ?? '0',
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'].toString()) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'].toString()) : null,
-      v: json['__v'] != null ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString())) : null,
+      averageRating: json['averageRating'] != null
+          ? (json['averageRating'] is num ? json['averageRating'].toDouble() : double.tryParse(json['averageRating'].toString()))
+          : null,
+      ratingCount: json['ratingCount'] != null
+          ? (json['ratingCount'] is int ? json['ratingCount'] : int.tryParse(json['ratingCount'].toString()))
+          : null,
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt'].toString()) : null,
+      v: json['__v'] != null
+          ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString()))
+          : null,
     );
   }
 
@@ -127,6 +158,7 @@ class DoctorModel {
       if (dateOfRegistration != null) 'dateOfRegistration': dateOfRegistration!.toIso8601String(),
       if (placeOfPractice != null) 'placeOfPractice': placeOfPractice,
       if (year != null) 'year': year,
+      if (allSlots != null) 'allSlots': allSlots,
       if (availableSlots != null) 'availableSlots': availableSlots,
       if (country != null) 'country': country,
       if (nationalIdentityDocument != null) 'nationalIdentityDocument': nationalIdentityDocument,
@@ -139,6 +171,8 @@ class DoctorModel {
       if (paymentAuthorization != null) 'paymentAuthorization': paymentAuthorization,
       if (profileImage != null) 'profileImage': profileImage,
       'ratings': ratings,
+      if (averageRating != null) 'averageRating': averageRating,
+      if (ratingCount != null) 'ratingCount': ratingCount,
       if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
       if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
       if (v != null) '__v': v,
@@ -162,6 +196,16 @@ class DoctorModel {
       }
     }
     return 'assets/demo_images/demo_doctor.jpeg';
+  }
+
+  String get medicalSpecialtyName {
+    if (medicalSpecialty == null) return '';
+    if (medicalSpecialty is String) return medicalSpecialty as String;
+    if (medicalSpecialty is Map) {
+      final map = medicalSpecialty as Map<String, dynamic>;
+      return map['name']?.toString() ?? '';
+    }
+    return '';
   }
 }
 

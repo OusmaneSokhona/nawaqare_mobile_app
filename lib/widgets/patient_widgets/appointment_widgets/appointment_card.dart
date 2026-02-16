@@ -29,7 +29,7 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Data Preparation
     final formattedDate = _formatDate(appointment.date);
-    final timeRange = '${_formatTime(appointment.timeslot.startTime)}-${_formatTime(appointment.timeslot.endTime)}';
+    final timeRange = '${_formatTime(appointment.timeslot!.startTime)}-${_formatTime(appointment.timeslot!.endTime)}';
     final consultationTypeIcon = _getConsultationTypeIcon(appointment.consultationType);
     final consultationTypeText = appointment.consultationType.displayName;
 

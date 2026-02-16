@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_detail.dart';
+import 'package:patient_app/utils/appointment_status.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/doctor_appoinment_widget.dart';
@@ -255,6 +256,10 @@ class DoctorAppointmentScreen extends StatelessWidget {
                             itemBuilder: (context, index) {
                               return DoctorAppoinmentWidget(
                                 isCompleted: isPast,
+                                isCancelled: list[index].status==AppointmentStatus.CANCELLED?true:false,
+                                onTapCancel: (){
+                                  showCancelConfirmationDialog(list[index].id);
+                                },
                                 onTap: () {
                                   Get.to(
                                     DoctorAppointmentDetail(
@@ -389,26 +394,34 @@ class DoctorAppointmentScreen extends StatelessWidget {
             }
           }),
           15.horizontalSpace,
-          ...List.generate(controller.totalPages, (index) {
-            int page = index + 1;
-            return GestureDetector(
-              onTap: () => controller.currentPage.value = page,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text(
-                  "$page",
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: AppFonts.jakartaMedium,
-                    fontWeight: FontWeight.w600,
-                    color: controller.currentPage.value == page
-                        ? AppColors.primaryColor
-                        : Colors.grey,
-                  ),
-                ),
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(controller.totalPages, (index) {
+                  int page = index + 1;
+                  return GestureDetector(
+                    onTap: () => controller.currentPage.value = page,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Text(
+                        "$page",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontFamily: AppFonts.jakartaMedium,
+                          fontWeight: FontWeight.w600,
+                          color: controller.currentPage.value == page
+                              ? AppColors.primaryColor
+                              : Colors.grey,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ),
-            );
-          }),
+            ),
+          ),
           15.horizontalSpace,
           _paginationArrow(Icons.arrow_forward, () {
             if (controller.currentPage.value < controller.totalPages) {
@@ -491,6 +504,46 @@ class DoctorAppointmentScreen extends StatelessWidget {
       cancel: TextButton(
         onPressed: () => Get.back(),
         child: Text("Cancel"),
+      ),
+    );
+  }
+  void showCancelConfirmationDialog(String appointmentId) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Cancel Appointment",
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "Do you really want to cancel this appointment?",
+          style: TextStyle(fontSize: 16.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "No",
+              style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              controller.updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELLED);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              "Yes, Cancel",
+              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+            ),
+          ),
+        ],
       ),
     );
   }

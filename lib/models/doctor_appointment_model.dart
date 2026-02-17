@@ -63,6 +63,7 @@ class DoctorAppointment {
   final String? homevisitstatus;
   final String? paymentStatus;
   final PrescriptionInfo? prescriptionId;
+  final List<FollowUp>? followUps;
 
   DoctorAppointment({
     required this.id,
@@ -84,6 +85,7 @@ class DoctorAppointment {
     this.homevisitstatus,
     this.paymentStatus,
     this.prescriptionId,
+    this.followUps,
   });
 
   factory DoctorAppointment.fromJson(Map<String, dynamic> json) {
@@ -115,6 +117,11 @@ class DoctorAppointment {
       prescriptionId: json['prescriptionId'] != null
           ? PrescriptionInfo.fromJson(json['prescriptionId'] as Map<String, dynamic>)
           : null,
+      followUps: json['followUps'] != null
+          ? (json['followUps'] as List)
+          .map((item) => FollowUp.fromJson(item as Map<String, dynamic>))
+          .toList()
+          : null,
     );
   }
 
@@ -139,6 +146,99 @@ class DoctorAppointment {
       'homevisitstatus': homevisitstatus,
       'paymentStatus': paymentStatus,
       'prescriptionId': prescriptionId?.toJson(),
+      'followUps': followUps?.map((item) => item.toJson()).toList(),
+    };
+  }
+}
+
+class FollowUp {
+  final String id;
+  final TimeSlot timeSlotId;
+  final List<dynamic> prescriptions;
+  final int followupPrice;
+  final String paymentIntent;
+  final String paymentStatus;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
+  final SOAP? soap;
+
+  FollowUp({
+    required this.id,
+    required this.timeSlotId,
+    required this.prescriptions,
+    required this.followupPrice,
+    required this.paymentIntent,
+    required this.paymentStatus,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+    this.soap,
+  });
+
+  factory FollowUp.fromJson(Map<String, dynamic> json) {
+    return FollowUp(
+      id: json['_id'] as String? ?? '',
+      timeSlotId: TimeSlot.fromJson(json['timeSlotId'] as Map<String, dynamic>? ?? {}),
+      prescriptions: json['prescriptions'] as List? ?? [],
+      followupPrice: json['followupPrice'] as int? ?? 0,
+      paymentIntent: json['paymentIntent'] as String? ?? '',
+      paymentStatus: json['paymentStatus'] as String? ?? '',
+      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
+      v: json['__v'] as int? ?? 0,
+      soap: json['SOAP'] != null ? SOAP.fromJson(json['SOAP'] as Map<String, dynamic>) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'timeSlotId': timeSlotId.toJson(),
+      'prescriptions': prescriptions,
+      'followupPrice': followupPrice,
+      'paymentIntent': paymentIntent,
+      'paymentStatus': paymentStatus,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      '__v': v,
+      'SOAP': soap?.toJson(),
+    };
+  }
+}
+
+class SOAP {
+  final String subjective;
+  final String objective;
+  final String assessment;
+  final String plan;
+  final String diagnosis;
+
+  SOAP({
+    required this.subjective,
+    required this.objective,
+    required this.assessment,
+    required this.plan,
+    required this.diagnosis,
+  });
+
+  factory SOAP.fromJson(Map<String, dynamic> json) {
+    return SOAP(
+      subjective: json['subjective'] as String? ?? '',
+      objective: json['objective'] as String? ?? '',
+      assessment: json['assessment'] as String? ?? '',
+      plan: json['plan'] as String? ?? '',
+      diagnosis: json['diagnosis'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'subjective': subjective,
+      'objective': objective,
+      'assessment': assessment,
+      'plan': plan,
+      'diagnosis': diagnosis,
     };
   }
 }
@@ -176,12 +276,48 @@ class PatientInfo {
   final String fullName;
   final String email;
   final String profileImage;
+  final String? phoneNumber;
+  final List<String>? appointments;
+  final List<String>? reports;
+  final List<String>? allergies;
+  final String? userId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+  final String? address;
+  final String? bloodPressure;
+  final double? bmi;
+  final String? country;
+  final DateTime? dob;
+  final String? gender;
+  final String? heartRate;
+  final String? height;
+  final String? religion;
+  final String? weight;
 
   PatientInfo({
     required this.id,
     required this.fullName,
     required this.email,
     required this.profileImage,
+    this.phoneNumber,
+    this.appointments,
+    this.reports,
+    this.allergies,
+    this.userId,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.address,
+    this.bloodPressure,
+    this.bmi,
+    this.country,
+    this.dob,
+    this.gender,
+    this.heartRate,
+    this.height,
+    this.religion,
+    this.weight,
   });
 
   factory PatientInfo.fromJson(Map<String, dynamic> json) {
@@ -190,6 +326,34 @@ class PatientInfo {
       fullName: json['fullName'] as String? ?? '',
       email: json['email'] as String? ?? '',
       profileImage: json['profileImage'] as String? ?? '',
+      phoneNumber: json['phoneNumber'] as String?,
+      appointments: json['appointments'] != null
+          ? List<String>.from(json['appointments'] as List)
+          : null,
+      reports: json['reports'] != null
+          ? List<String>.from(json['reports'] as List)
+          : null,
+      allergies: json['allergies'] != null
+          ? List<String>.from(json['allergies'] as List)
+          : null,
+      userId: json['userId'] as String?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
+      v: json['__v'] as int?,
+      address: json['address'] as String?,
+      bloodPressure: json['bloodPressure'] as String?,
+      bmi: (json['bmi'] as num?)?.toDouble(),
+      country: json['country'] as String?,
+      dob: json['dob'] != null ? DateTime.parse(json['dob'] as String) : null,
+      gender: json['gender'] as String?,
+      heartRate: json['heartRate'] as String?,
+      height: json['height'] as String?,
+      religion: json['religion'] as String?,
+      weight: json['weight'] as String?,
     );
   }
 
@@ -199,6 +363,24 @@ class PatientInfo {
       'fullName': fullName,
       'email': email,
       'profileImage': profileImage,
+      'phoneNumber': phoneNumber,
+      'appointments': appointments,
+      'reports': reports,
+      'allergies': allergies,
+      'userId': userId,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      '__v': v,
+      'address': address,
+      'bloodPressure': bloodPressure,
+      'bmi': bmi,
+      'country': country,
+      'dob': dob?.toIso8601String(),
+      'gender': gender,
+      'heartRate': heartRate,
+      'height': height,
+      'religion': religion,
+      'weight': weight,
     };
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_add_appointment_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_appointment_detail.dart';
 import 'package:patient_app/utils/appointment_status.dart';
 import 'package:patient_app/widgets/custom_button.dart';
@@ -19,13 +20,10 @@ import '../../../utils/api_urls.dart';
 class DoctorAppointmentScreen extends StatelessWidget {
   DoctorAppointmentScreen({super.key});
 
-  final DoctorAppointmentController controller = Get.put(
-    DoctorAppointmentController(),
-  );
+  final DoctorAppointmentController controller = Get.put(DoctorAppointmentController());
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -287,7 +285,11 @@ class DoctorAppointmentScreen extends StatelessWidget {
                           borderRadius: 15,
                           text: AppStrings.addAppointment.tr,
                           onTap: () {
-                            _showAddAppointmentDialog(context);
+                            // When navigating to add appointment, we'll refresh when coming back
+                            Get.to(() => DoctorAddAppointmentScreen())?.then((_) {
+                              // This will execute when returning from the add appointment screen
+                              controller.refreshAppointments();
+                            });
                           },
                         )
                             : SizedBox(),
@@ -458,55 +460,6 @@ class DoctorAppointmentScreen extends StatelessWidget {
     );
   }
 
-  void _showAddAppointmentDialog(BuildContext context) {
-    Get.defaultDialog(
-      title: "Add New Appointment",
-      content: Container(
-        width: 300.w,
-        child: Column(
-          children: [
-            CustomTextField(
-              labelText: "Patient ID",
-              hintText: "Enter patient ID",
-              controller: TextEditingController(),
-            ),
-            10.verticalSpace,
-            CustomTextField(
-              labelText: "Date",
-              hintText: "Select date",
-              suffixIcon: Icons.calendar_today,
-              controller: TextEditingController(),
-            ),
-            10.verticalSpace,
-            CustomTextField(
-              labelText: "Time Slot",
-              hintText: "Select time slot",
-              suffixIcon: Icons.access_time,
-              controller: TextEditingController(),
-            ),
-            10.verticalSpace,
-            CustomTextField(
-              labelText: "Reason",
-              hintText: "Enter appointment reason",
-              controller: TextEditingController(),
-            ),
-          ],
-        ),
-      ),
-      confirm: CustomButton(
-        text: "Schedule",
-        borderRadius: 15,
-        onTap: () {
-          Get.back();
-          Get.snackbar("Success", "Appointment scheduled successfully");
-        },
-      ),
-      cancel: TextButton(
-        onPressed: () => Get.back(),
-        child: Text("Cancel"),
-      ),
-    );
-  }
   void showCancelConfirmationDialog(String appointmentId) {
     Get.dialog(
       AlertDialog(

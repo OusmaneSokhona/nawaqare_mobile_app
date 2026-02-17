@@ -43,9 +43,12 @@ class HomeController extends GetxController {
         if (appointments.isNotEmpty) {
           final now = DateTime.now();
 
-          // 1. Find Ongoing: The first one where 'now' is between start and end
+          // 1. Find Ongoing: Only consider appointments with non-null timeslot
           try {
             ongoingAppointment.value = appointments.firstWhere((appointment) {
+              // Check if timeslot exists first
+              if (appointment.timeslot == null) return false;
+
               final startTime = appointment.timeslot!.startTime;
               final endTime = appointment.timeslot!.endTime;
               final isActive = appointment.status == AppointmentStatus.confirmed ||
@@ -57,8 +60,11 @@ class HomeController extends GetxController {
             ongoingAppointment.value = null; // No ongoing found
           }
 
-          // 2. Find Upcoming: Filter for future appointments, then find the one with the earliest start time
+          // 2. Find Upcoming: Filter for future appointments with non-null timeslot
           List<Appointment> futureAppointments = appointments.where((appointment) {
+            // Check if timeslot exists first
+            if (appointment.timeslot == null) return false;
+
             final startTime = appointment.timeslot!.startTime;
             final isActive = appointment.status == AppointmentStatus.confirmed ||
                 appointment.status == AppointmentStatus.pending;
@@ -68,8 +74,10 @@ class HomeController extends GetxController {
 
           if (futureAppointments.isNotEmpty) {
             // Sort by start time to get the absolute next one
-            futureAppointments.sort((a, b) =>
-                a.timeslot!.startTime.compareTo(b.timeslot!.startTime));
+            futureAppointments.sort((a, b) {
+              // We already filtered out null timeslots, so it's safe to use ! here
+              return a.timeslot!.startTime.compareTo(b.timeslot!.startTime);
+            });
 
             upcomingAppointment.value = futureAppointments.first;
           }

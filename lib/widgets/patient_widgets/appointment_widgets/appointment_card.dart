@@ -77,7 +77,7 @@ class AppointmentCard extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.network(
-                            appointment.doctor.profileImage ?? '',
+                            appointment.doctorId.profileImage ?? '',
                             height: isWeb ? 50 : 90,
                             width: isWeb ? 50 : 90,
                             fit: BoxFit.cover,
@@ -111,7 +111,7 @@ class AppointmentCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            appointment.doctor.fullName,
+                            appointment.doctorId.fullName,
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -120,7 +120,7 @@ class AppointmentCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            appointment.doctor.email ?? appointment.doctor.email,
+                            appointment.doctorId.email ?? "email",
                             style: const TextStyle(
                               fontSize: 14,
                               color: Color(0xFF6B7280),

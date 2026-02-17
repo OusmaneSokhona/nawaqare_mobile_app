@@ -243,7 +243,7 @@ class PreviewScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      appointment.doctor.fullName,
+                      appointment.doctorId.fullName,
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w700,
@@ -253,7 +253,7 @@ class PreviewScreen extends StatelessWidget {
                     ),
                     4.verticalSpace,
                     Text(
-                      appointment.doctor.email,
+                      appointment.doctorId.email,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
@@ -292,12 +292,12 @@ class PreviewScreen extends StatelessWidget {
   }
 
   Widget _buildDoctorImage() {
-    if (appointment.doctor.profileImage != null &&
-        appointment.doctor.profileImage!.isNotEmpty) {
+    if (appointment.doctorId.profileImage != null &&
+        appointment.doctorId.profileImage!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: Image.network(
-          appointment.doctor.profileImage!,
+          appointment.doctorId.profileImage!,
           height: 70.h,
           width: 70.w,
           fit: BoxFit.cover,

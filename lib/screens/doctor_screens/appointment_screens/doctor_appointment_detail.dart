@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appointment_detail_controller.dart';
 import 'package:patient_app/models/doctor_appointment_model.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_reschedule_appointment_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/preview_screen_doctor.dart';
 import 'package:patient_app/widgets/appointment_statue_widget.dart';
 import 'package:patient_app/widgets/custom_button.dart';
@@ -15,6 +16,7 @@ import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/home_visi
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
+import '../../../widgets/reschdule_request_widget.dart';
 
 class DoctorAppointmentDetail extends StatelessWidget {
   final bool isCompleted;
@@ -26,6 +28,14 @@ class DoctorAppointmentDetail extends StatelessWidget {
     required this.appointmentModel,
     this.isCompleted = false,
   });
+  bool get _hasRescheduleReason {
+    return appointmentModel.isReschedule?.reason != null &&
+        appointmentModel.isReschedule!.reason!.isNotEmpty&&appointmentModel.isReschedule!.role!="doctor";
+  }
+  bool get _hasRescheduleStatus {
+    return appointmentModel.isReschedule?.reason != null &&
+        appointmentModel.isReschedule!.reason!.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,23 +90,36 @@ class DoctorAppointmentDetail extends StatelessWidget {
                       if (isCompleted) ...{
                         DoctorPastAppoinmentWidget(appointmentModel: appointmentModel,),
                       } else ...{
-                        Align(
-                          alignment: AlignmentDirectional.topStart,
-                          child: Text(
-                            AppStrings.status.tr,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: AppFonts.jakartaBold,
+                        if (_hasRescheduleStatus)
+                          Align(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Text(
+                              AppStrings.reschedule.tr,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: AppFonts.jakartaBold,
+                              ),
                             ),
                           ),
-                        ),
-                        10.verticalSpace,
-                        Align(
-                          alignment: AlignmentGeometry.centerLeft,
-                          child:  AppointmentStatusWidget(status: appointmentModel.status),
-                        ),
+                        if (_hasRescheduleReason)
+                          10.verticalSpace,
+                        if (_hasRescheduleReason)...{
+                          RescheduleRequestWidget(
+                            patientName: appointmentModel.patientId.fullName,
+                            patientImage: appointmentModel.patientId.profileImage ?? '',
+                            rescheduleReason: appointmentModel.isReschedule?.reason,
+                            onAccept: () {
+                              // controller.acceptReschedule(appointmentModel.id);
+                            },
+                            onReject: () {
+                              // Handle reject reschedule
+                              // controller.rejectReschedule(appointmentModel.id);
+                            },
+                          ),} else if(_hasRescheduleStatus)...{
+                          Align(alignment: AlignmentGeometry.centerLeft,child:AppointmentStatusWidget(status: appointmentModel.isReschedule!.isAccept),),
+                        },
                         10.verticalSpace,
                         Align(
                           alignment: AlignmentDirectional.topStart,
@@ -166,12 +189,12 @@ class DoctorAppointmentDetail extends StatelessWidget {
                           ),
                         10.verticalSpace,
                         MedicalReportCard(
-                          title: AppStrings.bloodTestReport.tr,
-                          date: "200/Sep/2025",onlyView: true,
+                          title: appointmentModel.patientId.reports!,
+                          onlyView: true,
                         ),
 
                         30.verticalSpace,
-                        if (appointmentModel.consultationType == "homevisit" && appointmentModel.status == "pending")
+                        if (appointmentModel.consultationType == "homevisit" && appointmentModel.status == "pending"&&appointmentModel.isReschedule!.isAccept!="pending")
                           Obx(() => (controller.statusSetedHomeVisit.value == "accepted" || appointmentModel.homevisitstatus == "Accept" || appointmentModel.homevisitstatus == "accepted") && (appointmentModel.status == "pending" || appointmentModel.status == "Pending")
                               ? Column(
                             children: [
@@ -188,7 +211,9 @@ class DoctorAppointmentDetail extends StatelessWidget {
                               CustomButton(
                                 borderRadius: 15,
                                 text: AppStrings.reschedule.tr,
-                                onTap: () {},
+                                onTap: () {
+                                  Get.to(DoctorRescheduleAppointmentScreen(appointmentId: appointmentModel.id,));
+                                },
                                 bgColor: AppColors.inACtiveButtonColor,
                                 fontColor: Colors.black,
                               ),
@@ -235,13 +260,15 @@ class DoctorAppointmentDetail extends StatelessWidget {
                               CustomButton(
                                 borderRadius: 15,
                                 text: AppStrings.reschedule.tr,
-                                onTap: () {},
+                                onTap: () {
+                                  Get.to(DoctorRescheduleAppointmentScreen(appointmentId: appointmentModel.id,));
+                                },
                                 bgColor: AppColors.inACtiveButtonColor,
                                 fontColor: Colors.black,
                               ),
                             ],
                           ),
-                        if (appointmentModel.status == "confirmed")
+                        if (appointmentModel.status == "confirmed"&&appointmentModel.isReschedule!.isAccept!="pending")
                           Column(
                             children: [
                               CustomButton(
@@ -255,13 +282,15 @@ class DoctorAppointmentDetail extends StatelessWidget {
                                 CustomButton(
                                   borderRadius: 15,
                                   text: AppStrings.reschedule.tr,
-                                  onTap: () {},
+                                  onTap: () {
+                                    Get.to(DoctorRescheduleAppointmentScreen(appointmentId: appointmentModel.id,));
+                                  },
                                   bgColor: AppColors.inACtiveButtonColor,
                                   fontColor: Colors.black,
                                 ),
                             ],
                           ),
-                        if (appointmentModel.status == "ongoing")
+                        if (appointmentModel.status == "ongoing"&&appointmentModel.isReschedule!.isAccept!="pending")
                           CustomButton(
                             borderRadius: 15,
                             text: AppStrings.joinConsultation.tr,

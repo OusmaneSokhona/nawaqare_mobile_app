@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/appointment_controller.dart';
 import 'package:patient_app/main.dart';
+import 'package:patient_app/screens/document_view_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../models/appointment_model.dart';
@@ -11,14 +12,15 @@ import '../../../utils/app_strings.dart';
 
 class PastAppointmentWidgets extends StatelessWidget {
   final Appointment appointment;
-  final AppointmentController appointmentController = Get.find<AppointmentController>();
+  final AppointmentController appointmentController =
+      Get.find<AppointmentController>();
 
   PastAppointmentWidgets({super.key, required this.appointment});
 
   @override
   Widget build(BuildContext context) {
     return Obx(
-          () => Column(
+      () => Column(
         children: [
           if (appointmentController.selectedTab.value == "Diagnosis") ...[
             15.verticalSpace,
@@ -29,13 +31,17 @@ class PastAppointmentWidgets extends StatelessWidget {
           if (appointmentController.selectedTab.value == "Ordonnance") ...[
             15.verticalSpace,
             if (appointment.prescriptionId != null)
-              ...appointment.prescriptionId!.medications.map((medication) =>
-                  PrescriptionHistoryCard(
-                    medication: medication.name,
-                    dosage: "${medication.dosage} - ${medication.frequency}",
-                    daysRemaining: _calculateDaysRemaining(appointment.prescriptionId!.validUntil),
+              ...appointment.prescriptionId!.medications
+                  .map(
+                    (medication) => PrescriptionHistoryCard(
+                      medication: medication.name,
+                      dosage: "${medication.dosage} - ${medication.frequency}",
+                      daysRemaining: _calculateDaysRemaining(
+                        appointment.prescriptionId!.validUntil,
+                      ),
+                    ),
                   )
-              ).toList()
+                  .toList()
             else
               PrescriptionHistoryCard(
                 medication: "No prescription available",
@@ -45,22 +51,24 @@ class PastAppointmentWidgets extends StatelessWidget {
           ],
           if (appointmentController.selectedTab.value == "Medical Report") ...[
             15.verticalSpace,
-            MedicalReportCard(
-              title: "Medical Report - ${appointment.formattedDate}",
-              date: appointment.formattedDate,
-            ),
+            MedicalReportCard(title: appointment.patientId.reports),
           ],
           15.verticalSpace,
           FollowUpRecommendationCard(
-            recommendation: appointment.notes ?? "Schedule a follow-up as recommended by Dr. ${appointment.doctor.fullName}",
+            recommendation:
+                appointment.notes ??
+                "Schedule a follow-up as recommended by Dr. ${appointment.doctorId.fullName}",
           ),
           if (appointmentController.selectedTab.value == "Reviews") ...[
             15.verticalSpace,
             ReviewCard(
-              image: appointment.doctor.profileImage ?? "assets/demo_images/Frame 1000000981.png",
-              reviewerName: appointment.doctor.fullName,
+              image:
+                  appointment.doctorId.profileImage ??
+                  "assets/demo_images/demo_doctor.jpeg",
+              reviewerName: appointment.doctorId.fullName,
               rating: 4.5,
-              reviewText: "Consultation completed on ${appointment.formattedDate}. ${appointment.notes ?? 'No additional notes.'}",
+              reviewText:
+                  "Consultation completed on ${appointment.formattedDate}. ${appointment.notes ?? 'No additional notes.'}",
             ),
           ],
           15.verticalSpace,
@@ -310,53 +318,55 @@ class PrescriptionHistoryCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-             dosage.isNotEmpty?Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _buttonBgColor,
-                        foregroundColor: _primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        AppStrings.downloadPdf.tr,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _blueColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        AppStrings.requestDelivery.tr,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+              dosage.isNotEmpty
+                  ? Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _buttonBgColor,
+                            foregroundColor: _primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            AppStrings.downloadPdf.tr,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ],
-              ):SizedBox(),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _blueColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            elevation: 0,
+                          ),
+                          child: Text(
+                            AppStrings.requestDelivery.tr,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                  : SizedBox(),
             ],
           ),
         ),
@@ -366,105 +376,111 @@ class PrescriptionHistoryCard extends StatelessWidget {
 }
 
 class MedicalReportCard extends StatelessWidget {
-  final String title;
-  final String date;
+  final List<String> title;
 
-  const MedicalReportCard({required this.title, required this.date, super.key});
+  const MedicalReportCard({required this.title, super.key});
 
   static const Color _primaryColor = Color(0xFF1F2937);
-  static const Color _secondaryColor = Color(0xFF6B7280);
   static const Color _blueColor = Color(0xFF4C86F7);
   static const Color _iconBgColor = Color(0xFFE0EFFF);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CardHeader(title: AppStrings.medicalReports.tr),
-        5.verticalSpace,
-        Container(
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
-            borderRadius: BorderRadius.circular(13.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                spreadRadius: 2,
-                blurRadius: 10,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: _iconBgColor,
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                child: const Icon(
-                  Icons.description_outlined,
-                  color: _blueColor,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: _primaryColor,
+    return (title.isNotEmpty && title != null)
+        ? Column(
+          children: [
+            CardHeader(title: AppStrings.medicalReports.tr),
+            5.verticalSpace,
+            SizedBox(
+              height: title.length < 2 ? 120.h : 240.h,
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: title.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: AppColors.lightGrey.withOpacity(0.2),
                       ),
+                      borderRadius: BorderRadius.circular(13.0),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          spreadRadius: 2,
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      date,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: _secondaryColor,
-                      ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: _iconBgColor,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: const Icon(
+                            Icons.description_outlined,
+                            color: _blueColor,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title[index],
+                            maxLines: 3,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: _primaryColor,
+                            ),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.to(DocumentViewerScreen(documentUrl: title[index], fileName: title[index]));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _blueColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            elevation: 0,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: Text(
+                            AppStrings.view.tr,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _blueColor,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  elevation: 0,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  AppStrings.view.tr,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
+            ),
+          ],
+        )
+        : Center(
+          child: Text(
+            "No Reports Available",
+            style: TextStyle(fontSize: 14.sp),
           ),
-        ),
-      ],
-    );
+        );
   }
 }
 
@@ -575,9 +591,10 @@ class ReviewCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundImage: image.startsWith('assets')
-                    ? AssetImage(image) as ImageProvider
-                    : NetworkImage(image),
+                backgroundImage:
+                    image.startsWith('assets')
+                        ? AssetImage(image) as ImageProvider
+                        : NetworkImage(image),
               ),
               const SizedBox(width: 12),
               Expanded(

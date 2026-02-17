@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/add_report_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_notes_screen.dart';
+import 'package:patient_app/screens/document_view_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/delete_report_dialog.dart';
 import '../../../models/doctor_appointment_model.dart';
@@ -165,10 +166,9 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           ),
         ),
         15.verticalSpace,
-        if (appointmentModel.prescriptionId != null)
           MedicalReportCard(
-            title: "Prescription #${appointmentModel.prescriptionId!.prescriptionNumber}",
-            date: _formatDate(appointmentModel.prescriptionId!.issueDate),
+            title: appointmentModel.patientId.reports!,
+
             onlyView: false,
           ),
         15.verticalSpace,
@@ -537,13 +537,11 @@ class PrescriptionHistoryCard extends StatelessWidget {
 }
 
 class MedicalReportCard extends StatelessWidget {
-  final String title;
-  final String date;
+  final List<String> title;
   final bool onlyView;
 
   const MedicalReportCard({
     required this.title,
-    required this.date,
     super.key,
     required this.onlyView,
   });
@@ -555,165 +553,167 @@ class MedicalReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return (title.isNotEmpty&&title!=null)?Column(
       children: [
         CardHeader(title: AppStrings.medicalReports.tr),
         5.verticalSpace,
-        Container(
-          padding: EdgeInsets.all(onlyView?0.sp:10.sp),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(color: onlyView?Colors.transparent:AppColors.lightGrey.withOpacity(0.2)),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: AppColors.lightGrey.withOpacity(0.2),
-                  ),
-                  borderRadius: BorderRadius.circular(13.0),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
+        SizedBox(height: title.length<2?onlyView?100.h:200.h:200.h,child: ListView.builder(padding: EdgeInsets.zero,itemCount: title.length,itemBuilder: (context,index){
+          return Container(
+            padding: EdgeInsets.all(onlyView?0.sp:10.sp),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: onlyView?Colors.transparent:AppColors.lightGrey.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      color: AppColors.lightGrey.withOpacity(0.2),
                     ),
-                  ],
+                    borderRadius: BorderRadius.circular(13.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        spreadRadius: 2,
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: _iconBgColor,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Icon(
+                          Icons.description_outlined,
+                          color: _blueColor,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              title[index],
+                              maxLines: 3,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: _primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      onlyView
+                          ? InkWell(
+
+                        onTap: (){
+                          Get.to(DocumentViewerScreen(documentUrl: title[index], fileName: title[index]));
+                        },
+                            child: Container(
+                                                    padding: EdgeInsets.symmetric(
+                            horizontal: 12.sp,
+                            vertical: 4.sp,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                    decoration: BoxDecoration(
+                            color: AppColors.primaryColor,
+                            borderRadius: BorderRadius.circular(9.sp),
+                                                    ),
+                                                    child: Text(
+                            AppStrings.view.tr,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontFamily: AppFonts.jakartaMedium,
+                              fontWeight: FontWeight.w500,
+                            ),
+                                                    ),
+                                                  ),
+                          )
+                          : InkWell(
+                        onTap: () {
+                          Get.dialog(DeleteReportDialog());
+                        },
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: AppColors.red,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                onlyView?0.verticalSpace:12.verticalSpace,
+                onlyView?SizedBox():Row(
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _iconBgColor,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: const Icon(
-                        Icons.description_outlined,
-                        color: _blueColor,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: _primaryColor,
-                            ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Get.to(AddReportScreen());
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.inACtiveButtonColor,
+                          foregroundColor: _primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            date,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: _secondaryColor,
-                            ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          AppStrings.addReport.tr,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
                           ),
-                        ],
-                      ),
-                    ),
-                    onlyView
-                        ? Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.sp,
-                        vertical: 4.sp,
-                      ),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(9.sp),
-                      ),
-                      child: Text(
-                        AppStrings.view.tr,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.sp,
-                          fontFamily: AppFonts.jakartaMedium,
-                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    )
-                        : InkWell(
-                      onTap: () {
-                        Get.dialog(DeleteReportDialog());
-                      },
-                      child: Icon(
-                        Icons.delete_outline,
-                        color: AppColors.red,
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          AppStrings.downloadReport.tr,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              onlyView?0.verticalSpace:12.verticalSpace,
-              onlyView?SizedBox():Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.to(AddReportScreen());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.inACtiveButtonColor,
-                        foregroundColor: _primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        AppStrings.addReport.tr,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        AppStrings.downloadReport.tr,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        }),),
+
       ],
-    );
+    ):SizedBox();
   }
 }
 

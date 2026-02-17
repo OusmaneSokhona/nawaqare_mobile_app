@@ -46,8 +46,8 @@ class AppointmentResponse {
 
 class Appointment {
   final String id;
-  final String patientId;
-  final Doctor doctor;
+  final Patient patientId;
+  final Doctor doctorId;
   final Timeslot? timeslot;
   final int fee;
   final String currency;
@@ -69,7 +69,7 @@ class Appointment {
   Appointment({
     required this.id,
     required this.patientId,
-    required this.doctor,
+    required this.doctorId,
     this.timeslot,
     required this.fee,
     required this.currency,
@@ -92,8 +92,8 @@ class Appointment {
   factory Appointment.fromJson(Map<String, dynamic> json) {
     return Appointment(
       id: json['_id']?.toString() ?? '',
-      patientId: json['patientId']?.toString() ?? '',
-      doctor: Doctor.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
+      patientId: Patient.fromJson(json['patientId'] as Map<String, dynamic>? ?? {}),
+      doctorId: Doctor.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
       timeslot: json['timeslot'] != null
           ? Timeslot.fromJson(json['timeslot'] as Map<String, dynamic>)
           : null,
@@ -123,8 +123,8 @@ class Appointment {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'patientId': patientId,
-      'doctorId': doctor.toJson(),
+      'patientId': patientId.toJson(),
+      'doctorId': doctorId.toJson(),
       'timeslot': timeslot?.toJson(),
       'fee': fee,
       'currency': currency,
@@ -147,8 +147,128 @@ class Appointment {
 
   bool get isUpcoming => date.isAfter(DateTime.now());
   bool get isPast => date.isBefore(DateTime.now());
-  String get formattedDate => '${date.day}/${date.month}/${date.year}';
+  String get formattedDate => '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
   String get formattedTime => '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+}
+
+class Patient {
+  final String id;
+  final String userId;
+  final String fullName;
+  final String phoneNumber;
+  final String email;
+  final List<String> allergies;
+  final List<String> appointments;
+  final List<String> reports;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
+  final String? address;
+  final String? bloodPressure;
+  final double? bmi;
+  final String? country;
+  final DateTime? dob;
+  final String? gender;
+  final String? heartRate;
+  final String? height;
+  final String? profileImage;
+  final String? religion;
+  final String? weight;
+
+  Patient({
+    required this.id,
+    required this.userId,
+    required this.fullName,
+    required this.phoneNumber,
+    required this.email,
+    required this.allergies,
+    required this.appointments,
+    required this.reports,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+    this.address,
+    this.bloodPressure,
+    this.bmi,
+    this.country,
+    this.dob,
+    this.gender,
+    this.heartRate,
+    this.height,
+    this.profileImage,
+    this.religion,
+    this.weight,
+  });
+
+  factory Patient.fromJson(Map<String, dynamic> json) {
+    return Patient(
+      id: json['_id']?.toString() ?? '',
+      userId: json['userId']?.toString() ?? '',
+      fullName: json['fullName']?.toString() ?? '',
+      phoneNumber: json['phoneNumber']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      allergies: (json['allergies'] as List<dynamic>?)
+          ?.map((item) => item.toString())
+          .toList() ?? [],
+      appointments: (json['appointments'] as List<dynamic>?)
+          ?.map((item) => item.toString())
+          .toList() ?? [],
+      reports: (json['reports'] as List<dynamic>?)
+          ?.map((item) => item.toString())
+          .toList() ?? [],
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      v: (json['__v'] as num?)?.toInt() ?? 0,
+      address: json['address']?.toString(),
+      bloodPressure: json['bloodPressure']?.toString(),
+      bmi: (json['bmi'] as num?)?.toDouble(),
+      country: json['country']?.toString(),
+      dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
+      gender: json['gender']?.toString(),
+      heartRate: json['heartRate']?.toString(),
+      height: json['height']?.toString(),
+      profileImage: json['profileImage']?.toString(),
+      religion: json['religion']?.toString(),
+      weight: json['weight']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'userId': userId,
+      'fullName': fullName,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'allergies': allergies,
+      'appointments': appointments,
+      'reports': reports,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      '__v': v,
+      'address': address,
+      'bloodPressure': bloodPressure,
+      'bmi': bmi,
+      'country': country,
+      'dob': dob?.toIso8601String(),
+      'gender': gender,
+      'heartRate': heartRate,
+      'height': height,
+      'profileImage': profileImage,
+      'religion': religion,
+      'weight': weight,
+    };
+  }
+
+  int? get age {
+    if (dob == null) return null;
+    final now = DateTime.now();
+    int age = now.year - dob!.year;
+    if (now.month < dob!.month || (now.month == dob!.month && now.day < dob!.day)) {
+      age--;
+    }
+    return age;
+  }
 }
 
 class Doctor {
@@ -239,6 +359,10 @@ class Timeslot {
       return '${minutes}m';
     }
   }
+
+  String get formattedStartTime => '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}';
+  String get formattedEndTime => '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}';
+  String get formattedStartDate => '${startTime.day}/${startTime.month}/${startTime.year}';
 }
 
 class RescheduleInfo {
@@ -267,6 +391,10 @@ class RescheduleInfo {
       'role': role,
     };
   }
+
+  bool get isPending => isAccept == 'pending';
+  bool get isAccepted => isAccept == 'accepted';
+  bool get isRejected => isAccept == 'rejected';
 }
 
 class Prescription {
@@ -341,6 +469,8 @@ class Prescription {
       '__v': v,
     };
   }
+
+  bool get isValid => validUntil.isAfter(DateTime.now());
 }
 
 class Medication {
@@ -421,8 +551,8 @@ enum AppointmentStatus {
   confirmed,
   completed,
   cancelled,
-  rescheduled,
-  ongoing;
+  ongoing,
+  rescheduled;
 
   String get displayName {
     switch (this) {
@@ -437,7 +567,7 @@ enum AppointmentStatus {
       case AppointmentStatus.ongoing:
         return 'Ongoing';
       case AppointmentStatus.rescheduled:
-        return "rescheduled";
+        return "Rescheduled";
     }
   }
 }
@@ -455,6 +585,8 @@ class AppointmentStatusExtension {
         return AppointmentStatus.cancelled;
       case 'ongoing':
         return AppointmentStatus.ongoing;
+      case 'rescheduled':
+        return AppointmentStatus.rescheduled;
       default:
         return AppointmentStatus.pending;
     }
@@ -492,7 +624,6 @@ class TimeslotStatusExtension {
     }
   }
 }
-
 class AppointmentModel {
   final String name;
   final String specialty;

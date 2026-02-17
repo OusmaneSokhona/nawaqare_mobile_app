@@ -225,7 +225,7 @@ class AppointmentWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                appointment.doctor.fullName,
+                appointment.doctorId.fullName,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18.sp,
@@ -329,9 +329,9 @@ class AppointmentWidget extends StatelessWidget {
   }
 
   Widget _buildDoctorImage() {
-    if (appointment.doctor.profileImage != null && appointment.doctor.profileImage!.isNotEmpty) {
+    if (appointment.doctorId.profileImage != null && appointment.doctorId.profileImage!.isNotEmpty) {
       return Image.network(
-        appointment.doctor.profileImage!,
+        appointment.doctorId.profileImage!,
         height: 105.h,
         width: 85.w,
         fit: BoxFit.cover,

@@ -32,6 +32,14 @@ class DoctorAppointmentController extends GetxController {
     });
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // This will be called every time the screen is shown/comes into focus
+    print("Screen is now visible - refreshing appointments");
+    fetchDoctorAppointments();
+  }
+
   Future<void> fetchDoctorAppointments() async {
     try {
       isLoading.value = true;
@@ -492,6 +500,7 @@ class DoctorAppointmentController extends GetxController {
       file.value = 'File selection cancelled';
     }
   }
+
   Future<void> updateAppointmentStatus(String appointmentId, String status) async {
     try {
       isLoading.value = true;

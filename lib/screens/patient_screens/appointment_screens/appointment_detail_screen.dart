@@ -25,6 +25,7 @@ class AppointmentDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("is Reshdule = ${appointment.rescheduleReason}");
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -109,7 +110,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      appointment.doctor.fullName,
+                      appointment.doctorId.fullName,
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w700,
@@ -172,11 +173,11 @@ class AppointmentDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDoctorImage() {
-    if (appointment.doctor.profileImage != null && appointment.doctor.profileImage!.isNotEmpty) {
+    if (appointment.doctorId.profileImage != null && appointment.doctorId.profileImage!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: Image.network(
-          appointment.doctor.profileImage!,
+          appointment.doctorId.profileImage!,
           height: 80.h,
           width: 80.w,
           fit: BoxFit.cover,
@@ -351,7 +352,7 @@ class AppointmentDetailScreen extends StatelessWidget {
   }
 
   Widget _buildActionButtons() {
-    return Column(
+    return (appointment.status==AppointmentStatus.pending||appointment.status==AppointmentStatus.confirmed)?Column(
       children: [
         CustomButton(
           borderRadius: 15,
@@ -369,7 +370,7 @@ class AppointmentDetailScreen extends StatelessWidget {
           fontColor: Colors.black,
         ),
       ],
-    );
+    ):SizedBox();
   }
 
   String _getConsultationTypeEmoji(ConsultationType type) {

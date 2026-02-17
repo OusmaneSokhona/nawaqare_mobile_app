@@ -25,4 +25,6 @@ class ApiUrls {
   static String getAllPatients = '/api/appointments/doctor-patientsApp';
   static String submitReviewApi = '/api/review/submit';
   static String updateAppointmentStatus = '/api/appointments/update/';
+  static String doctorCreateAppointmentEndpoint="/api/appointments/create-appointment";
+  static String rescheduleAppointment="/api/appointments/reschedule";
 }

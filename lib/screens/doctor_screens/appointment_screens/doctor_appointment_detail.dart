@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appointment_detail_controller.dart';
 import 'package:patient_app/models/doctor_appointment_model.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_reschedule_appointment_screen.dart';
@@ -22,6 +23,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
   final bool isCompleted;
   final DoctorAppointment appointmentModel;
   final DoctorAppointmentDetailController controller = Get.put(DoctorAppointmentDetailController());
+  final DoctorAppointmentController appointmentController=Get.put(DoctorAppointmentController());
 
   DoctorAppointmentDetail({
     super.key,
@@ -30,7 +32,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
   });
   bool get _hasRescheduleReason {
     return appointmentModel.isReschedule?.reason != null &&
-        appointmentModel.isReschedule!.reason!.isNotEmpty&&appointmentModel.isReschedule!.role!="doctor";
+        appointmentModel.isReschedule!.reason!.isNotEmpty&&appointmentModel.isReschedule!.role!="doctor"&&appointmentModel.isReschedule!.isAccept=="pending";
   }
   bool get _hasRescheduleStatus {
     return appointmentModel.isReschedule?.reason != null &&
@@ -59,6 +61,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
+appointmentController.fetchDoctorAppointments();
                       Get.back();
                     },
                     child: Image.asset(
@@ -111,11 +114,10 @@ class DoctorAppointmentDetail extends StatelessWidget {
                             patientImage: appointmentModel.patientId.profileImage ?? '',
                             rescheduleReason: appointmentModel.isReschedule?.reason,
                             onAccept: () {
-                              // controller.acceptReschedule(appointmentModel.id);
+                              controller.acceptRescheduleRequest(appointmentModel.id);
                             },
                             onReject: () {
-                              // Handle reject reschedule
-                              // controller.rejectReschedule(appointmentModel.id);
+                              controller.rejectRescheduleRequest(appointmentModel.id);
                             },
                           ),} else if(_hasRescheduleStatus)...{
                           Align(alignment: AlignmentGeometry.centerLeft,child:AppointmentStatusWidget(status: appointmentModel.isReschedule!.isAccept),),
@@ -195,7 +197,8 @@ class DoctorAppointmentDetail extends StatelessWidget {
 
                         30.verticalSpace,
                         if (appointmentModel.consultationType == "homevisit" && appointmentModel.status == "pending"&&appointmentModel.isReschedule!.isAccept!="pending")
-                          Obx(() => (controller.statusSetedHomeVisit.value == "accepted" || appointmentModel.homevisitstatus == "Accept" || appointmentModel.homevisitstatus == "accepted") && (appointmentModel.status == "pending" || appointmentModel.status == "Pending")
+                          ((appointmentModel.homevisitstatus == "Accept" || appointmentModel.homevisitstatus == "accepted") &&
+                              (appointmentModel.status == "pending" || appointmentModel.status == "Pending"))
                               ? Column(
                             children: [
                               CustomButton(
@@ -212,7 +215,9 @@ class DoctorAppointmentDetail extends StatelessWidget {
                                 borderRadius: 15,
                                 text: AppStrings.reschedule.tr,
                                 onTap: () {
-                                  Get.to(DoctorRescheduleAppointmentScreen(appointmentId: appointmentModel.id,));
+                                  Get.to(DoctorRescheduleAppointmentScreen(
+                                    appointmentId: appointmentModel.id,
+                                  ));
                                 },
                                 bgColor: AppColors.inACtiveButtonColor,
                                 fontColor: Colors.black,
@@ -245,8 +250,8 @@ class DoctorAppointmentDetail extends StatelessWidget {
                                 fontColor: Colors.black,
                               ),
                             ],
-                          )),
-                        if (appointmentModel.consultationType != "homevisit" && appointmentModel.status == "pending")
+                          ),
+                        if (appointmentModel.consultationType != "homevisit" && appointmentModel.status == "pending"&&appointmentModel.isReschedule!.isAccept!="pending")
                           Column(
                             children: [
                               CustomButton(
@@ -268,7 +273,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                               ),
                             ],
                           ),
-                        if (appointmentModel.status == "confirmed"&&appointmentModel.isReschedule!.isAccept!="pending")
+                        if (appointmentModel.status == "confirmed"&&appointmentModel.isReschedule!.isAccept!="pending"&&appointmentModel.isReschedule!.isAccept!="pending")
                           Column(
                             children: [
                               CustomButton(
@@ -290,7 +295,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
                                 ),
                             ],
                           ),
-                        if (appointmentModel.status == "ongoing"&&appointmentModel.isReschedule!.isAccept!="pending")
+                        if (appointmentModel.status == "ongoing"&&appointmentModel.isReschedule!.isAccept!="pending"&&appointmentModel.isReschedule!.isAccept!="pending")
                           CustomButton(
                             borderRadius: 15,
                             text: AppStrings.joinConsultation.tr,

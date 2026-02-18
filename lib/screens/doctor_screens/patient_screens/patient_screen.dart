@@ -81,11 +81,19 @@ class PatientScreen extends StatelessWidget {
                       SliverList(
                         delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                            final patient = patientController.paginatedPatients[index];
+                            final patients = patientController.paginatedPatients;
+
+                            if (index >= patients.length) {
+                              return null;
+                            }
+
+                            final patient = patients[index];
+
                             return InkWell(
-                              onTap: (){
-                                Get.to(PatientDetailScreen(
-                                    patient: patient));
+                              onTap: () {
+                                Get.to(() => PatientDetailScreen(
+                                  patient: patient,
+                                ));
                               },
                               child: PatientCardWidget(
                                 patientName: patient.fullName,
@@ -97,15 +105,28 @@ class PatientScreen extends StatelessWidget {
                                 totalSpent: patient.totalSpent,
                                 patientId: patient.patientId,
                                 onScheduleTap: () {
-
+                                  // Handle schedule tap
+                                  Get.snackbar(
+                                    'Schedule',
+                                    'Schedule appointment for ${patient.fullName}',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
                                 },
                                 onAddNoteTap: () {
-                                  // Get.to(AddNotesScreen(
-                                  //     patientId: patient.patientId));
+                                  // Handle add note tap
+                                  Get.snackbar(
+                                    'Add Note',
+                                    'Add note for ${patient.fullName}',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
                                 },
                                 onFollowUpTap: () {
-                                  // Get.to(PatientDetailScreen(
-                                  //     patientId: patient.patientId));
+                                  // Handle follow up tap
+                                  Get.snackbar(
+                                    'Follow Up',
+                                    'Follow up with ${patient.fullName}',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
                                 },
                               ),
                             );
@@ -179,19 +200,20 @@ class PatientScreen extends StatelessWidget {
       prefixIconColor: AppColors.darkGrey,
       suffixIcon: Icons.filter_list,
       suffixIconColor: AppColors.darkGrey,
+      onChanged: (value) {
+        patientController.setSearchQuery(value);
+      },
       onSuffixIconTap: () {
         Get.bottomSheet(
           backgroundColor: Colors.white,
           PatientFilterBottomSheet(
             initialStatus: patientController.selectedStatus.value,
             onApply: (String status) {
-              patientController.selectedStatus.value = status;
-              patientController.currentPage.value = 1;
+              patientController.setStatusFilter(status);
               Get.back();
             },
             onReset: () {
-              patientController.selectedStatus.value = AppStrings.all.tr;
-              patientController.currentPage.value = 1;
+              patientController.setStatusFilter(AppStrings.all.tr);
               Get.back();
             },
           ),
@@ -213,42 +235,57 @@ class PatientScreen extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        Obx(() => Text(
-          '${patientController.totalFilteredCount} ${AppStrings.patients.tr}',
-          style: TextStyle(
-            color: AppColors.primaryColor,
-            fontSize: 14.sp,
-          ),
-        )),
+        Obx(() {
+          int count = patientController.totalFilteredCount;
+          return Text(
+            '$count ${count == 1 ? 'Patient' : 'Patients'}',
+            style: TextStyle(
+              color: AppColors.primaryColor,
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          );
+        }),
       ],
     );
   }
 
   Widget _buildPagination() {
     return Obx(() {
-      if (patientController.totalPages <= 0) return const SizedBox.shrink();
+      int totalPages = patientController.totalPages;
+      int currentPage = patientController.currentPage.value;
+
+      if (totalPages <= 1) return const SizedBox.shrink();
+
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _paginationArrow(Icons.arrow_back, () {
-            if (patientController.currentPage.value > 1) {
-              patientController.currentPage.value--;
+            if (currentPage > 1) {
+              patientController.previousPage();
             }
           }),
           15.horizontalSpace,
-          ...List.generate(patientController.totalPages, (index) {
+          ...List.generate(totalPages, (index) {
             int page = index + 1;
             return GestureDetector(
               onTap: () => patientController.currentPage.value = page,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 5.w),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: currentPage == page
+                      ? AppColors.primaryColor.withOpacity(0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
                 child: Text(
                   "$page",
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontFamily: AppFonts.jakartaMedium,
                     fontWeight: FontWeight.w600,
-                    color: patientController.currentPage.value == page
+                    color: currentPage == page
                         ? AppColors.primaryColor
                         : Colors.grey,
                   ),
@@ -258,8 +295,8 @@ class PatientScreen extends StatelessWidget {
           }),
           15.horizontalSpace,
           _paginationArrow(Icons.arrow_forward, () {
-            if (patientController.currentPage.value < patientController.totalPages) {
-              patientController.currentPage.value++;
+            if (currentPage < totalPages) {
+              patientController.nextPage();
             }
           }),
         ],
@@ -271,10 +308,10 @@ class PatientScreen extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(5.w),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(3.r),
+          borderRadius: BorderRadius.circular(8.r),
           boxShadow: const [
             BoxShadow(
               color: Colors.black12,
@@ -285,7 +322,7 @@ class PatientScreen extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          size: 17.h,
+          size: 20.h,
           color: Colors.black,
         ),
       ),

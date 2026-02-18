@@ -56,7 +56,6 @@ class Appointment {
   final AppointmentStatus status;
   final String? visitAddress;
   final String? notes;
-  final String rescheduleReason;
   final DateTime createdAt;
   final DateTime updatedAt;
   final int v;
@@ -78,7 +77,6 @@ class Appointment {
     required this.status,
     this.visitAddress,
     this.notes,
-    required this.rescheduleReason,
     required this.createdAt,
     required this.updatedAt,
     required this.v,
@@ -99,14 +97,13 @@ class Appointment {
           : null,
       fee: (json['fee'] as num?)?.toInt() ?? 0,
       currency: json['currency']?.toString() ?? 'USD',
-      date: DateTime.tryParse(json['date']?.toString() ?? '') ?? DateTime.now(),
+      date: _parseToLocalDateTime(json['date']),
       consultationType: ConsultationTypeExtension.fromString(json['consultationType']?.toString() ?? 'remote'),
       status: AppointmentStatusExtension.fromString(json['status']?.toString() ?? 'pending'),
       visitAddress: json['visitAddress']?.toString(),
       notes: json['notes']?.toString(),
-      rescheduleReason: json['rescheduleReason']?.toString() ?? '',
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: (json['__v'] as num?)?.toInt() ?? 0,
       homevisitstatus: json['homevisitstatus']?.toString(),
       isReschedule: json['isReschedule'] != null
@@ -120,6 +117,19 @@ class Appointment {
     );
   }
 
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      // Parse the string and convert to local time
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
+  }
+
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -128,14 +138,13 @@ class Appointment {
       'timeslot': timeslot?.toJson(),
       'fee': fee,
       'currency': currency,
-      'date': date.toIso8601String(),
+      'date': date.toUtc().toIso8601String(),
       'consultationType': consultationType.name,
       'status': status.name,
       'visitAddress': visitAddress,
       'notes': notes,
-      'rescheduleReason': rescheduleReason,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
       'homevisitstatus': homevisitstatus,
       'isReschedule': isReschedule?.toJson(),
@@ -145,10 +154,85 @@ class Appointment {
     };
   }
 
-  bool get isUpcoming => date.isAfter(DateTime.now());
-  bool get isPast => date.isBefore(DateTime.now());
-  String get formattedDate => '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
-  String get formattedTime => '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+  bool get isUpcoming {
+    if (timeslot == null) return date.isAfter(DateTime.now());
+    return timeslot!.startTime.isAfter(DateTime.now());
+  }
+
+  bool get isPast {
+    if (timeslot == null) return date.isBefore(DateTime.now());
+    return timeslot!.endTime.isBefore(DateTime.now());
+  }
+
+  String get formattedDate {
+    if (timeslot != null) {
+      return '${timeslot!.startTime.day.toString().padLeft(2, '0')}/${timeslot!.startTime.month.toString().padLeft(2, '0')}/${timeslot!.startTime.year}';
+    }
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
+  String get formattedTime {
+    if (timeslot != null) {
+      return timeslot!.formattedStartTime;
+    }
+    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
+  String get formattedTimeRange {
+    if (timeslot != null) {
+      return '${timeslot!.formattedStartTime} - ${timeslot!.formattedEndTime}';
+    }
+    return formattedTime;
+  }
+
+  String getFormattedDateWithDay() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final appointmentDate = date;
+
+    if (appointmentDate.year == today.year &&
+        appointmentDate.month == today.month &&
+        appointmentDate.day == today.day) {
+      return "Today";
+    } else if (appointmentDate.year == today.year &&
+        appointmentDate.month == today.month &&
+        appointmentDate.day == today.day + 1) {
+      return "Tomorrow";
+    } else {
+      final weekdayMap = {
+        1: 'Mon',
+        2: 'Tue',
+        3: 'Wed',
+        4: 'Thu',
+        5: 'Fri',
+        6: 'Sat',
+        7: 'Sun',
+      };
+
+      final monthMap = {
+        1: 'Jan',
+        2: 'Feb',
+        3: 'Mar',
+        4: 'Apr',
+        5: 'May',
+        6: 'Jun',
+        7: 'Jul',
+        8: 'Aug',
+        9: 'Sep',
+        10: 'Oct',
+        11: 'Nov',
+        12: 'Dec',
+      };
+
+      final weekday = weekdayMap[appointmentDate.weekday] ?? 'Day';
+      final month = monthMap[appointmentDate.month] ?? 'Month';
+
+      return '$weekday, ${appointmentDate.day} $month';
+    }
+  }
 }
 
 class Patient {
@@ -216,14 +300,14 @@ class Patient {
       reports: (json['reports'] as List<dynamic>?)
           ?.map((item) => item.toString())
           .toList() ?? [],
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: (json['__v'] as num?)?.toInt() ?? 0,
       address: json['address']?.toString(),
       bloodPressure: json['bloodPressure']?.toString(),
       bmi: (json['bmi'] as num?)?.toDouble(),
       country: json['country']?.toString(),
-      dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
+      dob: json['dob'] != null ? _parseToLocalDateTime(json['dob']) : null,
       gender: json['gender']?.toString(),
       heartRate: json['heartRate']?.toString(),
       height: json['height']?.toString(),
@@ -231,6 +315,18 @@ class Patient {
       religion: json['religion']?.toString(),
       weight: json['weight']?.toString(),
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -243,14 +339,14 @@ class Patient {
       'allergies': allergies,
       'appointments': appointments,
       'reports': reports,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
       'address': address,
       'bloodPressure': bloodPressure,
       'bmi': bmi,
       'country': country,
-      'dob': dob?.toIso8601String(),
+      'dob': dob?.toUtc().toIso8601String(),
       'gender': gender,
       'heartRate': heartRate,
       'height': height,
@@ -325,23 +421,35 @@ class Timeslot {
   factory Timeslot.fromJson(Map<String, dynamic> json) {
     return Timeslot(
       id: json['_id']?.toString() ?? '',
-      startTime: DateTime.tryParse(json['startTime']?.toString() ?? '') ?? DateTime.now(),
-      endTime: DateTime.tryParse(json['endTime']?.toString() ?? '') ?? DateTime.now(),
+      startTime: _parseToLocalDateTime(json['startTime']),
+      endTime: _parseToLocalDateTime(json['endTime']),
       status: TimeslotStatusExtension.fromString(json['status']?.toString() ?? 'booked'),
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: (json['__v'] as num?)?.toInt() ?? 0,
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'startTime': startTime.toUtc().toIso8601String(),
+      'endTime': endTime.toUtc().toIso8601String(),
       'status': status.name,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
     };
   }
@@ -360,9 +468,27 @@ class Timeslot {
     }
   }
 
-  String get formattedStartTime => '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}';
-  String get formattedEndTime => '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}';
-  String get formattedStartDate => '${startTime.day}/${startTime.month}/${startTime.year}';
+  String get formattedStartTime {
+    final hour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
+    final minute = startTime.minute.toString().padLeft(2, '0');
+    final period = startTime.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
+  String get formattedEndTime {
+    final hour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
+    final minute = endTime.minute.toString().padLeft(2, '0');
+    final period = endTime.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
+  String get formattedStartDate {
+    return '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}';
+  }
+
+  String get formattedTimeRange {
+    return '$formattedStartTime - $formattedEndTime';
+  }
 }
 
 class RescheduleInfo {
@@ -443,12 +569,24 @@ class Prescription {
           ?.map((item) => Medication.fromJson(item as Map<String, dynamic>))
           .toList() ?? [],
       prescriptionNumber: json['prescriptionNumber']?.toString() ?? '',
-      issueDate: DateTime.tryParse(json['issueDate']?.toString() ?? '') ?? DateTime.now(),
-      validUntil: DateTime.tryParse(json['validUntil']?.toString() ?? '') ?? DateTime.now(),
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ?? DateTime.now(),
+      issueDate: _parseToLocalDateTime(json['issueDate']),
+      validUntil: _parseToLocalDateTime(json['validUntil']),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: (json['__v'] as num?)?.toInt() ?? 0,
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -462,15 +600,23 @@ class Prescription {
       'notes': notes,
       'medications': medications.map((med) => med.toJson()).toList(),
       'prescriptionNumber': prescriptionNumber,
-      'issueDate': issueDate.toIso8601String(),
-      'validUntil': validUntil.toIso8601String(),
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'issueDate': issueDate.toUtc().toIso8601String(),
+      'validUntil': validUntil.toUtc().toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
     };
   }
 
   bool get isValid => validUntil.isAfter(DateTime.now());
+
+  String get formattedIssueDate {
+    return '${issueDate.day}/${issueDate.month}/${issueDate.year}';
+  }
+
+  String get formattedValidUntil {
+    return '${validUntil.day}/${validUntil.month}/${validUntil.year}';
+  }
 }
 
 class Medication {
@@ -531,10 +677,14 @@ enum ConsultationType {
 
 class ConsultationTypeExtension {
   static ConsultationType fromString(String value) {
-    switch (value) {
+    switch (value.toLowerCase()) {
       case 'homevisit':
+      case 'home_visit':
+      case 'home-visit':
         return ConsultationType.homevisit;
       case 'inperson':
+      case 'in_person':
+      case 'in-person':
         return ConsultationType.inperson;
       case 'remote':
         return ConsultationType.remote;
@@ -574,7 +724,7 @@ enum AppointmentStatus {
 
 class AppointmentStatusExtension {
   static AppointmentStatus fromString(String value) {
-    switch (value) {
+    switch (value.toLowerCase()) {
       case 'pending':
         return AppointmentStatus.pending;
       case 'confirmed':
@@ -612,7 +762,7 @@ enum TimeslotStatus {
 
 class TimeslotStatusExtension {
   static TimeslotStatus fromString(String value) {
-    switch (value) {
+    switch (value.toLowerCase()) {
       case 'available':
         return TimeslotStatus.available;
       case 'booked':
@@ -624,6 +774,7 @@ class TimeslotStatusExtension {
     }
   }
 }
+
 class AppointmentModel {
   final String name;
   final String specialty;

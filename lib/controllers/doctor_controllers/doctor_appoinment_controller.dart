@@ -25,20 +25,13 @@ class DoctorAppointmentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchDoctorAppointments();
     ever(appointmentType, (_) {
       currentPage.value = 1;
       _updateCurrentList();
     });
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    // This will be called every time the screen is shown/comes into focus
-    print("Screen is now visible - refreshing appointments");
-    fetchDoctorAppointments();
-  }
+
 
   Future<void> fetchDoctorAppointments() async {
     try {
@@ -110,12 +103,6 @@ class DoctorAppointmentController extends GetxController {
 
           _updateCurrentList();
 
-          Get.snackbar(
-            "Success",
-            '${jsonResponse['message'] ?? 'Appointments fetched successfully'}',
-            snackPosition: SnackPosition.BOTTOM,
-            duration: Duration(seconds: 2),
-          );
         } else {
           print('No appointments found in response');
           allAppointments.value = [];

@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/appointment_controller.dart';
+import 'package:patient_app/screens/patient_screens/appointment_screens/patient_reschdule_appoinment_screen.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import '../../../models/appointment_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_strings.dart';
+import '../../../widgets/appointment_statue_widget.dart';
 import '../../../widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
+import '../../../widgets/reschdule_request_widget.dart';
+import '../../doctor_screens/appointment_screens/doctor_reschedule_appointment_screen.dart';
 import '../video_call_screens/preview_screen.dart';
 
 class AppointmentDetailScreen extends StatelessWidget {
@@ -21,11 +25,24 @@ class AppointmentDetailScreen extends StatelessWidget {
     this.isCompleted = false,
   });
 
-  final AppointmentController appointmentController = Get.put(AppointmentController());
+  final AppointmentController appointmentController = Get.put(
+    AppointmentController(),
+  );
+
+  bool get _hasRescheduleReason {
+    return appointment.isReschedule?.reason != null &&
+        appointment.isReschedule!.reason!.isNotEmpty &&
+        appointment.isReschedule!.role != "patient"&&appointment.isReschedule!.isAccept=="pending";
+  }
+
+  bool get _hasRescheduleStatus {
+    return appointment.isReschedule?.reason != null &&
+        appointment.isReschedule!.reason!.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("is Reshdule = ${appointment.rescheduleReason}");
+    print("object${appointment.isReschedule!.isAccept}");
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -45,7 +62,7 @@ class AppointmentDetailScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: (){appointmentController.fetchAppointments();Get.back();},
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -72,7 +89,9 @@ class AppointmentDetailScreen extends StatelessWidget {
                       _buildAppointmentDetailCard(),
                       10.verticalSpace,
                       isCompleted ? _buildTabs() : SizedBox.shrink(),
-                      isCompleted ? PastAppointmentWidgets(appointment: appointment,) : _buildCurrentAppointmentContent(),
+                      isCompleted
+                          ? PastAppointmentWidgets(appointment: appointment)
+                          : _buildCurrentAppointmentContent(),
                     ],
                   ),
                 ),
@@ -133,12 +152,36 @@ class AppointmentDetailScreen extends StatelessWidget {
                       children: [
                         Icon(Icons.star, color: Colors.orange, size: 16.sp),
                         4.horizontalSpace,
-                        Text("5.0", style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600)),
+                        Text(
+                          "5.0",
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         8.horizontalSpace,
-                        Container(height: 15.h, width: 1.w, color: AppColors.primaryColor),
+                        Container(
+                          height: 15.h,
+                          width: 1.w,
+                          color: AppColors.primaryColor,
+                        ),
                         8.horizontalSpace,
-                        Text("${AppStrings.fee.tr}: ", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500, fontSize: 13.sp)),
-                        Text("\$${appointment.fee} ${appointment.currency}", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w600, fontSize: 13.sp)),
+                        Text(
+                          "${AppStrings.fee.tr}: ",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13.sp,
+                          ),
+                        ),
+                        Text(
+                          "\$${appointment.fee} ${appointment.currency}",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13.sp,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -147,25 +190,45 @@ class AppointmentDetailScreen extends StatelessWidget {
             ],
           ),
           20.verticalSpace,
-          _buildDetailRow(Icons.calendar_today_outlined, AppStrings.date.tr, _formatDate(appointment.date)),
+          _buildDetailRow(
+            Icons.calendar_today_outlined,
+            AppStrings.date.tr,
+            _formatDate(appointment.date),
+          ),
           15.verticalSpace,
           // Fix: Safely handle null timeslot
           _buildDetailRow(
             Icons.watch_later_outlined,
             "Time",
             appointment.timeslot != null
-                ? _formatTime(appointment.timeslot!.startTime, appointment.timeslot!.endTime)
+                ? _formatTime(
+                  appointment.timeslot!.startTime,
+                  appointment.timeslot!.endTime,
+                )
                 : 'Time not specified',
           ),
           15.verticalSpace,
-          _buildDetailRow(Icons.medical_services, AppStrings.consultationType.tr, appointment.consultationType.displayName),
-          if (appointment.consultationType == ConsultationType.homevisit && appointment.visitAddress != null) ...[
+          _buildDetailRow(
+            Icons.medical_services,
+            AppStrings.consultationType.tr,
+            appointment.consultationType.displayName,
+          ),
+          if (appointment.consultationType == ConsultationType.homevisit &&
+              appointment.visitAddress != null) ...[
             15.verticalSpace,
-            _buildDetailRow(Icons.location_on, AppStrings.address.tr, appointment.visitAddress!),
+            _buildDetailRow(
+              Icons.location_on,
+              AppStrings.address.tr,
+              appointment.visitAddress!,
+            ),
           ],
           if (appointment.notes != null && appointment.notes!.isNotEmpty) ...[
             15.verticalSpace,
-            _buildDetailRow(Icons.note, AppStrings.notes.tr, appointment.notes!),
+            _buildDetailRow(
+              Icons.note,
+              AppStrings.notes.tr,
+              appointment.notes!,
+            ),
           ],
         ],
       ),
@@ -173,7 +236,8 @@ class AppointmentDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDoctorImage() {
-    if (appointment.doctorId.profileImage != null && appointment.doctorId.profileImage!.isNotEmpty) {
+    if (appointment.doctorId.profileImage != null &&
+        appointment.doctorId.profileImage!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12.r),
         child: Image.network(
@@ -210,55 +274,83 @@ class AppointmentDetailScreen extends StatelessWidget {
       children: [
         Icon(icon, color: AppColors.primaryColor, size: 20.h),
         10.horizontalSpace,
-        Expanded(child: Text(title, style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, fontFamily: AppFonts.jakartaMedium, color: Colors.grey.shade600))),
-        Expanded(flex: 2, child: Text(value, style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600, fontFamily: AppFonts.jakartaMedium, color: Colors.black), textAlign: TextAlign.right)),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              fontFamily: AppFonts.jakartaMedium,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 2,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              fontFamily: AppFonts.jakartaMedium,
+              color: Colors.black,
+            ),
+            textAlign: TextAlign.right,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildTabs() {
     return Obx(
-          () => Row(
+      () => Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: List.generate(
-          appointmentController.tabs.length,
-              (index) {
-            bool isSelected = appointmentController.selectedTab.value == appointmentController.tabs[index];
-            return GestureDetector(
-              onTap: () => appointmentController.selectedTab.value = appointmentController.tabs[index],
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      appointmentController.tabs[index],
-                      style: TextStyle(
-                        color: isSelected ? const Color(0xFF3B82F6) : const Color(0xFF94A3B8),
-                        fontSize: 10.sp,
-                        fontFamily: AppFonts.jakartaMedium,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+        children: List.generate(appointmentController.tabs.length, (index) {
+          bool isSelected =
+              appointmentController.selectedTab.value ==
+              appointmentController.tabs[index];
+          return GestureDetector(
+            onTap:
+                () =>
+                    appointmentController.selectedTab.value =
+                        appointmentController.tabs[index],
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    appointmentController.tabs[index],
+                    style: TextStyle(
+                      color:
+                          isSelected
+                              ? const Color(0xFF3B82F6)
+                              : const Color(0xFF94A3B8),
+                      fontSize: 10.sp,
+                      fontFamily: AppFonts.jakartaMedium,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                  ),
+                  if (isSelected) ...[
+                    4.verticalSpace,
+                    Container(
+                      height: 2.5.h,
+                      width: 60.w,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF3B82F6),
+                        borderRadius: BorderRadius.circular(2.r),
                       ),
                     ),
-                    if (isSelected) ...[
-                      4.verticalSpace,
-                      Container(
-                        height: 2.5.h,
-                        width: 60.w,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF3B82F6),
-                          borderRadius: BorderRadius.circular(2.r),
-                        ),
-                      ),
-                    ] else ...[
-                      6.5.verticalSpace,
-                    ],
+                  ] else ...[
+                    6.5.verticalSpace,
                   ],
-                ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -271,7 +363,22 @@ class AppointmentDetailScreen extends StatelessWidget {
         10.verticalSpace,
         _buildNotesSection(),
         70.verticalSpace,
-        _buildActionButtons(),
+        (appointment.status == AppointmentStatus.pending&&appointment.isReschedule!.isAccept!="pending")
+            ? CustomButton(
+              borderRadius: 15,
+              text: AppStrings.reschedule.tr,
+              onTap: () {
+                Get.to(
+                  PatientReschduleAppoinmentScreen(
+                    appointmentId: appointment.id,
+                    doctorId: appointment.doctorId.id,
+                  ),
+                );
+              },
+              bgColor: AppColors.inACtiveButtonColor,
+              fontColor: Colors.black,
+            )
+            : _buildActionButtons(),
       ],
     );
   }
@@ -280,43 +387,40 @@ class AppointmentDetailScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: AlignmentDirectional.topStart,
-          child: Text(
-            AppStrings.status.tr,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w700,
-              fontFamily: AppFonts.jakartaBold,
+        if (_hasRescheduleStatus)
+          Align(
+            alignment: AlignmentDirectional.topStart,
+            child: Text(
+              AppStrings.reschedule.tr,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+                fontFamily: AppFonts.jakartaBold,
+              ),
             ),
           ),
-        ),
-        10.verticalSpace,
-        Row(
-          children: [
-            Container(
-              height: 30.h,
-              width: 30.w,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _getStatusColor(appointment.status),
-              ),
-              child: Icon(Icons.check, color: Colors.white, size: 18.h),
+        if (_hasRescheduleReason) 10.verticalSpace,
+        if (_hasRescheduleReason) ...{
+          RescheduleRequestWidget(
+            patientName: appointment.doctorId.fullName,
+            patientImage: appointment.doctorId.profileImage ?? '',
+            rescheduleReason: appointment.isReschedule?.reason,
+            onAccept: () {
+               appointmentController.acceptRescheduleRequest(appointment.id);
+            },
+            onReject: () {
+              appointmentController.rejectRescheduleRequest(appointment.id);
+            },
+          ),
+        } else if (_hasRescheduleStatus) ...{
+          Align(
+            alignment: AlignmentGeometry.centerLeft,
+            child: AppointmentStatusWidget(
+              status: appointment.isReschedule!.isAccept,
             ),
-            10.horizontalSpace,
-            Text(
-              appointment.status.displayName,
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w500,
-                fontFamily: AppFonts.jakartaMedium,
-              ),
-            ),
-          ],
-        ),
+          ),
+        },
       ],
     );
   }
@@ -352,25 +456,35 @@ class AppointmentDetailScreen extends StatelessWidget {
   }
 
   Widget _buildActionButtons() {
-    return (appointment.status==AppointmentStatus.pending||appointment.status==AppointmentStatus.confirmed)?Column(
-      children: [
-        CustomButton(
-          borderRadius: 15,
-          text: AppStrings.joinConsultation.tr,
-          onTap: () {
-             Get.to(PreviewScreen(appointment: appointment,));
-          },
-        ),
-        10.verticalSpace,
-        CustomButton(
-          borderRadius: 15,
-          text: AppStrings.reschedule.tr,
-          onTap: () {},
-          bgColor: AppColors.inACtiveButtonColor,
-          fontColor: Colors.black,
-        ),
-      ],
-    ):SizedBox();
+    return (appointment.status == AppointmentStatus.confirmed &&
+            appointment.isReschedule!.isAccept != "pending")
+        ? Column(
+          children: [
+            CustomButton(
+              borderRadius: 15,
+              text: AppStrings.joinConsultation.tr,
+              onTap: () {
+                Get.to(PreviewScreen(appointment: appointment));
+              },
+            ),
+            10.verticalSpace,
+            CustomButton(
+              borderRadius: 15,
+              text: AppStrings.reschedule.tr,
+              onTap: () {
+                Get.to(
+                  PatientReschduleAppoinmentScreen(
+                    appointmentId: appointment.id,
+                    doctorId: appointment.doctorId.id,
+                  ),
+                );
+              },
+              bgColor: AppColors.inACtiveButtonColor,
+              fontColor: Colors.black,
+            ),
+          ],
+        )
+        : SizedBox();
   }
 
   String _getConsultationTypeEmoji(ConsultationType type) {

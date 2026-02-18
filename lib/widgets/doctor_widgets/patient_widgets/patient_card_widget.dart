@@ -187,7 +187,7 @@ class PatientCardWidget extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: AppColors.primaryColor.withOpacity(0.1),
                 ),
-                child: patientImageUrl != null
+                child: (patientImageUrl != null && patientImageUrl!.isNotEmpty)
                     ? ClipRRect(
                   borderRadius: BorderRadius.circular(40.r),
                   child: Image.network(
@@ -195,6 +195,32 @@ class PatientCardWidget extends StatelessWidget {
                     width: 80.w,
                     height: 80.w,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Show icon if image fails to load
+                      return Center(
+                        child: Icon(
+                          Icons.person,
+                          size: 30.h,
+                          color: AppColors.primaryColor,
+                        ),
+                      );
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Center(
+                        child: SizedBox(
+                          width: 30.w,
+                          height: 30.w,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                                : null,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 )
                     : Center(

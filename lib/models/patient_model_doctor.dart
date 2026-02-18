@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class PatientAppointmentModel {
@@ -40,28 +41,41 @@ class PatientAppointmentModel {
   });
 
   factory PatientAppointmentModel.fromJson(Map<String, dynamic> json) {
+    // Extract patient info
+    late String extractedPatientId;
+    Patient? extractedPatient;
+
+    if (json['patientId'] is Map) {
+      // PatientId is an object with patient details
+      final patientMap = json['patientId'] as Map<String, dynamic>;
+      extractedPatientId = patientMap['_id'] ?? '';
+      extractedPatient = Patient.fromJson(patientMap);
+    } else {
+      // PatientId is just a string ID
+      extractedPatientId = json['patientId'] ?? '';
+      extractedPatient = null;
+    }
+
     return PatientAppointmentModel(
-      id: json['_id'],
-      patientId: json['patientId'] is String
-          ? json['patientId']
-          : json['patientId']['_id'],
-      doctorId: json['doctorId'],
-      date: DateTime.parse(json['date']),
-      consultationType: json['consultationType'],
-      status: json['status'],
-      fee: json['fee'] is double ? json['fee'] : (json['fee'] as num).toDouble(),
-      currency: json['currency'],
+      id: json['_id'] ?? '',
+      patientId: extractedPatientId,
+      doctorId: json['doctorId'] ?? '',
+      date: json['date'] != null ? DateTime.parse(json['date']) : DateTime.now(),
+      consultationType: json['consultationType'] ?? '',
+      status: json['status'] ?? '',
+      fee: json['fee'] != null ? (json['fee'] is double ? json['fee'] : (json['fee'] as num).toDouble()) : 0.0,
+      currency: json['currency'] ?? '',
       visitAddress: json['visitAddress'],
       notes: json['notes'],
       rescheduleReason: json['rescheduleReason'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : DateTime.now(),
       timeslot: json['timeslot'] != null ? TimeSlot.fromJson(json['timeslot']) : null,
-      patient: json['patientId'] is Map ? Patient.fromJson(json['patientId']) : null,
+      patient: extractedPatient,
       homevisitstatus: json['homevisitstatus'] != null
           ? HomeVisitStatus.fromString(json['homevisitstatus'])
           : null,
-      isReschedule: json['isReschedule'] != null
+      isReschedule: json['isReschedule'] != null && json['isReschedule'] is Map
           ? Reschedule.fromJson(json['isReschedule'])
           : null,
     );
@@ -108,6 +122,23 @@ class PatientAppointmentModel {
         return consultationType;
     }
   }
+
+  Color get statusColor {
+    switch (status) {
+      case 'pending':
+        return Colors.orange;
+      case 'confirmed':
+        return Colors.green;
+      case 'ongoing':
+        return Colors.blue;
+      case 'completed':
+        return Colors.teal;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
 }
 
 class TimeSlot {
@@ -129,12 +160,12 @@ class TimeSlot {
 
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
     return TimeSlot(
-      id: json['_id'],
-      startTime: DateTime.parse(json['startTime']),
-      endTime: DateTime.parse(json['endTime']),
-      status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      id: json['_id'] ?? '',
+      startTime: json['startTime'] != null ? DateTime.parse(json['startTime']) : DateTime.now(),
+      endTime: json['endTime'] != null ? DateTime.parse(json['endTime']) : DateTime.now(),
+      status: json['status'] ?? '',
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : DateTime.now(),
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : DateTime.now(),
     );
   }
 }
@@ -154,10 +185,10 @@ class Patient {
 
   factory Patient.fromJson(Map<String, dynamic> json) {
     return Patient(
-      id: json['_id'],
-      fullName: json['fullName'],
-      email: json['email'],
-      profileImage: json["profileImage"],
+      id: json['_id'] ?? '',
+      fullName: json['fullName'] ?? 'Unknown Patient',
+      email: json['email'] ?? '',
+      profileImage: json['profileImage'] ?? '',
     );
   }
 }
@@ -177,6 +208,17 @@ enum HomeVisitStatus {
         return HomeVisitStatus.reject;
       default:
         return HomeVisitStatus.pending;
+    }
+  }
+
+  String get value {
+    switch (this) {
+      case HomeVisitStatus.pending:
+        return 'Pending';
+      case HomeVisitStatus.accept:
+        return 'Accepted';
+      case HomeVisitStatus.reject:
+        return 'Rejected';
     }
   }
 }
@@ -199,6 +241,19 @@ class Reschedule {
       role: json['role'],
     );
   }
+
+  String get statusText {
+    switch (isAccept) {
+      case 'accepted':
+        return 'Accepted';
+      case 'rejected':
+        return 'Rejected';
+      case 'pending':
+        return 'Pending';
+      default:
+        return 'Not Set';
+    }
+  }
 }
 
 class AppointmentsResponse {
@@ -212,10 +267,12 @@ class AppointmentsResponse {
 
   factory AppointmentsResponse.fromJson(Map<String, dynamic> json) {
     return AppointmentsResponse(
-      message: json['message'],
-      appointments: List<PatientAppointmentModel>.from(
+      message: json['message'] ?? '',
+      appointments: json['appointments'] != null
+          ? List<PatientAppointmentModel>.from(
         json['appointments'].map((x) => PatientAppointmentModel.fromJson(x)),
-      ),
+      )
+          : [],
     );
   }
 }
@@ -240,4 +297,29 @@ class PatientSummary {
     required this.totalAppointments,
     required this.totalSpent,
   });
+
+  String get lastAppointmentFormatted {
+    if (lastAppointmentDate == null) return 'No appointments';
+    final format = DateFormat('MMM d, yyyy');
+    return format.format(lastAppointmentDate!);
+  }
+
+  String get consultationTypeText {
+    switch (lastConsultationType) {
+      case 'remote':
+        return 'Remote';
+      case 'inperson':
+        return 'In-Person';
+      case 'homevisit':
+        return 'Home Visit';
+      case 'video':
+        return 'Video';
+      default:
+        return lastConsultationType ?? 'Unknown';
+    }
+  }
+
+  String get totalSpentFormatted {
+    return '\$${totalSpent.toStringAsFixed(2)}';
+  }
 }

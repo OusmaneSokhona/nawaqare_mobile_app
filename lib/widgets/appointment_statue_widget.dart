@@ -36,6 +36,8 @@ class AppointmentStatusWidget extends StatelessWidget {
         return Colors.grey;
       case "accepted":
         return Colors.blue;
+      case "rejected":
+        return Colors.red;
       default:
         return Colors.grey;
     }
@@ -57,6 +59,8 @@ class AppointmentStatusWidget extends StatelessWidget {
         return Icons.not_interested;
       case "accepted":
         return Icons.done_all;
+      case "rejected":
+        return Icons.cancel;
       default:
         return Icons.help;
     }

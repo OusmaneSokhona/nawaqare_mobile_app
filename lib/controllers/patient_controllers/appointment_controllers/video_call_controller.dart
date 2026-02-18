@@ -67,6 +67,7 @@ class VideoCallController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        print("agora is runing");
         final data = response.data;
 
         if (data['success'] == true) {

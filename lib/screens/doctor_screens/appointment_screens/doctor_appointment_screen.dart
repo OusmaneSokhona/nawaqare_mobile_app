@@ -24,6 +24,9 @@ class DoctorAppointmentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchDoctorAppointments();
+    });
     return Scaffold(
       body: Container(
         height: 1.sh,

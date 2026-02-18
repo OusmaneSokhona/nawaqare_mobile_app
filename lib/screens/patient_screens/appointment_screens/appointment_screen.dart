@@ -16,6 +16,9 @@ class AppointmentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      appointmentController.fetchAppointments();
+    });
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -35,7 +38,7 @@ class AppointmentScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: () {Get.back();},
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,

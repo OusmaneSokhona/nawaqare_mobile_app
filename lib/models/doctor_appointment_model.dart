@@ -103,14 +103,14 @@ class DoctorAppointment {
           : null,
       fee: (json['fee'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] as String? ?? '',
-      date: DateTime.parse(json['date'] as String? ?? DateTime.now().toIso8601String()),
+      date: _parseToLocalDateTime(json['date']),
       consultationType: json['consultationType'] as String? ?? '',
       status: json['status'] as String? ?? '',
       visitAddress: json['visitAddress'] as String?,
       notes: json['notes'] as String?,
       rescheduleReason: json['rescheduleReason'] as String? ?? '',
-      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: json['__v'] as int? ?? 0,
       homevisitstatus: json['homevisitstatus'] as String?,
       paymentStatus: json['paymentStatus'] as String?,
@@ -125,6 +125,18 @@ class DoctorAppointment {
     );
   }
 
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
+  }
+
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -134,20 +146,101 @@ class DoctorAppointment {
       'timeslot': timeslot?.toJson(),
       'fee': fee,
       'currency': currency,
-      'date': date.toIso8601String(),
+      'date': date.toUtc().toIso8601String(),
       'consultationType': consultationType,
       'status': status,
       'visitAddress': visitAddress,
       'notes': notes,
       'rescheduleReason': rescheduleReason,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
       'homevisitstatus': homevisitstatus,
       'paymentStatus': paymentStatus,
       'prescriptionId': prescriptionId?.toJson(),
       'followUps': followUps?.map((item) => item.toJson()).toList(),
     };
+  }
+
+  // Helper getters for formatted display
+  bool get isUpcoming {
+    if (timeslot == null) return date.isAfter(DateTime.now());
+    return timeslot!.startTime.isAfter(DateTime.now());
+  }
+
+  bool get isPast {
+    if (timeslot == null) return date.isBefore(DateTime.now());
+    return timeslot!.endTime.isBefore(DateTime.now());
+  }
+
+  String get formattedDate {
+    if (timeslot != null) {
+      return '${timeslot!.startTime.day.toString().padLeft(2, '0')}/${timeslot!.startTime.month.toString().padLeft(2, '0')}/${timeslot!.startTime.year}';
+    }
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
+  }
+
+  String get formattedTime {
+    if (timeslot != null) {
+      return timeslot!.formattedStartTime;
+    }
+    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
+  String get formattedTimeRange {
+    if (timeslot != null) {
+      return '${timeslot!.formattedStartTime} - ${timeslot!.formattedEndTime}';
+    }
+    return formattedTime;
+  }
+
+  String getFormattedDateWithDay() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final appointmentDate = date;
+
+    if (appointmentDate.year == today.year &&
+        appointmentDate.month == today.month &&
+        appointmentDate.day == today.day) {
+      return "Today";
+    } else if (appointmentDate.year == today.year &&
+        appointmentDate.month == today.month &&
+        appointmentDate.day == today.day + 1) {
+      return "Tomorrow";
+    } else {
+      final weekdayMap = {
+        1: 'Mon',
+        2: 'Tue',
+        3: 'Wed',
+        4: 'Thu',
+        5: 'Fri',
+        6: 'Sat',
+        7: 'Sun',
+      };
+
+      final monthMap = {
+        1: 'Jan',
+        2: 'Feb',
+        3: 'Mar',
+        4: 'Apr',
+        5: 'May',
+        6: 'Jun',
+        7: 'Jul',
+        8: 'Aug',
+        9: 'Sep',
+        10: 'Oct',
+        11: 'Nov',
+        12: 'Dec',
+      };
+
+      final weekday = weekdayMap[appointmentDate.weekday] ?? 'Day';
+      final month = monthMap[appointmentDate.month] ?? 'Month';
+
+      return '$weekday, ${appointmentDate.day} $month';
+    }
   }
 }
 
@@ -184,11 +277,23 @@ class FollowUp {
       followupPrice: json['followupPrice'] as int? ?? 0,
       paymentIntent: json['paymentIntent'] as String? ?? '',
       paymentStatus: json['paymentStatus'] as String? ?? '',
-      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: json['__v'] as int? ?? 0,
       soap: json['SOAP'] != null ? SOAP.fromJson(json['SOAP'] as Map<String, dynamic>) : null,
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -199,8 +304,8 @@ class FollowUp {
       'followupPrice': followupPrice,
       'paymentIntent': paymentIntent,
       'paymentStatus': paymentStatus,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
       'SOAP': soap?.toJson(),
     };
@@ -269,6 +374,10 @@ class RescheduleInfo {
       'role': role,
     };
   }
+
+  bool get isPending => isAccept == 'pending';
+  bool get isAccepted => isAccept == 'accepted';
+  bool get isRejected => isAccept == 'rejected';
 }
 
 class PatientInfo {
@@ -338,23 +447,35 @@ class PatientInfo {
           : null,
       userId: json['userId'] as String?,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? _parseToLocalDateTime(json['createdAt'])
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? _parseToLocalDateTime(json['updatedAt'])
           : null,
       v: json['__v'] as int?,
       address: json['address'] as String?,
       bloodPressure: json['bloodPressure'] as String?,
       bmi: (json['bmi'] as num?)?.toDouble(),
       country: json['country'] as String?,
-      dob: json['dob'] != null ? DateTime.parse(json['dob'] as String) : null,
+      dob: json['dob'] != null ? _parseToLocalDateTime(json['dob']) : null,
       gender: json['gender'] as String?,
       heartRate: json['heartRate'] as String?,
       height: json['height'] as String?,
       religion: json['religion'] as String?,
       weight: json['weight'] as String?,
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -368,20 +489,30 @@ class PatientInfo {
       'reports': reports,
       'allergies': allergies,
       'userId': userId,
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
+      'createdAt': createdAt?.toUtc().toIso8601String(),
+      'updatedAt': updatedAt?.toUtc().toIso8601String(),
       '__v': v,
       'address': address,
       'bloodPressure': bloodPressure,
       'bmi': bmi,
       'country': country,
-      'dob': dob?.toIso8601String(),
+      'dob': dob?.toUtc().toIso8601String(),
       'gender': gender,
       'heartRate': heartRate,
       'height': height,
       'religion': religion,
       'weight': weight,
     };
+  }
+
+  int? get age {
+    if (dob == null) return null;
+    final now = DateTime.now();
+    int age = now.year - dob!.year;
+    if (now.month < dob!.month || (now.month == dob!.month && now.day < dob!.day)) {
+      age--;
+    }
+    return age;
   }
 }
 
@@ -407,25 +538,73 @@ class TimeSlot {
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
     return TimeSlot(
       id: json['_id'] as String? ?? '',
-      startTime: DateTime.parse(json['startTime'] as String? ?? DateTime.now().toIso8601String()),
-      endTime: DateTime.parse(json['endTime'] as String? ?? DateTime.now().toIso8601String()),
+      startTime: _parseToLocalDateTime(json['startTime']),
+      endTime: _parseToLocalDateTime(json['endTime']),
       status: json['status'] as String? ?? '',
-      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: json['__v'] as int? ?? 0,
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'startTime': startTime.toUtc().toIso8601String(),
+      'endTime': endTime.toUtc().toIso8601String(),
       'status': status,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
     };
+  }
+
+  String get formattedDuration {
+    final duration = endTime.difference(startTime);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+
+    if (hours > 0 && minutes > 0) {
+      return '${hours}h ${minutes}m';
+    } else if (hours > 0) {
+      return '${hours}h';
+    } else {
+      return '${minutes}m';
+    }
+  }
+
+  String get formattedStartTime {
+    final hour = startTime.hour % 12 == 0 ? 12 : startTime.hour % 12;
+    final minute = startTime.minute.toString().padLeft(2, '0');
+    final period = startTime.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
+  String get formattedEndTime {
+    final hour = endTime.hour % 12 == 0 ? 12 : endTime.hour % 12;
+    final minute = endTime.minute.toString().padLeft(2, '0');
+    final period = endTime.hour < 12 ? 'AM' : 'PM';
+    return '$hour:$minute $period';
+  }
+
+  String get formattedStartDate {
+    return '${startTime.day.toString().padLeft(2, '0')}/${startTime.month.toString().padLeft(2, '0')}/${startTime.year}';
+  }
+
+  String get formattedTimeRange {
+    return '$formattedStartTime - $formattedEndTime';
   }
 }
 
@@ -475,12 +654,24 @@ class PrescriptionInfo {
           .map((item) => Medication.fromJson(item as Map<String, dynamic>))
           .toList(),
       prescriptionNumber: json['prescriptionNumber'] as String? ?? '',
-      issueDate: DateTime.parse(json['issueDate'] as String? ?? DateTime.now().toIso8601String()),
-      validUntil: DateTime.parse(json['validUntil'] as String? ?? DateTime.now().toIso8601String()),
-      createdAt: DateTime.parse(json['createdAt'] as String? ?? DateTime.now().toIso8601String()),
-      updatedAt: DateTime.parse(json['updatedAt'] as String? ?? DateTime.now().toIso8601String()),
+      issueDate: _parseToLocalDateTime(json['issueDate']),
+      validUntil: _parseToLocalDateTime(json['validUntil']),
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
       v: json['__v'] as int? ?? 0,
     );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      print('Error parsing date: $e');
+      return DateTime.now();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -494,12 +685,22 @@ class PrescriptionInfo {
       'notes': notes,
       'medications': medications.map((medication) => medication.toJson()).toList(),
       'prescriptionNumber': prescriptionNumber,
-      'issueDate': issueDate.toIso8601String(),
-      'validUntil': validUntil.toIso8601String(),
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'issueDate': issueDate.toUtc().toIso8601String(),
+      'validUntil': validUntil.toUtc().toIso8601String(),
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
       '__v': v,
     };
+  }
+
+  bool get isValid => validUntil.isAfter(DateTime.now());
+
+  String get formattedIssueDate {
+    return '${issueDate.day}/${issueDate.month}/${issueDate.year}';
+  }
+
+  String get formattedValidUntil {
+    return '${validUntil.day}/${validUntil.month}/${validUntil.year}';
   }
 }
 

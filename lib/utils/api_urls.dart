@@ -27,4 +27,6 @@ class ApiUrls {
   static String updateAppointmentStatus = '/api/appointments/update/';
   static String doctorCreateAppointmentEndpoint="/api/appointments/create-appointment";
   static String rescheduleAppointment="/api/appointments/reschedule";
+  static String rejectRescheduleRequest="/api/appointments/reschedule/reject";
+  static String acceptRescheduleRequest="/api/appointments/reschedule/accept";
 }

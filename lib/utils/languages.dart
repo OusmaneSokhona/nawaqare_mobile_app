@@ -619,8 +619,8 @@ class Languages extends Translations {
       AppStrings.confirmDecline: "Confirm Decline",
       AppStrings.closeConsultationMsg:
           "Are u sure you want to refer your patient / close your consultation.",
-      AppStrings.declineHomeVisitMsg:
-          "Are you sure you want to decline this home visit request?",
+      AppStrings.declineHomeVisitMsg: "Are you sure you want to decline this home visit request?",
+      AppStrings.confirmHomeVisitMsg: "Are you sure you want to Accept this home visit request?",
       AppStrings.reportType: "Report Type",
       AppStrings.uploadReport: "Upload Report",
       AppStrings.uploadYourReport: "Upload your Report",
@@ -1830,8 +1830,8 @@ class Languages extends Translations {
       AppStrings.confirmDecline: "Confirmer le déclin",
       AppStrings.closeConsultationMsg:
           "Êtes-vous sûr de vouloir référer votre patient / fermer votre consultation.",
-      AppStrings.declineHomeVisitMsg:
-          "Êtes-vous sûr de vouloir décliner cette demande de visite à domicile ?",
+      AppStrings.declineHomeVisitMsg: "Êtes-vous sûr de vouloir décliner cette demande de visite à domicile ?",
+      AppStrings.confirmHomeVisitMsg: "Êtes-vous sûr de vouloir accepter cette demande de visite à domicile ?",
       AppStrings.reportType: "Type de rapport",
       AppStrings.uploadReport: "Télécharger le rapport",
       AppStrings.uploadYourReport: "Téléchargez votre rapport",

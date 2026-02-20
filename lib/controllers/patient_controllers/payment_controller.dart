@@ -47,27 +47,6 @@ class PaymentController extends GetxController {
   final paymentAmount = 5000;
   final paymentCurrency = 'usd';
 
-  final Map<String, Map<String, String>> demoCardDetails = {
-    'visa': {
-      'cardNumber': '4242 4242 4242 4242',
-      'expiry': '12/25',
-      'cvv': '123',
-      'holderName': 'John Doe'
-    },
-    'mastercard': {
-      'cardNumber': '5555 5555 5555 4444',
-      'expiry': '10/24',
-      'cvv': '321',
-      'holderName': 'Jane Smith'
-    },
-    'amex': {
-      'cardNumber': '3782 822463 10005',
-      'expiry': '08/26',
-      'cvv': '1234',
-      'holderName': 'Robert Johnson'
-    }
-  };
-
   final String stripePublishableKey = 'pk_test_TYooMQauvdEDq54NiTphI7jx';
   final String stripeSecretKey = 'STRIPE_KEY_REMOVED';
 
@@ -82,47 +61,15 @@ class PaymentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadSavedCards();
+    initStripe();
   }
 
-  void loadSavedCards() {
-    isLoadingSavedCards.value = true;
+  Future<void> initStripe() async {
     try {
-      loadDemoCards();
-    } finally {
-      isLoadingSavedCards.value = false;
-    }
-  }
-
-  void loadDemoCards() {
-    if (savedCards.isEmpty) {
-      savedCards.addAll([
-        CardModel(
-          id: '1',
-          cardHolderName: 'John Doe',
-          cardNumber: '4242 4242 4242 4242',
-          expiryDate: '12/25',
-          cvv: '123',
-          cardBrand: 'Visa',
-          isDefault: true,
-        ),
-        CardModel(
-          id: '2',
-          cardHolderName: 'Jane Smith',
-          cardNumber: '5555 5555 5555 4444',
-          expiryDate: '10/24',
-          cvv: '321',
-          cardBrand: 'Mastercard',
-          isDefault: false,
-        ),
-      ]);
-
-      if (savedCards.isNotEmpty) {
-        selectedCard.value = savedCards.firstWhere(
-              (card) => card.isDefault,
-          orElse: () => savedCards.first,
-        );
-      }
+      Stripe.publishableKey = stripePublishableKey;
+      await Stripe.instance.applySettings();
+    } catch (e) {
+      debugPrint('Error initializing Stripe: $e');
     }
   }
 
@@ -352,21 +299,6 @@ class PaymentController extends GetxController {
     }
   }
 
-  void fillDemoCardDetails(String cardType) {
-    Map<String, String>? details = demoCardDetails[cardType];
-    if (details != null) {
-      cardNumberController.text = details['cardNumber']!;
-      cardHolderNameController.text = details['holderName']!;
-      cvvController.text = details['cvv']!;
-
-      List<String> expiryParts = details['expiry']!.split('/');
-      int month = int.parse(expiryParts[0]);
-      int year = int.parse('20${expiryParts[1]}');
-      selectedDate.value = DateTime(year, month);
-      expiryDateController.text = details['expiry']!;
-    }
-  }
-
   void clearCardInputFields() {
     cardHolderNameController.clear();
     cardNumberController.clear();
@@ -374,15 +306,6 @@ class PaymentController extends GetxController {
     expiryDateController.clear();
     selectedDate.value = DateTime(DateTime.now().year + 2, 1);
     paymentError.value = "";
-  }
-
-  Future<void> initStripe() async {
-    try {
-      Stripe.publishableKey = stripePublishableKey;
-      await Stripe.instance.applySettings();
-    } catch (e) {
-      debugPrint('Error initializing Stripe: $e');
-    }
   }
 
   Future<Map<String, dynamic>> createPaymentIntent(String paymentMethodId) async {
@@ -414,25 +337,63 @@ class PaymentController extends GetxController {
     }
   }
 
+  Future<PaymentMethod?> createStripePaymentMethod() async {
+    try {
+      if (selectedCard.value == null) return null;
+
+      CardModel card = selectedCard.value!;
+      String cleanCardNumber = card.cardNumber.replaceAll(' ', '');
+      List<String> expiryParts = card.expiryDate.split('/');
+
+      final params = PaymentMethodParams.card(
+        paymentMethodData: PaymentMethodData(
+        ),
+      );
+
+      PaymentMethod paymentMethod = await Stripe.instance.createPaymentMethod(
+        params: params,
+      );
+
+      return paymentMethod;
+    } catch (e) {
+      paymentError.value = 'Failed to create payment method: $e';
+      return null;
+    }
+  }
+
   Future<bool> processCardPayment() async {
     try {
       isProcessingPayment.value = true;
       paymentError.value = "";
 
-      await Future.delayed(const Duration(seconds: 2));
+      PaymentMethod? paymentMethod = await createStripePaymentMethod();
+      if (paymentMethod == null) {
+        isProcessingPayment.value = false;
+        return false;
+      }
 
-      isProcessingPayment.value = false;
+      Map<String, dynamic> paymentIntent = await createPaymentIntent(paymentMethod.id);
 
-      Get.snackbar(
-        'Success',
-        'Payment completed successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
+      final result = await Stripe.instance.confirmPayment(
+        paymentIntentClientSecret: paymentIntent['client_secret'],
       );
 
-      return true;
+      if (result.status == PaymentIntentsStatus.Succeeded) {
+        Get.snackbar(
+          'Success',
+          'Payment completed successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+        isProcessingPayment.value = false;
+        return true;
+      } else {
+        paymentError.value = 'Payment failed: ${result.status}';
+        isProcessingPayment.value = false;
+        return false;
+      }
     } catch (e) {
       isProcessingPayment.value = false;
       paymentError.value = e.toString();
@@ -444,11 +405,8 @@ class PaymentController extends GetxController {
     try {
       isProcessingPayment.value = true;
       paymentError.value = "";
-
       await Future.delayed(const Duration(seconds: 2));
-
       isProcessingPayment.value = false;
-
       Get.snackbar(
         'Success',
         'PayPal payment successful',
@@ -456,7 +414,6 @@ class PaymentController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
       return true;
     } catch (e) {
       isProcessingPayment.value = false;
@@ -469,11 +426,8 @@ class PaymentController extends GetxController {
     try {
       isProcessingPayment.value = true;
       paymentError.value = "";
-
       await Future.delayed(const Duration(seconds: 2));
-
       isProcessingPayment.value = false;
-
       Get.snackbar(
         'Success',
         'Orange Money payment successful',
@@ -481,7 +435,6 @@ class PaymentController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
       return true;
     } catch (e) {
       isProcessingPayment.value = false;
@@ -494,11 +447,8 @@ class PaymentController extends GetxController {
     try {
       isProcessingPayment.value = true;
       paymentError.value = "";
-
       await Future.delayed(const Duration(seconds: 2));
-
       isProcessingPayment.value = false;
-
       Get.snackbar(
         'Success',
         'Wave payment successful',
@@ -506,7 +456,6 @@ class PaymentController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-
       return true;
     } catch (e) {
       isProcessingPayment.value = false;

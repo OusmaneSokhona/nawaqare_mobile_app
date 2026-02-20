@@ -88,26 +88,7 @@ class AddNewCardScreen extends StatelessWidget {
                           keyboardType: TextInputType.number,
                           maxLength: 19,
                           onChanged: (value) {
-                            String formatted = value.replaceAll(' ', '');
-                            if (formatted.length > 4) {
-                              formatted = formatted.substring(0, 4) + ' ' +
-                                  formatted.substring(4);
-                            }
-                            if (formatted.length > 9) {
-                              formatted = formatted.substring(0, 9) + ' ' +
-                                  formatted.substring(9);
-                            }
-                            if (formatted.length > 14) {
-                              formatted = formatted.substring(0, 14) + ' ' +
-                                  formatted.substring(14);
-                            }
-                            paymentController.cardNumberController.value =
-                                TextEditingValue(
-                                  text: formatted,
-                                  selection: TextSelection.collapsed(
-                                      offset: formatted.length
-                                  ),
-                                );
+                            paymentController.formatCardNumber(value);
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -275,6 +256,7 @@ class AddNewCardScreen extends StatelessWidget {
         int month = int.parse(expiryParts[0]);
         int year = int.parse('20${expiryParts[1]}');
         paymentController.selectedDate.value = DateTime(year, month);
+        paymentController.expiryDateController.text = expiry;
       },
       child: Row(
         children: [

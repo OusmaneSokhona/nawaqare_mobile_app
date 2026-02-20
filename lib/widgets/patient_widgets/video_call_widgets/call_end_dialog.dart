@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
 import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import 'package:patient_app/utils/appointment_status.dart';
 import 'package:patient_app/utils/locat_storage.dart';
 
 import '../../../screens/patient_screens/main_screen.dart';
@@ -12,7 +15,10 @@ import '../../../screens/patient_screens/video_call_screens/consultaion_finished
 import '../../../utils/app_colors.dart';
 
 class CallEndDialog extends StatelessWidget {
-  const CallEndDialog({super.key});
+  CallEndDialog({super.key});
+
+  final DoctorAppointmentController appointmentController = Get.find();
+  final VideoCallController videoCallController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +81,10 @@ class CallEndDialog extends StatelessWidget {
                       Expanded(
                         child: Text(
                           AppStrings.anonymousFeedbackNote.tr,
-                          style: const TextStyle(color: Colors.black, fontSize: 13),
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
@@ -111,17 +120,18 @@ class CallEndDialog extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () async {
                           Get.back();
-                          // Localization logic for redirection
-                          await LocalStorageUtils.getLoginedDoctor()
-                              ? Get.offAll(
-                            MainScreenDoctor(),
-                            binding: AppBinding(),
-                          )
-                              :Get.offAll(MainScreen(),binding: AppBinding());
-                        //    Get.to(
-                          //                             ConsultaionFinishedScreen(),
-                          //                             binding: AppBinding(),
-                          //                           );
+                          if (await LocalStorageUtils.getLoginedDoctor()) {
+                             appointmentController.updateAppointmentStatus(
+                              videoCallController.appointmentId.value,
+                              AppointmentStatus.COMPLETED,
+                            );
+                            Get.offAll(
+                              MainScreenDoctor(),
+                              binding: AppBinding(),
+                            );
+                          } else {
+                            Get.offAll(MainScreen(), binding: AppBinding());
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,

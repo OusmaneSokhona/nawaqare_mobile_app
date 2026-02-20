@@ -4,9 +4,11 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/add_report_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_follow_up_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_notes_screen.dart';
 import 'package:patient_app/screens/document_view_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/appointment_status.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/delete_report_dialog.dart';
 import '../../../models/doctor_appointment_model.dart';
 import '../../../utils/app_fonts.dart';
@@ -14,7 +16,8 @@ import '../../../utils/app_strings.dart';
 
 class DoctorPastAppoinmentWidget extends StatelessWidget {
   final DoctorAppointment appointmentModel;
-  DoctorPastAppoinmentWidget({super.key,required this.appointmentModel});
+
+  DoctorPastAppoinmentWidget({super.key, required this.appointmentModel});
 
   DoctorAppointmentController doctorAppointmentController =
   Get.find<DoctorAppointmentController>();
@@ -24,8 +27,13 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
     return DateFormat('dd MMM yyyy').format(date);
   }
 
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('dd MMM yyyy • hh:mm a').format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
+    print("${appointmentModel.id}");
     return Column(
       children: [
         15.verticalSpace,
@@ -135,22 +143,29 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           child: Column(
             children: [
               Obx(
-                    () => DiagnosisHistoryCard(
-                  diagnosis: appointmentModel.prescriptionId?.diagnosis ?? "No diagnosis",
-                  icd: "ICD-10",
-                  notes: doctorAppointmentController.notesText.value.isEmpty
-                      ? (appointmentModel.prescriptionId?.notes ?? "No notes available")
-                      : doctorAppointmentController.notesText.value,
-                ),
+                    () =>
+                    DiagnosisHistoryCard(
+                      diagnosis: appointmentModel.prescriptionId?.diagnosis ??
+                          "No diagnosis",
+                      icd: "ICD-10",
+                      notes: doctorAppointmentController.notesText.value.isEmpty
+                          ? (appointmentModel.prescriptionId?.notes ??
+                          "No notes available")
+                          : doctorAppointmentController.notesText.value,
+                    ),
               ),
               15.verticalSpace,
               if (appointmentModel.prescriptionId != null)
-                ...appointmentModel.prescriptionId!.medications.map((medication) =>
+                ...appointmentModel.prescriptionId!.medications.map((
+                    medication) =>
                     PrescriptionHistoryCard(
                       medication: medication.name,
-                      dosage: "${medication.dosage} - ${medication.frequency} - ${medication.duration}",
-                      daysRemaining: _calculateDaysRemaining(appointmentModel.prescriptionId!.validUntil),
-                      prescriptionNumber: appointmentModel.prescriptionId!.prescriptionNumber,
+                      dosage: "${medication.dosage} - ${medication
+                          .frequency} - ${medication.duration}",
+                      daysRemaining: _calculateDaysRemaining(
+                          appointmentModel.prescriptionId!.validUntil),
+                      prescriptionNumber: appointmentModel.prescriptionId!
+                          .prescriptionNumber,
                       issueDate: appointmentModel.prescriptionId!.issueDate,
                       validUntil: appointmentModel.prescriptionId!.validUntil,
                     ),
@@ -165,14 +180,22 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
             ],
           ),
         ),
-        15.verticalSpace,
-          MedicalReportCard(
-            title: appointmentModel.patientId.reports!,
 
-            onlyView: false,
-          ),
+        if (appointmentModel.soap != null)
+          _buildMainSoapSection(),
+
+        if (appointmentModel.followUps != null &&
+            appointmentModel.followUps!.isNotEmpty)
+          ..._buildFollowUpsSections(),
+
+        15.verticalSpace,
+        MedicalReportCard(
+          title: appointmentModel.patientId.reports ?? [],
+          onlyView: false,
+        ),
         15.verticalSpace,
         FollowUpRecommendationCard(
+          appointmentModel: appointmentModel,
           recommendation: AppStrings.chooseOptionFutureAction.tr,
           options: [
             AppStrings.scheduleFollowUp.tr,
@@ -194,9 +217,386 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildMainSoapSection() {
+    return Column(
+      children: [
+        15.verticalSpace,
+        CardHeader(title: "SOAP Notes"),
+        10.verticalSpace,
+        Container(
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            children: [
+              _buildSoapCard(
+                title: "Subjective",
+                content: appointmentModel.soap!.subjective,
+                icon: Icons.person_outline,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Objective",
+                content: appointmentModel.soap!.objective,
+                icon: Icons.science,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Assessment",
+                content: appointmentModel.soap!.assessment,
+                icon: Icons.assessment_outlined,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Plan",
+                content: appointmentModel.soap!.plan,
+                icon: Icons.assignment_outlined,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Diagnosis",
+                content: appointmentModel.soap!.diagnosis,
+                icon: Icons.medical_services_outlined,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSoapCard({
+    required String title,
+    required String content,
+    required IconData icon,
+  }) {
+    return Container(
+      width: 1.sw,
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.lightGrey.withOpacity(0.1)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Icon(
+              icon,
+              size: 16.sp,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: AppFonts.jakartaMedium,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  content.isNotEmpty ? content : "No $title notes available",
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: content.isNotEmpty ? Colors.grey.shade700 : Colors.grey.shade400,
+                    fontStyle: content.isEmpty ? FontStyle.italic : FontStyle.normal,
+                    fontFamily: AppFonts.jakartaRegular,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildFollowUpsSections() {
+    List<Widget> followUpSections = [];
+
+    for (var followUp in appointmentModel.followUps!) {
+      if (followUp.soap != null) {
+        followUpSections.addAll([
+          15.verticalSpace,
+          CardHeader(title: "SOAP Notes - ${_formatDate(followUp.createdAt)}"),
+          10.verticalSpace,
+          Container(
+            padding: EdgeInsets.all(15.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(15.r),
+            ),
+            child: Column(
+              children: [
+                _buildSoapCard(
+                  title: "Subjective",
+                  content: followUp.soap!.subjective,
+                  icon: Icons.person_outline,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Objective",
+                  content: followUp.soap!.objective,
+                  icon: Icons.science,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Assessment",
+                  content: followUp.soap!.assessment,
+                  icon: Icons.assessment_outlined,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Plan",
+                  content: followUp.soap!.plan,
+                  icon: Icons.assignment_outlined,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Diagnosis",
+                  content: followUp.soap!.diagnosis,
+                  icon: Icons.medical_services_outlined,
+                ),
+              ],
+            ),
+          ),
+        ]);
+      }
+
+      followUpSections.addAll([
+        15.verticalSpace,
+        CardHeader(title: "Follow-up Visit - ${_formatDate(followUp.timeSlotId.startTime)}"),
+        10.verticalSpace,
+        Container(
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.access_time,
+                      size: 16.sp,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Appointment Time",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey.shade600,
+                            fontFamily: AppFonts.jakartaRegular,
+                          ),
+                        ),
+                        Text(
+                          "${followUp.timeSlotId.formattedStartDate} • ${followUp.timeSlotId.formattedTimeRange}",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: AppFonts.jakartaMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: followUp.paymentStatus.toLowerCase() == "paid"
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.payment,
+                      size: 16.sp,
+                      color: followUp.paymentStatus.toLowerCase() == "paid"
+                          ? Colors.green
+                          : Colors.orange,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Payment Status",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey.shade600,
+                            fontFamily: AppFonts.jakartaRegular,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              followUp.paymentStatus.capitalizeFirst ?? "Pending",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: followUp.paymentStatus.toLowerCase() == "paid"
+                                    ? Colors.green
+                                    : Colors.orange,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              "• \$${followUp.followupPrice}",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if (followUp.prescriptions.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.medication,
+                        size: 16.sp,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Prescriptions",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey.shade600,
+                              fontFamily: AppFonts.jakartaRegular,
+                            ),
+                          ),
+                          Text(
+                            "${followUp.prescriptions.length} medication(s) prescribed",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (followUp.paymentIntent.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.receipt_long,
+                        size: 16.sp,
+                        color: Colors.purple,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Payment Intent",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey.shade600,
+                              fontFamily: AppFonts.jakartaRegular,
+                            ),
+                          ),
+                          Text(
+                            "ID: ${followUp.paymentIntent.substring(0, 8)}...",
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.purple,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+      ]);
+    }
+
+    return followUpSections;
+  }
+
   int _calculateDaysRemaining(DateTime validUntil) {
     final now = DateTime.now();
-    final difference = validUntil.difference(now).inDays;
+    final difference = validUntil
+        .difference(now)
+        .inDays;
     return difference > 0 ? difference : 0;
   }
 }
@@ -285,12 +685,16 @@ class DiagnosisHistoryCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    diagnosis,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.lightGrey,
+                  SizedBox(
+                    width: 0.5.sw,
+                    child: Text(
+                      diagnosis,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.lightGrey,
+                      ),
                     ),
                   ),
                   Text(
@@ -387,7 +791,7 @@ class PrescriptionHistoryCard extends StatelessWidget {
                   fontSize: 16.sp,
                 ),
               ),
-              if (prescriptionNumber != null)
+              if (prescriptionNumber != null && prescriptionNumber!.isNotEmpty)
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                   decoration: BoxDecoration(
@@ -444,7 +848,8 @@ class PrescriptionHistoryCard extends StatelessWidget {
                   style: TextStyle(fontSize: 11.sp, color: _secondaryColor),
                 ),
                 SizedBox(width: 12.w),
-                Icon(Icons.event_available, size: 12.sp, color: _secondaryColor),
+                Icon(
+                    Icons.event_available, size: 12.sp, color: _secondaryColor),
                 SizedBox(width: 4.w),
                 Text(
                   "Valid until: ${_formatDate(validUntil)}",
@@ -469,7 +874,9 @@ class PrescriptionHistoryCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
               decoration: BoxDecoration(
-                color: daysRemaining > 5 ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                color: daysRemaining > 5
+                    ? Colors.green.withOpacity(0.1)
+                    : Colors.orange.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(4.r),
               ),
               child: Text(
@@ -483,53 +890,55 @@ class PrescriptionHistoryCard extends StatelessWidget {
             ),
           ],
           SizedBox(height: 16.h),
-          if (prescriptionNumber!.isNotEmpty) Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _buttonBgColor,
-                    foregroundColor: _primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+          if (prescriptionNumber != null && prescriptionNumber!.isNotEmpty)
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _buttonBgColor,
+                      foregroundColor: _primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppStrings.downloadPdf.tr,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _blueColor,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    AppStrings.refill.tr,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
+                    child: Text(
+                      AppStrings.downloadPdf.tr,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _blueColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      AppStrings.refill.tr,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -553,180 +962,193 @@ class MedicalReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (title.isNotEmpty&&title!=null)?Column(
+    return (title.isNotEmpty) ? Column(
       children: [
         CardHeader(title: AppStrings.medicalReports.tr),
         5.verticalSpace,
-        SizedBox(height: title.length<2?onlyView?100.h:200.h:200.h,child: ListView.builder(padding: EdgeInsets.zero,itemCount: title.length,itemBuilder: (context,index){
-          return Container(
-            padding: EdgeInsets.all(onlyView?0.sp:10.sp),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: onlyView?Colors.transparent:AppColors.lightGrey.withOpacity(0.2)),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16.0),
+        SizedBox(
+          height: title.length < 2 ? onlyView ? 100.h : 200.h : 200.h,
+          child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: title.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: EdgeInsets.all(onlyView ? 0.sp : 10.sp),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     border: Border.all(
-                      color: AppColors.lightGrey.withOpacity(0.2),
-                    ),
-                    borderRadius: BorderRadius.circular(13.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        spreadRadius: 2,
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
+                        color: onlyView ? Colors.transparent : AppColors
+                            .lightGrey.withOpacity(0.2)),
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        padding: const EdgeInsets.all(16.0),
                         decoration: BoxDecoration(
-                          color: _iconBgColor,
-                          borderRadius: BorderRadius.circular(8.0),
+                          color: Colors.white,
+                          border: Border.all(
+                            color: AppColors.lightGrey.withOpacity(0.2),
+                          ),
+                          borderRadius: BorderRadius.circular(13.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              spreadRadius: 2,
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        child: const Icon(
-                          Icons.description_outlined,
-                          color: _blueColor,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              title[index],
-                              maxLines: 3,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: _primaryColor,
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: _iconBgColor,
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: const Icon(
+                                Icons.description_outlined,
+                                color: _blueColor,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title[index],
+                                    maxLines: 3,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: _primaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            onlyView
+                                ? InkWell(
+                              onTap: () {
+                                Get.to(DocumentViewerScreen(
+                                    documentUrl: title[index],
+                                    fileName: title[index]));
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 12.sp,
+                                  vertical: 4.sp,
+                                ),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(9.sp),
+                                ),
+                                child: Text(
+                                  AppStrings.view.tr,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            )
+                                : InkWell(
+                              onTap: () {
+                                Get.dialog(DeleteReportDialog());
+                              },
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: AppColors.red,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      onlyView
-                          ? InkWell(
-
-                        onTap: (){
-                          Get.to(DocumentViewerScreen(documentUrl: title[index], fileName: title[index]));
-                        },
-                            child: Container(
-                                                    padding: EdgeInsets.symmetric(
-                            horizontal: 12.sp,
-                            vertical: 4.sp,
-                                                    ),
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(9.sp),
-                                                    ),
-                                                    child: Text(
-                            AppStrings.view.tr,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 15.sp,
-                              fontFamily: AppFonts.jakartaMedium,
-                              fontWeight: FontWeight.w500,
+                      onlyView ? 0.verticalSpace : 12.verticalSpace,
+                      onlyView ? const SizedBox() : Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Get.to(AddReportScreen());
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.inACtiveButtonColor,
+                                foregroundColor: _primaryColor,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 14),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                AppStrings.addReport.tr,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
-                                                    ),
-                                                  ),
-                          )
-                          : InkWell(
-                        onTap: () {
-                          Get.dialog(DeleteReportDialog());
-                        },
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: AppColors.red,
-                        ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryColor,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 14),
+                                elevation: 0,
+                              ),
+                              child: Text(
+                                AppStrings.downloadReport.tr,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ),
-                onlyView?0.verticalSpace:12.verticalSpace,
-                onlyView?SizedBox():Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Get.to(AddReportScreen());
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.inACtiveButtonColor,
-                          foregroundColor: _primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          AppStrings.addReport.tr,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          elevation: 0,
-                        ),
-                        child: Text(
-                          AppStrings.downloadReport.tr,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        }),),
-
+                );
+              }
+          ),
+        ),
       ],
-    ):SizedBox();
+    ) : const SizedBox();
   }
 }
 
 class FollowUpRecommendationCard extends StatelessWidget {
   final String recommendation;
   final List<String> options;
+  final DoctorAppointment appointmentModel;
 
-  const FollowUpRecommendationCard({
+   FollowUpRecommendationCard({
     required this.recommendation,
     required this.options,
+    required this.appointmentModel,
     super.key,
   });
-
+  DoctorAppointmentController appointmentController=Get.find();
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -749,35 +1171,90 @@ class FollowUpRecommendationCard extends StatelessWidget {
             ...options.map(
                   (option) => Padding(
                 padding: EdgeInsets.symmetric(vertical: 4.h),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 24.w,
-                      height: 24.h,
-                      child: Checkbox(
-                        activeColor: AppColors.primaryColor,
-                        value: false,
-                        onChanged: (bool? newValue) {},
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.r),
+                child: InkWell(
+                  onTap: (){
+                    if(option == AppStrings.scheduleFollowUp.tr){
+                      Get.to(DoctorFollowupScreen(appointmentId: appointmentModel.id));
+                    }else if(option ==AppStrings.closeConsultation.tr){
+                      showCancelConfirmationDialog(appointmentModel.id);
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: Checkbox(
+                          activeColor: AppColors.primaryColor,
+                          value: false,
+                          onChanged: (bool? newValue) {
+                            if(option == AppStrings.scheduleFollowUp.tr){
+                              Get.to(DoctorFollowupScreen(appointmentId: appointmentModel.id));
+                            }else if(option ==AppStrings.closeConsultation.tr){
+                              showCancelConfirmationDialog(appointmentModel.id);
+                            }
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      option,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.lightGrey,
+                      SizedBox(width: 8.w),
+                      Text(
+                        option,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.lightGrey,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+  void showCancelConfirmationDialog(String appointmentId) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Close Appointment",
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "Do you really want to Close this appointment?",
+          style: TextStyle(fontSize: 16.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "No",
+              style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+             await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELLED);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              "Yes, Cancel",
+              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

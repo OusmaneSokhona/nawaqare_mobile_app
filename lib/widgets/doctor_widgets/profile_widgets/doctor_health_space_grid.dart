@@ -67,7 +67,6 @@ class DoctorHealthSpaceGrid extends StatelessWidget {
           onTap: () async {
             await Get.deleteAll(force: true);
             LocalStorageUtils.deleteUser();
-            isWeb?Get.offAll(WebSignInScreen(), binding: AppBinding()):
             Get.offAll(SignInScreen(), binding: AppBinding());
           },
         ),

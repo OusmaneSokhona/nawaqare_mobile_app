@@ -379,6 +379,7 @@ class AppointmentDetailScreen extends StatelessWidget {
               fontColor: Colors.black,
             )
             : _buildActionButtons(),
+        20.verticalSpace,
       ],
     );
   }
@@ -387,6 +388,23 @@ class AppointmentDetailScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: Text(
+            AppStrings.status.tr,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: AppFonts.jakartaBold,
+            ),
+          ),
+        ),
+        10.verticalSpace,
+        AppointmentStatusWidget(
+          status: appointment.status.displayName,
+        ),
+        5.verticalSpace,
         if (_hasRescheduleStatus)
           Align(
             alignment: AlignmentDirectional.topStart,

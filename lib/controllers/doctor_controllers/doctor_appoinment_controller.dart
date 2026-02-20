@@ -498,6 +498,7 @@ class DoctorAppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        Get.back();
         Get.snackbar(
           "Success",
           "Appointment status updated successfully",

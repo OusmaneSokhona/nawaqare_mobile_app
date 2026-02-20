@@ -177,66 +177,16 @@ class VideoCallControls extends StatelessWidget {
         color: Colors.grey[800],
         shape: const CircleBorder(),
         elevation: 5,
-        child: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Colors.white, size: 28),
-          onSelected: (String result) {
-            if (result == "messages") {
-              Get.to(ChatDetailScreen());
-            } else if (result == "setting") {
-              Get.to(SettingScreen());
-            } else if (result == "note") {
-              controller.drawerValue.value = "doctorNotes";
-              controller.scaffoldKey.currentState?.openEndDrawer();
-            } else if (result == "addPrescription") {
-              controller.drawerValue.value = "addPrescription";
-              controller.scaffoldKey.currentState?.openEndDrawer();
-            } else if (result == "viewReports") {
-              controller.drawerValue.value = "viewReports";
-              controller.scaffoldKey.currentState?.openEndDrawer();
-            } else if (result == "patientHistory") {
-              controller.drawerValue.value = "viewReports"; // Note: verify value if patientHistory is intended
-              controller.scaffoldKey.currentState?.openEndDrawer();
-            }
-          },
-          offset: const Offset(0, -200),
-          color: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-            PopupMenuItem<String>(
-              value: 'note',
-              child: Text(AppStrings.addDoctorNote.tr, style: const TextStyle(fontSize: 16)),
-            ),
-            PopupMenuItem<String>(
-              value: 'addPrescription',
-              child: Text(AppStrings.addPrescription.tr, style: const TextStyle(fontSize: 16)),
-            ),
-            PopupMenuItem<String>(
-              value: 'viewReports',
-              child: Text(AppStrings.viewReports.tr, style: const TextStyle(fontSize: 16)),
-            ),
-            PopupMenuItem<String>(
-              value: 'patientHistory',
-              child: Text(AppStrings.patientHistory.tr, style: const TextStyle(fontSize: 16)),
-            ),
-            PopupMenuItem<String>(
-              value: 'messages',
-              child: Text(AppStrings.inVideoMessages.tr, style: const TextStyle(fontSize: 16)),
-            ),
-            PopupMenuItem<String>(
-              value: 'captions',
-              child: Text(AppStrings.captionsOff.tr, style: const TextStyle(fontSize: 16)),
-            ),
-            PopupMenuItem<String>(
-              value: 'setting',
-              child: Text(AppStrings.settings.tr, style: const TextStyle(fontSize: 16)),
-            ),
-          ],
-        ),
-      ),
-    );
+        child:  Padding(
+          padding:  EdgeInsets.all(4.sp),
+          child: InkWell(onTap: (){
+            controller.drawerValue.value = "moreAction";
+            controller.scaffoldKey.currentState?.openEndDrawer();
+          },child: Icon(Icons.more_vert, color: Colors.white, size: 43.sp)),
+        ),));
   }
 
   void _showEndCallDialog() {
-    Get.dialog(barrierDismissible: false, const CallEndDialog());
+    Get.dialog(barrierDismissible: false,  CallEndDialog());
   }
 }

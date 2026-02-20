@@ -29,4 +29,6 @@ class ApiUrls {
   static String rescheduleAppointment="/api/appointments/reschedule";
   static String rejectRescheduleRequest="/api/appointments/reschedule/reject";
   static String acceptRescheduleRequest="/api/appointments/reschedule/accept";
+  static String createFollowUp="api/appointments/followup/create";
+  static String createSoapNoteApi="api/appointments/soap/";
 }

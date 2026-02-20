@@ -6,7 +6,12 @@ import 'package:patient_app/controllers/patient_controllers/appointment_controll
 import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/add_prescription_drawer.dart';
 import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/doctor_notes_drawer.dart';
 import 'package:patient_app/widgets/doctor_widgets/video_call_widgets/recent_projects_drawer.dart';
+import 'package:patient_app/widgets/patient_widgets/video_call_widgets/consent_access_drawer.dart';
+import 'package:patient_app/widgets/patient_widgets/video_call_widgets/medical_observation_drawer.dart';
+import 'package:patient_app/widgets/patient_widgets/video_call_widgets/more_actions_drawer.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/video_call_controls.dart';
+
+import '../../../widgets/patient_widgets/video_call_widgets/call_end_dialog.dart';
 
 class VideoCallScreen extends StatelessWidget {
   VideoCallScreen({super.key});
@@ -15,108 +20,137 @@ class VideoCallScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: controller.scaffoldKey,
-      endDrawer: Obx(
-            () => controller.drawerValue.value == "doctorNotes"
-            ? const DoctorNotesDrawer()
-            : controller.drawerValue.value == "addPrescription"
-            ? const AddPrescriptionDrawer()
-            : const RecentProjectsDrawer(),
-      ),
-      body: Obx(() {
-        final hasRemote = controller.remoteUid.value != null;
-        final engineReady = controller.engine != null;
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        key: controller.scaffoldKey,
+        endDrawer: Obx(
+          () =>
+              controller.drawerValue.value == "doctorNotes"
+                  ? const DoctorNotesDrawer()
+                  : controller.drawerValue.value == "addPrescription"
+                  ? const AddPrescriptionDrawer()
+                  : controller.drawerValue.value == "medicalObservation"
+                  ? const MedicalObservationDrawer()
+                  : controller.drawerValue.value == "moreAction"
+                  ? const MoreActionsDrawer()
+                  : controller.drawerValue.value == "consentAccess"
+                  ? const ConsentAccessDrawer()
+                  : const RecentProjectsDrawer(),
+        ),
+        body: Obx(() {
+          final hasRemote = controller.remoteUid.value != null;
+          final engineReady = controller.engine != null;
 
-        return Container(
-          height: 1.sh,
-          width: 1.sw,
-          color: Colors.black87,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              if (hasRemote && engineReady)
-                AgoraVideoView(
-                  controller: VideoViewController.remote(
-                    rtcEngine: controller.engine!,
-                    canvas: VideoCanvas(
-                      uid: controller.remoteUid.value,
-                      renderMode: RenderModeType.renderModeFit,
+          return Container(
+            height: 1.sh,
+            width: 1.sw,
+            color: Colors.black87,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (hasRemote && engineReady)
+                  AgoraVideoView(
+                    controller: VideoViewController.remote(
+                      rtcEngine: controller.engine!,
+                      canvas: VideoCanvas(
+                        uid: controller.remoteUid.value,
+                        renderMode: RenderModeType.renderModeFit,
+                      ),
+                      connection: RtcConnection(
+                        channelId: controller.channelName.value,
+                      ),
                     ),
-                    connection: RtcConnection(channelId: controller.channelName.value),
+                  )
+                else
+                  const Center(
+                    child: Text(
+                      "Waiting for the other participant...",
+                      style: TextStyle(color: Colors.white70, fontSize: 20),
+                    ),
                   ),
-                )
-              else
-                const Center(
-                  child: Text(
-                    "Waiting for the other participant...",
-                    style: TextStyle(color: Colors.white70, fontSize: 20),
-                  ),
-                ),
 
-              if (controller.isJoined.value && engineReady && controller.showLocalPreview.value)
-                Positioned(
-                  top: 60.h,
-                  right: 16.w,
-                  child: Obx(() {
-                    if (controller.cameraOff.value) {
+                if (controller.isJoined.value &&
+                    engineReady &&
+                    controller.showLocalPreview.value)
+                  Positioned(
+                    top: 60.h,
+                    right: 16.w,
+                    child: Obx(() {
+                      if (controller.cameraOff.value) {
+                        return Container(
+                          width: 140.w,
+                          height: 180.h,
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Icon(
+                            Icons.videocam_off,
+                            color: Colors.white,
+                            size: 30.sp,
+                          ),
+                        );
+                      }
                       return Container(
                         width: 140.w,
                         height: 180.h,
                         decoration: BoxDecoration(
-                          color: Colors.black,
                           borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Icon(Icons.videocam_off, color: Colors.white, size: 30.sp),
-                      );
-                    }
-                    return Container(
-                      width: 140.w,
-                      height: 180.h,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16.r),
-                        border: Border.all(color: Colors.blueAccent, width: 2),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14.r),
-                        child: AgoraVideoView(
-                          controller: VideoViewController(
-                            rtcEngine: controller.engine!,
-                            canvas: const VideoCanvas(uid: 0),
+                          border: Border.all(
+                            color: Colors.blueAccent,
+                            width: 2,
                           ),
                         ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(14.r),
+                          child: AgoraVideoView(
+                            controller: VideoViewController(
+                              rtcEngine: controller.engine!,
+                              canvas: const VideoCanvas(uid: 0),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+
+                if (!controller.isJoined.value)
+                  const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: VideoCallControls(),
+                ),
+                Positioned(
+                  top: 70.h,
+                  left: 30.w,
+                  child: Obx(() {
+                    return InkWell(
+                      onTap:
+                          controller.cameraOff.value
+                              ? null
+                              : () => controller.switchCamera(),
+                      child: Icon(
+                        Icons.cameraswitch,
+                        color:
+                            controller.cameraOff.value
+                                ? Colors.grey
+                                : Colors.white,
+                        size: 30.sp,
                       ),
                     );
                   }),
                 ),
-
-              if (!controller.isJoined.value)
-                const Center(child: CircularProgressIndicator(color: Colors.white)),
-
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: VideoCallControls(),
-              ),
-              Positioned(
-                top: 70.h,
-                left: 30.w,
-                child: Obx(() {
-                  return InkWell(
-                    onTap: controller.cameraOff.value ? null : () => controller.switchCamera(),
-                    child: Icon(
-                      Icons.cameraswitch,
-                      color: controller.cameraOff.value ? Colors.grey : Colors.white,
-                      size: 30.sp,
-                    ),
-                  );
-                }),
-              ),
-            ],
-          ),
-        );
-      }),
+              ],
+            ),
+          );
+        }),
+      ),
     );
   }
 }

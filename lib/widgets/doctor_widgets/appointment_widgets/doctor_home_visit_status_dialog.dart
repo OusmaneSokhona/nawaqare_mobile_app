@@ -49,7 +49,7 @@ class DoctorHomeVisitStatusDialog extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 status
-                    ? AppStrings.closeConsultationMsg.tr
+                    ? AppStrings.confirmHomeVisitMsg.tr
                     : AppStrings.declineHomeVisitMsg.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey[700]),

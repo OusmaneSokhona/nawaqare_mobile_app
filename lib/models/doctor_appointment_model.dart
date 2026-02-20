@@ -64,6 +64,7 @@ class DoctorAppointment {
   final String? paymentStatus;
   final PrescriptionInfo? prescriptionId;
   final List<FollowUp>? followUps;
+  final SOAP? soap;
 
   DoctorAppointment({
     required this.id,
@@ -86,6 +87,7 @@ class DoctorAppointment {
     this.paymentStatus,
     this.prescriptionId,
     this.followUps,
+    this.soap,
   });
 
   factory DoctorAppointment.fromJson(Map<String, dynamic> json) {
@@ -122,12 +124,12 @@ class DoctorAppointment {
           .map((item) => FollowUp.fromJson(item as Map<String, dynamic>))
           .toList()
           : null,
+      soap: json['SOAP'] != null ? SOAP.fromJson(json['SOAP'] as Map<String, dynamic>) : null,
     );
   }
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
@@ -159,10 +161,10 @@ class DoctorAppointment {
       'paymentStatus': paymentStatus,
       'prescriptionId': prescriptionId?.toJson(),
       'followUps': followUps?.map((item) => item.toJson()).toList(),
+      'SOAP': soap?.toJson(),
     };
   }
 
-  // Helper getters for formatted display
   bool get isUpcoming {
     if (timeslot == null) return date.isAfter(DateTime.now());
     return timeslot!.startTime.isAfter(DateTime.now());
@@ -220,7 +222,6 @@ class DoctorAppointment {
         6: 'Sat',
         7: 'Sun',
       };
-
       final monthMap = {
         1: 'Jan',
         2: 'Feb',
@@ -235,10 +236,8 @@ class DoctorAppointment {
         11: 'Nov',
         12: 'Dec',
       };
-
       final weekday = weekdayMap[appointmentDate.weekday] ?? 'Day';
       final month = monthMap[appointmentDate.month] ?? 'Month';
-
       return '$weekday, ${appointmentDate.day} $month';
     }
   }
@@ -286,7 +285,6 @@ class FollowUp {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
@@ -361,7 +359,7 @@ class RescheduleInfo {
 
   factory RescheduleInfo.fromJson(Map<String, dynamic> json) {
     return RescheduleInfo(
-      isAccept: json['isAccept'] as String? ?? 'pending',
+      isAccept: json['isAccept'] as String? ?? 'notset',
       reason: json['reason'] as String?,
       role: json['role'] as String?,
     );
@@ -378,6 +376,7 @@ class RescheduleInfo {
   bool get isPending => isAccept == 'pending';
   bool get isAccepted => isAccept == 'accepted';
   bool get isRejected => isAccept == 'rejected';
+  bool get isNotSet => isAccept == 'notset';
 }
 
 class PatientInfo {
@@ -468,7 +467,6 @@ class PatientInfo {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
@@ -549,7 +547,6 @@ class TimeSlot {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
@@ -575,7 +572,6 @@ class TimeSlot {
     final duration = endTime.difference(startTime);
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
-
     if (hours > 0 && minutes > 0) {
       return '${hours}h ${minutes}m';
     } else if (hours > 0) {
@@ -664,7 +660,6 @@ class PrescriptionInfo {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();

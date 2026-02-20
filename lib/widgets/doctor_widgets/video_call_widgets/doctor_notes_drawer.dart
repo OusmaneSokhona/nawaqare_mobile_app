@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/appointment_controllers/video_call_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
-import 'package:patient_app/utils/app_strings.dart'; // Added import
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/widgets/patient_widgets/video_call_widgets/clinic_note_widget.dart';
 
 class DoctorNotesDrawer extends GetView<VideoCallController> {
   const DoctorNotesDrawer({super.key});
@@ -12,115 +13,83 @@ class DoctorNotesDrawer extends GetView<VideoCallController> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.9,
+      width: MediaQuery.of(context).size.width,
       backgroundColor: Colors.transparent,
+      elevation: 0,
       child: Stack(
-        alignment: Alignment.centerRight,
         children: [
-          Container(
-            width: 0.8.sw,
-            height: 1.sh,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.onboardingBackground, Colors.white],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(top: 60.h, left: 18.w, right: 10.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppStrings.doctorNotes.tr, // Localized
-                            style: TextStyle(
-                              fontSize: 24.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          15.verticalSpace,
-                          SizedBox(
-                            width: 0.6.sw,
-                            child: Text(
-                              AppStrings.observationsSubtitle.tr, // Localized
-                              maxLines: 2,
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: AppColors.darkGrey,
+          Row(
+            children: [
+              const Spacer(),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color(0xFFF4F9FF),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0.w,20.h, 0.w, 0.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding:  EdgeInsets.fromLTRB(20.w,30.h,20.w,0),
+                              child: Text(
+                                "Doctor Notes",
+                                style: TextStyle(
+                                  fontSize: 28.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: const Color(0xFF333333),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  20.verticalSpace,
-                  Text(
-                    AppStrings.addNote.tr, // Localized
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  10.verticalSpace,
-                  Container(
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: TextField(
-                      onChanged: controller.onNoteChanged,
-                      maxLines: 5,
-                      decoration: InputDecoration(
-                        hintText: AppStrings.noteHint.tr, // Localized
-                        contentPadding: const EdgeInsets.all(12),
-                        border: InputBorder.none,
+                           20.verticalSpace,
+                           Expanded(child: ClinicalNoteWidget(appointmentId: controller.appointmentId.value)),
+                           30.verticalSpace,
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  const Spacer(),
-                  CustomButton(
-                      borderRadius: 15,
-                      text: AppStrings.noteSave.tr, // Localized
-                      onTap: () {}
-                  ),
-                  30.verticalSpace,
-                ],
+
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
           Positioned(
-            left: 12.w,
-            top: 55.h,
-            child: Container(
-              height: 40.h,
-              width: 40.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryColor,
-              ),
-              child: IconButton(
-                icon: Icon(
-                  Icons.arrow_forward_outlined,
+            left: (MediaQuery.of(context).size.width * 0.15) - 20,
+            top: 45.h,
+            child: GestureDetector(
+              onTap: () => Get.back(),
+              child: Container(
+                height: 40.h,
+                width: 40.w,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xFF4A80F0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.arrow_forward,
                   color: Colors.white,
                   size: 20.sp,
                 ),
-                onPressed: () {
-                  Get.back();
-                },
               ),
             ),
-          )
+          ),
         ],
       ),
     );

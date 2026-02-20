@@ -18,6 +18,7 @@ class PaymentScreen extends StatelessWidget {
   PaymentScreen({super.key});
 
   final PaymentController paymentController = Get.put(PaymentController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,8 +227,7 @@ class PaymentScreen extends StatelessWidget {
                     color: Colors.transparent,
                     child: InkWell(
                       onTap: () {
-                        paymentController.selectedCard.value = card;
-                        paymentController.selectedPayment.value = "Credit/Debit Card";
+                        paymentController.selectCard(card);
                       },
                       borderRadius: BorderRadius.circular(16.r),
                       child: Container(
@@ -451,7 +451,6 @@ class PaymentScreen extends StatelessWidget {
                 child: Obx(
                       () => Container(
                     height: paymentController.selectedPayment.value ==
-
                         paymentController.payments[index]?100.h:70.h,
                     width: 1.sw,
                     decoration: BoxDecoration(

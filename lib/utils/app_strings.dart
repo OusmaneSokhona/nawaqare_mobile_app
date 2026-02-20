@@ -587,6 +587,7 @@ class AppStrings {
   static const String confirmDecline = "confirm_decline";
   static const String closeConsultationMsg = "close_consultation_msg";
   static const String declineHomeVisitMsg = "decline_home_visit_msg";
+  static const String confirmHomeVisitMsg = "confirm_home_visit_msg";
   static const String reportType = "report_type";
   static const String uploadReport = "upload_report";
   static const String uploadYourReport = "upload_your_report";

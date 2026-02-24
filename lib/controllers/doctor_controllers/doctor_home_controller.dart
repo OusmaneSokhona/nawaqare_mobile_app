@@ -24,7 +24,6 @@ class DoctorHomeController extends GetxController {
 
   Future<void> fetchAppointments() async {
     try {
-      isLoading.value = true;
       ongoingAppointment.value = null;
       upcomingAppointment.value = null;
 
@@ -143,7 +142,6 @@ class DoctorHomeController extends GetxController {
           colorText: Colors.white
       );
     } finally {
-      isLoading.value = false;
     }
   }
 

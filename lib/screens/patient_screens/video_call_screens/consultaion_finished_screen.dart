@@ -9,11 +9,13 @@ import '../../../utils/app_strings.dart';
 class ConsultaionFinishedScreen extends StatelessWidget {
   final String appointmentId;
   final String doctorName;
+  final Function onComplete;
 
   const ConsultaionFinishedScreen({
     super.key,
     required this.appointmentId,
     required this.doctorName,
+    required this.onComplete,
   });
 
   @override
@@ -21,6 +23,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
     final FeedbackController controller = Get.put(
       FeedbackController(appointmentId: appointmentId),
     );
+    print("id = ${appointmentId}");
 
     return Scaffold(
       body: Container(
@@ -122,7 +125,9 @@ class ConsultaionFinishedScreen extends StatelessWidget {
           child: SizedBox(
             height: 56,
             child: ElevatedButton(
-              onPressed: controller.viewPrescription,
+              onPressed:(){
+                Get.back();
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey.shade100,
                 elevation: 0,
@@ -131,7 +136,7 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                 ),
               ),
               child: Text(
-                AppStrings.viewPrescription.tr,
+                AppStrings.back.tr,
                 style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600, color: Colors.black87),
               ),
             ),
@@ -142,7 +147,9 @@ class ConsultaionFinishedScreen extends StatelessWidget {
           child: Obx(() => SizedBox(
             height: 56,
             child: ElevatedButton(
-              onPressed: controller.isSendButtonEnabled ? controller.sendFeedback : null,
+              onPressed: (){
+                controller.isSendButtonEnabled ? controller.sendFeedback(onComplete): null;
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF4285F4),
                 disabledBackgroundColor: const Color(0xFF4285F4).withOpacity(0.5),

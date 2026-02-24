@@ -25,6 +25,9 @@ class DoctorHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.fetchAppointments();
+    });
     homeController.scrollChange();
     bool isDesktop = MediaQuery.of(context).size.width > 600;
     return Scaffold(

@@ -61,15 +61,7 @@ class PastAppointmentWidgets extends StatelessWidget {
           ),
           if (appointmentController.selectedTab.value == "Reviews") ...[
             15.verticalSpace,
-            ReviewCard(
-              image:
-                  appointment.doctorId.profileImage ??
-                  "assets/demo_images/demo_doctor.jpeg",
-              reviewerName: appointment.doctorId.fullName,
-              rating: 4.5,
-              reviewText:
-                  "Consultation completed on ${appointment.formattedDate}. ${appointment.notes ?? 'No additional notes.'}",
-            ),
+            ReviewCard(appointment: appointment),
           ],
           15.verticalSpace,
           CustomButton(
@@ -443,7 +435,12 @@ class MedicalReportCard extends StatelessWidget {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            Get.to(DocumentViewerScreen(documentUrl: title[index], fileName: title[index]));
+                            Get.to(
+                              DocumentViewerScreen(
+                                documentUrl: title[index],
+                                fileName: title[index],
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _blueColor,
@@ -561,93 +558,90 @@ class FollowUpRecommendationCard extends StatelessWidget {
 }
 
 class ReviewCard extends StatelessWidget {
-  final String reviewerName;
-  final double rating;
-  final String reviewText;
-  final String image;
+  final Appointment appointment;
 
-  const ReviewCard({
-    required this.reviewerName,
-    required this.rating,
-    required this.reviewText,
-    required this.image,
-    super.key,
-  });
+  const ReviewCard({required this.appointment, super.key});
 
   static const Color _primaryColor = Color(0xFF1F2937);
   static const Color _starColor = AppColors.orange;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8.sp),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CardHeader(title: AppStrings.review.tr),
-          5.verticalSpace,
-          Row(
+    return appointment.reviews!.isNotEmpty
+        ? Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.sp),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundImage:
-                    image.startsWith('assets')
-                        ? AssetImage(image) as ImageProvider
-                        : NetworkImage(image),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      reviewerName,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: _primaryColor,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
+              CardHeader(title: AppStrings.review.tr),
+              5.verticalSpace,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage:
+                        appointment.reviews!.first.patientId.profileImage == null
+                            ? AssetImage("assets/demo_images/demo_doctor.jpeg")
+                            : NetworkImage(
+                              appointment.reviews!.first.patientId.profileImage!,
+                            ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          rating.toStringAsFixed(1),
+                          appointment.reviews!.first.patientId.fullName,
                           style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: _primaryColor,
                           ),
                         ),
-                        const SizedBox(width: 4),
-                        ...List.generate(5, (index) {
-                          return Icon(
-                            index < rating.floor()
-                                ? Icons.star
-                                : Icons.star_border,
-                            color: _starColor,
-                            size: 18,
-                          );
-                        }),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Text(
+                              "${appointment.reviews!.first.rating}",
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            ...List.generate(appointment.reviews!.first.rating, (
+                              index,
+                            ) {
+                              return Icon(
+                                index < appointment.reviews!.first.rating.floor()
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: _starColor,
+                                size: 18,
+                              );
+                            }),
+                          ],
+                        ),
                       ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                appointment.reviews!.first.review,
+                style: const TextStyle(
+                  fontSize: 16,
+                  height: 1.4,
+                  color: _primaryColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            reviewText,
-            style: const TextStyle(
-              fontSize: 16,
-              height: 1.4,
-              color: _primaryColor,
-            ),
-          ),
-        ],
-      ),
-    );
+        )
+        : SizedBox();
   }
 }

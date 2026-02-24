@@ -207,9 +207,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
         ReviewCard(
           image: "assets/demo_images/Frame 1000000981.png",
           reviewerName: "Emily Anderson",
-          rating: 5,
-          reviewText:
-          "Dr. Patel is a true professional who genuinely cares about his patients. I highly recommend Dr. Patel to anyone seeking exceptional cardiac care.",
+          appoitment: appointmentModel,
         ),
         15.verticalSpace,
         40.verticalSpace,
@@ -1151,6 +1149,8 @@ class FollowUpRecommendationCard extends StatelessWidget {
   DoctorAppointmentController appointmentController=Get.find();
   @override
   Widget build(BuildContext context) {
+    appointmentModel.status==AppointmentStatus.CANCELLED?options.remove(AppStrings.closeConsultation.tr):null;
+    appointmentModel.status==AppointmentStatus.COMPLETED?options.remove(AppStrings.closeConsultation.tr):null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1240,7 +1240,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               Get.back();
-             await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELLED);
+             await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -1261,14 +1261,12 @@ class FollowUpRecommendationCard extends StatelessWidget {
 
 class ReviewCard extends StatelessWidget {
   final String reviewerName;
-  final double rating;
-  final String reviewText;
+  final DoctorAppointment appoitment;
   final String image;
 
   const ReviewCard({
     required this.reviewerName,
-    required this.rating,
-    required this.reviewText,
+    required this.appoitment,
     required this.image,
     super.key,
   });
@@ -1278,7 +1276,7 @@ class ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return appoitment.reviews!.isNotEmpty?Padding(
       padding: EdgeInsets.symmetric(horizontal: 0.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1292,8 +1290,8 @@ class ReviewCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CircleAvatar(
-                    radius: 20.r,
-                    backgroundImage: AssetImage(image),
+                    radius: 40.r,
+                    backgroundImage: NetworkImage(appoitment.reviews!.first.patientId.profileImage),
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
@@ -1321,7 +1319,7 @@ class ReviewCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              rating.toStringAsFixed(1),
+                             "${appoitment.reviews!.first.rating}.0",
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
@@ -1331,7 +1329,7 @@ class ReviewCard extends StatelessWidget {
                             SizedBox(width: 4.w),
                             ...List.generate(5, (index) {
                               return Icon(
-                                index < rating.floor()
+                                index < appoitment.reviews!.first.rating.floor()
                                     ? Icons.star
                                     : Icons.star_border,
                                 color: _starColor,
@@ -1347,7 +1345,7 @@ class ReviewCard extends StatelessWidget {
               ),
               SizedBox(height: 8.h),
               Text(
-                reviewText,
+                appoitment.reviews!.first.review,
                 style: TextStyle(
                   fontSize: 14.sp,
                   height: 1.4,
@@ -1358,6 +1356,6 @@ class ReviewCard extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ):SizedBox();
   }
 }

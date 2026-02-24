@@ -42,7 +42,7 @@ class AppointmentDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("object${appointment.isReschedule!.isAccept}");
+    print("object ${appointment.id}");
     return Scaffold(
       body: Container(
         height: 1.sh,

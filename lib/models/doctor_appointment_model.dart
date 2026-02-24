@@ -65,6 +65,8 @@ class DoctorAppointment {
   final PrescriptionInfo? prescriptionId;
   final List<FollowUp>? followUps;
   final SOAP? soap;
+  final List<Reviews>? reviews;
+  final Map<String, dynamic>? cancellation;
 
   DoctorAppointment({
     required this.id,
@@ -88,6 +90,8 @@ class DoctorAppointment {
     this.prescriptionId,
     this.followUps,
     this.soap,
+    this.reviews,
+    this.cancellation,
   });
 
   factory DoctorAppointment.fromJson(Map<String, dynamic> json) {
@@ -125,6 +129,12 @@ class DoctorAppointment {
           .toList()
           : null,
       soap: json['SOAP'] != null ? SOAP.fromJson(json['SOAP'] as Map<String, dynamic>) : null,
+      reviews: json['reviews'] != null
+          ? (json['reviews'] as List)
+          .map((item) => Reviews.fromJson(item as Map<String, dynamic>))
+          .toList()
+          : null,
+      cancellation: json['cancellation'] as Map<String, dynamic>?,
     );
   }
 
@@ -134,7 +144,6 @@ class DoctorAppointment {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -162,6 +171,8 @@ class DoctorAppointment {
       'prescriptionId': prescriptionId?.toJson(),
       'followUps': followUps?.map((item) => item.toJson()).toList(),
       'SOAP': soap?.toJson(),
+      'reviews': reviews?.map((item) => item.toJson()).toList(),
+      'cancellation': cancellation,
     };
   }
 
@@ -289,7 +300,6 @@ class FollowUp {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -471,7 +481,6 @@ class PatientInfo {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -551,7 +560,6 @@ class TimeSlot {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -664,7 +672,6 @@ class PrescriptionInfo {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -731,6 +738,82 @@ class Medication {
       'frequency': frequency,
       'duration': duration,
       '_id': id,
+    };
+  }
+}
+
+class Reviews {
+  final String id;
+  final DoctorInfo doctorId;
+  final PatientInfo patientId;
+  final String appointmentId;
+  final int rating;
+  final String review;
+  final bool ratingGiven;
+  final int v;
+
+  Reviews({
+    required this.id,
+    required this.doctorId,
+    required this.patientId,
+    required this.appointmentId,
+    required this.rating,
+    required this.review,
+    required this.ratingGiven,
+    required this.v,
+  });
+
+  factory Reviews.fromJson(Map<String, dynamic> json) {
+    return Reviews(
+      id: json['_id'] as String? ?? '',
+      doctorId: DoctorInfo.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
+      patientId: PatientInfo.fromJson(json['patientId'] as Map<String, dynamic>? ?? {}),
+      appointmentId: json['appointmentId'] as String? ?? '',
+      rating: json['rating'] as int? ?? 0,
+      review: json['review'] as String? ?? '',
+      ratingGiven: json['ratingGiven'] as bool? ?? false,
+      v: json['__v'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'doctorId': doctorId.toJson(),
+      'patientId': patientId.toJson(),
+      'appointmentId': appointmentId,
+      'rating': rating,
+      'review': review,
+      'ratingGiven': ratingGiven,
+      '__v': v,
+    };
+  }
+}
+
+class DoctorInfo {
+  final String id;
+  final String fullName;
+  final String profileImage;
+
+  DoctorInfo({
+    required this.id,
+    required this.fullName,
+    required this.profileImage,
+  });
+
+  factory DoctorInfo.fromJson(Map<String, dynamic> json) {
+    return DoctorInfo(
+      id: json['_id'] as String? ?? '',
+      fullName: json['fullName'] as String? ?? '',
+      profileImage: json['profileImage'] as String? ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'fullName': fullName,
+      'profileImage': profileImage,
     };
   }
 }

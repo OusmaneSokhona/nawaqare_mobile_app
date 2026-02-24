@@ -41,6 +41,7 @@ class DoctorAppointmentDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(appointmentModel.id);
     return Scaffold(
       body: Container(
         height: 1.sh,

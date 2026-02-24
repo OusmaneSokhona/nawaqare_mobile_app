@@ -1120,6 +1120,7 @@ class AppStrings {
   static const failedToDeleteSlot = 'failedToDeleteSlot';
   static const availableSlots = 'availableSlots';
   static const delete = 'delete';
+  static const addReview = 'add_review';
 
   // Months
   static const String january = 'january';

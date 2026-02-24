@@ -4,13 +4,11 @@ import 'package:patient_app/controllers/patient_controllers/appointment_controll
 import 'package:intl/intl.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:patient_app/models/card_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:dio/dio.dart' as dio_instance;
 
 class PaymentController extends GetxController {
   RxString selectedPayment = "".obs;
-  BookAppointmentController bookAppointmentController =
-  Get.put(BookAppointmentController());
+  BookAppointmentController bookAppointmentController = Get.put(BookAppointmentController());
 
   List<String> payments = [
     "Credit/Debit Card",
@@ -37,17 +35,17 @@ class PaymentController extends GetxController {
   TextEditingController expiryDateController = TextEditingController();
 
   final selectedDate = DateTime(DateTime.now().year + 2, 1).obs;
-  final cvv = '1234'.obs;
 
   RxBool isProcessingPayment = false.obs;
-  RxString paymentError = "".obs;
-  RxString paymentIntentId = "".obs;
   RxBool isLoadingSavedCards = false.obs;
+  RxString paymentError = "".obs;
 
   final paymentAmount = 5000;
   final paymentCurrency = 'usd';
 
   final String stripePublishableKey = 'pk_test_TYooMQauvdEDq54NiTphI7jx';
+  // NEVER use secret key here in production - only for temporary local testing
+  // Move ALL secret-key operations to your backend!
   final String stripeSecretKey = 'STRIPE_KEY_REMOVED';
 
   String get formattedDate {
@@ -62,6 +60,18 @@ class PaymentController extends GetxController {
   void onInit() {
     super.onInit();
     initStripe();
+    if (savedCards.isEmpty) {
+      CardModel demoCard = CardModel(id: 'demo', cardHolderName: 'Test User', cardNumber: '4242 4242 4242 4242', expiryDate: '12/34', cvv: '123', cardBrand: '');
+      demoCard.id = 'demo';
+      demoCard.cardHolderName = 'Test User';
+      demoCard.cardNumber = '4242 4242 4242 4242';
+      demoCard.expiryDate = '12/34';
+      demoCard.cvv = '123';
+      demoCard.isDefault = true;
+      savedCards.add(demoCard);
+      selectedCard.value = demoCard;
+      selectedPayment.value = "Credit/Debit Card";
+    }
   }
 
   Future<void> initStripe() async {
@@ -69,7 +79,7 @@ class PaymentController extends GetxController {
       Stripe.publishableKey = stripePublishableKey;
       await Stripe.instance.applySettings();
     } catch (e) {
-      debugPrint('Error initializing Stripe: $e');
+      debugPrint('Error: $e');
     }
   }
 
@@ -81,7 +91,6 @@ class PaymentController extends GetxController {
   Future<bool> addNewCard(CardModel newCard) async {
     try {
       isLoadingSavedCards.value = true;
-
       newCard.id = DateTime.now().millisecondsSinceEpoch.toString();
 
       if (savedCards.isEmpty || newCard.isDefault) {
@@ -104,7 +113,6 @@ class PaymentController extends GetxController {
       );
 
       clearCardInputFields();
-
       return true;
     } catch (e) {
       Get.snackbar(
@@ -123,7 +131,6 @@ class PaymentController extends GetxController {
   Future<bool> deleteCard(String cardId) async {
     try {
       isLoadingSavedCards.value = true;
-
       savedCards.removeWhere((card) => card.id == cardId);
 
       if (selectedCard.value?.id == cardId) {
@@ -224,11 +231,6 @@ class PaymentController extends GetxController {
       return false;
     }
 
-    if (!RegExp(r'^[0-9]+$').hasMatch(cvv)) {
-      paymentError.value = "CVV must contain only numbers";
-      return false;
-    }
-
     if (holderName.trim().isEmpty) {
       paymentError.value = "Card holder name is required";
       return false;
@@ -240,33 +242,19 @@ class PaymentController extends GetxController {
 
   String detectCardBrand(String cardNumber) {
     String cleanNumber = cardNumber.replaceAll(' ', '');
-
-    if (cleanNumber.startsWith('4')) {
-      return 'Visa';
-    } else if (cleanNumber.startsWith('5')) {
-      return 'Mastercard';
-    } else if (cleanNumber.startsWith('34') || cleanNumber.startsWith('37')) {
-      return 'American Express';
-    } else if (cleanNumber.startsWith('6')) {
-      return 'Discover';
-    } else if (cleanNumber.startsWith('2')) {
-      return 'Mir';
-    } else {
-      return 'Card';
-    }
+    if (cleanNumber.startsWith('4')) return 'Visa';
+    if (cleanNumber.startsWith('5')) return 'Mastercard';
+    if (cleanNumber.startsWith('34') || cleanNumber.startsWith('37')) return 'American Express';
+    return 'Card';
   }
 
   void formatCardNumber(String value) {
     String formatted = value.replaceAll(' ', '');
     StringBuffer buffer = StringBuffer();
-
     for (int i = 0; i < formatted.length; i++) {
-      if (i > 0 && i % 4 == 0) {
-        buffer.write(' ');
-      }
+      if (i > 0 && i % 4 == 0) buffer.write(' ');
       buffer.write(formatted[i]);
     }
-
     cardNumberController.value = TextEditingValue(
       text: buffer.toString(),
       selection: TextSelection.collapsed(offset: buffer.length),
@@ -279,18 +267,6 @@ class PaymentController extends GetxController {
       initialDate: selectedDate.value,
       firstDate: DateTime.now(),
       lastDate: DateTime(DateTime.now().year + 10),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: Colors.blue,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null && picked != selectedDate.value) {
@@ -308,17 +284,18 @@ class PaymentController extends GetxController {
     paymentError.value = "";
   }
 
-  Future<Map<String, dynamic>> createPaymentIntent(String paymentMethodId) async {
+  Future<Map<String, dynamic>> createPaymentIntentOnBackend(String paymentMethodId) async {
     try {
-      final url = Uri.parse('https://api.stripe.com/v1/payment_intents');
-
-      final response = await http.post(
-        url,
-        headers: {
-          'Authorization': 'Bearer $stripeSecretKey',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {
+      dio_instance.Dio dio = dio_instance.Dio();
+      final response = await dio.post(
+        'https://api.stripe.com/v1/payment_intents',
+        options: dio_instance.Options(
+          headers: {
+            'Authorization': 'Bearer $stripeSecretKey',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        ),
+        data: {
           'amount': (paymentAmount * 100).toString(),
           'currency': paymentCurrency,
           'payment_method': paymentMethodId,
@@ -328,36 +305,12 @@ class PaymentController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return response.data;
       } else {
-        throw Exception('Failed to create payment intent: ${response.body}');
+        throw Exception('Backend failed: ${response.statusCode} - ${response.data}');
       }
     } catch (e) {
-      throw Exception('Failed to create payment intent: $e');
-    }
-  }
-
-  Future<PaymentMethod?> createStripePaymentMethod() async {
-    try {
-      if (selectedCard.value == null) return null;
-
-      CardModel card = selectedCard.value!;
-      String cleanCardNumber = card.cardNumber.replaceAll(' ', '');
-      List<String> expiryParts = card.expiryDate.split('/');
-
-      final params = PaymentMethodParams.card(
-        paymentMethodData: PaymentMethodData(
-        ),
-      );
-
-      PaymentMethod paymentMethod = await Stripe.instance.createPaymentMethod(
-        params: params,
-      );
-
-      return paymentMethod;
-    } catch (e) {
-      paymentError.value = 'Failed to create payment method: $e';
-      return null;
+      throw Exception('Failed to create PaymentIntent: $e');
     }
   }
 
@@ -366,183 +319,139 @@ class PaymentController extends GetxController {
       isProcessingPayment.value = true;
       paymentError.value = "";
 
-      PaymentMethod? paymentMethod = await createStripePaymentMethod();
-      if (paymentMethod == null) {
-        isProcessingPayment.value = false;
+      if (selectedCard.value == null) {
+        paymentError.value = "No card selected";
         return false;
       }
 
-      Map<String, dynamic> paymentIntent = await createPaymentIntent(paymentMethod.id);
+      final card = selectedCard.value!;
+      final cleanNumber = card.cardNumber.replaceAll(RegExp(r'\s+'), '');
 
-      final result = await Stripe.instance.confirmPayment(
-        paymentIntentClientSecret: paymentIntent['client_secret'],
+      final expiryParts = card.expiryDate.split('/');
+      if (expiryParts.length != 2) {
+        paymentError.value = "Invalid expiry format";
+        return false;
+      }
+
+      final expMonth = int.tryParse(expiryParts[0].trim());
+      final expYearRaw = expiryParts[1].trim();
+      final expYear = int.tryParse(expYearRaw.length == 2 ? '20$expYearRaw' : expYearRaw);
+
+      if (expMonth == null || expMonth < 1 || expMonth > 12 || expYear == null) {
+        paymentError.value = "Invalid expiry date";
+        return false;
+      }
+
+      await Stripe.instance.dangerouslyUpdateCardDetails(
+        CardDetails(
+          number: cleanNumber,
+          cvc: card.cvv.trim(),
+          expirationMonth: expMonth,
+          expirationYear: expYear,
+        ),
       );
 
-      if (result.status == PaymentIntentsStatus.Succeeded) {
-        Get.snackbar(
-          'Success',
-          'Payment completed successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          duration: const Duration(seconds: 3),
-        );
-        isProcessingPayment.value = false;
-        return true;
-      } else {
-        paymentError.value = 'Payment failed: ${result.status}';
-        isProcessingPayment.value = false;
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      final paymentMethod = await Stripe.instance.createPaymentMethod(
+        params: PaymentMethodParams.card(
+          paymentMethodData: PaymentMethodData(
+            billingDetails: BillingDetails(name: card.cardHolderName.trim()),
+          ),
+        ),
+      );
+
+      debugPrint('PaymentMethod created: ${paymentMethod.id}');
+
+      final paymentIntentData = await createPaymentIntentOnBackend(paymentMethod.id);
+
+      final clientSecret = paymentIntentData['client_secret'] as String?;
+      if (clientSecret == null || clientSecret.isEmpty) {
+        paymentError.value = "No client secret received";
         return false;
       }
-    } catch (e) {
-      isProcessingPayment.value = false;
-      paymentError.value = e.toString();
+
+      final confirmationResult = await Stripe.instance.confirmPayment(
+        paymentIntentClientSecret: clientSecret,
+        data:  PaymentMethodParams.affirm(paymentMethodData: PaymentMethodData()),
+      );
+
+      if (confirmationResult.status == PaymentIntentsStatus.Succeeded) {
+        Get.snackbar('Success', 'Payment completed', backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      } else {
+        paymentError.value = "Confirmation failed: ${confirmationResult.status}";
+        return false;
+      }
+    } on StripeException catch (e) {
+      paymentError.value = e.error.localizedMessage ?? e.toString();
+      Get.snackbar('Payment Error', paymentError.value, backgroundColor: Colors.red, colorText: Colors.white);
       return false;
+    } catch (e) {
+      paymentError.value = e.toString();
+      Get.snackbar('Error', paymentError.value, backgroundColor: Colors.red, colorText: Colors.white);
+      return false;
+    } finally {
+      isProcessingPayment.value = false;
     }
   }
 
   Future<bool> processPaypalPayment() async {
-    try {
-      isProcessingPayment.value = true;
-      paymentError.value = "";
-      await Future.delayed(const Duration(seconds: 2));
-      isProcessingPayment.value = false;
-      Get.snackbar(
-        'Success',
-        'PayPal payment successful',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-      return true;
-    } catch (e) {
-      isProcessingPayment.value = false;
-      paymentError.value = e.toString();
-      return false;
-    }
+    isProcessingPayment.value = true;
+    await Future.delayed(const Duration(seconds: 2));
+    isProcessingPayment.value = false;
+    return true;
   }
 
   Future<bool> processOrangeMoneyPayment() async {
-    try {
-      isProcessingPayment.value = true;
-      paymentError.value = "";
-      await Future.delayed(const Duration(seconds: 2));
-      isProcessingPayment.value = false;
-      Get.snackbar(
-        'Success',
-        'Orange Money payment successful',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-      return true;
-    } catch (e) {
-      isProcessingPayment.value = false;
-      paymentError.value = e.toString();
-      return false;
-    }
+    isProcessingPayment.value = true;
+    await Future.delayed(const Duration(seconds: 2));
+    isProcessingPayment.value = false;
+    return true;
   }
 
   Future<bool> processWavePayment() async {
-    try {
-      isProcessingPayment.value = true;
-      paymentError.value = "";
-      await Future.delayed(const Duration(seconds: 2));
-      isProcessingPayment.value = false;
-      Get.snackbar(
-        'Success',
-        'Wave payment successful',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
-      return true;
-    } catch (e) {
-      isProcessingPayment.value = false;
-      paymentError.value = e.toString();
-      return false;
-    }
+    isProcessingPayment.value = true;
+    await Future.delayed(const Duration(seconds: 2));
+    isProcessingPayment.value = false;
+    return true;
   }
 
   Future<bool> processPayment() async {
     if (selectedPayment.value.isEmpty) {
-      paymentError.value = "Please select a payment method";
-      Get.snackbar(
-        'Error',
-        'Please select a payment method',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      Get.snackbar('Error', 'Please select a payment method', backgroundColor: Colors.red, colorText: Colors.white);
       return false;
     }
 
-    if (selectedPayment.value == "Credit/Debit Card" && savedCards.isEmpty) {
-      paymentError.value = "Please add a card first";
-      Get.snackbar(
-        'Error',
-        'No cards found. Please add a card.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (selectedPayment.value == "Credit/Debit Card" && selectedCard.value == null) {
-      paymentError.value = "Please select a card";
-      Get.snackbar(
-        'Error',
-        'Please select a card',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
+    if (selectedPayment.value == "Credit/Debit Card") {
+      if (savedCards.isEmpty || selectedCard.value == null) {
+        Get.snackbar('Error', 'Please select a valid card', backgroundColor: Colors.red, colorText: Colors.white);
+        return false;
+      }
+      return await processCardPayment();
     }
 
     switch (selectedPayment.value) {
-      case "Credit/Debit Card":
-        return await processCardPayment();
-      case "Paypal":
-        return await processPaypalPayment();
-      case "Orange Money":
-        return await processOrangeMoneyPayment();
-      case "Wave":
-        return await processWavePayment();
+      case "Paypal": return await processPaypalPayment();
+      case "Orange Money": return await processOrangeMoneyPayment();
+      case "Wave": return await processWavePayment();
       case "Cash":
         if (bookAppointmentController.appointmentType.value != "homeVisit") {
-          Get.snackbar(
-            'Error',
-            'Cash payment is only available for home visits',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
+          Get.snackbar('Error', 'Cash only for home visits', backgroundColor: Colors.red, colorText: Colors.white);
           return false;
         }
-        Get.snackbar(
-          'Success',
-          'Booking confirmed with Cash payment',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
         return true;
-      default:
-        return false;
+      default: return false;
     }
   }
 
   void resetPaymentState() {
     isProcessingPayment.value = false;
     paymentError.value = "";
-    paymentIntentId.value = "";
     selectedPayment.value = "";
-    selectedCard.value = savedCards.isNotEmpty ? savedCards.firstWhere(
-          (card) => card.isDefault,
-      orElse: () => savedCards.first,
-    ) : null;
+    if (savedCards.isNotEmpty) {
+      selectedCard.value = savedCards.firstWhere((c) => c.isDefault, orElse: () => savedCards.first);
+    }
     clearCardInputFields();
   }
 

@@ -61,9 +61,11 @@ class Appointment {
   final int v;
   final String? homevisitstatus;
   final RescheduleInfo? isReschedule;
-  final List<dynamic>? followUps;
+  final List<FollowUp>? followUps;
   final String? paymentStatus;
   final Prescription? prescriptionId;
+  final SOAP? soap;
+  final List<Reviews>? reviews; // Changed from Reviews? to List<Reviews>?
 
   Appointment({
     required this.id,
@@ -85,6 +87,8 @@ class Appointment {
     this.followUps,
     this.paymentStatus,
     this.prescriptionId,
+    this.soap,
+    this.reviews,
   });
 
   factory Appointment.fromJson(Map<String, dynamic> json) {
@@ -109,23 +113,32 @@ class Appointment {
       isReschedule: json['isReschedule'] != null
           ? RescheduleInfo.fromJson(json['isReschedule'] as Map<String, dynamic>)
           : null,
-      followUps: json['followUps'] as List<dynamic>?,
+      followUps: json['followUps'] != null
+          ? (json['followUps'] as List<dynamic>)
+          .map((item) => FollowUp.fromJson(item as Map<String, dynamic>))
+          .toList()
+          : null,
       paymentStatus: json['paymentStatus']?.toString(),
       prescriptionId: json['prescriptionId'] != null
           ? Prescription.fromJson(json['prescriptionId'] as Map<String, dynamic>)
+          : null,
+      soap: json['SOAP'] != null
+          ? SOAP.fromJson(json['SOAP'] as Map<String, dynamic>)
+          : null,
+      reviews: json['reviews'] != null
+          ? (json['reviews'] as List<dynamic>)
+          .map((item) => Reviews.fromJson(item as Map<String, dynamic>))
+          .toList()
           : null,
     );
   }
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
-      // Parse the string and convert to local time
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -148,9 +161,11 @@ class Appointment {
       '__v': v,
       'homevisitstatus': homevisitstatus,
       'isReschedule': isReschedule?.toJson(),
-      'followUps': followUps,
+      'followUps': followUps?.map((f) => f.toJson()).toList(),
       'paymentStatus': paymentStatus,
       'prescriptionId': prescriptionId?.toJson(),
+      'SOAP': soap?.toJson(),
+      'reviews': reviews?.map((r) => r.toJson()).toList(),
     };
   }
 
@@ -232,6 +247,206 @@ class Appointment {
 
       return '$weekday, ${appointmentDate.day} $month';
     }
+  }
+}
+
+class SOAP {
+  final String? subjective;
+  final String? objective;
+  final String? assessment;
+  final String? plan;
+  final String? diagnosis;
+
+  SOAP({
+    this.subjective,
+    this.objective,
+    this.assessment,
+    this.plan,
+    this.diagnosis,
+  });
+
+  factory SOAP.fromJson(Map<String, dynamic> json) {
+    return SOAP(
+      subjective: json['subjective']?.toString(),
+      objective: json['objective']?.toString(),
+      assessment: json['assessment']?.toString(),
+      plan: json['plan']?.toString(),
+      diagnosis: json['diagnosis']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'subjective': subjective,
+      'objective': objective,
+      'assessment': assessment,
+      'plan': plan,
+      'diagnosis': diagnosis,
+    };
+  }
+}
+
+class FollowUp {
+  final String id;
+  final TimeSlotId timeSlotId;
+  final List<dynamic> prescriptions;
+  final int followupPrice;
+  final String paymentIntent;
+  final String paymentStatus;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
+
+  FollowUp({
+    required this.id,
+    required this.timeSlotId,
+    required this.prescriptions,
+    required this.followupPrice,
+    required this.paymentIntent,
+    required this.paymentStatus,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+  });
+
+  factory FollowUp.fromJson(Map<String, dynamic> json) {
+    return FollowUp(
+      id: json['_id']?.toString() ?? '',
+      timeSlotId: TimeSlotId.fromJson(json['timeSlotId'] as Map<String, dynamic>? ?? {}),
+      prescriptions: json['prescriptions'] as List<dynamic>? ?? [],
+      followupPrice: (json['followupPrice'] as num?)?.toInt() ?? 0,
+      paymentIntent: json['paymentIntent']?.toString() ?? '',
+      paymentStatus: json['paymentStatus']?.toString() ?? 'pending',
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
+      v: (json['__v'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'timeSlotId': timeSlotId.toJson(),
+      'prescriptions': prescriptions,
+      'followupPrice': followupPrice,
+      'paymentIntent': paymentIntent,
+      'paymentStatus': paymentStatus,
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
+      '__v': v,
+    };
+  }
+}
+
+class TimeSlotId {
+  final String id;
+  final DateTime startTime;
+  final DateTime endTime;
+  final String status;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final int v;
+
+  TimeSlotId({
+    required this.id,
+    required this.startTime,
+    required this.endTime,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.v,
+  });
+
+  factory TimeSlotId.fromJson(Map<String, dynamic> json) {
+    return TimeSlotId(
+      id: json['_id']?.toString() ?? '',
+      startTime: _parseToLocalDateTime(json['startTime']),
+      endTime: _parseToLocalDateTime(json['endTime']),
+      status: json['status']?.toString() ?? 'booked',
+      createdAt: _parseToLocalDateTime(json['createdAt']),
+      updatedAt: _parseToLocalDateTime(json['updatedAt']),
+      v: (json['__v'] as num?)?.toInt() ?? 0,
+    );
+  }
+
+  static DateTime _parseToLocalDateTime(dynamic value) {
+    if (value == null) return DateTime.now();
+    try {
+      final utcDateTime = DateTime.parse(value.toString());
+      return utcDateTime.toLocal();
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'startTime': startTime.toUtc().toIso8601String(),
+      'endTime': endTime.toUtc().toIso8601String(),
+      'status': status,
+      'createdAt': createdAt.toUtc().toIso8601String(),
+      'updatedAt': updatedAt.toUtc().toIso8601String(),
+      '__v': v,
+    };
+  }
+}
+
+class Reviews {
+  final String id;
+  final Doctor doctorId;
+  final Patient patientId;
+  final String appointmentId;
+  final int rating;
+  final String review;
+  final bool ratingGiven;
+  final int v;
+
+  Reviews({
+    required this.id,
+    required this.doctorId,
+    required this.patientId,
+    required this.appointmentId,
+    required this.rating,
+    required this.review,
+    required this.ratingGiven,
+    required this.v,
+  });
+
+  factory Reviews.fromJson(Map<String, dynamic> json) {
+    return Reviews(
+      id: json['_id'] as String? ?? '',
+      doctorId: Doctor.fromJson(json['doctorId'] as Map<String, dynamic>? ?? {}),
+      patientId: Patient.fromJson(json['patientId'] as Map<String, dynamic>? ?? {}),
+      appointmentId: json['appointmentId'] as String? ?? '',
+      rating: json['rating'] as int? ?? 0,
+      review: json['review'] as String? ?? '',
+      ratingGiven: json['ratingGiven'] as bool? ?? false,
+      v: json['__v'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'doctorId': doctorId.toJson(),
+      'patientId': patientId.toJson(),
+      'appointmentId': appointmentId,
+      'rating': rating,
+      'review': review,
+      'ratingGiven': ratingGiven,
+      '__v': v,
+    };
   }
 }
 
@@ -319,12 +534,10 @@ class Patient {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -432,12 +645,10 @@ class Timeslot {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -504,7 +715,7 @@ class RescheduleInfo {
 
   factory RescheduleInfo.fromJson(Map<String, dynamic> json) {
     return RescheduleInfo(
-      isAccept: json['isAccept']?.toString() ?? 'pending',
+      isAccept: json['isAccept']?.toString() ?? 'notset',
       reason: json['reason']?.toString(),
       role: json['role']?.toString(),
     );
@@ -521,6 +732,7 @@ class RescheduleInfo {
   bool get isPending => isAccept == 'pending';
   bool get isAccepted => isAccept == 'accepted';
   bool get isRejected => isAccept == 'rejected';
+  bool get isNotSet => isAccept == 'notset';
 }
 
 class Prescription {
@@ -579,12 +791,10 @@ class Prescription {
 
   static DateTime _parseToLocalDateTime(dynamic value) {
     if (value == null) return DateTime.now();
-
     try {
       final utcDateTime = DateTime.parse(value.toString());
       return utcDateTime.toLocal();
     } catch (e) {
-      print('Error parsing date: $e');
       return DateTime.now();
     }
   }
@@ -679,12 +889,8 @@ class ConsultationTypeExtension {
   static ConsultationType fromString(String value) {
     switch (value.toLowerCase()) {
       case 'homevisit':
-      case 'home_visit':
-      case 'home-visit':
         return ConsultationType.homevisit;
       case 'inperson':
-      case 'in_person':
-      case 'in-person':
         return ConsultationType.inperson;
       case 'remote':
         return ConsultationType.remote;

@@ -1203,6 +1203,7 @@ class Languages extends Translations {
       AppStrings.failedToDeleteSlot: "Failed to delete slot",
       AppStrings.availableSlots: "Available Slots",
       AppStrings.delete: "Delete",
+      AppStrings.addReview: "Add Review",
     },
     'fr_FR': {
       AppStrings.langSupport: "Support Linguistique",
@@ -2429,6 +2430,7 @@ class Languages extends Translations {
       AppStrings.failedToDeleteSlot: "Échec de la suppression du créneau",
       AppStrings.availableSlots: "Créneaux disponibles",
       AppStrings.delete: "Supprimer",
+      AppStrings.addReview: "Ajouter un avis",
     },
   };
 }

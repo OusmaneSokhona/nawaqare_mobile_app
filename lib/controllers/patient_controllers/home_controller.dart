@@ -23,7 +23,6 @@ class HomeController extends GetxController {
   Future<void> fetchAppointments() async {
     print("token= ${await LocalStorageUtils.getToken()}");
     try {
-      isLoading.value = true;
 
       final response = await apiService.get(ApiUrls.getAppointments);
 
@@ -89,7 +88,7 @@ class HomeController extends GetxController {
       print('Error fetching appointments: $e');
       Get.snackbar(AppStrings.warning.tr, 'Failed to fetch appointments: $e');
     } finally {
-      isLoading.value = false;
+
     }
   }
   @override

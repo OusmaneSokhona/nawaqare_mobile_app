@@ -8,7 +8,6 @@ import 'package:patient_app/screens/patient_screens/video_call_screens/help_cent
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
-import 'package:patient_app/utils/locat_storage.dart';
 import 'package:patient_app/widgets/category_button.dart';
 import 'package:patient_app/widgets/patient_widgets/prescription_widgets/next_action_row.dart';
 import 'package:patient_app/widgets/patient_widgets/order_widgets/order_tracking_card.dart';
@@ -24,6 +23,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.fetchAppointments();
+    });
     return Scaffold(
       body: Obx(() {
         if (homeController.isLoading.value) {

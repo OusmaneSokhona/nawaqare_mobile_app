@@ -50,16 +50,7 @@ class NotificationScreen extends StatelessWidget {
                     ),
                   ),
                   10.horizontalSpace,
-                  InkWell(
-                    onTap: (){
-                      Get.to(
-                            () => ConsultaionFinishedScreen(
-                          appointmentId: '698088abd111b5b39c64f1f9',
-                          doctorName: 'Dr. Maria Waston',
-                        ),
-                      );
-                    },
-                    child: Text(
+                  Text(
                       AppStrings.notifications.tr,
                       style: TextStyle(
                         color: Colors.black,
@@ -68,7 +59,6 @@ class NotificationScreen extends StatelessWidget {
                         fontFamily: AppFonts.jakartaBold,
                       ),
                     ),
-                  ),
                   Spacer(),
                   Container(
                     decoration: BoxDecoration(

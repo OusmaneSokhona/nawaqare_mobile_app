@@ -6,6 +6,7 @@ import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import '../../../models/appointment_model.dart';
+import '../../../screens/patient_screens/video_call_screens/consultaion_finished_screen.dart';
 import '../../../utils/app_colors.dart';
 
 class AppointmentWidget extends StatelessWidget {
@@ -155,6 +156,23 @@ class AppointmentWidget extends StatelessWidget {
               onTap: onTap,
               height: 40.h,
             ),
+            if(appointment.status==AppointmentStatus.completed&&appointment.reviews==null&&isCompleted)
+              10.verticalSpace,
+            if(appointment.status==AppointmentStatus.completed&&appointment.reviews==null&&isCompleted)
+              CustomButton(
+                borderRadius: 15,
+                text: AppStrings.addReview.tr,
+                onTap: (){
+                  Get.to(
+                        () => ConsultaionFinishedScreen(
+                      appointmentId: appointment.id,
+                      doctorName: appointment.doctorId.fullName,
+                          onComplete: (){controller.fetchAppointments();},
+                    ),
+                  );
+                },
+                height: 40.h,
+              ),
           ],
         ),
       ),
@@ -185,12 +203,12 @@ class AppointmentWidget extends StatelessWidget {
   }
 
   Widget _buildStatusOrRating() {
-    if (isCompleted) {
+    if (isCompleted&&appointment.reviews!=null) {
       return Row(
         children: [
           const Icon(Icons.star, color: Colors.orange, size: 16),
           4.horizontalSpace,
-          Text("5.0/5", style: TextStyle(fontSize: 13.sp)),
+          Text("${appointment.reviews!.first.rating}.0/5", style: TextStyle(fontSize: 13.sp)),
           20.horizontalSpace,
         ],
       );
@@ -256,14 +274,14 @@ class AppointmentWidget extends StatelessWidget {
               ),
               Row(
                 children: [
-                  const Icon(Icons.star, color: Colors.orange, size: 16),
-                  4.horizontalSpace,
-                  Text(
+                  appointment.reviews!=null?Icon(Icons.star, color: Colors.orange, size: 16):SizedBox(),
+                  appointment.reviews!=null?4.horizontalSpace:0.horizontalSpace,
+                  appointment.reviews!=null?Text(
                     "5.0",
                     style: TextStyle(fontSize: 13.sp),
-                  ),
-                  7.horizontalSpace,
-                  Container(height: 15.h, width: 1.w, color: AppColors.primaryColor),
+                  ):SizedBox(),
+                  appointment.reviews!=null?7.horizontalSpace:0.horizontalSpace,
+                  appointment.reviews!=null?Container(height: 15.h, width: 1.w, color: AppColors.primaryColor):SizedBox(),
                   7.horizontalSpace,
                   Text(
                     "${AppStrings.fee.tr}: ",

@@ -488,7 +488,7 @@ class DoctorAppointmentController extends GetxController {
     }
   }
 
-  Future<void> updateAppointmentStatus(String appointmentId, String status) async {
+  Future<void> updateAppointmentStatus(String appointmentId, String status,bool isBackTrue) async {
     try {
       isLoading.value = true;
 
@@ -498,7 +498,7 @@ class DoctorAppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        Get.back();
+        isBackTrue?Get.back():null;
         Get.snackbar(
           "Success",
           "Appointment status updated successfully",

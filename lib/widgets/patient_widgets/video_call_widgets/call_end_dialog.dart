@@ -123,7 +123,7 @@ class CallEndDialog extends StatelessWidget {
                           if (await LocalStorageUtils.getLoginedDoctor()) {
                              appointmentController.updateAppointmentStatus(
                               videoCallController.appointmentId.value,
-                              AppointmentStatus.COMPLETED,
+                              AppointmentStatus.COMPLETED,true
                             );
                             Get.offAll(
                               MainScreenDoctor(),

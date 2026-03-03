@@ -25,8 +25,6 @@ dependencies:
   agora_rtc_engine: ^6.5.3
   table_calendar: ^3.2.0
   flutter_stripe: ^12.2.0
-  stripe_android: ^12.2.0
-  stripe_ios: ^12.2.0
 
 dev_dependencies:
   flutter_test:

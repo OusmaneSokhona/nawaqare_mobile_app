@@ -530,7 +530,7 @@ class TimeSlotsGrid extends StatelessWidget {
           return GestureDetector(
             onTap: () => controller.selectTime(timeSlot.id),
             child: Container(
-              width: 0.285.sw,
+              width: 0.265.sw,
               height: 50.h,
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primaryColor : Colors.white,

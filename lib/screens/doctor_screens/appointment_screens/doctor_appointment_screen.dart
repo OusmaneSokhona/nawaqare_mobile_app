@@ -486,7 +486,7 @@ class DoctorAppointmentScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               Get.back();
-              controller.updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELLED);
+              controller.updateAppointmentStatus(appointmentId, AppointmentStatus.CANCELLED,false);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

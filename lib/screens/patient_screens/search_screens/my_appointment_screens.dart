@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/payment_controller.dart';
 import 'package:patient_app/models/appointment_model.dart';
+import 'package:patient_app/screens/patient_screens/main_screen.dart';
 import 'package:patient_app/widgets/progress_stepper.dart';
+import 'package:patient_app/widgets/patient_widgets/search_widgets/appointment_confimation_dialog.dart';
 import '../../../controllers/patient_controllers/appointment_controllers/book_appointment_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -11,7 +14,6 @@ import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../widgets/patient_widgets/search_widgets/my_appointment_doctor_card.dart';
 import '../../../widgets/patient_widgets/search_widgets/summary_card.dart';
-import '../appointment_screens/payment_screen.dart';
 
 class MyAppointmentScreens extends StatelessWidget {
   final AppointmentModel model;
@@ -19,6 +21,7 @@ class MyAppointmentScreens extends StatelessWidget {
   MyAppointmentScreens({super.key, required this.model});
 
   final BookAppointmentController controller = Get.put(BookAppointmentController());
+  final PaymentController paymentController = Get.put(PaymentController());
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +73,7 @@ class MyAppointmentScreens extends StatelessWidget {
                       30.verticalSpace,
                       Padding(
                         padding: EdgeInsets.only(right: 13.sp),
-                        child: const ProgressStepper(currentStep: 2, totalSteps: 3),
+                        child: const ProgressStepper(currentStep: 2, totalSteps: 2),
                       ),
                       5.verticalSpace,
                       Row(
@@ -78,14 +81,6 @@ class MyAppointmentScreens extends StatelessWidget {
                         children: [
                           Text(
                             AppStrings.section.tr,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13.sp,
-                            ),
-                          ),
-                          100.horizontalSpace,
-                          Text(
-                            AppStrings.details.tr,
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13.sp,
@@ -124,16 +119,51 @@ class MyAppointmentScreens extends StatelessWidget {
                         date: model.date ?? DateTime.now().toIso8601String(),
                         time: model.time ?? '3:00 PM',
                         consultationFee: model.fee ?? 0.0,
-                        totalFee: (model.fee ?? 0.0) + 2.0, // Adding $2 service fee
+                        totalFee: (model.fee ?? 0.0) + 2.0,
                       ),
-                      30.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.next.tr,
-                        onTap: () {
-                          Get.to(() => PaymentScreen(
-                          ));
-                        },
+                      20.verticalSpace,
+                      Obx(
+                            () => paymentController.paymentError.value.isNotEmpty
+                            ? Container(
+                          padding: EdgeInsets.all(12.w),
+                          margin: EdgeInsets.only(bottom: 16.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.red.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(color: AppColors.red.withOpacity(0.3)),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.error_outline, color: AppColors.red, size: 20.sp),
+                              10.horizontalSpace,
+                              Expanded(
+                                child: Text(
+                                  paymentController.paymentError.value,
+                                  style: TextStyle(
+                                    color: AppColors.red,
+                                    fontSize: 14.sp,
+                                    fontFamily: AppFonts.jakartaMedium,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                            : SizedBox.shrink(),
+                      ),
+                      20.verticalSpace,
+                      Obx(
+                            () => CustomButton(
+                          borderRadius: 15,
+                          text: paymentController.isProcessingPayment.value
+                              ? 'Processing...'
+                              : 'Pay \$${((model.fee ?? 0.0) + 2.0).toStringAsFixed(2)}',
+                          onTap: paymentController.isProcessingPayment.value
+                              ? () {}
+                              : () {
+                            _processPayment(context);
+                          },
+                        ),
                       ),
                       30.verticalSpace,
                     ],
@@ -145,5 +175,29 @@ class MyAppointmentScreens extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _processPayment(BuildContext context) async {
+    try {
+      bool paymentSuccess = await paymentController.processPayment();
+
+      if (paymentSuccess) {
+        Get.dialog(
+          barrierDismissible: false,
+          AppointmentConfirmationDialog(
+            doctorName: model.name,
+            date: model.date ?? '12/02/26',
+            time: model.time ?? '10:30',
+            onDone: () {
+              paymentController.resetPaymentState();
+              Get.offAll(MainScreen()); // Navigate to main screen
+            },
+
+          ),
+        );
+      }
+    } catch (e) {
+      print('Payment error: $e');
+    }
   }
 }

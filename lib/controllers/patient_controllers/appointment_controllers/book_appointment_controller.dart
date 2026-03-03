@@ -10,6 +10,7 @@ import 'package:patient_app/utils/api_urls.dart';
 
 class BookAppointmentController extends GetxController {
   RxString appointmentType = "inPerson".obs;
+  RxString appointmentId = "".obs;
   final duration = '30 mint'.obs;
   TextEditingController addressController=TextEditingController();
   TextEditingController notesController=TextEditingController();
@@ -186,7 +187,8 @@ class BookAppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print('Appointment created successfully: ${response.data}');
+        print('Appointment created successfully: ${response.data['appointment']['_id']}');
+        appointmentId.value = response.data['appointment']['_id'] ?? '';
         return response.data;
       } else {
         final errorMessage = response.data?["message"] ?? 'Failed to create appointment';

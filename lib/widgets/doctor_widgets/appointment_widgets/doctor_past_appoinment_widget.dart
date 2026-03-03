@@ -204,11 +204,11 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           ],
         ),
         15.verticalSpace,
-        ReviewCard(
+        appointmentModel.reviews!=null?ReviewCard(
           image: "assets/demo_images/Frame 1000000981.png",
           reviewerName: "Emily Anderson",
           appoitment: appointmentModel,
-        ),
+        ):SizedBox(),
         15.verticalSpace,
         40.verticalSpace,
       ],
@@ -1240,7 +1240,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               Get.back();
-             await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED);
+             await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED,false);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,

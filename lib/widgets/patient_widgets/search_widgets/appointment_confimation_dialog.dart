@@ -9,7 +9,6 @@ class AppointmentConfirmationDialog extends StatelessWidget {
   final String time;
 
   final VoidCallback onDone;
-  final VoidCallback onViewDetails;
 
   const AppointmentConfirmationDialog({
     Key? key,
@@ -17,7 +16,6 @@ class AppointmentConfirmationDialog extends StatelessWidget {
     required this.date,
     required this.time,
     required this.onDone,
-    required this.onViewDetails,
   }) : super(key: key);
 
   @override
@@ -81,27 +79,6 @@ class AppointmentConfirmationDialog extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12.0),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton(
-                onPressed: onViewDetails,
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.grey.shade800,
-                  side: BorderSide.none,
-                  backgroundColor: const Color(0xFFF0F0F0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  AppStrings.viewAppointmentDetails.tr,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ),
-            ),
           ],
         ),
       ),

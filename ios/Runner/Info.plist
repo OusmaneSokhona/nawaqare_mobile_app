@@ -38,6 +38,10 @@
     <string>Agora Video needs camera access</string>
     <key>io.agora.rtc.audio.NSMicrophoneUsageDescription</key>
     <string>Agora Audio needs microphone access</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Scan your card to add it automatically</string>
+    <key>NSCameraUsageDescription</key>
+    <string>To scan cards</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

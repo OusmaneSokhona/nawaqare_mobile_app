@@ -203,7 +203,7 @@ class AppointmentWidget extends StatelessWidget {
   }
 
   Widget _buildStatusOrRating() {
-    if (isCompleted&&appointment.reviews!=null) {
+    if (isCompleted&&appointment.reviews!=null&&appointment.reviews!.isNotEmpty) {
       return Row(
         children: [
           const Icon(Icons.star, color: Colors.orange, size: 16),

@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/auth_controllers/sign_up_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../screens/document_view_screen.dart';
 import 'heatlh_space_grid.dart';
@@ -13,6 +17,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find();
+    final SignUpController signUpController = Get.find<SignUpController>();
 
     return Obx(() {
       final user = homeController.currentUser.value;
@@ -29,7 +34,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
               backgroundColor: Colors.white,
               backgroundImage: userImage != null && userImage.isNotEmpty
                   ? NetworkImage(userImage)
-                  : AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
+                  : const AssetImage("assets/demo_images/home_demo_image.png") as ImageProvider,
             ),
           ),
           const SizedBox(height: 16),
@@ -46,28 +51,109 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
           const SizedBox(height: 20),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 88.w),
-            child: ElevatedButton(
-              onPressed: controller.uploadNewDocument,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3B82F6),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+            child: Obx(
+                  () => signUpController.isLoading.value
+                  ? SizedBox(
+                height: 45.h,
+                width: 25.w,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+              )
+                  : ElevatedButton(
+                onPressed: () async {
+                  // Create a completer to wait for file selection
+                  final completer = Completer<bool>();
+
+                  // Set up a listener for the selectedFileName
+                  late Worker worker;
+                  worker = ever(signUpController.selectedFileName, (String? value) {
+                    if (value != null && value.isNotEmpty) {
+                      if (!completer.isCompleted) {
+                        completer.complete(true);
+                      }
+                      worker.dispose();
+                    }
+                  });
+
+                  // Call pickFileNew (don't await since it returns void)
+                  signUpController.pickFileNew(signUpController.selectedFileName);
+
+                  // Wait for file selection with timeout
+                  try {
+                    await completer.future.timeout(
+                      const Duration(seconds: 30),
+                      onTimeout: () {
+                        if (!completer.isCompleted) {
+                          completer.complete(false);
+                          worker.dispose();
+                        }
+                        return false;
+                      },
+                    );
+
+                    // Check if file was selected
+                    if (signUpController.selectedFileName.value != null &&
+                        signUpController.selectedFileName.value!.isNotEmpty) {
+                      bool success = await signUpController.uploadDocuments();
+                      if (success) {
+                        // Clear the selected file after successful upload
+                        signUpController.selectedFileName.value = null;
+                        Get.snackbar(
+                          "Success",
+                          "Document uploaded successfully",
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.green,
+                          colorText: Colors.white,
+                        );
+                      }
+                    } else {
+                      Get.snackbar(
+                        "No File Selected",
+                        "Please select a file first",
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.orange,
+                        colorText: Colors.white,
+                      );
+                    }
+                  } catch (e) {
+                    // Timeout or error
+                    worker.dispose();
+                    Get.snackbar(
+                      "Timeout",
+                      "File selection timed out",
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF3B82F6),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-              ),
-              child: Text(
-                AppStrings.uploadNew.tr,
-                style: TextStyle(fontSize: 14.sp),
+                child: Text(
+                  AppStrings.uploadNew.tr,
+                  style: TextStyle(fontSize: 14.sp),
+                ),
               ),
             ),
           ),
           15.verticalSpace,
           Container(
-            height: userReports.length<2?0.10.sh:0.26.sh,
+            height: userReports.isEmpty
+                ? 0.15.sh
+                : (userReports.length < 2 ? 0.20.sh : 0.26.sh),
+            padding: EdgeInsets.only(top: 10),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
@@ -85,7 +171,12 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
               itemCount: userReports.length,
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
-                return _buildDocumentItem(userReports[index], index < userReports.length - 1);
+                return _buildDocumentItem(
+                  userReports[index],
+                  index < userReports.length - 1,
+                  signUpController,
+                  homeController,
+                );
               },
             )
                 : Center(
@@ -117,7 +208,12 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
     });
   }
 
-  Widget _buildDocumentItem(String reportUrl, bool showDivider) {
+  Widget _buildDocumentItem(
+      String reportUrl,
+      bool showDivider,
+      SignUpController signUpController,
+      HomeController homeController,
+      ) {
     final fileName = reportUrl.split('/').last;
     final fileType = fileName.split('.').last.toUpperCase();
 
@@ -177,31 +273,52 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                   Get.to(
                         () => DocumentViewerScreen(
                       documentUrl: reportUrl,
-                      fileName: 'My Report',
+                      fileName: fileName,
                     ),
                   );
-
                 },
               ),
               IconButton(
                 icon: Icon(Icons.delete_outline, color: Colors.red.shade400),
-                onPressed: () {
-                  // Handle delete
-                  Get.snackbar(
-                    AppStrings.action.tr,
-                    '${AppStrings.deleting.tr} $fileName',
+                onPressed: () async {
+                  // Show confirmation dialog
+                  Get.dialog(
+                    AlertDialog(
+                      title: const Text('Delete Document'),
+                      content: const Text('Are you sure you want to delete this document?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Get.back(),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            Get.back(); // Close dialog
+                            // TODO: Implement delete functionality
+                            Get.snackbar(
+                              'Info',
+                              'Delete functionality to be implemented',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          },
+                          child: const Text(
+                            'Delete',
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),
             ],
           ),
-          showDivider
-              ? Divider(
-            color: Colors.grey.shade300,
-            thickness: 1,
-            height: 20,
-          )
-              : const SizedBox.shrink(),
+          if (showDivider)
+            Divider(
+              color: Colors.grey.shade300,
+              thickness: 1,
+              height: 20,
+            ),
         ],
       ),
     );

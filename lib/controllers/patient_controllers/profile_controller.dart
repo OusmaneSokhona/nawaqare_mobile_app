@@ -60,43 +60,12 @@ class ProfileController extends GetxController {
     Get.to(EditMedicalVitals(),binding: AppBinding());
   }
 
-  void uploadNewDocument() {
-    Get.snackbar('Action', 'Opening Document Uploader');
-  }
+
 
   void handleHealthSpaceTap(Widget route) {
     Get.to(route);
   }
 
-  List<AllergyData> allergiesData = [
-    AllergyData(
-      medication: 'Penicillin',
-      reaction: 'Rash',
-      severity: 'Mild',
-      dateIdentified: '06/sep/2025',
-      documentFileName: 'Skin_Test_2024.pdf',
-      note: 'Avoid antibiotics in same family',
-      status: 'active',
-    ),
-    AllergyData(
-      medication: 'Food',
-      reaction: 'Rash',
-      severity: 'Mild',
-      dateIdentified: '06/sep/2025',
-      documentFileName: 'Skin_Test_2024.pdf',
-      note: 'Avoid antibiotics in same family',
-      status: 'resolved',
-    ),
-    AllergyData(
-      medication: 'Environmental',
-      reaction: 'Rash',
-      severity: 'Mild',
-      dateIdentified: '06/sep/2025',
-      documentFileName: 'Skin_Test_2024.pdf',
-      note: 'Avoid antibiotics in same family',
-      status: 'unConfirmed',
-    ),
-  ];
   final List<String> allergyTypeList = ['Medication', 'Food', 'Environmental'];
   final List<String> severityList = ['Mild', 'Slight', 'Minor', 'Low-Risk'];
   final List<String> statusList = ['active', 'resolved', 'unconfirmed'];

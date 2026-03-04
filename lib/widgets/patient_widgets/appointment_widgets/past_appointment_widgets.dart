@@ -61,7 +61,7 @@ class PastAppointmentWidgets extends StatelessWidget {
           ),
           if (appointmentController.selectedTab.value == "Reviews") ...[
             15.verticalSpace,
-            ReviewCard(appointment: appointment),
+            appointment.reviews!=null?ReviewCard(appointment: appointment):SizedBox(),
           ],
           15.verticalSpace,
           CustomButton(

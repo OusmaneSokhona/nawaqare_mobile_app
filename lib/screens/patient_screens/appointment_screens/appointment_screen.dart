@@ -281,48 +281,51 @@ class AppointmentScreen extends StatelessWidget {
 
   Widget _buildPagination() {
     return Obx(
-          () {
-        final totalPages = appointmentController.totalPages;
-        if (totalPages <= 1) return SizedBox(); // Don't show pagination if only 1 page
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _paginationArrow(Icons.arrow_back, () {
-              if (appointmentController.currentPage.value > 1) {
-                appointmentController.currentPage.value--;
-              }
-            }),
-            15.horizontalSpace,
-            ...List.generate(totalPages, (index) {
-              int page = index + 1;
-              return GestureDetector(
-                onTap: () => appointmentController.currentPage.value = page,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text(
-                    "$page",
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontFamily: AppFonts.jakartaMedium,
-                      fontWeight: FontWeight.w600,
-                      color: appointmentController.currentPage.value == page
-                          ? AppColors.primaryColor
-                          : Colors.grey,
+          () => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _paginationArrow(Icons.arrow_back, () {
+            if (appointmentController.currentPage.value > 1) {
+              appointmentController.currentPage.value--;
+            }
+          }),
+          15.horizontalSpace,
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(appointmentController.totalPages, (index) {
+                  int page = index + 1;
+                  return GestureDetector(
+                    onTap: () => appointmentController.currentPage.value = page,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Text(
+                        "$page",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontFamily: AppFonts.jakartaMedium,
+                          fontWeight: FontWeight.w600,
+                          color: appointmentController.currentPage.value == page
+                              ? AppColors.primaryColor
+                              : Colors.grey,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }),
-            15.horizontalSpace,
-            _paginationArrow(Icons.arrow_forward, () {
-              if (appointmentController.currentPage.value < totalPages) {
-                appointmentController.currentPage.value++;
-              }
-            }),
-          ],
-        );
-      },
+                  );
+                }),
+              ),
+            ),
+          ),
+          15.horizontalSpace,
+          _paginationArrow(Icons.arrow_forward, () {
+            if (appointmentController.currentPage.value < appointmentController.totalPages) {
+              appointmentController.currentPage.value++;
+            }
+          }),
+        ],
+      ),
     );
   }
 

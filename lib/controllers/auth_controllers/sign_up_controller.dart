@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/utils/api_urls.dart';
 import 'package:patient_app/utils/locat_storage.dart';
 import '../../../screens/auth_screens/sign_in_screen.dart';
@@ -19,6 +20,7 @@ class SignUpController extends GetxController {
   final ApiService _apiService = ApiService();
   RxString type = "patient".obs;
   SignInController signInController = Get.put(SignInController());
+  HomeController homeController = Get.put(HomeController());
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -300,7 +302,7 @@ RxString isPhoneValid="".obs;
   void updateIssueDate(DateTime? newDate) => _issueDate.value = newDate;
   void updateExpiryDate(DateTime? newDate) => _expiryDate.value = newDate;
 
-  final List<String> genderList = ['Male', 'Female', 'Other'];
+  final List<String> genderList = ['Male', 'Female'];
   final List<String> countryList = [
     'Afghanistan', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Antigua and Barbuda',
     'Argentina', 'Armenia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas',
@@ -380,7 +382,60 @@ RxString isPhoneValid="".obs;
       file.value = result.files.single.path!;
     }
   }
+  // In SignUpController.dart
+  Future<bool> pickFileNew(Rx<String?> file) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+        allowMultiple: false,
+      );
 
+      if (result != null) {
+        if (kIsWeb) {
+          // For web platform
+          final bytes = result.files.first.bytes;
+          final fileName = result.files.first.name;
+          file.value = fileName;
+          // Store bytes for web upload
+          print("File selected on web: $fileName");
+          Get.snackbar(
+            "Success",
+            "File selected: $fileName",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+          return true;
+        } else {
+          // For mobile platforms
+          if (result.files.single.path != null) {
+            file.value = result.files.single.path!;
+            print("File selected: ${file.value}");
+            Get.snackbar(
+              "Success",
+              "File selected: ${result.files.single.name}",
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+            return true;
+          }
+        }
+      }
+      return false;
+    } catch (e) {
+      print("Error picking file: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to pick file: $e",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    }
+  }
   void moveToSignInScreen() {
     nameController.clear();
     emailController.clear();
@@ -766,6 +821,108 @@ RxString isPhoneValid="".obs;
       return false;
     } catch (e) {
       isLoading.value = false;
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> editPersonalInfoPatient() async {
+    try {
+      isLoading.value = true;
+      Map<String, dynamic> data = {
+        "dob": _selectedDate.value?.toIso8601String(),
+        "gender": selectedGender.value?.toLowerCase(),
+        "country": selectedCountry.value,
+        "religion": selectedReligion.value,
+        "address": addressController.text.trim(),
+      };
+
+      FormData formData = FormData.fromMap({});
+      data.forEach((key, value) {
+        if (value != null) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      });
+
+      if (pickedImage.value != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(pickedImage.value!.path),
+        ));
+      }
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        homeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Patient profile Updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      print("Error updating patient profile: $e");
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> editMedicalVitals() async {
+    try {
+      isLoading.value = true;
+      Map<String, dynamic> data = {
+        "height": heightController.text.trim(),
+        "weight": weightController.text.trim(),
+        "bmi": double.tryParse(bmiController.text.trim()),
+        "bloodPressure": bloodPressureController.text.trim(),
+        "heartRate": heartRateController.text.trim(),
+      };
+
+      FormData formData = FormData.fromMap({});
+      data.forEach((key, value) {
+        if (value != null) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      });
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        homeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Details Updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      print("Error updating patient profile: $e");
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> uploadDocuments() async {
+    try {
+      isLoading.value = true;
+
+      FormData formData = FormData.fromMap({});
+      if (selectedFileName.value != null) {
+        formData.files.add(MapEntry(
+          'reports',
+          await MultipartFile.fromFile(selectedFileName.value!),
+        ));
+      }
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        homeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Document Added", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      isLoading.value = false;
+      print("Error updating patient profile: $e");
       _handleError(e);
       return false;
     }

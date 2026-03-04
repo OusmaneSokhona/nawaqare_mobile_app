@@ -2,6 +2,7 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/allergies_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
@@ -10,8 +11,9 @@ import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../utils/app_strings.dart';
 
-class AddAllergyScreen extends GetView<ProfileController> {
+class AddAllergyScreen extends StatelessWidget{
   AddAllergyScreen({super.key});
+  AllergyController controller = Get.find<AllergyController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

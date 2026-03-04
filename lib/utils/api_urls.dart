@@ -32,4 +32,6 @@ class ApiUrls {
   static String createFollowUp="api/appointments/followup/create";
   static String createSoapNoteApi="api/appointments/soap/";
   static String paymentIntent="api/consultationpacks/payment-intent";
+  static String getAllAllergies="api/allergy/getallallergies";
+  static String addAllergie="api/allergy/createallergy";
 }

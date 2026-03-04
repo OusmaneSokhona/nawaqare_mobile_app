@@ -487,7 +487,6 @@ class DoctorAppointmentController extends GetxController {
       file.value = 'File selection cancelled';
     }
   }
-
   Future<void> updateAppointmentStatus(String appointmentId, String status,bool isBackTrue) async {
     try {
       isLoading.value = true;

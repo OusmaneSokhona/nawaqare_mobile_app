@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../controllers/auth_controllers/forget_password_contorller.dart';
+import 'package:patient_app/controllers/auth_controllers/forget_password_contorller.dart';
+import 'package:patient_app/controllers/update_password_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../widgets/custom_button.dart';
@@ -12,8 +13,8 @@ import '../../../utils/app_images.dart';
 
 class UpdatePassword extends StatelessWidget {
   UpdatePassword({super.key});
-  final ForgetPasswordController controller = Get.put(ForgetPasswordController());
-
+  final UpdatePasswordController controller = Get.put(UpdatePasswordController());
+final ForgetPasswordController forgetPasswordController = Get.put(ForgetPasswordController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,26 +25,24 @@ class UpdatePassword extends StatelessWidget {
           gradient: LinearGradient(colors:[
             AppColors.onboardingBackground,
             AppColors.lightWhite,
-          ],begin: Alignment.topCenter,end: Alignment.bottomCenter),
+          ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
         ),
         child: Form(
           key: controller.formKeyUpdate,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: SingleChildScrollView(
-              child: Column(children: [
-                80.verticalSpace,
-                Row(
-                  children: [
-                    InkWell(
-                        onTap: (){
-                          Get.back();
-                        },
-                        child: Image.asset(AppImages.backIcon, height: 32.h, width: 32.w,)),
-                    7.horizontalSpace,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
+              child: Column(
+                children: [
+                  80.verticalSpace,
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: () => Get.back(),
+                        child: Image.asset(AppImages.backIcon, height: 32.h, width: 32.w),
+                      ),
+                      7.horizontalSpace,
+                      Text(
                         AppStrings.updatePassword.tr,
                         style: TextStyle(
                           color: Colors.black,
@@ -52,85 +51,71 @@ class UpdatePassword extends StatelessWidget {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+                    ],
+                  ),
+                  20.verticalSpace,
+                  Obx(
+                        () => CustomTextField(
+                      controller: controller.oldPassword,
+                      labelText: AppStrings.oldPassword.tr,
+                      hintText: AppStrings.enterPasswordHint.tr,
+                      prefixIcon: Icons.lock_outline,
+                      isPasswordField: controller.oldPasswordVisibility.value,
+                      validator: controller.validateOldPassword,
+                      onTapEye: () => controller.oldPasswordVisibility.toggle(),
                     ),
-                  ],
-                ),
-                20.verticalSpace,
-                Obx(
-                      ()=> CustomTextField(
-                    labelText: AppStrings.oldPassword.tr,
-                    hintText: AppStrings.enterPasswordHint.tr,
-                    prefixIcon: Icons.lock_outline,
-                    isPasswordField: true,
-                    isEnabled: controller.confirmNewPasswordVisibility.value,
-                    validator: controller.validateConfirmPassword,
-                    onTapEye: (){
-                      controller.confirmNewPasswordVisibility.value = !controller.confirmNewPasswordVisibility.value;
-                    },
                   ),
-                ),
-                20.verticalSpace,
-                Obx(
-                      ()=> CustomTextField(
-                    labelText: AppStrings.newPassword.tr,
-                    hintText: AppStrings.enterPasswordHint.tr,
-                    prefixIcon: Icons.lock_outline,
-                    isPasswordField: true,
-                    controller: controller.newPassword,
-                    isEnabled: controller.newPasswordVisibility.value,
-                    onFocusChange: controller.setPasswordActive,
-                    validator: controller.validatePassword,
-                    onChanged: (value) => controller.currentPassword.value = value,
-                    validationView: controller.isPasswordActive.value
-                        ? Obx(
-                          () => ValidationChecklist(
-                        rules: controller.getValidationRules(),
-                      ),
-                    )
-                        : null,
-                    onTapEye: (){
-                      controller.newPasswordVisibility.value = !controller.newPasswordVisibility.value;
-                    },
+                  20.verticalSpace,
+                  Obx(
+                        () => CustomTextField(
+                      controller: controller.newPassword,
+                      labelText: AppStrings.newPassword.tr,
+                      hintText: AppStrings.enterPasswordHint.tr,
+                      prefixIcon: Icons.lock_outline,
+                      isPasswordField: controller.newPasswordVisibility.value,
+                      onFocusChange: controller.setPasswordActive,
+                      validator: controller.validatePassword,
+                      onChanged: (value) => controller.currentPassword.value = value,
+                      validationView: controller.isPasswordActive.value
+                          ? ValidationChecklist(rules: forgetPasswordController.getValidationRules())
+                          : null,
+                      onTapEye: () => controller.newPasswordVisibility.toggle(),
+                    ),
                   ),
-                ),
-                20.verticalSpace,
-                Obx(
-                      ()=> CustomTextField(
-                    labelText: AppStrings.confirmPassword.tr,
-                    hintText: AppStrings.enterPasswordHint.tr,
-                    prefixIcon: Icons.lock_outline,
-                    isPasswordField: true,
-                    controller: controller.confrimNewPassword,
-                    isEnabled: controller.confirmNewPasswordVisibility.value,
-                    validator: controller.validateConfirmPassword,
-                    onTapEye: (){
-                      controller.confirmNewPasswordVisibility.value = !controller.confirmNewPasswordVisibility.value;
-                    },
+                  20.verticalSpace,
+                  Obx(
+                        () => CustomTextField(
+                      controller: controller.confirmNewPassword,
+                      labelText: AppStrings.confirmPassword.tr,
+                      hintText: AppStrings.enterPasswordHint.tr,
+                      prefixIcon: Icons.lock_outline,
+                      isPasswordField: controller.confirmNewPasswordVisibility.value,
+                      validator: controller.validateConfirmPassword,
+                      onTapEye: () => controller.confirmNewPasswordVisibility.toggle(),
+                    ),
                   ),
-                ),
-                10.verticalSpace,
-                40.verticalSpace,
-                CustomButton(
+                  40.verticalSpace,
+                  Obx(
+                        () => controller.isLoading.value
+                        ? const CircularProgressIndicator()
+                        : CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.update.tr,
+                      onTap: () => controller.resetPasswordApi(),
+                      fontSize: 18,
+                    ),
+                  ),
+                  10.verticalSpace,
+                  CustomButton(
                     borderRadius: 15,
-                    text: AppStrings.update.tr,
-                    onTap: (){
-                      if (controller.formKeyForget.currentState!.validate()) {
-                        print("Validation passed!");
-                      } else {
-                        print("Validation failed.");
-                      }
-                    },
-                    fontSize: 18
-                ),
-                10.verticalSpace,
-                CustomButton(
-                  borderRadius: 15,
-                  text: AppStrings.cancel.tr,
-                  onTap: (){Get.back();},
-                  bgColor: AppColors.inACtiveButtonColor,
-                  fontColor: Colors.black,
-                ),
-              ],),
+                    text: AppStrings.cancel.tr,
+                    onTap: () => Get.back(),
+                    bgColor: AppColors.inACtiveButtonColor,
+                    fontColor: Colors.black,
+                  ),
+                  30.verticalSpace,
+                ],
+              ),
             ),
           ),
         ),

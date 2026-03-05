@@ -217,7 +217,7 @@ class DoctorWidget extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 Text(
                                   doctor.country ?? AppStrings.notAvailable.tr,
-                                  style: TextStyle(fontSize: 13.sp),
+                                  style: TextStyle(fontSize: 11.sp),
                                 ),
                               ],
                             ),
@@ -235,7 +235,7 @@ class DoctorWidget extends StatelessWidget {
                                   style: TextStyle(
                                     color: AppColors.darkGrey,
                                     fontWeight: FontWeight.w500,
-                                    fontSize: 13.sp,
+                                    fontSize: 11.sp,
                                   ),
                                 ),
                               ],

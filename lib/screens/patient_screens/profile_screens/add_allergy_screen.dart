@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/allergies_controller.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -11,9 +10,10 @@ import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../utils/app_strings.dart';
 
-class AddAllergyScreen extends StatelessWidget{
+class AddAllergyScreen extends StatelessWidget {
   AddAllergyScreen({super.key});
-  AllergyController controller = Get.find<AllergyController>();
+  final AllergyController controller = Get.find<AllergyController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,14 +36,8 @@ class AddAllergyScreen extends StatelessWidget{
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Image.asset(
-                      AppImages.backIcon,
-                      height: 33.h,
-                      fit: BoxFit.fill,
-                    ),
+                    onTap: () => Get.back(),
+                    child: Image.asset(AppImages.backIcon, height: 33.h, fit: BoxFit.fill),
                   ),
                   10.horizontalSpace,
                   Text(
@@ -62,25 +56,43 @@ class AddAllergyScreen extends StatelessWidget{
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      buildDropdownField(title: AppStrings.medical.tr, items: controller.allergyTypeList, selectedValue: controller.selectedAllergy, onChanged: (_){}),
+                      buildDropdownField(
+                        title: AppStrings.medical.tr,
+                        items: controller.allergyTypeList,
+                        selectedValue: controller.selectedAllergy,
+                        onChanged: (val) => controller.selectedAllergy.value = val,
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.allergenName.tr, hintText: AppStrings.penicillin.tr,),
+                      CustomTextField(
+                        controller: controller.allergenNameController,
+                        labelText: AppStrings.allergenName.tr,
+                        hintText: AppStrings.penicillin.tr,
+                      ),
                       10.verticalSpace,
-                      CustomTextField(labelText: AppStrings.reaction.tr, hintText: AppStrings.rash.tr,),
+                      CustomTextField(
+                        controller: controller.reactionController,
+                        labelText: AppStrings.reaction.tr,
+                        hintText: AppStrings.rash.tr,
+                      ),
                       10.verticalSpace,
-                      buildDropdownField(title: AppStrings.severity.tr, items: controller.severityList, selectedValue: controller.selectedSeverity, onChanged: (_){}),
+                      buildDropdownField(
+                        title: AppStrings.severity.tr,
+                        items: controller.severityList,
+                        selectedValue: controller.selectedSeverity,
+                        onChanged: (val) => controller.selectedSeverity.value = val,
+                      ),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(AppStrings.dateIdentified.tr, style: TextStyle(color: AppColors.darkGrey, fontWeight: FontWeight.w600, fontSize: 15.sp),),
+                        child: Text(
+                          AppStrings.dateIdentified.tr,
+                          style: TextStyle(color: AppColors.darkGrey, fontWeight: FontWeight.w600, fontSize: 15.sp),
+                        ),
                       ),
-                      InkWell(
+                      Obx(() => InkWell(
                         onTap: () => _showDatePicker(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 18,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -93,32 +105,21 @@ class AddAllergyScreen extends StatelessWidget{
                                 controller.formattedDate,
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color:
-                                  controller.selectedDate == null
-                                      ? Colors.grey
-                                      : Colors.black,
+                                  color: controller.selectedDate == null ? Colors.grey : Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              const Icon(
-                                Icons.calendar_today,
-                                color: Colors.blue,
-                                size: 24,
-                              ),
+                              const Icon(Icons.calendar_today, color: Colors.blue, size: 24),
                             ],
                           ),
                         ),
-                      ),
+                      )),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           AppStrings.uploadLabel.tr,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.black87),
                         ),
                       ),
                       3.verticalSpace,
@@ -132,44 +133,18 @@ class AddAllergyScreen extends StatelessWidget{
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
+                          ),
+                          child: Obx(() => Column(
+                            children: [
+                              Icon(Icons.cloud_upload_outlined, size: 40, color: Colors.blue.shade700),
+                              const SizedBox(height: 12),
+                              Text(
+                                controller.selectedFileName.value!,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.black),
                               ),
                             ],
-                          ),
-                          child: Obx(
-                                () => Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.cloud_upload_outlined,
-                                  size: 40,
-                                  color: Colors.blue.shade700,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  controller.selectedFileName.value == 'No file selected' || controller.selectedFileName.value == 'File selection cancelled'
-                                      ? AppStrings.uploadFormat.tr
-                                      : controller.selectedFileName.value!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                if (controller.selectedFileName.value != 'No file selected' && controller.selectedFileName.value != 'File selection cancelled')
-                                  Text(
-                                    AppStrings.tapToSelectNew.tr,
-                                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                                  ),
-                              ],
-                            ),
-                          ),
+                          )),
                         ),
                       ),
                       10.verticalSpace,
@@ -177,11 +152,7 @@ class AddAllergyScreen extends StatelessWidget{
                         alignment: Alignment.centerLeft,
                         child: Text(
                           AppStrings.note.tr,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.black87),
                         ),
                       ),
                       3.verticalSpace,
@@ -189,26 +160,37 @@ class AddAllergyScreen extends StatelessWidget{
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300, width: 1),
+                          border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: TextField(
+                          controller: controller.noteController,
                           maxLines: 5,
-                          onTapOutside: (_){
-                            FocusManager.instance.primaryFocus!.unfocus();
-                          },
+                          onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
                           decoration: InputDecoration(
                             hintText: AppStrings.writeNoteHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                           ),
                         ),
                       ),
-                      10.verticalSpace,
-                      CustomButton(borderRadius: 15, text: AppStrings.save.tr, onTap: (){}),
+                      20.verticalSpace,
+                      Obx(() => controller.isAddingAllergy.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.save.tr,
+                        onTap: () => controller.submitAllergy(),
+                      ),
+                      ),
                       15.verticalSpace,
-                      CustomButton(borderRadius: 15, text: AppStrings.cancel.tr, onTap: (){Get.back();}, bgColor: AppColors.inACtiveButtonColor, fontColor: Colors.black,),
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.cancel.tr,
+                        onTap: () => Get.back(),
+                        bgColor: AppColors.inACtiveButtonColor,
+                        fontColor: Colors.black,
+                      ),
                       30.verticalSpace,
                     ],
                   ),
@@ -220,67 +202,51 @@ class AddAllergyScreen extends StatelessWidget{
       ),
     );
   }
+
   void _showDatePicker(BuildContext context) async {
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
         selectedDayHighlightColor: Colors.blue,
-        centerAlignModePicker: true,
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
       borderRadius: BorderRadius.circular(15),
     );
+    if (dates != null && dates.isNotEmpty) {
+      controller.updateDate(dates.first);
+    }
   }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,
     required Rx<String?> selectedValue,
     required Function(String?) onChanged,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5.0, left: 10.0),
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: Colors.black87),
           ),
-          Obx(
-                () => DropdownButtonFormField<String>(
-              value: selectedValue.value,
-              decoration: InputDecoration(
-                contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide.none
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              isExpanded: true,
-              icon:  Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
-              style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: onChanged,
-            ),
+        ),
+        Obx(() => DropdownButtonFormField<String>(
+          value: selectedValue.value,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0), borderSide: BorderSide.none),
+            filled: true,
+            fillColor: Colors.white,
           ),
-        ],
-      ),
+          items: items.map((val) => DropdownMenuItem(value: val, child: Text(val))).toList(),
+          onChanged: onChanged,
+        )),
+      ],
     );
   }
 }

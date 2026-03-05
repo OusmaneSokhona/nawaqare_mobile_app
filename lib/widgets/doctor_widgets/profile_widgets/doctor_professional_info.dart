@@ -36,7 +36,7 @@ class DoctorProfessionalInfo extends StatelessWidget {
       final doctorPhone = doctor?.phoneNumber ?? '+1 234 567 890';
       final doctorAddress = doctor?.clinicAddress ?? '32 Example St';
       final doctorExperience = doctor?.experience?.toString() ?? '';
-      final doctorSpecialization = doctor?.medicalSpecialty! ?? '';
+      final doctorSpecialization = doctor?.medicalSpecialty!.toString() ?? '';
       final doctorCountry = doctor?.country ?? '';
       final doctorQualifications = doctor?.certification ?? '';
       final doctorConsultationFee = doctor?.fee?.toString() ?? '0';

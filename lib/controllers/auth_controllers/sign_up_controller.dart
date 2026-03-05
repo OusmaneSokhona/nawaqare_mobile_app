@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/utils/api_urls.dart';
 import 'package:patient_app/utils/locat_storage.dart';
@@ -21,6 +22,7 @@ class SignUpController extends GetxController {
   RxString type = "patient".obs;
   SignInController signInController = Get.put(SignInController());
   HomeController homeController = Get.put(HomeController());
+  DoctorHomeController doctorHomeController = Get.put(DoctorHomeController());
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -923,6 +925,79 @@ RxString isPhoneValid="".obs;
     } catch (e) {
       isLoading.value = false;
       print("Error updating patient profile: $e");
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> editPersonalInfoDoctor() async {
+    try {
+      isLoading.value = true;
+
+      FormData formData = FormData.fromMap({
+        "dob": _selectedDate.value?.toIso8601String(),
+        "gender": selectedGender.value?.toLowerCase(),
+        "nationality": selectedCountry.value,
+        "idNumber": idNumberController.text.trim(),
+        "clinicAddress": clinicAddressController.text.trim(),
+        "aboutMe": aboutMeController.text.trim(),
+      });
+      if (pickedImage.value != null) {
+        formData.files.add(MapEntry(
+          'profileImage',
+          await MultipartFile.fromFile(pickedImage.value!.path, filename: 'profileImage.jpg'),
+        ));
+      }
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        doctorHomeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error updating doctor profile: $e");
+      isLoading.value = false;
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> editProfessionalInfoDoctor() async {
+    try {
+      isLoading.value = true;
+      FormData formData = FormData.fromMap({
+        "experience": experienceController.text.trim().isNotEmpty ? int.tryParse(experienceController.text.trim()) : null,
+        "dateOfRegistration": _registrationDate.value?.toIso8601String(),
+        "placeOfPractice": placeOfPracticeController.text.trim(),
+        "year": yearOfWorkController.text.trim().isNotEmpty ? int.tryParse(yearOfWorkController.text.trim()) : null,
+        "country": selectedCountry.value,
+        "ratings": "0"
+      });
+      if (videoConsultationFeeController.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry(
+          "fee[videoconsultation]",
+          videoConsultationFeeController.text.trim(),
+        ));
+      }
+      if (inPersonConsultationFeeController.text.trim().isNotEmpty) {
+        formData.fields.add(MapEntry(
+          "fee[inpersonconsultation]",
+          inPersonConsultationFeeController.text.trim(),
+        ));
+      }
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        doctorHomeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error updating doctor profile: $e");
+      isLoading.value = false;
       _handleError(e);
       return false;
     }

@@ -14,22 +14,22 @@ import '../../../widgets/profile_picture_widget.dart';
 
 class DoctorEditPersonalInfo extends GetView<SignUpController> {
   DoctorEditPersonalInfo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  Container(
+      body: Container(
         height: 1.sh,
         width: 1.sw,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              AppColors.onboardingBackground, Colors.white,],
+            colors: [AppColors.onboardingBackground, Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(horizontal:20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -37,7 +37,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
               Row(
                 children: [
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       Get.back();
                     },
                     child: Image.asset(
@@ -59,7 +59,14 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                 ],
               ),
               10.verticalSpace,
-              Text(AppStrings.updatePersonalInfoSub.tr,style:TextStyle(fontSize: 17.sp,fontFamily: AppFonts.jakartaMedium,fontWeight: FontWeight.w600),),
+              Text(
+                AppStrings.updatePersonalInfoSub.tr,
+                style: TextStyle(
+                  fontSize: 17.sp,
+                  fontFamily: AppFonts.jakartaMedium,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               20.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(
@@ -77,7 +84,7 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                       ),
                       10.verticalSpace,
                       Obx(
-                            () => Column(
+                        () => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
@@ -107,17 +114,16 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       controller.formattedDate,
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
-                                        controller.selectedDate ==
-                                            null
-                                            ? Colors.grey
-                                            : Colors.black,
+                                            controller.selectedDate == null
+                                                ? Colors.grey
+                                                : Colors.black,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -156,21 +162,17 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                         selectedValue: controller.selectedCountry,
                         onChanged: controller.updateSelectedCountry,
                       ),
-                      buildDropdownField(
-                        title: AppStrings.religion.tr,
-                        items: controller.religionList,
-                        selectedValue: controller.selectedReligion,
-                        onChanged: controller.updateSelectedReligion,
-                      ),
                       CustomTextField(
                         labelText: AppStrings.idNumber.tr,
                         prefixIcon: Icons.badge_outlined,
                         hintText: "31101-5678-9876",
+                        controller: controller.idNumberController,
                       ),
                       CustomTextField(
                         labelText: AppStrings.clinicAddress.tr,
                         prefixIcon: Icons.location_on,
                         hintText: "32 Examaple St",
+                        controller: controller.clinicAddressController,
                       ),
                       10.verticalSpace,
                       Align(
@@ -189,19 +191,25 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300, width: 1),
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                          ),
                         ),
                         child: TextField(
                           maxLines: 5,
-                          onTapOutside: (_){
+                          controller: controller.aboutMeController,
+                          onTapOutside: (_) {
                             FocusManager.instance.primaryFocus!.unfocus();
                           },
                           decoration: InputDecoration(
                             hintText: AppStrings.aboutMeHint.tr,
                             hintStyle: TextStyle(color: Colors.grey.shade500),
                             border: InputBorder.none,
-                            contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 15,
+                            ),
                           ),
                         ),
                       ),
@@ -210,17 +218,26 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
                 ),
               ),
               20.verticalSpace,
-              CustomButton(
-                text: AppStrings.update.tr,
-                onTap: (){
-                  Get.back();
-                },
-                borderRadius: 15,
+              Obx(
+                () =>
+                    controller.isLoading.value
+                        ? Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          ),
+                        )
+                        : CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.update.tr,
+                          onTap: () {
+                            controller.editPersonalInfoDoctor();
+                          },
+                        ),
               ),
               10.verticalSpace,
               CustomButton(
                 text: AppStrings.cancel.tr,
-                onTap: (){
+                onTap: () {
                   Get.back();
                 },
                 borderRadius: 15,
@@ -234,19 +251,83 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
       ),
     );
   }
+
   void _showDatePicker(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime maxDate = DateTime(now.year - 18, now.month, now.day);
+    final DateTime minDate = DateTime(
+      now.year - 120,
+      now.month,
+      now.day,
+    ); // Optional: set a reasonable minimum age
+
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
         selectedDayHighlightColor: Colors.blue,
         centerAlignModePicker: true,
+        firstDate: minDate,
+        lastDate: maxDate,
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      final selectedDate = dates[0]!;
+
+      if (_isAtLeast18YearsOld(selectedDate)) {
+        controller.updateDate(selectedDate);
+      } else {
+        _showAgeErrorDialog(context);
+      }
+    }
   }
+
+  bool _isAtLeast18YearsOld(DateTime birthDate) {
+    final DateTime now = DateTime.now();
+    final DateTime eighteenYearsAgo = DateTime(
+      now.year - 18,
+      now.month,
+      now.day,
+    );
+    return birthDate.isBefore(eighteenYearsAgo) ||
+        (birthDate.year == eighteenYearsAgo.year &&
+            birthDate.month == eighteenYearsAgo.month &&
+            birthDate.day == eighteenYearsAgo.day);
+  }
+
+  void _showAgeErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: Text(
+              'Age Restriction',
+              style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              'You must be at least 18 years old to register.',
+              style: TextStyle(fontSize: 16.sp),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(),
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+  }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,
@@ -270,26 +351,30 @@ class DoctorEditPersonalInfo extends GetView<SignUpController> {
             ),
           ),
           Obx(
-                () => DropdownButtonFormField<String>(
+            () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 14.0,
+                ),
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0),
-                    borderSide: BorderSide.none
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
                 ),
                 filled: true,
                 fillColor: Colors.white,
               ),
               isExpanded: true,
-              icon:  Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+              items:
+                  items.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
               onChanged: onChanged,
             ),
           ),

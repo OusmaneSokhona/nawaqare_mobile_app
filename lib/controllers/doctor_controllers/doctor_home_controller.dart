@@ -234,6 +234,85 @@ class DoctorHomeController extends GetxController {
       isLoading.value = false;
     }
   }
+  Future<void> loadUserDataSecondTime() async {
+    isLoading.value = true;
+    try {
+      final response = await _apiService.get(ApiUrls.meUrl);
+      if (response.statusCode == 200) {
+        print('API Doctor data response received');
+
+        if (response.data is Map<String, dynamic>) {
+          final Map<String, dynamic> responseData = response.data as Map<String, dynamic>;
+
+          if (responseData.containsKey('data') && responseData['data'] != null) {
+            final userData = responseData['data'] as Map<String, dynamic>;
+            final Map<String, dynamic> processedData = {};
+
+            processedData.addAll(userData);
+            processedData['role'] = 'doctor';
+
+            if (userData.containsKey('userId')) {
+              final userIdData = userData['userId'];
+              if (userIdData is Map<String, dynamic>) {
+                processedData['email'] = userIdData['email']?.toString() ?? processedData['email'];
+                processedData['phoneNumber'] = userIdData['phoneNumber']?.toString() ?? processedData['phoneNumber'];
+              }
+            }
+
+            if (!processedData.containsKey('fullName') || processedData['fullName'] == null) {
+              processedData['fullName'] = 'Doctor';
+            }
+
+            final Map<String, dynamic> doctorData = {
+              'profileImage': userData['profileImage']?.toString() ?? '',
+              'userId': userData['_id']?.toString() ?? '',
+              'email': processedData['email'] ?? '',
+              'phoneNumber': processedData['phoneNumber'] ?? '',
+              'specialization': userData['specialization'],
+              'qualifications': userData['qualifications'] is List ? userData['qualifications'] : [],
+              'experience': userData['experience'],
+              'clinicAddress': userData['clinicAddress'],
+              'consultationFee': userData['consultationFee'],
+              'availableSlots': userData['availableSlots'] is List ? userData['availableSlots'] : [],
+              'patients': userData['patients'] is List ? userData['patients'] : [],
+              'ratings': userData['ratings'],
+              'reviews': userData['reviews'] is List ? userData['reviews'] : [],
+            };
+
+            processedData['doctorData'] = doctorData;
+
+            print('Processed data for DoctorModel creation');
+
+            try {
+              final doctor = DoctorModel.fromJson(processedData);
+              currentUser.value = doctor;
+
+              await LocalStorageUtils.setUser(doctor.toJson());
+              print('Doctor data loaded successfully: ${doctor.fullName}');
+              print('Doctor email: ${doctor.email}');
+              print('Doctor profile image: ${doctor.profileImage}');
+            } catch (e) {
+              print('Error creating DoctorModel: $e');
+              print('Error type: ${e.runtimeType}');
+              print('Processed data keys: ${processedData.keys}');
+            }
+          } else {
+            print('Response missing data field');
+          }
+        } else {
+          print('Response data is not a Map');
+        }
+      } else {
+        print('Failed to load doctor data. Status code: ${response.statusCode}');
+        print('Response: ${response.data}');
+      }
+    } catch (e) {
+      print('Error loading doctor data: $e');
+      print('Stack trace: ${e.toString()}');
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   void scrollChange() {
     scrollController.addListener(() {

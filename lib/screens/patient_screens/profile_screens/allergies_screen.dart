@@ -59,114 +59,114 @@ class AllergiesScreen extends StatelessWidget {
                 ],
               ),
               20.verticalSpace,
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () => controller.refreshAllergies(),
-                  child: Obx(() {
-                    if (controller.isLoading.value) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryColor,
-                        ),
-                      );
-                    }
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
+                    ),
+                  );
+                }
 
-                    if (controller.errorMessage.isNotEmpty) {
-                      return Center(
+                if (controller.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Error loading allergies',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 16.sp,
+                          ),
+                        ),
+                        10.verticalSpace,
+                        Text(
+                          controller.errorMessage.value,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        20.verticalSpace,
+                        CustomButton(
+                          text: 'Retry',
+                          onTap: () => controller.fetchAllergies(),
+                          height: 45.h, borderRadius: 15,
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: [
+                    if (controller.allergiesData.isEmpty)
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 50.h),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            Icon(
+                              Icons.medical_services_outlined,
+                              size: 80.sp,
+                              color: Colors.grey,
+                            ),
+                            20.verticalSpace,
                             Text(
-                              'Error loading allergies',
+                              'No allergies found',
                               style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16.sp,
+                                fontSize: 18.sp,
+                                color: Colors.grey,
+                                fontFamily: AppFonts.jakartaMedium,
                               ),
                             ),
                             10.verticalSpace,
                             Text(
-                              controller.errorMessage.value,
+                              'Tap the button below to add your first allergy',
                               style: TextStyle(
-                                color: Colors.grey,
                                 fontSize: 14.sp,
+                                color: Colors.grey,
+                                fontFamily: AppFonts.jakartaRegular,
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            20.verticalSpace,
-                            CustomButton(
-                              text: 'Retry',
-                              onTap: () => controller.fetchAllergies(),
-                              height: 45.h, borderRadius: 15,
-                            ),
                           ],
                         ),
-                      );
-                    }
-
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          if (controller.allergiesData.isEmpty)
-                            Padding(
-                              padding: EdgeInsets.symmetric(vertical: 50.h),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.medical_services_outlined,
-                                    size: 80.sp,
-                                    color: Colors.grey,
-                                  ),
-                                  20.verticalSpace,
-                                  Text(
-                                    'No allergies found',
-                                    style: TextStyle(
-                                      fontSize: 18.sp,
-                                      color: Colors.grey,
-                                      fontFamily: AppFonts.jakartaMedium,
-                                    ),
-                                  ),
-                                  10.verticalSpace,
-                                  Text(
-                                    'Tap the button below to add your first allergy',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: Colors.grey,
-                                      fontFamily: AppFonts.jakartaRegular,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            )
-                          else
-                            ListView.builder(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: controller.allergiesData.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 18.sp),
-                                  child: MedicationAllergyCard(
-                                    data: controller.allergiesData[index],
-                                  ),
-                                );
-                              },
-                            ),
-                          CustomButton(
-                            borderRadius: 15,
-                            text: AppStrings.addAllergy.tr,
-                            onTap: () {
-                              Get.to(() => AddAllergyScreen());
+                      )
+                    else
+                      Container(
+                        height: 0.75.sh,
+                        child: RefreshIndicator(
+                          onRefresh: () => controller.fetchAllergies(),
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            itemCount: controller.allergiesData.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 18.sp),
+                                child: MedicationAllergyCard(
+                                  data: controller.allergiesData[index],
+                                ),
+                              );
                             },
                           ),
-                          30.verticalSpace,
-                        ],
+                        ),
                       ),
-                    );
-                  }),
-                ),
-              ),
+                    CustomButton(
+                      borderRadius: 15,
+                      text: AppStrings.addAllergy.tr,
+                      onTap: () {
+                        controller.clearFields();
+                        Get.to(() => AddAllergyScreen());
+                      },
+                    ),
+                    30.verticalSpace,
+                  ],
+                );
+              }),
             ],
           ),
         ),

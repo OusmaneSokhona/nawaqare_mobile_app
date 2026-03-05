@@ -34,4 +34,8 @@ class ApiUrls {
   static String paymentIntent="api/consultationpacks/payment-intent";
   static String getAllAllergies="api/allergy/getallallergies";
   static String addAllergie="api/allergy/createallergy";
+  static String deleteAllergie="api/allergy/deleteAllergy/";
+  static String updateAllergie="api/allergy/updateAllergy/";
+  static String updatePasswordApi="api/auth/reset-password";
+  static String getAllReviews="/api/review/getAll";
 }

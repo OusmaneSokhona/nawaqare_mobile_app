@@ -76,6 +76,7 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                       CustomTextField(
                         labelText: AppStrings.experienceInYears.tr,
                         hintText: "7",
+                        controller: controller.experienceController,
                       ),
                       buildDropdownField(
                         title: AppStrings.fee.tr,
@@ -144,23 +145,34 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
                       CustomTextField(
                         labelText: AppStrings.placeOfPractice.tr,
                         hintText: "Allied Hospital, Faisalabad",
+                        controller: controller.placeOfPracticeController,
                       ),
                       10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.year.tr,
                         hintText: "2008",
+                        controller: controller.yearOfWorkController,
                       ),
                     ],
                   ),
                 ),
               ),
               20.verticalSpace,
-              CustomButton(
-                text: AppStrings.update.tr,
-                onTap: (){
-                  Get.back();
-                },
-                borderRadius: 15,
+              Obx(
+                    () =>
+                controller.isLoading.value
+                    ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
+                )
+                    : CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.update.tr,
+                  onTap: () {
+                    controller.editProfessionalInfoDoctor();
+                  },
+                ),
               ),
               10.verticalSpace,
               CustomButton(
@@ -180,16 +192,78 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
     );
   }
   void _showDatePicker(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime maxDate = DateTime(now.year - 18, now.month, now.day);
+    final DateTime minDate = DateTime(
+      now.year - 120,
+      now.month,
+      now.day,
+    ); // Optional: set a reasonable minimum age
+
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
         selectedDayHighlightColor: Colors.blue,
         centerAlignModePicker: true,
+        firstDate: minDate,
+        lastDate: maxDate,
       ),
       dialogSize: const Size(325, 400),
       value: [controller.selectedDate],
       borderRadius: BorderRadius.circular(15),
+    );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      final selectedDate = dates[0]!;
+
+      if (_isAtLeast1YearsOld(selectedDate)) {
+        controller.updateDate(selectedDate);
+      } else {
+        _showAgeErrorDialog(context);
+      }
+    }
+  }
+
+  bool _isAtLeast1YearsOld(DateTime birthDate) {
+    final DateTime now = DateTime.now();
+    final DateTime eighteenYearsAgo = DateTime(
+      now.year - 1,
+      now.month,
+      now.day,
+    );
+    return birthDate.isBefore(eighteenYearsAgo) ||
+        (birthDate.year == eighteenYearsAgo.year &&
+            birthDate.month == eighteenYearsAgo.month &&
+            birthDate.day == eighteenYearsAgo.day);
+  }
+
+  void _showAgeErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+        title: Text(
+          'Age Restriction',
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'You must be at least 18 years old to register.',
+          style: TextStyle(fontSize: 16.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
   static Widget buildDropdownField({

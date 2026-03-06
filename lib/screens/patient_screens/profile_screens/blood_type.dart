@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/models/user_model.dart';
+import 'package:patient_app/screens/document_view_screen.dart';
+import '../../../controllers/patient_controllers/home_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
@@ -11,7 +14,9 @@ import 'edit_blood_type.dart';
 import '../../../utils/app_strings.dart';
 
 class BloodType extends GetView<ProfileController> {
-  BloodType({super.key});
+  BloodGroup blood;
+  BloodType({super.key,required this.blood});
+  final HomeController homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -97,16 +102,14 @@ class BloodType extends GetView<ProfileController> {
                               fit: BoxFit.fill,
                             ),
                             5.verticalSpace,
-                            Obx(
-                              () => Text(
-                                controller.selectedBloodType.value,
+                            Text(
+                                blood.type!,
                                 style: TextStyle(
                                   fontSize: 29.sp,
                                   fontWeight: FontWeight.w800,
                                   fontFamily: AppFonts.jakartaBold,
                                 ),
                               ),
-                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
@@ -119,7 +122,7 @@ class BloodType extends GetView<ProfileController> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                20.horizontalSpace,
+                                Spacer(),
                                 Text(
                                   AppStrings.source.tr,
                                   style: TextStyle(
@@ -129,16 +132,8 @@ class BloodType extends GetView<ProfileController> {
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                Spacer(),
-                                Text(
-                                  AppStrings.verificationStatus.tr,
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    fontFamily: AppFonts.jakartaMedium,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+Spacer(),
+
                               ],
                             ),
                             10.verticalSpace,
@@ -146,7 +141,7 @@ class BloodType extends GetView<ProfileController> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  AppStrings.jan2024.tr,
+                                  blood.lastConfirmed!.toLocal().toString().split(" ")[0],
                                   style: TextStyle(
                                     fontSize: 10.sp,
                                     fontFamily: AppFonts.jakartaMedium,
@@ -154,27 +149,28 @@ class BloodType extends GetView<ProfileController> {
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
-                                50.horizontalSpace,
-                                Text(
-                                  AppStrings.medicalTestReport.tr,
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    fontFamily: AppFonts.jakartaMedium,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400,
+                               Spacer(),
+                                SizedBox(
+                                  width: 0.50.sw,
+                                  child: InkWell(
+                                      onTap: (){
+                                        Get.to(DocumentViewerScreen(documentUrl: blood.report!, fileName: AppStrings.bloodTest.tr));
+                                      },
+                                    child: Text(
+                                      blood.report!,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontFamily: AppFonts.jakartaMedium,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                Spacer(),
-                                Text(
-                                  "✅ ${AppStrings.verified.tr}",
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    fontFamily: AppFonts.jakartaMedium,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                                50.horizontalSpace,
+
+
                               ],
                             ),
                           ],

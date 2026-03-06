@@ -21,7 +21,6 @@ class DoctorDocuments extends StatelessWidget {
       final doctor = homeController.currentUser.value;
       final doctorImage = doctor?.profileImage;
       final doctorTitle = 'Dr. ${doctor?.fullName ?? 'Daniel Lee'}';
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -95,36 +94,51 @@ class DoctorDocuments extends StatelessWidget {
             ),
             child: Column(
               children: [
+                5.verticalSpace,
+                doctor!.nationalIdentityDocument != null && doctor.nationalIdentityDocument!.isNotEmpty?
                 DocumentItemWidget(
                   documentName: AppStrings.nationalIdentityDocument.tr,
-                  documentStatus: AppStrings.uploadedStatus.tr,
-                ),
-                15.verticalSpace,
+                  documentStatus:doctor.nationalIdentityDocument!,
+                ):SizedBox(),
+                5.verticalSpace,
+                doctor.liabilityInsuranceProof != null && doctor.liabilityInsuranceProof!.isNotEmpty?
                 DocumentItemWidget(
-                  documentName: AppStrings.medicalDiploma.tr,
-                  documentStatus: AppStrings.pendingReviewStatus.tr,
-                ),
-                15.verticalSpace,
+                  documentName:AppStrings.liabilityInsuranceProof.tr,
+                  documentStatus:doctor.liabilityInsuranceProof!,
+                ):SizedBox(),
+                5.verticalSpace,
+                doctor.medicalLicence != null && doctor.medicalLicence!.isNotEmpty?
                 DocumentItemWidget(
-                  documentName: AppStrings.registrationCertificate.tr,
-                  documentStatus: AppStrings.uploadedStatus.tr,
-                ),
-                15.verticalSpace,
+                  documentName:AppStrings.medicalLicense.tr,
+                  documentStatus: doctor.medicalLicence!,
+                ):SizedBox(),
+                5.verticalSpace,
+                doctor.passportOrIdFront != null && doctor.passportOrIdFront!.isNotEmpty?
                 DocumentItemWidget(
-                  documentName: AppStrings.professionalPhoto.tr,
-                  documentStatus: AppStrings.rejectedStatus.tr,
-                ),
-                15.verticalSpace,
+                  documentName: AppStrings.passportIdFront.tr,
+                  documentStatus: doctor.passportOrIdFront!,
+                ):SizedBox(),
+                5.verticalSpace,
+                doctor.paymentAuthorization != null && doctor.paymentAuthorization!.isNotEmpty?
                 DocumentItemWidget(
-                  documentName: AppStrings.liabilityInsuranceProof.tr,
-                  documentStatus: AppStrings.expiredStatus.tr,
-                ),
-                15.verticalSpace,
+                  documentName: AppStrings.paymentAuthorization.tr,
+                  documentStatus: doctor.paymentAuthorization!,
+                ):SizedBox(),
+                doctor.cnpd != null && doctor.cnpd!.isNotEmpty?
+                    DocumentItemWidget(
+                      documentName: AppStrings.cnpdGdprForm.tr,
+                      documentStatus: doctor.cnpd!,
+                    ):SizedBox(),
+                doctor.certification != null && doctor.certification!.isNotEmpty?
                 DocumentItemWidget(
-                  documentName: AppStrings.bankDetailsProof.tr,
-                  documentStatus: AppStrings.uploadedStatus.tr,
-                  showDivider: false,
-                ),
+                  documentName: AppStrings.diplomaCertification.tr,
+                  documentStatus: doctor.certification!,
+                ):SizedBox(),
+                doctor.bankVerificationLetter!= null && doctor.bankVerificationLetter!.isNotEmpty?
+                DocumentItemWidget(
+                  documentName: AppStrings.bankVerificationLetter.tr,
+                  documentStatus: doctor.bankVerificationLetter!,
+                ):SizedBox(),
                 7.verticalSpace,
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),

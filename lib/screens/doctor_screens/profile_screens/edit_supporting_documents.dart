@@ -126,10 +126,21 @@ class EditSupportingDocuments extends GetView<SignUpController> {
                 ),
               ),
               20.verticalSpace,
-              CustomButton(
-                text: AppStrings.update.tr,
-                onTap: () => Get.back(),
-                borderRadius: 15,
+              Obx(
+                    () =>
+                controller.isLoading.value
+                    ? Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
+                )
+                    : CustomButton(
+                  borderRadius: 15,
+                  text: AppStrings.update.tr,
+                  onTap: () {
+                    controller.editDocumentDoctors();
+                  },
+                ),
               ),
               10.verticalSpace,
               CustomButton(

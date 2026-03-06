@@ -966,28 +966,100 @@ RxString isPhoneValid="".obs;
   Future<bool> editProfessionalInfoDoctor() async {
     try {
       isLoading.value = true;
-      FormData formData = FormData.fromMap({
-        "experience": experienceController.text.trim().isNotEmpty ? int.tryParse(experienceController.text.trim()) : null,
-        "dateOfRegistration": _registrationDate.value?.toIso8601String(),
-        "placeOfPractice": placeOfPracticeController.text.trim(),
-        "year": yearOfWorkController.text.trim().isNotEmpty ? int.tryParse(yearOfWorkController.text.trim()) : null,
-        "country": selectedCountry.value,
-        "ratings": "0"
-      });
-      if (videoConsultationFeeController.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry(
-          "fee[videoconsultation]",
-          videoConsultationFeeController.text.trim(),
-        ));
+      final formData = FormData();
+
+// Helper to add if not null/empty
+      void addIfValid(String key, dynamic value) {
+        if (value != null && value.toString().trim().isNotEmpty) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
       }
-      if (inPersonConsultationFeeController.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry(
-          "fee[inpersonconsultation]",
-          inPersonConsultationFeeController.text.trim(),
-        ));
-      }
+      addIfValid("experience", experienceController.text.trim());
+      addIfValid("dateOfRegistration", _registrationDate.value?.toIso8601String());
+      addIfValid("placeOfPractice", placeOfPracticeController.text.trim());
+      addIfValid("year", yearOfWorkController.text.trim());
+      addIfValid("country", selectedCountry.value);
+      addIfValid("fee[videoconsultation]", videoConsultationFeeController.text.trim());
+      addIfValid("fee[inpersonconsultation]", inPersonConsultationFeeController.text.trim());
       final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
       isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        doctorHomeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error updating doctor profile: $e");
+      isLoading.value = false;
+      _handleError(e);
+      return false;
+    }
+  }
+  Future<bool> editDocumentDoctors() async {
+    try {
+      isLoading.value = true;
+
+      FormData formData = FormData.fromMap({});
+      if (selectedFileIdCard.value != null && selectedFileIdCard.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'nationalIdentityDocument',
+          await MultipartFile.fromFile(selectedFileIdCard.value!, filename: 'nationalIdentityDocument.jpg'),
+        ));
+      }
+      if (selectedFilePassport.value != null && selectedFilePassport.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'passportOrIdFront',
+          await MultipartFile.fromFile(selectedFilePassport.value!, filename: 'passportOrIdFront.jpg'),
+        ));
+      }
+      if (selectedFileMedicalLicense.value != null && selectedFileMedicalLicense.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'medicalLicence',
+          await MultipartFile.fromFile(selectedFileMedicalLicense.value!, filename: 'medicalLicence.jpg'),
+        ));
+      }
+      if (selectedFileDiploma.value != null && selectedFileDiploma.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'certification',
+          await MultipartFile.fromFile(selectedFileDiploma.value!, filename: 'certification.jpg'),
+        ));
+      }
+      if (selectedFileInsuranceProof.value != null && selectedFileInsuranceProof.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'liabilityInsuranceProof',
+          await MultipartFile.fromFile(selectedFileInsuranceProof.value!, filename: 'liabilityInsuranceProof.jpg'),
+        ));
+      }
+      if (selectedFileCnpd.value != null && selectedFileCnpd.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'cnpd',
+          await MultipartFile.fromFile(selectedFileCnpd.value!, filename: 'cnpd.jpg'),
+        ));
+      }
+      if (selectedFileBankVerification.value != null && selectedFileBankVerification.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'bankVerificationLetter',
+          await MultipartFile.fromFile(selectedFileBankVerification.value!, filename: 'bankVerificationLetter.jpg'),
+        ));
+      }
+      if (selectedFileBankPaymentAuthorization.value != null && selectedFileBankPaymentAuthorization.value!.isNotEmpty) {
+        formData.files.add(MapEntry(
+          'paymentAuthorization',
+          await MultipartFile.fromFile(selectedFileBankPaymentAuthorization.value!, filename: 'paymentAuthorization.jpg'),
+        ));
+      }
+
+      print("Sending Doctor Data: ${formData.fields.map((e) => '${e.key}: ${e.value}').toList()}");
+      print("Sending Doctor Files: ${formData.files.length} files");
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+
+      print("Doctor Profile Update Response Status: ${response.statusCode}");
+      print("Doctor Profile Update Response Data: ${response.data}");
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         doctorHomeController.loadUserDataSecondTime();
         Get.back();

@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-
 class UserModel {
   final String? id;
-  final String? userId; // Add this field
+  final String? userId;
   final String email;
   final UserRole role;
   final String? fullName;
@@ -18,7 +17,7 @@ class UserModel {
 
   UserModel({
     this.id,
-    this.userId, // Add this
+    this.userId,
     required this.email,
     required this.role,
     this.fullName,
@@ -38,58 +37,109 @@ class UserModel {
   String toRawJson() => json.encode(toJson());
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    // Extract userId from nested object if exists
-    String? extractedUserId;
-    if (json['userId'] != null) {
-      if (json['userId'] is Map<String, dynamic>) {
-        extractedUserId = json['userId']['_id']?.toString();
-      } else {
-        extractedUserId = json['userId']?.toString();
-      }
-    }
+    try {
+      print('UserModel.fromJson - json keys: ${json.keys}');
 
-    return UserModel(
-      id: json['_id'] ?? json['id'],
-      userId: extractedUserId ?? json['userId'], // Use extracted userId
-      email: json['email']?.toString() ?? '',
-      role: _parseRole(json['role']),
-      fullName: json['fullName']?.toString(),
-      phoneNumber: json['phoneNumber']?.toString(),
-      createdAt: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt'].toString())
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'].toString())
-          : null,
-      isVerified: json['isVerified'] ?? false,
-      isActive: json['isActive'] ?? true,
-      patientData: json['patientData'] != null
-          ? PatientData.fromJson(
-          json['patientData'] is Map
-              ? json['patientData']
-              : Map<String, dynamic>.from(json['patientData'])
-      )
-          : null,
-      doctorData: json['doctorData'] != null
-          ? DoctorData.fromJson(
-          json['doctorData'] is Map
-              ? json['doctorData']
-              : Map<String, dynamic>.from(json['doctorData'])
-      )
-          : null,
-      pharmacyData: json['pharmacyData'] != null
-          ? PharmacyData.fromJson(
-          json['pharmacyData'] is Map
-              ? json['pharmacyData']
-              : Map<String, dynamic>.from(json['pharmacyData'])
-      )
-          : null,
-    );
+      // Check if the response has a 'data' field (your API structure)
+      if (json.containsKey('data') && json['data'] is Map<String, dynamic>) {
+        final data = json['data'] as Map<String, dynamic>;
+        print('Processing data object with keys: ${data.keys}');
+
+        // Extract userId from the data object
+        String? extractedUserId;
+        if (data.containsKey('userId')) {
+          if (data['userId'] is Map<String, dynamic>) {
+            extractedUserId = data['userId']['_id']?.toString();
+          } else {
+            extractedUserId = data['userId']?.toString();
+          }
+        }
+
+        // Parse role from the main response or data
+        UserRole userRole = _parseRole(json['role'] ?? data['role']);
+
+        return UserModel(
+          id: data['_id']?.toString(),
+          userId: extractedUserId,
+          email: data['email']?.toString() ?? '',
+          role: userRole,
+          fullName: data['fullName']?.toString(),
+          phoneNumber: data['phoneNumber']?.toString(),
+          createdAt: data['createdAt'] != null
+              ? DateTime.tryParse(data['createdAt'].toString())
+              : null,
+          updatedAt: data['updatedAt'] != null
+              ? DateTime.tryParse(data['updatedAt'].toString())
+              : null,
+          isVerified: data['isVerified'] ?? false,
+          isActive: data['isActive'] ?? true,
+          patientData: userRole == UserRole.patient
+              ? PatientData.fromJson(data)
+              : null,
+          doctorData: userRole == UserRole.doctor
+              ? DoctorData.fromJson(data)
+              : null,
+          pharmacyData: userRole == UserRole.pharmacy
+              ? PharmacyData.fromJson(data)
+              : null,
+        );
+      }
+
+      // Fallback to original parsing if 'data' field doesn't exist
+      String? extractedUserId;
+      if (json['userId'] != null) {
+        if (json['userId'] is Map<String, dynamic>) {
+          extractedUserId = json['userId']['_id']?.toString();
+        } else {
+          extractedUserId = json['userId']?.toString();
+        }
+      }
+
+      return UserModel(
+        id: json['_id'] ?? json['id'],
+        userId: extractedUserId,
+        email: json['email']?.toString() ?? '',
+        role: _parseRole(json['role']),
+        fullName: json['fullName']?.toString(),
+        phoneNumber: json['phoneNumber']?.toString(),
+        createdAt: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt'].toString())
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'].toString())
+            : null,
+        isVerified: json['isVerified'] ?? false,
+        isActive: json['isActive'] ?? true,
+        patientData: json['patientData'] != null
+            ? PatientData.fromJson(
+            json['patientData'] is Map
+                ? json['patientData']
+                : Map<String, dynamic>.from(json['patientData']))
+            : null,
+        doctorData: json['doctorData'] != null
+            ? DoctorData.fromJson(
+            json['doctorData'] is Map
+                ? json['doctorData']
+                : Map<String, dynamic>.from(json['doctorData']))
+            : null,
+        pharmacyData: json['pharmacyData'] != null
+            ? PharmacyData.fromJson(
+            json['pharmacyData'] is Map
+                ? json['pharmacyData']
+                : Map<String, dynamic>.from(json['pharmacyData']))
+            : null,
+      );
+    } catch (e, stackTrace) {
+      print('Error in UserModel.fromJson: $e');
+      print('Stack trace: $stackTrace');
+      print('Problematic JSON: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (id != null) 'id': id,
+      if (id != null) '_id': id,
       if (userId != null) 'userId': userId,
       'email': email,
       'role': role.value,
@@ -97,7 +147,7 @@ class UserModel {
       if (phoneNumber != null) 'phoneNumber': phoneNumber,
       'isVerified': isVerified,
       'isActive': isActive,
-      if (patientData != null) 'patientData': patientData!.toJson(),
+      if (patientData != null) 'data': patientData!.toJson(),
       if (doctorData != null) 'doctorData': doctorData!.toJson(),
       if (pharmacyData != null) 'pharmacyData': pharmacyData!.toJson(),
     };
@@ -162,148 +212,631 @@ enum UserRole {
 }
 
 class PatientData {
-  final String? userId;
-  final String? email;
+  final String? id;
+  final UserIdData? userId;
+  final String? fullName;
   final String? phoneNumber;
+  final String? email;
+  final List<Allergy> allergies;
+  final List<Appointment> appointments;
+  final List<String> reports;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+  final String? address;
+  final String? bloodPressure;
+  final double? bmi;
+  final String? country;
   final DateTime? dob;
   final String? gender;
-  final String? country;
-  final String? religion;
-  final List<String> allergies;
-  final List<Map<String, dynamic>> appointments; // Changed from List<String>
-  final String? address;
-  final String? height;
-  final String? weight;
-  final double? bmi;
-  final String? bloodPressure;
   final String? heartRate;
-  final List<String> reports;
+  final String? height;
   final String? profileImage;
+  final String? religion;
+  final String? weight;
+  final BloodGroup? bloodGroup;
 
   PatientData({
+    this.id,
     this.userId,
-    this.email,
+    this.fullName,
     this.phoneNumber,
+    this.email,
+    List<Allergy>? allergies,
+    List<Appointment>? appointments,
+    List<String>? reports,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.address,
+    this.bloodPressure,
+    this.bmi,
+    this.country,
     this.dob,
     this.gender,
-    this.country,
-    this.religion,
-    List<String>? allergies,
-    List<Map<String, dynamic>>? appointments, // Changed type
-    this.address,
-    this.height,
-    this.weight,
-    this.bmi,
-    this.bloodPressure,
     this.heartRate,
-    List<String>? reports,
+    this.height,
     this.profileImage,
+    this.religion,
+    this.weight,
+    this.bloodGroup,
   }) : allergies = allergies ?? [],
         appointments = appointments ?? [],
         reports = reports ?? [];
 
   factory PatientData.fromJson(Map<String, dynamic> json) {
-    // Convert appointments to List<Map<String, dynamic>>
-    List<Map<String, dynamic>> appointmentList = [];
-    if (json['appointments'] is List) {
-      for (var item in json['appointments']) {
-        if (item is Map<String, dynamic>) {
-          appointmentList.add(item);
-        } else if (item is Map) {
-          appointmentList.add(Map<String, dynamic>.from(item));
-        }
-      }
-    }
+    try {
+      print('PatientData.fromJson - json keys: ${json.keys}');
 
+      return PatientData(
+        id: json['_id']?.toString(),
+        userId: json['userId'] != null
+            ? (json['userId'] is Map<String, dynamic>
+            ? UserIdData.fromJson(json['userId'])
+            : null)
+            : null,
+        fullName: json['fullName']?.toString(),
+        phoneNumber: json['phoneNumber']?.toString(),
+        email: json['email']?.toString(),
+        allergies: json['allergies'] != null && json['allergies'] is List
+            ? List<Allergy>.from(json['allergies'].map((x) => Allergy.fromJson(x)))
+            : [],
+        appointments: json['appointments'] != null && json['appointments'] is List
+            ? List<Appointment>.from(json['appointments'].map((x) => Appointment.fromJson(x)))
+            : [],
+        reports: json['reports'] != null && json['reports'] is List
+            ? List<String>.from(json['reports'].map((x) => x.toString()))
+            : [],
+        createdAt: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt'].toString())
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'].toString())
+            : null,
+        v: json['__v'] != null
+            ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString()))
+            : null,
+        address: json['address']?.toString(),
+        bloodPressure: json['bloodPressure']?.toString(),
+        bmi: json['bmi'] != null
+            ? (json['bmi'] is num ? json['bmi'].toDouble() : double.tryParse(json['bmi'].toString()))
+            : null,
+        country: json['country']?.toString(),
+        dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
+        gender: json['gender']?.toString(),
+        heartRate: json['heartRate']?.toString(),
+        height: json['height']?.toString(),
+        profileImage: json['profileImage']?.toString(),
+        religion: json['religion']?.toString(),
+        weight: json['weight']?.toString(),
+        bloodGroup: json['bloodGroup'] != null ? BloodGroup.fromJson(json['bloodGroup']) : null,
+      );
+    } catch (e, stackTrace) {
+      print('Error in PatientData.fromJson: $e');
+      print('Stack trace: $stackTrace');
+      print('Problematic JSON: $json');
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) '_id': id,
+      if (userId != null) 'userId': userId!.toJson(),
+      if (fullName != null) 'fullName': fullName,
+      if (phoneNumber != null) 'phoneNumber': phoneNumber,
+      if (email != null) 'email': email,
+      'allergies': allergies.map((x) => x.toJson()).toList(),
+      'appointments': appointments.map((x) => x.toJson()).toList(),
+      'reports': reports,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (v != null) '__v': v,
+      if (address != null) 'address': address,
+      if (bloodPressure != null) 'bloodPressure': bloodPressure,
+      if (bmi != null) 'bmi': bmi,
+      if (country != null) 'country': country,
+      if (dob != null) 'dob': dob!.toIso8601String(),
+      if (gender != null) 'gender': gender,
+      if (heartRate != null) 'heartRate': heartRate,
+      if (height != null) 'height': height,
+      if (profileImage != null) 'profileImage': profileImage,
+      if (religion != null) 'religion': religion,
+      if (weight != null) 'weight': weight,
+      if (bloodGroup != null) 'bloodGroup': bloodGroup!.toJson(),
+    };
+  }
+
+  PatientData copyWith({
+    String? id,
+    UserIdData? userId,
+    String? fullName,
+    String? phoneNumber,
+    String? email,
+    List<Allergy>? allergies,
+    List<Appointment>? appointments,
+    List<String>? reports,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    int? v,
+    String? address,
+    String? bloodPressure,
+    double? bmi,
+    String? country,
+    DateTime? dob,
+    String? gender,
+    String? heartRate,
+    String? height,
+    String? profileImage,
+    String? religion,
+    String? weight,
+    BloodGroup? bloodGroup,
+  }) {
     return PatientData(
-      userId: json['userId']?.toString(),
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      fullName: fullName ?? this.fullName,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      email: email ?? this.email,
+      allergies: allergies ?? this.allergies,
+      appointments: appointments ?? this.appointments,
+      reports: reports ?? this.reports,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      v: v ?? this.v,
+      address: address ?? this.address,
+      bloodPressure: bloodPressure ?? this.bloodPressure,
+      bmi: bmi ?? this.bmi,
+      country: country ?? this.country,
+      dob: dob ?? this.dob,
+      gender: gender ?? this.gender,
+      heartRate: heartRate ?? this.heartRate,
+      height: height ?? this.height,
+      profileImage: profileImage ?? this.profileImage,
+      religion: religion ?? this.religion,
+      weight: weight ?? this.weight,
+      bloodGroup: bloodGroup ?? this.bloodGroup,
+    );
+  }
+}
+
+class UserIdData {
+  final String? id;
+  final String? email;
+  final String? phoneNumber;
+  final String? role;
+  final dynamic otp;
+  final dynamic otpExpiresAt;
+  final bool? otpVerified;
+  final bool? emailVerified;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+  final String? currentToken;
+  final bool? isActive;
+
+  UserIdData({
+    this.id,
+    this.email,
+    this.phoneNumber,
+    this.role,
+    this.otp,
+    this.otpExpiresAt,
+    this.otpVerified,
+    this.emailVerified,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.currentToken,
+    this.isActive,
+  });
+
+  factory UserIdData.fromJson(Map<String, dynamic> json) {
+    try {
+      return UserIdData(
+        id: json['_id']?.toString(),
+        email: json['email']?.toString(),
+        phoneNumber: json['phoneNumber']?.toString(),
+        role: json['role']?.toString(),
+        otp: json['otp'],
+        otpExpiresAt: json['otpExpiresAt'],
+        otpVerified: json['otpVerified'],
+        emailVerified: json['emailVerified'],
+        createdAt: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt'].toString())
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'].toString())
+            : null,
+        v: json['__v'] != null
+            ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString()))
+            : null,
+        currentToken: json['currentToken']?.toString(),
+        isActive: json['isActive'],
+      );
+    } catch (e) {
+      print('Error in UserIdData.fromJson: $e');
+      print('Problematic JSON: $json');
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) '_id': id,
+      if (email != null) 'email': email,
+      if (phoneNumber != null) 'phoneNumber': phoneNumber,
+      if (role != null) 'role': role,
+      if (otp != null) 'otp': otp,
+      if (otpExpiresAt != null) 'otpExpiresAt': otpExpiresAt,
+      if (otpVerified != null) 'otpVerified': otpVerified,
+      if (emailVerified != null) 'emailVerified': emailVerified,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (v != null) '__v': v,
+      if (currentToken != null) 'currentToken': currentToken,
+      if (isActive != null) 'isActive': isActive,
+    };
+  }
+}
+
+class Allergy {
+  final String? id;
+  final String? allergyType;
+  final String? allergenName;
+  final String? reaction;
+  final String? createdBy;
+  final String? severity;
+  final DateTime? dateIdentified;
+  final String? photo;
+  final String? notes;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+
+  Allergy({
+    this.id,
+    this.allergyType,
+    this.allergenName,
+    this.reaction,
+    this.createdBy,
+    this.severity,
+    this.dateIdentified,
+    this.photo,
+    this.notes,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
+
+  factory Allergy.fromJson(Map<String, dynamic> json) {
+    try {
+      return Allergy(
+        id: json['_id']?.toString(),
+        allergyType: json['allergyType']?.toString(),
+        allergenName: json['allergenName']?.toString(),
+        reaction: json['reaction']?.toString(),
+        createdBy: json['createdBy']?.toString(),
+        severity: json['severity']?.toString(),
+        dateIdentified: json['dateIdentified'] != null
+            ? DateTime.tryParse(json['dateIdentified'].toString())
+            : null,
+        photo: json['photo']?.toString(),
+        notes: json['notes']?.toString(),
+        createdAt: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt'].toString())
+            : null,
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'].toString())
+            : null,
+        v: json['__v'] != null
+            ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString()))
+            : null,
+      );
+    } catch (e) {
+      print('Error in Allergy.fromJson: $e');
+      print('Problematic JSON: $json');
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) '_id': id,
+      if (allergyType != null) 'allergyType': allergyType,
+      if (allergenName != null) 'allergenName': allergenName,
+      if (reaction != null) 'reaction': reaction,
+      if (createdBy != null) 'createdBy': createdBy,
+      if (severity != null) 'severity': severity,
+      if (dateIdentified != null) 'dateIdentified': dateIdentified!.toIso8601String(),
+      if (photo != null) 'photo': photo,
+      if (notes != null) 'notes': notes,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (v != null) '__v': v,
+    };
+  }
+}
+
+class Appointment {
+  final String? id;
+  final String? patientId;
+  final DoctorId? doctorId;
+  final Timeslot? timeslot;
+  final int? fee;
+  final String? currency;
+  final DateTime? date;
+  final String? consultationType;
+  final String? status;
+  final String? visitAddress;
+  final String? homevisitstatus;
+  final IsReschedule? isReschedule;
+  final List<String>? followUps;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+  final SOAP? soap;
+  final String? prescriptionId;
+  final List<String>? reviews;
+  final String? notes;
+
+  Appointment({
+    this.id,
+    this.patientId,
+    this.doctorId,
+    this.timeslot,
+    this.fee,
+    this.currency,
+    this.date,
+    this.consultationType,
+    this.status,
+    this.visitAddress,
+    this.homevisitstatus,
+    this.isReschedule,
+    this.followUps,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+    this.soap,
+    this.prescriptionId,
+    this.reviews,
+    this.notes,
+  });
+
+  factory Appointment.fromJson(Map<String, dynamic> json) {
+    try {
+      return Appointment(
+        id: json['_id']?.toString(),
+        patientId: json['patientId']?.toString(),
+        doctorId: json['doctorId'] != null && json['doctorId'] is Map<String, dynamic>
+            ? DoctorId.fromJson(json['doctorId'])
+            : null,
+        timeslot: json['timeslot'] != null && json['timeslot'] is Map<String, dynamic>
+            ? Timeslot.fromJson(json['timeslot'])
+            : null,
+        fee: json['fee'] != null
+            ? (json['fee'] is int ? json['fee'] : int.tryParse(json['fee'].toString()))
+            : null,
+        currency: json['currency']?.toString(),
+        date: json['date'] != null ? DateTime.tryParse(json['date'].toString()) : null,
+        consultationType: json['consultationType']?.toString(),
+        status: json['status']?.toString(),
+        visitAddress: json['visitAddress']?.toString(),
+        homevisitstatus: json['homevisitstatus']?.toString(),
+        isReschedule: json['isReschedule'] != null && json['isReschedule'] is Map<String, dynamic>
+            ? IsReschedule.fromJson(json['isReschedule'])
+            : null,
+        followUps: json['followUps'] != null && json['followUps'] is List
+            ? List<String>.from(json['followUps'].map((x) => x.toString()))
+            : [],
+        createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null,
+        updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt'].toString()) : null,
+        v: json['__v'] != null
+            ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString()))
+            : null,
+        soap: json['SOAP'] != null && json['SOAP'] is Map<String, dynamic>
+            ? SOAP.fromJson(json['SOAP'])
+            : null,
+        prescriptionId: json['prescriptionId']?.toString(),
+        reviews: json['reviews'] != null && json['reviews'] is List
+            ? List<String>.from(json['reviews'].map((x) => x.toString()))
+            : [],
+        notes: json['notes']?.toString(),
+      );
+    } catch (e) {
+      print('Error in Appointment.fromJson: $e');
+      print('Problematic JSON: $json');
+      rethrow;
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) '_id': id,
+      if (patientId != null) 'patientId': patientId,
+      if (doctorId != null) 'doctorId': doctorId!.toJson(),
+      if (timeslot != null) 'timeslot': timeslot!.toJson(),
+      if (fee != null) 'fee': fee,
+      if (currency != null) 'currency': currency,
+      if (date != null) 'date': date!.toIso8601String(),
+      if (consultationType != null) 'consultationType': consultationType,
+      if (status != null) 'status': status,
+      if (visitAddress != null) 'visitAddress': visitAddress,
+      if (homevisitstatus != null) 'homevisitstatus': homevisitstatus,
+      if (isReschedule != null) 'isReschedule': isReschedule!.toJson(),
+      if (followUps != null) 'followUps': followUps,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (v != null) '__v': v,
+      if (soap != null) 'SOAP': soap!.toJson(),
+      if (prescriptionId != null) 'prescriptionId': prescriptionId,
+      if (reviews != null) 'reviews': reviews,
+      if (notes != null) 'notes': notes,
+    };
+  }
+}
+
+class DoctorId {
+  final String? id;
+  final String? email;
+
+  DoctorId({
+    this.id,
+    this.email,
+  });
+
+  factory DoctorId.fromJson(Map<String, dynamic> json) {
+    return DoctorId(
+      id: json['_id']?.toString(),
       email: json['email']?.toString(),
-      phoneNumber: json['phoneNumber']?.toString(),
-      dob: json['dob'] != null
-          ? DateTime.tryParse(json['dob'].toString())
-          : null,
-      gender: json['gender']?.toString(),
-      country: json['country']?.toString(),
-      religion: json['religion']?.toString(),
-      allergies: json['allergies'] != null
-          ? List<String>.from(json['allergies'].map((x) => x.toString()))
-          : [],
-      appointments: appointmentList, // Use converted list
-      address: json['address']?.toString(),
-      height: json['height']?.toString(),
-      weight: json['weight']?.toString(),
-      bmi: json['bmi'] != null
-          ? (json['bmi'] is num ? json['bmi'].toDouble() : double.tryParse(json['bmi'].toString()))
-          : null,
-      bloodPressure: json['bloodPressure']?.toString(),
-      heartRate: json['heartRate']?.toString(),
-      reports: json['reports'] != null
-          ? List<String>.from(json['reports'].map((x) => x.toString()))
-          : [],
-      profileImage: json['profileImage']?.toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (userId != null) 'userId': userId,
+      if (id != null) '_id': id,
       if (email != null) 'email': email,
-      if (phoneNumber != null) 'phoneNumber': phoneNumber,
-      if (dob != null) 'dob': dob!.toIso8601String(),
-      if (gender != null) 'gender': gender,
-      if (country != null) 'country': country,
-      if (religion != null) 'religion': religion,
-      'allergies': allergies,
-      'appointments': appointments,
-      if (address != null) 'address': address,
-      if (height != null) 'height': height,
-      if (weight != null) 'weight': weight,
-      if (bmi != null) 'bmi': bmi,
-      if (bloodPressure != null) 'bloodPressure': bloodPressure,
-      if (heartRate != null) 'heartRate': heartRate,
-      'reports': reports,
-      if (profileImage != null) 'profileImage': profileImage,
     };
   }
+}
 
-  PatientData copyWith({
-    String? userId,
-    String? email,
-    String? phoneNumber,
-    DateTime? dob,
-    String? gender,
-    String? country,
-    String? religion,
-    List<String>? allergies,
-    List<Map<String, dynamic>>? appointments,
-    String? address,
-    String? height,
-    String? weight,
-    double? bmi,
-    String? bloodPressure,
-    String? heartRate,
-    List<String>? reports,
-    String? profileImage,
-  }) {
-    return PatientData(
-      userId: userId ?? this.userId,
-      email: email ?? this.email,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      dob: dob ?? this.dob,
-      gender: gender ?? this.gender,
-      country: country ?? this.country,
-      religion: religion ?? this.religion,
-      allergies: allergies ?? this.allergies,
-      appointments: appointments ?? this.appointments,
-      address: address ?? this.address,
-      height: height ?? this.height,
-      weight: weight ?? this.weight,
-      bmi: bmi ?? this.bmi,
-      bloodPressure: bloodPressure ?? this.bloodPressure,
-      heartRate: heartRate ?? this.heartRate,
-      reports: reports ?? this.reports,
-      profileImage: profileImage ?? this.profileImage,
+class Timeslot {
+  final String? id;
+  final DateTime? startTime;
+  final DateTime? endTime;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final int? v;
+
+  Timeslot({
+    this.id,
+    this.startTime,
+    this.endTime,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
+  });
+
+  factory Timeslot.fromJson(Map<String, dynamic> json) {
+    return Timeslot(
+      id: json['_id']?.toString(),
+      startTime: json['startTime'] != null ? DateTime.tryParse(json['startTime'].toString()) : null,
+      endTime: json['endTime'] != null ? DateTime.tryParse(json['endTime'].toString()) : null,
+      status: json['status']?.toString(),
+      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt'].toString()) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.tryParse(json['updatedAt'].toString()) : null,
+      v: json['__v'] != null
+          ? (json['__v'] is int ? json['__v'] : int.tryParse(json['__v'].toString()))
+          : null,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (id != null) '_id': id,
+      if (startTime != null) 'startTime': startTime!.toIso8601String(),
+      if (endTime != null) 'endTime': endTime!.toIso8601String(),
+      if (status != null) 'status': status,
+      if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
+      if (v != null) '__v': v,
+    };
+  }
+}
+
+class IsReschedule {
+  final String? isAccept;
+  final String? reason;
+  final String? role;
+
+  IsReschedule({
+    this.isAccept,
+    this.reason,
+    this.role,
+  });
+
+  factory IsReschedule.fromJson(Map<String, dynamic> json) {
+    return IsReschedule(
+      isAccept: json['isAccept']?.toString(),
+      reason: json['reason']?.toString(),
+      role: json['role']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (isAccept != null) 'isAccept': isAccept,
+      if (reason != null) 'reason': reason,
+      if (role != null) 'role': role,
+    };
+  }
+}
+
+class SOAP {
+  final String? assessment;
+  final String? diagnosis;
+  final String? objective;
+  final String? plan;
+  final String? subjective;
+
+  SOAP({
+    this.assessment,
+    this.diagnosis,
+    this.objective,
+    this.plan,
+    this.subjective,
+  });
+
+  factory SOAP.fromJson(Map<String, dynamic> json) {
+    return SOAP(
+      assessment: json['assessment']?.toString(),
+      diagnosis: json['diagnosis']?.toString(),
+      objective: json['objective']?.toString(),
+      plan: json['plan']?.toString(),
+      subjective: json['subjective']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (assessment != null) 'assessment': assessment,
+      if (diagnosis != null) 'diagnosis': diagnosis,
+      if (objective != null) 'objective': objective,
+      if (plan != null) 'plan': plan,
+      if (subjective != null) 'subjective': subjective,
+    };
+  }
+}
+
+class BloodGroup {
+  final DateTime? lastConfirmed;
+  final String? type;
+  final String? report;
+
+  BloodGroup({
+    this.lastConfirmed,
+    this.type,
+    this.report,
+  });
+
+  factory BloodGroup.fromJson(Map<String, dynamic> json) {
+    return BloodGroup(
+      lastConfirmed: json['lastConfirmed'] != null
+          ? DateTime.tryParse(json['lastConfirmed'].toString())
+          : null,
+      type: json['type']?.toString(),
+      report: json['report']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (lastConfirmed != null) 'lastConfirmed': lastConfirmed!.toIso8601String(),
+      if (type != null) 'type': type,
+      if (report != null) 'report': report,
+    };
   }
 }
 
@@ -376,7 +909,7 @@ class DoctorData {
       email: json['email'],
       fullName: json['fullName'],
       phoneNumber: json['phoneNumber'],
-      dob: json['dob'] != null ? DateTime.parse(json['dob']) : null,
+      dob: json['dob'] != null ? DateTime.tryParse(json['dob'].toString()) : null,
       gender: json['gender'],
       nationality: json['nationality'],
       idNumber: json['idNumber'],
@@ -387,12 +920,12 @@ class DoctorData {
       fee: json['fee'] != null ? ConsultationFee.fromJson(json['fee']) : null,
       currency: json['currency'],
       dateOfRegistration: json['dateOfRegistration'] != null
-          ? DateTime.parse(json['dateOfRegistration'])
+          ? DateTime.tryParse(json['dateOfRegistration'].toString())
           : null,
       placeOfPractice: json['placeOfPractice'],
       year: json['year'],
       availableSlots: json['availableSlots'] != null
-          ? List<String>.from(json['availableSlots'])
+          ? List<String>.from(json['availableSlots'].map((x) => x.toString()))
           : [],
       country: json['country'],
       nationalIdentityDocument: json['nationalIdentityDocument'],
@@ -521,13 +1054,13 @@ class ConsultationFee {
   factory ConsultationFee.fromJson(Map<String, dynamic> json) {
     return ConsultationFee(
       remoteconsultation: json['remoteconsultation'] != null
-          ? json['remoteconsultation'].toDouble()
+          ? (json['remoteconsultation'] is num ? json['remoteconsultation'].toDouble() : double.tryParse(json['remoteconsultation'].toString()))
           : null,
       inpersonconsultation: json['inpersonconsultation'] != null
-          ? json['inpersonconsultation'].toDouble()
+          ? (json['inpersonconsultation'] is num ? json['inpersonconsultation'].toDouble() : double.tryParse(json['inpersonconsultation'].toString()))
           : null,
       homevisitconsultation: json['homevisitconsultation'] != null
-          ? json['homevisitconsultation'].toDouble()
+          ? (json['homevisitconsultation'] is num ? json['homevisitconsultation'].toDouble() : double.tryParse(json['homevisitconsultation'].toString()))
           : null,
     );
   }
@@ -611,8 +1144,8 @@ class PharmacyData {
       operatingHours: json['operatingHours'],
       licenseNumber: json['licenseNumber'],
       issuingAuthority: json['issuingAuthority'],
-      issueDate: json['issueDate'] != null ? DateTime.parse(json['issueDate']) : null,
-      expiryDate: json['expiryDate'] != null ? DateTime.parse(json['expiryDate']) : null,
+      issueDate: json['issueDate'] != null ? DateTime.tryParse(json['issueDate'].toString()) : null,
+      expiryDate: json['expiryDate'] != null ? DateTime.tryParse(json['expiryDate'].toString()) : null,
       businessRegistrationNo: json['businessRegistrationNo'],
       registerName: json['registerName'],
       profileImage: json['profileImage'],

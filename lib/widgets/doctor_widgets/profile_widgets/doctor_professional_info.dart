@@ -123,13 +123,13 @@ class DoctorProfessionalInfo extends StatelessWidget {
                 ),
                 InfoRow(
                   label: AppStrings.nationalIdentityDocument.tr,
-                  value: "MA-PK-457621",
+                  value: doctor?.id ?? '',
                   labelTextSize: 15,
                   valueTextSize: 12,
                 ),
                 InfoRow(
                   label: AppStrings.dateOfRegistration.tr,
-                  value: '15 March 2018',
+                  value: doctor!.dateOfRegistration!.toIso8601String().split('T').first,
                 ),
                 CardHeader(
                   title: AppStrings.practiceInformation.tr,
@@ -138,26 +138,21 @@ class DoctorProfessionalInfo extends StatelessWidget {
                 ),
                 InfoRow(
                   label: AppStrings.medicalSpecialty.tr,
-                  value: doctorSpecialization,
+                  value: doctor.medicalSpecialtyName,
                 ),
                 InfoRow(
                   label: AppStrings.placeOfPractice.tr,
-                  value: doctorAddress,
+                  value: doctor.placeOfPractice! ?? '',
                   labelTextSize: 15,
                   valueTextSize: 12,
                 ),
                 InfoRow(
                   label: AppStrings.experience.tr,
-                  value: "$doctorExperience ${AppStrings.years.tr}",
+                  value: "${doctor.experience} ${AppStrings.years.tr}",
                 ),
-                InfoRow(label: AppStrings.year.tr, value: doctorExperience),
-                InfoRow(label: AppStrings.nationality.tr, value: AppStrings.pakistani.tr),
-                InfoRow(label: AppStrings.country.tr, value: doctorCountry),
-                InfoRow(
-                  label: AppStrings.language.tr,
-                  value: AppStrings.english.tr,
-                  showDivider: false,
-                ),
+                InfoRow(label: AppStrings.year.tr, value: doctor.year.toString()),
+                InfoRow(label: AppStrings.nationality.tr, value: doctor.nationality!),
+                InfoRow(label: AppStrings.country.tr, value: doctor.country!),
                 Text(
                   AppStrings.publicProfileNote.tr,
                   style: TextStyle(

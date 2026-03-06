@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/utils/api_urls.dart';
 import 'package:patient_app/utils/locat_storage.dart';
 import '../../models/appointment_model.dart';
-import '../../models/user_model.dart';
+import '../../models/user_model.dart' hide Appointment;
 import '../../services/api_service.dart';
 import '../../utils/app_strings.dart';
 
@@ -23,7 +23,6 @@ class HomeController extends GetxController {
   Future<void> fetchAppointments() async {
     print("token= ${await LocalStorageUtils.getToken()}");
     try {
-
       final response = await apiService.get(ApiUrls.getAppointments);
 
       if (response.statusCode == 200) {
@@ -91,6 +90,7 @@ class HomeController extends GetxController {
 
     }
   }
+
   @override
   void onInit() {
     super.onInit();
@@ -154,29 +154,37 @@ class HomeController extends GetxController {
               processedData['fullName'] = 'User';
             }
 
-            // Prepare patientData for the UserModel
+            // Prepare patientData for the UserModel with bloodGroup included
             final Map<String, dynamic> patientData = {
-              'profileImage': userData['profileImage']?.toString() ?? '',
-              'userId': userData['_id']?.toString() ?? '',
+              '_id': userData['_id']?.toString() ?? '',
+              'userId': userData['userId'],
+              'fullName': userData['fullName']?.toString() ?? '',
+              'phoneNumber': userData['phoneNumber']?.toString() ?? '',
               'email': processedData['email'] ?? '',
-              'phoneNumber': processedData['phoneNumber'] ?? '',
-              'dob': userData['dob'],
-              'gender': userData['gender'],
-              'country': userData['country'],
               'allergies': userData['allergies'] is List ? userData['allergies'] : [],
               'appointments': userData['appointments'] is List ? userData['appointments'] : [],
-              'address': userData['address'],
-              'height': userData['height'],
-              'weight': userData['weight'],
-              'bmi': userData['bmi'],
-              'bloodPressure': userData['bloodPressure'],
-              'heartRate': userData['heartRate'],
               'reports': userData['reports'] is List ? userData['reports'] : [],
+              'createdAt': userData['createdAt'],
+              'updatedAt': userData['updatedAt'],
+              '__v': userData['__v'],
+              'address': userData['address'],
+              'bloodPressure': userData['bloodPressure'],
+              'bmi': userData['bmi'],
+              'country': userData['country'],
+              'dob': userData['dob'],
+              'gender': userData['gender'],
+              'heartRate': userData['heartRate'],
+              'height': userData['height'],
+              'profileImage': userData['profileImage']?.toString() ?? '',
+              'religion': userData['religion'],
+              'weight': userData['weight'],
+              'bloodGroup': userData['bloodGroup'], // This is the key addition
             };
 
             processedData['patientData'] = patientData;
 
             print('Processed data for UserModel creation');
+            print('Blood group data: ${userData['bloodGroup']}');
 
             try {
               final user = UserModel.fromJson(processedData);
@@ -187,6 +195,7 @@ class HomeController extends GetxController {
               print('User data loaded successfully: ${user.fullName}');
               print('User email: ${user.email}');
               print('User profile image: ${user.patientData?.profileImage}');
+              print('User blood group: ${user.patientData?.bloodGroup?.type}');
             } catch (e) {
               print('Error creating UserModel: $e');
               print('Error type: ${e.runtimeType}');
@@ -209,6 +218,7 @@ class HomeController extends GetxController {
       isLoading.value = false;
     }
   }
+
   Future<void> loadUserDataSecondTime() async {
     isLoading.value = true;
     try {
@@ -247,29 +257,37 @@ class HomeController extends GetxController {
               processedData['fullName'] = 'User';
             }
 
-            // Prepare patientData for the UserModel
+            // Prepare patientData for the UserModel with bloodGroup included
             final Map<String, dynamic> patientData = {
-              'profileImage': userData['profileImage']?.toString() ?? '',
-              'userId': userData['_id']?.toString() ?? '',
+              '_id': userData['_id']?.toString() ?? '',
+              'userId': userData['userId'],
+              'fullName': userData['fullName']?.toString() ?? '',
+              'phoneNumber': userData['phoneNumber']?.toString() ?? '',
               'email': processedData['email'] ?? '',
-              'phoneNumber': processedData['phoneNumber'] ?? '',
-              'dob': userData['dob'],
-              'gender': userData['gender'],
-              'country': userData['country'],
               'allergies': userData['allergies'] is List ? userData['allergies'] : [],
               'appointments': userData['appointments'] is List ? userData['appointments'] : [],
-              'address': userData['address'],
-              'height': userData['height'],
-              'weight': userData['weight'],
-              'bmi': userData['bmi'],
-              'bloodPressure': userData['bloodPressure'],
-              'heartRate': userData['heartRate'],
               'reports': userData['reports'] is List ? userData['reports'] : [],
+              'createdAt': userData['createdAt'],
+              'updatedAt': userData['updatedAt'],
+              '__v': userData['__v'],
+              'address': userData['address'],
+              'bloodPressure': userData['bloodPressure'],
+              'bmi': userData['bmi'],
+              'country': userData['country'],
+              'dob': userData['dob'],
+              'gender': userData['gender'],
+              'heartRate': userData['heartRate'],
+              'height': userData['height'],
+              'profileImage': userData['profileImage']?.toString() ?? '',
+              'religion': userData['religion'],
+              'weight': userData['weight'],
+              'bloodGroup': userData['bloodGroup'], // This is the key addition
             };
 
             processedData['patientData'] = patientData;
 
             print('Processed data for UserModel creation');
+            print('Blood group data: ${userData['bloodGroup']}');
 
             try {
               final user = UserModel.fromJson(processedData);
@@ -280,6 +298,7 @@ class HomeController extends GetxController {
               print('User data loaded successfully: ${user.fullName}');
               print('User email: ${user.email}');
               print('User profile image: ${user.patientData?.profileImage}');
+              print('User blood group: ${user.patientData?.bloodGroup?.type}');
             } catch (e) {
               print('Error creating UserModel: $e');
               print('Error type: ${e.runtimeType}');

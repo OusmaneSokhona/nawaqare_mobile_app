@@ -2,16 +2,17 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import '../../../controllers/patient_controllers/blood_type_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 import '../../../utils/app_strings.dart';
 
-class EditBloodType extends GetView<ProfileController> {
+class EditBloodType extends StatelessWidget {
   EditBloodType({super.key});
 
+  final BloodTypeController controller = Get.put(BloodTypeController());
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +66,12 @@ class EditBloodType extends GetView<ProfileController> {
                         title: AppStrings.bloodType.tr,
                         items: controller.bloodList,
                         selectedValue: controller.selectedBloodType,
-                        onChanged: (_) {},
+                        onChanged: (value) {
+                          controller.selectedBloodType.value = value;
+                        },
                       ),
+                      10.verticalSpace,
+                      buildDatePickerField(context),
                       10.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
@@ -149,7 +154,7 @@ class EditBloodType extends GetView<ProfileController> {
                       CustomButton(
                         borderRadius: 15,
                         text: AppStrings.update.tr,
-                        onTap: () {Get.back();},
+                        onTap: controller.updateBloodType,
                       ),
                       15.verticalSpace,
                       CustomButton(
@@ -157,7 +162,10 @@ class EditBloodType extends GetView<ProfileController> {
                         text: AppStrings.cancel.tr,
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
-                        onTap: () {Get.back();},
+                        onTap: () {
+                          controller.clearSelection();
+                          Get.back();
+                        },
                       ),
                       15.verticalSpace,
                     ],
@@ -171,6 +179,51 @@ class EditBloodType extends GetView<ProfileController> {
     );
   }
 
+  Widget buildDatePickerField(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
+            child: Text(
+              'Last Confirmed Date',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: () => _showDatePicker(context),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Obx(
+                    () => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${controller.selectedDate.value.year}-${controller.selectedDate.value.month.toString().padLeft(2, '0')}-${controller.selectedDate.value.day.toString().padLeft(2, '0')}',
+                      style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                    ),
+                    Icon(Icons.calendar_today, color: AppColors.darkGrey, size: 20),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showDatePicker(BuildContext context) async {
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
@@ -178,14 +231,20 @@ class EditBloodType extends GetView<ProfileController> {
         calendarType: CalendarDatePicker2Type.single,
         selectedDayHighlightColor: Colors.blue,
         centerAlignModePicker: true,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now(),
       ),
       dialogSize: const Size(325, 400),
-      value: [controller.selectedDate],
+      value: [controller.selectedDate.value],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates.first != null) {
+      controller.setDate(dates.first!);
+    }
   }
 
-  static Widget buildDropdownField({
+  Widget buildDropdownField({
     required String title,
     required List<String> items,
     required Rx<String?> selectedValue,
@@ -225,14 +284,14 @@ class EditBloodType extends GetView<ProfileController> {
               isExpanded: true,
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items:
-              items.map<DropdownMenuItem<String>>((String value) {
+              items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),
                 );
               }).toList(),
               onChanged: onChanged,
+              hint: Text('Select blood type'),
             ),
           ),
         ],

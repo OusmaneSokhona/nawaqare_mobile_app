@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/screens/patient_screens/profile_screens/consultation_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
@@ -17,7 +18,8 @@ import 'language_dialogs.dart';
 
 class HeatlhSpaceGrid extends StatelessWidget {
   final ProfileController profileController;
-  const HeatlhSpaceGrid({super.key, required this.profileController});
+  HomeController homeController = Get.find();
+   HeatlhSpaceGrid({super.key, required this.profileController});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class HeatlhSpaceGrid extends StatelessWidget {
           icon: "assets/images/blood_type.png",
           title: AppStrings.bloodType.tr,
           onTap: () {
-            profileController.handleHealthSpaceTap( BloodType());
+            profileController.handleHealthSpaceTap( BloodType(blood:homeController.currentUser.value!.patientData!.bloodGroup!,));
           },
         ),
         HealthSpaceCard(

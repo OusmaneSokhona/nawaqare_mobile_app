@@ -4,8 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/models/vaccination_history_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
-
-import '../../../models/prscription_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VaccinationCard extends StatelessWidget {
   final Function onTap;
@@ -18,14 +17,14 @@ class VaccinationCard extends StatelessWidget {
   });
 
   Color _getStatusColor(String status) {
-    switch (status) {
-      case "Active":
+    switch (status.toLowerCase()) {
+      case "active":
         return AppColors.primaryColor;
-      case "Pending":
+      case "pending":
         return AppColors.orange;
-      case "Expired":
+      case "expired":
         return AppColors.red;
-      case "Completed":
+      case "completed":
         return AppColors.green;
       default:
         return Colors.grey;
@@ -33,14 +32,14 @@ class VaccinationCard extends StatelessWidget {
   }
 
   String _getLocalizedStatus(String status) {
-    switch (status) {
-      case "Active":
+    switch (status.toLowerCase()) {
+      case "active":
         return AppStrings.active.tr;
-      case "Pending":
+      case "pending":
         return AppStrings.pending.tr;
-      case "Expired":
+      case "expired":
         return AppStrings.expired.tr;
-      case "Completed":
+      case "completed":
         return AppStrings.completed.tr;
       default:
         return status;
@@ -65,6 +64,19 @@ class VaccinationCard extends StatelessWidget {
     );
   }
 
+  Future<void> _launchCertificate() async {
+    if (vaccinationHistoryModel.certificate != null &&
+        vaccinationHistoryModel.certificate!.isNotEmpty) {
+      final Uri url = Uri.parse(vaccinationHistoryModel.certificate!);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url);
+      } else {
+        Get.snackbar('Error', 'Could not open certificate',
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -85,6 +97,7 @@ class VaccinationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
@@ -98,13 +111,40 @@ class VaccinationCard extends StatelessWidget {
                         color: const Color(0xFF333333),
                       ),
                     ),
-                    Text(
-                      vaccinationHistoryModel.testName,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: const Color(0xFF666666),
+                    if (vaccinationHistoryModel.certificate != null)
+                      GestureDetector(
+                        onTap: _launchCertificate,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.insert_drive_file,
+                              size: 14.sp,
+                              color: AppColors.primaryColor,
+                            ),
+                            4.horizontalSpace,
+                            Expanded(
+                              child: Text(
+                                'View Certificate',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: AppColors.primaryColor,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      Text(
+                        'No certificate',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: AppColors.lightGrey,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -116,7 +156,7 @@ class VaccinationCard extends StatelessWidget {
           Text(
             "${AppStrings.lastUpdatedLabel.tr} ${vaccinationHistoryModel.lastUpdated}",
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 12.sp,
               color: AppColors.darkGrey,
             ),
           ),

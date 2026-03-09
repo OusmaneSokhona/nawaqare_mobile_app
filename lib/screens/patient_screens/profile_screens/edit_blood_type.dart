@@ -60,115 +60,147 @@ class EditBloodType extends StatelessWidget {
               20.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      buildDropdownField(
-                        title: AppStrings.bloodType.tr,
-                        items: controller.bloodList,
-                        selectedValue: controller.selectedBloodType,
-                        onChanged: (value) {
-                          controller.selectedBloodType.value = value;
-                        },
-                      ),
-                      10.verticalSpace,
-                      buildDatePickerField(context),
-                      10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppStrings.uploadProofOptional.tr,
-                          style: TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      3.verticalSpace,
-                      InkWell(
-                        onTap: controller.pickFile,
-                        borderRadius: BorderRadius.circular(12),
-                        child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 20,
-                            horizontal: 20,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFFE5E7EB),
-                              width: 1,
+                  child: Obx(
+                        () => Stack(
+                      children: [
+                        Column(
+                          children: [
+                            buildDropdownField(
+                              title: AppStrings.bloodType.tr,
+                              items: controller.bloodList,
+                              selectedValue: controller.selectedBloodType,
+                              onChanged: controller.isLoading.value
+                                  ? null
+                                  : (value) {
+                                controller.selectedBloodType.value = value;
+                              },
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.05),
-                                spreadRadius: 2,
-                                blurRadius: 5,
-                                offset: const Offset(0, 3),
+                            10.verticalSpace,
+                            buildDatePickerField(context),
+                            10.verticalSpace,
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                AppStrings.uploadProofOptional.tr,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
                               ),
-                            ],
-                          ),
-                          child: Obx(
-                                () => Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.cloud_upload_outlined,
-                                  size: 40,
-                                  color: Colors.blue.shade700,
+                            ),
+                            3.verticalSpace,
+                            InkWell(
+                              onTap: controller.isLoading.value
+                                  ? null
+                                  : controller.pickFile,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                  horizontal: 20,
                                 ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  controller.selectedFileName.value ==
-                                      'No file selected' ||
-                                      controller.selectedFileName.value ==
-                                          'File selection cancelled'
-                                      ? AppStrings.uploadTestProof.tr
-                                      : controller.selectedFileName.value!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFE5E7EB),
+                                    width: 1,
                                   ),
-                                ),
-                                if (controller.selectedFileName.value !=
-                                    'No file selected' &&
-                                    controller.selectedFileName.value !=
-                                        'File selection cancelled')
-                                  Text(
-                                    AppStrings.tapToSelectNew.tr,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.05),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 3),
                                     ),
+                                  ],
+                                ),
+                                child: Obx(
+                                      () => Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.cloud_upload_outlined,
+                                        size: 40,
+                                        color: controller.isLoading.value
+                                            ? Colors.grey
+                                            : Colors.blue.shade700,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        controller.selectedFileName.value ==
+                                            'No file selected' ||
+                                            controller.selectedFileName.value ==
+                                                'File selection cancelled'
+                                            ? AppStrings.uploadTestProof.tr
+                                            : controller.selectedFileName.value!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: controller.isLoading.value
+                                              ? Colors.grey
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      if (controller.selectedFileName.value !=
+                                          'No file selected' &&
+                                          controller.selectedFileName.value !=
+                                              'File selection cancelled')
+                                        Text(
+                                          AppStrings.tapToSelectNew.tr,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: controller.isLoading.value
+                                                ? Colors.grey.shade300
+                                                : Colors.grey,
+                                          ),
+                                        ),
+                                    ],
                                   ),
-                              ],
+                                ),
+                              ),
+                            ),
+                            30.verticalSpace,
+                            CustomButton(
+                              borderRadius: 15,
+                              text: AppStrings.update.tr,
+                              onTap: controller.isLoading.value
+                                  ? (){}
+                                  : controller.updateBloodType,
+                              bgColor: controller.isLoading.value
+                                  ? AppColors.inACtiveButtonColor
+                                  : AppColors.primaryColor,
+                            ),
+                            15.verticalSpace,
+                            CustomButton(
+                              borderRadius: 15,
+                              text: AppStrings.cancel.tr,
+                              bgColor: AppColors.inACtiveButtonColor,
+                              fontColor: controller.isLoading.value
+                                  ? Colors.grey
+                                  : Colors.black,
+                              onTap: controller.isLoading.value
+                                  ?  (){}
+                                  : () {
+                                controller.clearSelection();
+                                Get.back();
+                              },
+                            ),
+                            15.verticalSpace,
+                          ],
+                        ),
+                        if (controller.isLoading.value)
+                          Container(
+                            color: Colors.black.withOpacity(0.3),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
                             ),
                           ),
-                        ),
-                      ),
-                      30.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.update.tr,
-                        onTap: controller.updateBloodType,
-                      ),
-                      15.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.cancel.tr,
-                        bgColor: AppColors.inACtiveButtonColor,
-                        fontColor: Colors.black,
-                        onTap: () {
-                          controller.clearSelection();
-                          Get.back();
-                        },
-                      ),
-                      15.verticalSpace,
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -192,12 +224,14 @@ class EditBloodType extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: controller.isLoading.value ? Colors.grey : Colors.black87,
               ),
             ),
           ),
           InkWell(
-            onTap: () => _showDatePicker(context),
+            onTap: controller.isLoading.value
+                ? null
+                : () => _showDatePicker(context),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
@@ -211,9 +245,16 @@ class EditBloodType extends StatelessWidget {
                   children: [
                     Text(
                       '${controller.selectedDate.value.year}-${controller.selectedDate.value.month.toString().padLeft(2, '0')}-${controller.selectedDate.value.day.toString().padLeft(2, '0')}',
-                      style: TextStyle(fontSize: 16.sp, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: controller.isLoading.value ? Colors.grey : Colors.black
+                      ),
                     ),
-                    Icon(Icons.calendar_today, color: AppColors.darkGrey, size: 20),
+                    Icon(
+                        Icons.calendar_today,
+                        color: controller.isLoading.value ? Colors.grey : AppColors.darkGrey,
+                        size: 20
+                    ),
                   ],
                 ),
               ),
@@ -248,7 +289,7 @@ class EditBloodType extends StatelessWidget {
     required String title,
     required List<String> items,
     required Rx<String?> selectedValue,
-    required Function(String?) onChanged,
+    required Function(String?)? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -259,10 +300,10 @@ class EditBloodType extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
             child: Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: controller.isLoading.value ? Colors.grey : Colors.black87,
               ),
             ),
           ),
@@ -282,8 +323,14 @@ class EditBloodType extends StatelessWidget {
                 fillColor: Colors.white,
               ),
               isExpanded: true,
-              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
-              style: TextStyle(fontSize: 16.sp, color: Colors.black),
+              icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: controller.isLoading.value ? Colors.grey : AppColors.darkGrey
+              ),
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  color: controller.isLoading.value ? Colors.grey : Colors.black
+              ),
               items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -291,7 +338,12 @@ class EditBloodType extends StatelessWidget {
                 );
               }).toList(),
               onChanged: onChanged,
-              hint: Text('Select blood type'),
+              hint: Text(
+                'Select blood type',
+                style: TextStyle(
+                    color: controller.isLoading.value ? Colors.grey : Colors.black54
+                ),
+              ),
             ),
           ),
         ],

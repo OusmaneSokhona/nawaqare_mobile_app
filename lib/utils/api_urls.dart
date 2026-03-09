@@ -39,4 +39,6 @@ class ApiUrls {
   static String updatePasswordApi="api/auth/reset-password";
   static String getAllReviews="/api/review/getAll";
   static String updateBloodType="/api/patient/blood-grp";
+  static String createMedicalHistory="api/medicalHistory/create";
+  static String getMedicalHistory="/api/medicalHistory/get";
 }

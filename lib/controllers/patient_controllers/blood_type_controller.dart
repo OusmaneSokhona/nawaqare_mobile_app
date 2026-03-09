@@ -11,23 +11,25 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 
+import 'home_controller.dart';
+
 class BloodTypeController extends GetxController {
   final ProfileController profileController = Get.find<ProfileController>();
   final ApiService apiService = ApiService();
-
+  final HomeController homeController = Get.find<HomeController>();
   Rx<String?> selectedBloodType = Rx<String?>(null);
   Rx<DateTime> selectedDate = DateTime.now().obs;
   Rx<File?> selectedFile = Rx<File?>(null);
   RxString selectedFileName = 'No file selected'.obs;
+
+  // Loading state
+  RxBool isLoading = false.obs;
 
   final List<String> bloodList = [
     'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
   ];
 
   final ImagePicker _picker = ImagePicker();
-
-
-
 
   Future<void> pickFile() async {
     try {
@@ -67,14 +69,11 @@ class BloodTypeController extends GetxController {
     }
 
     try {
-      Get.dialog(
-        Center(child: CircularProgressIndicator()),
-        barrierDismissible: false,
-      );
+      isLoading.value = true;
 
       final token = await LocalStorageUtils.getToken();
       if (token == null) {
-        Get.back();
+        isLoading.value = false;
         Get.snackbar(
           'Error',
           'Authentication token not found',
@@ -84,12 +83,12 @@ class BloodTypeController extends GetxController {
         );
         return;
       }
+
       FormData formData = FormData.fromMap({
         'type': selectedBloodType.value,
         'lastConfirmed': selectedDate.value.toIso8601String(),
       });
 
-      // Add file if selected using the same pattern as your example
       if (selectedFile.value != null && selectedFile.value!.path.isNotEmpty) {
         formData.files.add(MapEntry(
           'bloodReport',
@@ -105,18 +104,11 @@ class BloodTypeController extends GetxController {
         data: formData,
       );
 
-      Get.back();
+      print("Response status: ${response.statusCode}");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-
-        Get.snackbar(
-          'Success',
-          'Blood type updated successfully',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-
+homeController.loadUserDataSecondTime();
+        Get.back();
         Get.back();
       } else {
         String errorMessage = 'Failed to update blood type';
@@ -133,9 +125,7 @@ class BloodTypeController extends GetxController {
         );
       }
     } catch (e) {
-      Get.back();
       print('Error updating blood type: $e');
-
       Get.snackbar(
         'Error',
         'An error occurred: ${e.toString()}',
@@ -143,6 +133,8 @@ class BloodTypeController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -21,10 +21,10 @@ class AllergyController extends GetxController {
   var errorMessage = ''.obs;
 
   final List<String> allergyTypeList = ['birds', 'Medication', 'Food', 'Environmental'];
-  final List<String> severityList = ['severe', 'Mild', 'Slight', 'Minor', 'Low-Risk'];
+  final List<String> severityList = ['mild', 'moderate', 'severe'];
 
   final selectedAllergy = Rx<String?>('birds');
-  final selectedSeverity = Rx<String?>('severe');
+  final selectedSeverity = Rx<String?>('mild');
   final Rx<DateTime?> _selectedDate = Rx<DateTime?>(DateTime.now());
 
   final selectedFileName = Rx<String?>('No file selected');

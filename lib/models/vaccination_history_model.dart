@@ -1,14 +1,15 @@
 class VaccinationHistoryModel {
-
   final String vaccineName;
   final String testName;
-  final String lastUpdated;
   final String status;
+  final String lastUpdated;
+  final String? certificate;
 
   VaccinationHistoryModel({
     required this.vaccineName,
     required this.testName,
-    required this.lastUpdated,
     required this.status,
+    required this.lastUpdated,
+    this.certificate,
   });
 }

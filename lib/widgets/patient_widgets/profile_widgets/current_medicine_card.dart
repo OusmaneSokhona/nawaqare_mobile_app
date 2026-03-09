@@ -5,31 +5,29 @@ import 'package:patient_app/models/medical_history_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
-import '../../../models/prscription_model.dart';
-
 class CurrentMedicineCard extends StatelessWidget {
   final Function onTap;
-  final MedicalHistoryModel medicalHistoryModel;
+  final MedicationHistoryResponse medicalHistoryModel;
 
   CurrentMedicineCard({required this.medicalHistoryModel, super.key, required this.onTap});
 
   Color _getStatusColor(String status) {
-    if (status == "Active") return AppColors.primaryColor;
-    if (status == "In Progress") return AppColors.orange;
-    if (status == "Expired") return AppColors.red;
-    if (status == "Completed") return AppColors.green;
+    if (status.toLowerCase() == "active") return AppColors.primaryColor;
+    if (status.toLowerCase() == "in progress") return AppColors.orange;
+    if (status.toLowerCase() == "expired") return AppColors.red;
+    if (status.toLowerCase() == "completed") return AppColors.green;
     return Colors.grey;
   }
 
   String _getLocalizedStatus(String status) {
-    switch (status) {
-      case "Active":
+    switch (status.toLowerCase()) {
+      case "active":
         return AppStrings.active.tr;
-      case "In Progress":
+      case "in progress":
         return AppStrings.inProgress.tr;
-      case "Expired":
+      case "expired":
         return AppStrings.expired.tr;
-      case "Completed":
+      case "completed":
         return AppStrings.completed.tr;
       default:
         return status;
@@ -47,7 +45,7 @@ class CurrentMedicineCard extends StatelessWidget {
         _getLocalizedStatus(status),
         style: TextStyle(
           color: Colors.white,
-          fontSize: 12.sp,
+          fontSize: 11.sp,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -75,69 +73,64 @@ class CurrentMedicineCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Image.asset(medicalHistoryModel.doctor.image, height: 70.h),
-              15.horizontalSpace,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    medicalHistoryModel.doctor.name,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF333333),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      medicalHistoryModel.medicineName ?? 'Unknown Medicine',
+                      style: TextStyle(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF333333),
+                      ),
                     ),
-                  ),
-                  Text(
-                    medicalHistoryModel.doctor.specialty,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF666666),
+                    Text(
+                      'Doctor ID: ${medicalHistoryModel.doctorId ?? 'N/A'}',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: const Color(0xFF666666),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const Spacer(),
-              _buildStatusChip(medicalHistoryModel.doctor.status),
+              _buildStatusChip(medicalHistoryModel.status ?? 'Unknown'),
             ],
           ),
           5.verticalSpace,
           const Divider(),
           5.verticalSpace,
-          Text(
-            medicalHistoryModel.medicationName,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF333333),
-            ),
-          ),
-          4.verticalSpace,
-          Text(
-            medicalHistoryModel.dosage,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF666666),
-            ),
+          Row(
+            children: [
+              Icon(Icons.medication, size: 16.sp, color: AppColors.primaryColor),
+              8.horizontalSpace,
+              Text(
+                'Dosage: ${medicalHistoryModel.dosage ?? 'N/A'}',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF333333),
+                ),
+              ),
+            ],
           ),
           8.verticalSpace,
-          if (medicalHistoryModel.refillLimitDate != null)
-            Text(
-              '${AppStrings.refillsLeft.tr}: ${medicalHistoryModel.refillLimitDate}',
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
-                color: AppColors.lightGrey.withOpacity(0.8),
-              ),
+          if (medicalHistoryModel.refill != null)
+            Row(
+              children: [
+                Icon(Icons.refresh, size: 16.sp, color: AppColors.lightGrey),
+                8.horizontalSpace,
+                Text(
+                  '${AppStrings.refillsLeft.tr}: ${medicalHistoryModel.refill}',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.lightGrey,
+                  ),
+                ),
+              ],
             ),
-          Text(
-            medicalHistoryModel.lastUpdated,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: AppColors.darkGrey,
-            ),
-          ),
-          16.verticalSpace,
         ],
       ),
     );

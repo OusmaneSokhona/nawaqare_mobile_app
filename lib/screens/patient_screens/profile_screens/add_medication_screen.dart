@@ -1,17 +1,19 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/medical_history_controller.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
+import '../../../models/doctor_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_strings.dart';
 
-class AddMedicationScreen extends GetView<ProfileController> {
-  const AddMedicationScreen({super.key});
+class AddMedicationScreen extends StatelessWidget {
+  AddMedicationScreen({super.key});
+
+  final MedicalHistoryController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,7 @@ class AddMedicationScreen extends GetView<ProfileController> {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -58,91 +58,75 @@ class AddMedicationScreen extends GetView<ProfileController> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      30.verticalSpace,
-                      CustomTextField(
-                        labelText: AppStrings.medicationName.tr,
-                        hintText: AppStrings.metforminHint.tr,
-                      ),
-                      10.verticalSpace,
-                      CustomTextField(
-                        labelText: AppStrings.dosage.tr,
-                        hintText: AppStrings.dosageHint.tr,
-                      ),
-                      10.verticalSpace,
-                      CustomTextField(
-                        labelText: AppStrings.doctor.tr,
-                        hintText: AppStrings.doctorHint.tr,
-                      ),
-                      10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppStrings.refill.tr,
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: AppFonts.jakartaMedium,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () => _showDatePicker(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 18,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey.shade300),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                controller.formattedDate,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: controller.selectedDate == null
-                                      ? Colors.grey
-                                      : Colors.black,
-                                  fontWeight: FontWeight.w500,
+                  child: Obx(
+                        () => Stack(
+                      children: [
+                        Column(
+                          children: [
+                            30.verticalSpace,
+                            CustomTextField(
+                              labelText: AppStrings.medicationName.tr,
+                              hintText: AppStrings.metforminHint.tr,
+                              controller: controller.medicineNameController,
+                            ),
+                            10.verticalSpace,
+                            CustomTextField(
+                              labelText: AppStrings.dosage.tr,
+                              hintText: AppStrings.dosageHint.tr,
+                              controller: controller.dosageController,
+                            ),
+                            10.verticalSpace,
+                            if (controller.allDoctorList.isNotEmpty)
+                              _buildDoctorDropdown()
+                            else
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                child: Text(
+                                  "No doctors available",
+                                  style: TextStyle(
+                                    color: Colors.grey.shade700,
+                                    fontSize: 15.sp,
+                                  ),
                                 ),
                               ),
-                              const Icon(
-                                Icons.calendar_today,
-                                color: Colors.blue,
-                                size: 24,
-                              ),
-                            ],
-                          ),
+                            10.verticalSpace,
+                            _buildRefillField(),
+                            10.verticalSpace,
+                            buildDropdownField(
+                              title: AppStrings.status.tr,
+                              items: controller.medicationStatusList,
+                              selectedValue: controller.medicationStatus,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  controller.medicationStatus.value = value;
+                                }
+                              },
+                            ),
+                            30.verticalSpace,
+                            CustomButton(
+                              borderRadius: 15,
+                              text: AppStrings.addAndSave.tr,
+                              isLoading: controller.isLoading.value,
+                              onTap: controller.isLoading.value ? (){} : controller.addMedication,
+                            ),
+                            12.verticalSpace,
+                            CustomButton(
+                              borderRadius: 15,
+                              text: AppStrings.cancel.tr,
+                              bgColor: AppColors.inACtiveButtonColor,
+                              fontColor: Colors.black,
+                              onTap: controller.isLoading.value ? (){} : () => Get.back(),
+                            ),
+                            20.verticalSpace,
+                          ],
                         ),
-                      ),
-                      10.verticalSpace,
-                      buildDropdownField(
-                        title: AppStrings.status.tr,
-                        items: controller.medicationStatusList,
-                        selectedValue: controller.medicationStatus,
-                        onChanged: (_) {},
-                      ),
-                      20.verticalSpace,
-                      CustomButton(
-                          borderRadius: 15,
-                          text: AppStrings.addAndSave.tr,
-                          onTap: () {}
-                      ),
-                      10.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.cancel.tr,
-                        onTap: () { Get.back(); },
-                        bgColor: AppColors.inACtiveButtonColor,
-                        fontColor: Colors.black,
-                      ),
-                    ],
+                        if (controller.isLoading.value)
+                          Container(
+                            color: Colors.black.withOpacity(0.3),
+                            child: const Center(child: CircularProgressIndicator()),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -153,17 +137,107 @@ class AddMedicationScreen extends GetView<ProfileController> {
     );
   }
 
-  void _showDatePicker(BuildContext context) async {
-    await showCalendarDatePicker2Dialog(
-      context: context,
-      config: CalendarDatePicker2WithActionButtonsConfig(
-        calendarType: CalendarDatePicker2Type.single,
-        selectedDayHighlightColor: Colors.blue,
-        centerAlignModePicker: true,
-      ),
-      dialogSize: const Size(325, 400),
-      value: [controller.selectedDate],
-      borderRadius: BorderRadius.circular(15),
+  Widget _buildDoctorDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0, left: 10.0),
+          child: Text(
+            "Doctor",
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              fontFamily: AppFonts.jakartaMedium,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Obx(
+                () => DropdownButton<DoctorModel>(
+              value: controller.selectedDoctor.value,
+              isExpanded: true,
+              underline: const SizedBox(),
+              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+              items: controller.allDoctorList.map((doctor) {
+                return DropdownMenuItem<DoctorModel>(
+                  value: doctor,
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 15,
+                        backgroundImage: doctor.profileImage != null
+                            ? NetworkImage(doctor.profileImage!)
+                            :  AssetImage("assets/demo_images/demo_doctor.jpeg"),
+                      ),
+                      10.horizontalSpace,
+                      Text(
+                        doctor.displayName ?? "Unknown Doctor",
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              onChanged: (DoctorModel? newValue) {
+                controller.selectedDoctor.value = newValue;
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRefillField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0, left: 10.0),
+          child: Text(
+            AppStrings.refill.tr,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              fontFamily: AppFonts.jakartaMedium,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Obx(
+                () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  controller.hasRefill.value ? 'Yes (Refill available)' : 'No refill',
+                  style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+                ),
+                Switch(
+                  value: controller.hasRefill.value,
+                  onChanged: (value) => controller.hasRefill.value = value,
+                  activeColor: AppColors.primaryColor,
+                  activeTrackColor: AppColors.primaryColor.withOpacity(0.5),
+                  inactiveThumbColor: Colors.grey,
+                  inactiveTrackColor: Colors.grey.withOpacity(0.3),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -174,12 +248,12 @@ class AddMedicationScreen extends GetView<ProfileController> {
     required Function(String?) onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
+            padding: const EdgeInsets.only(bottom: 8.0, left: 10.0),
             child: Text(
               title,
               style: const TextStyle(
@@ -193,10 +267,7 @@ class AddMedicationScreen extends GetView<ProfileController> {
                 () => DropdownButtonFormField<String>(
               value: selectedValue.value,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 14.0,
-                ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                   borderSide: BorderSide.none,
@@ -205,13 +276,10 @@ class AddMedicationScreen extends GetView<ProfileController> {
                 fillColor: Colors.white,
               ),
               isExpanded: true,
-              icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
-              style: TextStyle(fontSize: 16.sp, color: Colors.black),
+              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.grey),
+              style: const TextStyle(fontSize: 14, color: Colors.black),
               items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
+                return DropdownMenuItem<String>(value: value, child: Text(value));
               }).toList(),
               onChanged: onChanged,
             ),

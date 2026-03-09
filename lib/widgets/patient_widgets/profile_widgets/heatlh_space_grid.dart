@@ -43,7 +43,7 @@ class HeatlhSpaceGrid extends StatelessWidget {
           icon: "assets/images/medical_history_icon.png",
           title: AppStrings.medicalHistory.tr,
           onTap: () {
-            profileController.handleHealthSpaceTap(const MedicalHistory());
+            profileController.handleHealthSpaceTap( MedicalHistory());
           },
         ),
         HealthSpaceCard(

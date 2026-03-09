@@ -2,7 +2,7 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
+import 'package:patient_app/controllers/patient_controllers/medical_history_controller.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import '../../../utils/app_colors.dart';
@@ -10,8 +10,9 @@ import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_strings.dart';
 
-class AddVaccinationScreen extends GetView<ProfileController> {
-  const AddVaccinationScreen({super.key});
+class AddVaccinationScreen extends StatelessWidget {
+  AddVaccinationScreen({super.key});
+  MedicalHistoryController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +63,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                     children: [
                       30.verticalSpace,
                       CustomTextField(
+                        controller: controller.vaccineNameController,
                         labelText: AppStrings.vaccinationName.tr,
                         hintText: AppStrings.influenza.tr,
                       ),
@@ -114,9 +116,13 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                       10.verticalSpace,
                       buildDropdownField(
                         title: AppStrings.status.tr,
-                        items: controller.medicationStatusList,
+                        items: controller.vacinationStatusList,
                         selectedValue: controller.vaccinationStatus,
-                        onChanged: (_) {},
+                        onChanged: (value) {
+                          if (value != null) {
+                            controller.vaccinationStatus.value = value;
+                          }
+                        },
                       ),
                       10.verticalSpace,
                       Align(
@@ -178,14 +184,23 @@ class AddVaccinationScreen extends GetView<ProfileController> {
                           ),
                         ),
                       ),
-
                       20.verticalSpace,
-                      CustomButton(borderRadius: 15, text: AppStrings.addAndSave.tr, onTap: (){}),
+                      Obx(
+                            () => CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.addAndSave.tr,
+                          onTap: controller.isLoading.value ? (){} : controller.addVaccination,
+                          isLoading: controller.isLoading.value,
+                        ),
+                      ),
                       10.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
                         text: AppStrings.cancel.tr,
-                        onTap: (){Get.back();},
+                        onTap: () {
+                          controller.clearVaccinationForm();
+                          Get.back();
+                        },
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
                       ),
@@ -200,7 +215,6 @@ class AddVaccinationScreen extends GetView<ProfileController> {
     );
   }
 
-  // Helper for dynamic file upload text
   String _getUploadText(String value) {
     if (value == 'No file selected') return AppStrings.uploadLabReportHint.tr;
     if (value == 'File selection cancelled') return AppStrings.selectionCancelled.tr;
@@ -208,7 +222,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
   }
 
   void _showDatePicker(BuildContext context) async {
-    await showCalendarDatePicker2Dialog(
+    final values = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
@@ -219,9 +233,13 @@ class AddVaccinationScreen extends GetView<ProfileController> {
       value: [controller.selectedDate],
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (values != null && values.isNotEmpty) {
+      controller.updateDate(values.first);
+    }
   }
 
-  static Widget buildDropdownField({
+  Widget buildDropdownField({
     required String title,
     required List<String> items,
     required Rx<String?> selectedValue,
@@ -261,8 +279,7 @@ class AddVaccinationScreen extends GetView<ProfileController> {
               isExpanded: true,
               icon: Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
               style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items:
-              items.map<DropdownMenuItem<String>>((String value) {
+              items: items.map<DropdownMenuItem<String>>((String value) {
                 return DropdownMenuItem<String>(
                   value: value,
                   child: Text(value),

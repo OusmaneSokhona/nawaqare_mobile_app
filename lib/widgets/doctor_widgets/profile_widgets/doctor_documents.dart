@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/auth_controllers/sign_up_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
@@ -14,6 +15,7 @@ class DoctorDocuments extends StatelessWidget {
   DoctorDocuments({super.key});
   final DoctorProfileController controller = Get.find();
   final DoctorHomeController homeController = Get.find<DoctorHomeController>();
+  final SignUpController signUpController = Get.find<SignUpController>();
 
   @override
   Widget build(BuildContext context) {
@@ -99,45 +101,69 @@ class DoctorDocuments extends StatelessWidget {
                 DocumentItemWidget(
                   documentName: AppStrings.nationalIdentityDocument.tr,
                   documentStatus:doctor.nationalIdentityDocument!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("nationalIdentityDocument");
+                  },
                 ):SizedBox(),
                 5.verticalSpace,
                 doctor.liabilityInsuranceProof != null && doctor.liabilityInsuranceProof!.isNotEmpty?
                 DocumentItemWidget(
                   documentName:AppStrings.liabilityInsuranceProof.tr,
                   documentStatus:doctor.liabilityInsuranceProof!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("liabilityInsuranceProof");
+                  },
                 ):SizedBox(),
                 5.verticalSpace,
                 doctor.medicalLicence != null && doctor.medicalLicence!.isNotEmpty?
                 DocumentItemWidget(
                   documentName:AppStrings.medicalLicense.tr,
                   documentStatus: doctor.medicalLicence!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("medicalLicence");
+                  },
                 ):SizedBox(),
                 5.verticalSpace,
                 doctor.passportOrIdFront != null && doctor.passportOrIdFront!.isNotEmpty?
                 DocumentItemWidget(
                   documentName: AppStrings.passportIdFront.tr,
                   documentStatus: doctor.passportOrIdFront!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("passportOrIdFront");
+                  },
                 ):SizedBox(),
                 5.verticalSpace,
                 doctor.paymentAuthorization != null && doctor.paymentAuthorization!.isNotEmpty?
                 DocumentItemWidget(
                   documentName: AppStrings.paymentAuthorization.tr,
                   documentStatus: doctor.paymentAuthorization!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("paymentAuthorization");
+                  },
                 ):SizedBox(),
                 doctor.cnpd != null && doctor.cnpd!.isNotEmpty?
                     DocumentItemWidget(
                       documentName: AppStrings.cnpdGdprForm.tr,
                       documentStatus: doctor.cnpd!,
+                      onDeleteTap: () async {
+                        await signUpController.deleteDoctorDocument("cnpd");
+                      },
                     ):SizedBox(),
                 doctor.certification != null && doctor.certification!.isNotEmpty?
                 DocumentItemWidget(
                   documentName: AppStrings.diplomaCertification.tr,
                   documentStatus: doctor.certification!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("certification");
+                  },
                 ):SizedBox(),
                 doctor.bankVerificationLetter!= null && doctor.bankVerificationLetter!.isNotEmpty?
                 DocumentItemWidget(
                   documentName: AppStrings.bankVerificationLetter.tr,
                   documentStatus: doctor.bankVerificationLetter!,
+                  onDeleteTap: () async {
+                    await signUpController.deleteDoctorDocument("bankVerificationLetter");
+                  },
                 ):SizedBox(),
                 7.verticalSpace,
                 Container(

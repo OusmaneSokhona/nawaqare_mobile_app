@@ -1,9 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../controllers/patient_controllers/medical_history_controller.dart';
+import '../../../models/family_history_model.dart';
 import '../../../utils/app_strings.dart';
 
 class FamilyHistoryCard extends StatelessWidget {
-  const FamilyHistoryCard({super.key});
+  final FamilyHistoryModel familyHistory;
+
+  const FamilyHistoryCard({
+    super.key,
+    required this.familyHistory,
+  });
+
+  String _formatDate(DateTime date) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  String _capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +40,7 @@ class FamilyHistoryCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              // Using trParams for dynamic relation name
-              AppStrings.relationLabel.trParams({'relation': 'Father'}),
+              familyHistory.relation,
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -30,7 +49,7 @@ class FamilyHistoryCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              AppStrings.diabetes.tr,
+              familyHistory.condition,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
@@ -38,7 +57,7 @@ class FamilyHistoryCard extends StatelessWidget {
               ),
             ),
             Text(
-              AppStrings.ageLabel.trParams({'age': '60'}),
+              'Age at diagnosis: ${familyHistory.age} years',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
@@ -46,34 +65,36 @@ class FamilyHistoryCard extends StatelessWidget {
               ),
             ),
             Text(
-              AppStrings.severityLabel.trParams({'severity': AppStrings.mild.tr}),
+              'Severity: ${_capitalize(familyHistory.severity)}',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 12),
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  height: 1.5,
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: AppStrings.note.tr,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+            if (familyHistory.notes.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              RichText(
+                text: TextSpan(
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                    height: 1.5,
+                  ),
+                  children: <TextSpan>[
+                    const TextSpan(
+                      text: 'Note: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: AppStrings.antibioticWarning.tr,
-                  ),
-                ],
+                    TextSpan(
+                      text: familyHistory.notes,
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
             const SizedBox(height: 12),
             const Divider(
               color: Color(0xFFE5E7EB),
@@ -81,7 +102,7 @@ class FamilyHistoryCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              AppStrings.lastUpdated.trParams({'date': '12 Sept 2025'}),
+              'Last updated: ${_formatDate(familyHistory.updatedAt)}',
               style: const TextStyle(
                 fontSize: 14,
                 color: Color(0xFF6B7280),

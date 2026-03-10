@@ -152,7 +152,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
           Container(
             height: userReports.isEmpty
                 ? 0.15.sh
-                : (userReports.length < 2 ? 0.20.sh : 0.26.sh),
+                : (userReports.length < 2 ? 0.12.sh : 0.26.sh),
             padding: EdgeInsets.only(top: 10),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -169,13 +169,16 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                 ? ListView.builder(
               padding: EdgeInsets.zero,
               itemCount: userReports.length,
-              physics: const NeverScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return _buildDocumentItem(
                   userReports[index],
                   index < userReports.length - 1,
                   signUpController,
                   homeController,
+                    (){
+                    signUpController.deleteReport(index);
+                    }
                 );
               },
             )
@@ -213,6 +216,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
       bool showDivider,
       SignUpController signUpController,
       HomeController homeController,
+      Function() onDeleteTap,
       ) {
     final fileName = reportUrl.split('/').last;
     final fileType = fileName.split('.').last.toUpperCase();
@@ -293,13 +297,8 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
                         ),
                         TextButton(
                           onPressed: () async {
-                            Get.back(); // Close dialog
-                            // TODO: Implement delete functionality
-                            Get.snackbar(
-                              'Info',
-                              'Delete functionality to be implemented',
-                              snackPosition: SnackPosition.BOTTOM,
-                            );
+                            Get.back();
+                           onDeleteTap();
                           },
                           child: const Text(
                             'Delete',

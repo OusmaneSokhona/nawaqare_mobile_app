@@ -21,8 +21,18 @@ class SignUpController extends GetxController {
   final ApiService _apiService = ApiService();
   RxString type = "patient".obs;
   SignInController signInController = Get.put(SignInController());
-  HomeController homeController = Get.put(HomeController());
-  DoctorHomeController doctorHomeController = Get.put(DoctorHomeController());
+  late HomeController _homeController;
+  late DoctorHomeController _doctorHomeController;
+
+  HomeController get homeController {
+    _homeController = Get.put(HomeController(), permanent: false);
+    return _homeController;
+  }
+
+  DoctorHomeController get doctorHomeController {
+    _doctorHomeController = Get.put(DoctorHomeController(), permanent: false);
+    return _doctorHomeController;
+  }
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
@@ -1183,5 +1193,132 @@ RxString isPhoneValid="".obs;
       return '';
     }
   }
+  Future<void> deleteReport(int reportIndex) async {
+    try {
+      isLoading.value = true;
 
+      final response = await _apiService.delete(
+        "${ApiUrls.deleteReport}$reportIndex",
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        homeController.loadUserDataSecondTime();
+      } else {
+        String errorMessage = 'Failed to delete report';
+        if (response.data is Map && response.data['message'] != null) {
+          errorMessage = response.data['message'];
+        } else if (response.data is Map && response.data['error'] != null) {
+          errorMessage = response.data['error'];
+        }
+
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage = 'Network error occurred';
+
+      if (e.response != null) {
+        if (e.response?.data is Map) {
+          errorMessage = e.response?.data['message'] ??
+              e.response?.data['error'] ??
+              'Server error: ${e.response?.statusCode}';
+        } else {
+          errorMessage = 'Server error: ${e.response?.statusCode}';
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection timeout. Please try again.';
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        errorMessage = 'Server not responding. Please try again.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection. Please check your network.';
+      }
+
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+  Future<void> deleteDoctorDocument(String documentType) async {
+    try {
+      isLoading.value = true;
+
+      final response = await _apiService.delete(
+        "${ApiUrls.deleteDocumentDoctor}$documentType",
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+      doctorHomeController.loadUserDataSecondTime();
+      } else {
+        String errorMessage = 'Failed to delete bank verification letter';
+        if (response.data is Map && response.data['message'] != null) {
+          errorMessage = response.data['message'];
+        } else if (response.data is Map && response.data['error'] != null) {
+          errorMessage = response.data['error'];
+        }
+
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage = 'Network error occurred';
+
+      if (e.response != null) {
+        if (e.response?.data is Map) {
+          errorMessage = e.response?.data['message'] ??
+              e.response?.data['error'] ??
+              'Server error: ${e.response?.statusCode}';
+        } else {
+          errorMessage = 'Server error: ${e.response?.statusCode}';
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection timeout. Please try again.';
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        errorMessage = 'Server not responding. Please try again.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection. Please check your network.';
+      }
+
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

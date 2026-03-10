@@ -41,4 +41,6 @@ class ApiUrls {
   static String updateBloodType="/api/patient/blood-grp";
   static String createMedicalHistory="api/medicalHistory/create";
   static String getMedicalHistory="/api/medicalHistory/get";
+  static String deleteReport="api/patient/delete-report/";
+  static String deleteDocumentDoctor="api/doctor/delete-document/";
 }

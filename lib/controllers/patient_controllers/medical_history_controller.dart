@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 import '../../models/doctor_model.dart';
+import '../../models/family_history_model.dart';
+import '../../models/life_style_model.dart';
 import '../../models/medical_history_model.dart';
 import '../../models/vaccination_history_model.dart';
 import '../../utils/app_strings.dart';
@@ -117,7 +119,97 @@ class MedicalHistoryController extends GetxController {
       isLoading.value = false;
     }
   }
+  RxList<FamilyHistoryModel> apiFamilyHistoryList = <FamilyHistoryModel>[].obs;
 
+  Future<void> fetchFamilyHistory() async {
+    try {
+      isLoading.value = true;
+      String patientId = homeController.currentUser.value?.id ?? "";
+      print("Fetching family history for patient ID: $patientId");
+
+      if (patientId.isEmpty) return;
+
+      final response = await apiService.get(
+        ApiUrls.getMedicalHistory,
+        query: {
+          "patientId": patientId,
+          "type": "familyHistory",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var rawData = response.data;
+        List<dynamic> listData = [];
+
+        if (rawData is List) {
+          listData = rawData;
+        } else if (rawData is Map && rawData['data'] is List) {
+          listData = rawData['data'];
+        } else if (rawData is Map && rawData['familyHistory'] is List) {
+          listData = rawData['familyHistory'];
+        }
+
+        apiFamilyHistoryList.assignAll(
+          listData.map((json) => FamilyHistoryModel.fromJson(json)).toList(),
+        );
+
+        debugPrint('Fetched ${apiFamilyHistoryList.length} family history records');
+      }
+    } catch (e) {
+      debugPrint('Fetch Family History Error: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+  // Add this Rx to your controller
+  Rx<LifestyleModel?> lifestyleData = Rx<LifestyleModel?>(null);
+
+// Add this method to fetch lifestyle data
+  Future<void> fetchLifestyleData() async {
+    try {
+      String patientId = homeController.currentUser.value?.id ?? "";
+      if (patientId.isEmpty) return;
+
+      final response = await apiService.get(
+        ApiUrls.getMedicalHistory,
+        query: {
+          "patientId": patientId,
+          "type": "lifestyle",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var rawData = response.data;
+
+        if (rawData is Map && rawData['data'] != null) {
+          var dataList = rawData['data'];
+          if (dataList is List && dataList.isNotEmpty) {
+            lifestyleData.value = LifestyleModel.fromJson(dataList.first as Map<String, dynamic>);
+          } else if (dataList is Map<String, dynamic>) {
+            lifestyleData.value = LifestyleModel.fromJson(dataList);
+          }
+        } else if (rawData is List && rawData.isNotEmpty) {
+          lifestyleData.value = LifestyleModel.fromJson(rawData.first as Map<String, dynamic>);
+        } else if (rawData is Map<String, dynamic>) {
+          lifestyleData.value = LifestyleModel.fromJson(rawData);
+        }
+
+        debugPrint('Fetched lifestyle data: ${lifestyleData.value != null}');
+      }
+    } catch (e) {
+      debugPrint('Fetch Lifestyle Error: $e');
+    }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    loadDoctors();
+    fetchMedicationHistory("medications");
+    fetchVaccinationHistory("vaccinations");
+    fetchFamilyHistory();
+    fetchLifestyleData();
+  }
   String _formatDate(String dateString) {
     try {
       DateTime date = DateTime.parse(dateString);
@@ -131,13 +223,7 @@ class MedicalHistoryController extends GetxController {
     }
   }
 
-  @override
-  void onInit() {
-    super.onInit();
-    loadDoctors();
-    fetchMedicationHistory("medications");
-    fetchVaccinationHistory("vaccinations");
-  }
+
 
   List<String> medicationStatusList = ["Active", "Stopped", "Completed"];
   List<String> vacinationStatusList = ["Pending", "Completed"];
@@ -561,6 +647,7 @@ class MedicalHistoryController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         clearFamilyHistoryForm();
+        fetchFamilyHistory();
         Get.back();
       } else {
         String msg = response.data?['message'] ??
@@ -620,6 +707,7 @@ class MedicalHistoryController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        fetchLifestyleData();
         Get.back();
       } else {
         String errorMsg = 'Failed to save lifestyle data';

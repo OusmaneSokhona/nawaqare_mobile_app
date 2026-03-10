@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/utils/app_strings.dart';
+import '../../../controllers/patient_controllers/medical_history_controller.dart';
+import '../../../utils/app_strings.dart';
 
 class LifestyleCard extends StatelessWidget {
   const LifestyleCard({super.key});
@@ -37,72 +38,73 @@ class LifestyleCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNoteSection(String title, String text) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-            // Example of using a value from keys if appropriate
-            Text(
-              AppStrings.highProteinValue.tr,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF1F2937),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            color: Color(0xFF6B7280),
-            height: 1.4,
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _buildLifestyleItem(AppStrings.smoking.tr, AppStrings.noValue.tr),
-            _buildLifestyleItem(AppStrings.alcoholUse.tr, AppStrings.occasionalValue.tr),
-            _buildLifestyleItem(AppStrings.physicalActivity.tr, AppStrings.sedentaryValue.tr),
-            _buildLifestyleItem(AppStrings.dietType.tr, AppStrings.highProteinValue.tr),
-            _buildLifestyleItem(AppStrings.sleepQuality.tr, AppStrings.fairValue.tr),
-            const SizedBox(height: 8),
-            _buildNoteSection(
-              AppStrings.noteLabel.tr,
-              'Dr. David Patel, a dedicated cardiologist, brings a wealth of experience to Golden Gate Cardiology Center in Golden Gate, CA.'.tr,
+    final MedicalHistoryController controller = Get.find<MedicalHistoryController>();
+
+    return Obx(() {
+      if (controller.isLoading.value && controller.lifestyleData.value == null) {
+        return const Card(
+          elevation: 4,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16.0)),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(20.0),
+            child: Center(
+              child: CircularProgressIndicator(),
             ),
-          ],
+          ),
+        );
+      }
+
+      final lifestyle = controller.lifestyleData.value;
+
+      return Card(
+        elevation: 4,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
         ),
-      ),
-    );
+        child: Container(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              if (lifestyle != null) ...[
+                _buildLifestyleItem(
+                    AppStrings.smoking.tr,
+                    lifestyle.capitalizedSmoking.isEmpty ? 'Not specified' : lifestyle.capitalizedSmoking
+                ),
+                _buildLifestyleItem(
+                    AppStrings.alcoholUse.tr,
+                    lifestyle.capitalizedAlcohol.isEmpty ? 'Not specified' : lifestyle.capitalizedAlcohol
+                ),
+                _buildLifestyleItem(
+                    AppStrings.physicalActivity.tr,
+                    lifestyle.capitalizedPhysicalActivity.isEmpty ? 'Not specified' : lifestyle.capitalizedPhysicalActivity
+                ),
+                _buildLifestyleItem(
+                    AppStrings.dietType.tr,
+                    lifestyle.capitalizedDietType.isEmpty ? 'Not specified' : lifestyle.capitalizedDietType
+                ),
+                _buildLifestyleItem(
+                    AppStrings.sleepQuality.tr,
+                    lifestyle.capitalizedSleepQuality.isEmpty ? 'Not specified' : lifestyle.capitalizedSleepQuality
+                ),
+              ] else ...[
+                _buildLifestyleItem(AppStrings.smoking.tr, 'No data'),
+                _buildLifestyleItem(AppStrings.alcoholUse.tr, 'No data'),
+                _buildLifestyleItem(AppStrings.physicalActivity.tr, 'No data'),
+                _buildLifestyleItem(AppStrings.dietType.tr, 'No data'),
+                _buildLifestyleItem(AppStrings.sleepQuality.tr, 'No data'),
+              ],
+            ],
+          ),
+        ),
+      );
+    });
   }
 }

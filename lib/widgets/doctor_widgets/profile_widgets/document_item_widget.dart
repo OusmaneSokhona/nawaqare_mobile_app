@@ -9,7 +9,8 @@ class DocumentItemWidget extends StatelessWidget {
   final String documentName;
   final String documentStatus;
   final bool showDivider;
-  const DocumentItemWidget({super.key,required this.documentName, required this.documentStatus,this.showDivider=true});
+  final Function onDeleteTap;
+  const DocumentItemWidget({super.key,required this.documentName, required this.documentStatus,this.showDivider=true,required this.onDeleteTap});
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +33,36 @@ class DocumentItemWidget extends StatelessWidget {
             InkWell(onTap: (){
           Get.to(DocumentViewerScreen(documentUrl: documentStatus, fileName: documentName));
             },child: Icon(Icons.remove_red_eye,size: 20.sp,color: AppColors.lightGrey,)),
-           Icon(
-              Icons.delete_outline,
-              size: 20.sp,
-              color: CupertinoColors.systemRed,
+           InkWell(
+             onTap: () {
+               Get.dialog(
+                 AlertDialog(
+                   title: const Text('Delete Document'),
+                   content: const Text('Are you sure you want to delete this document?'),
+                   actions: [
+                     TextButton(
+                       onPressed: () => Get.back(),
+                       child: const Text('Cancel'),
+                     ),
+                     TextButton(
+                       onPressed: () async {
+                         Get.back();
+                         onDeleteTap();
+                       },
+                       child: const Text(
+                         'Delete',
+                         style: TextStyle(color: Colors.red),
+                       ),
+                     ),
+                   ],
+                 ),
+               );
+             },
+             child: Icon(
+                Icons.delete_outline,
+                size: 20.sp,
+                color: CupertinoColors.systemRed,
+             ),
            )
 
           ],

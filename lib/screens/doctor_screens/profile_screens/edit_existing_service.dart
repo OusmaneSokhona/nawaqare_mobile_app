@@ -1,22 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/doctor_controllers/doctor_profile_controller.dart';
+import 'package:patient_app/models/service_model.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
-import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
-
+import '../../../controllers/doctor_controllers/service_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
+import '../../../widgets/patient_widgets/video_call_widgets/setting widgets.dart';
 
 class EditExistingService extends StatelessWidget {
-  final DoctorProfileController controller = Get.find();
   EditExistingService({super.key});
+
+  final ServiceController serviceController = Get.find<ServiceController>();
+  final ServiceModel? service = Get.arguments;
+  final TextEditingController serviceNameController = TextEditingController();
+  final TextEditingController durationController = TextEditingController();
+  final TextEditingController feeController = TextEditingController();
+  final TextEditingController adtFeeController = TextEditingController();
+  final TextEditingController mrtController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final RxString selectedMode = 'inperson'.obs;
+  final RxString selectedStatus = 'active'.obs;
+
+  final List<String> modeOptions = ['inperson', 'remote'];
+  final List<String> statusOptions = ['active', 'inactive'];
 
   @override
   Widget build(BuildContext context) {
+    if (service != null) {
+      serviceNameController.text = service!.serviceName;
+      durationController.text = service!.duration;
+      feeController.text = service!.fee;
+      adtFeeController.text = service!.aDTfee;
+      descriptionController.text = service!.description;
+      selectedMode.value = service!.mode;
+      selectedStatus.value = service!.status;
+    }
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -63,35 +86,50 @@ class EditExistingService extends StatelessWidget {
                     children: [
                       20.verticalSpace,
                       CustomTextField(
+                        controller: serviceNameController,
                         labelText: AppStrings.serviceName.tr,
-                        hintText: "MA-PK-457621",
+                        hintText: "General Consultation",
                       ),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: durationController,
                         labelText: AppStrings.defaultDuration.tr,
-                        hintText: "15 min",
+                        hintText: "30min",
                       ),
                       10.verticalSpace,
                       CustomTextField(
-                        labelText: AppStrings.fee.tr,
-                        hintText: "\$590",
+                        controller: feeController,
+                        labelText: "${AppStrings.fee.tr} *",
+                        hintText: "1000",
+                      ),
+                      10.verticalSpace,
+                      CustomTextField(
+                        controller: adtFeeController,
+                        labelText: "ADT Fee",
+                        hintText: "500",
+                      ),
+                      10.verticalSpace,
+                      CustomTextField(
+                        controller: mrtController,
+                        labelText: "MRT",
+                        hintText: "200",
                       ),
                       10.verticalSpace,
                       Obx(() => CustomDropdown(
                         label: AppStrings.mode.tr,
-                        options: controller.mode,
-                        currentValue: controller.selectedMode.value,
+                        options: modeOptions,
+                        currentValue: selectedMode.value,
                         onChanged: (val) {
-                          if (val != null) controller.selectedMode.value = val;
+                          if (val != null) selectedMode.value = val;
                         },
                       )),
                       10.verticalSpace,
                       Obx(() => CustomDropdown(
                         label: AppStrings.status.tr,
-                        options: controller.serviceTypeList,
-                        currentValue: controller.selectedServiceType.value,
+                        options: statusOptions,
+                        currentValue: selectedStatus.value,
                         onChanged: (val) {
-                          if (val != null) controller.selectedServiceType.value = val;
+                          if (val != null) selectedStatus.value = val;
                         },
                       )),
                       10.verticalSpace,
@@ -114,6 +152,7 @@ class EditExistingService extends StatelessWidget {
                           border: Border.all(color: Colors.grey.shade300, width: 1),
                         ),
                         child: TextField(
+                          controller: descriptionController,
                           maxLines: 3,
                           onTapOutside: (_) {
                             FocusManager.instance.primaryFocus!.unfocus();
@@ -128,13 +167,12 @@ class EditExistingService extends StatelessWidget {
                         ),
                       ),
                       20.verticalSpace,
-                      CustomButton(
+                      Obx(() => CustomButton(
                         text: AppStrings.update.tr,
-                        onTap: () {
-                          Get.back();
-                        },
+                        onTap: serviceController.isLoading.value ? (){} : updateService,
                         borderRadius: 15,
-                      ),
+                        isLoading: serviceController.isLoading.value,
+                      )),
                       10.verticalSpace,
                       CustomButton(
                         text: AppStrings.cancel.tr,
@@ -155,5 +193,73 @@ class EditExistingService extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> updateService() async {
+    if (serviceNameController.text.isEmpty ||
+        durationController.text.isEmpty ||
+        feeController.text.isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please fill all required fields',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    try {
+      Get.dialog(
+        Center(child: CircularProgressIndicator(color: AppColors.primaryColor)),
+        barrierDismissible: false,
+      );
+
+      final Map<String, dynamic> serviceData = {
+        'serviceName': serviceNameController.text,
+        'fee': feeController.text,
+        'duration': durationController.text,
+        'ADTfee': adtFeeController.text.isEmpty ? '0' : adtFeeController.text,
+        'MRT': mrtController.text.isEmpty ? '0' : mrtController.text,
+        'description': descriptionController.text.isEmpty ? 'Basic checkup' : descriptionController.text,
+        'mode': selectedMode.value,
+        'status': selectedStatus.value,
+      };
+
+      final bool success = await serviceController.updateService(
+        service!.id,
+        serviceData,
+      );
+
+      Get.back();
+
+      if (success) {
+        Get.back();
+        Get.snackbar(
+          'Success',
+          'Service updated successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          serviceController.errorMessage.value,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      Get.back();
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }

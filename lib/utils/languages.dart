@@ -1204,6 +1204,8 @@ class Languages extends Translations {
       AppStrings.availableSlots: "Available Slots",
       AppStrings.delete: "Delete",
       AppStrings.addReview: "Add Review",
+      AppStrings.confirmActivation : 'Confirm Activation',
+  AppStrings.activationWarning :'Are you sure you want to activate this service? It will be visible to patients.',
     },
     'fr_FR': {
       AppStrings.langSupport: "Support Linguistique",
@@ -2431,6 +2433,8 @@ class Languages extends Translations {
       AppStrings.availableSlots: "Créneaux disponibles",
       AppStrings.delete: "Supprimer",
       AppStrings.addReview: "Ajouter un avis",
+      AppStrings.confirmActivation : 'Confirmer l\'activation',
+      AppStrings.activationWarning : 'Ce service pourra être réservé. Confirmer ?',
     },
   };
 }

@@ -1121,6 +1121,8 @@ class AppStrings {
   static const availableSlots = 'availableSlots';
   static const delete = 'delete';
   static const addReview = 'add_review';
+  static const String confirmActivation = 'confirm_activation';
+  static const String activationWarning = "activation_warning";
 
   // Months
   static const String january = 'january';

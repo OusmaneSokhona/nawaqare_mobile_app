@@ -2,9 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import 'package:patient_app/utils/app_colors.dart';
 
 class ConfirmDeactivationDialog extends StatelessWidget {
-  const ConfirmDeactivationDialog({super.key});
+  final VoidCallback? onConfirm;
+  final String? title;
+  final String? message;
+  final bool isActivation;
+
+  const ConfirmDeactivationDialog({
+    super.key,
+    this.onConfirm,
+    this.title,
+    this.message,
+    this.isActivation = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +29,21 @@ class ConfirmDeactivationDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Image.asset("assets/images/deactivation_dialog_icon.png", height: 110.h),
+            Image.asset(
+              "assets/images/deactivation_dialog_icon.png",
+              height: 110.h,
+              errorBuilder: (context, error, stackTrace) {
+                // Fallback icon if image not found
+                return Icon(
+                  isActivation ? Icons.check_circle_outline : Icons.warning_amber_outlined,
+                  size: 80.sp,
+                  color: isActivation ? AppColors.green : AppColors.primaryColor,
+                );
+              },
+            ),
             const SizedBox(height: 16),
             Text(
-              AppStrings.confirmDeactivation.tr,
+              title ?? (isActivation ? AppStrings.confirmActivation.tr : AppStrings.confirmDeactivation.tr),
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -30,7 +53,9 @@ class ConfirmDeactivationDialog extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              AppStrings.deactivationWarning.tr,
+              message ?? (isActivation
+                  ? AppStrings.activationWarning.tr
+                  : AppStrings.deactivationWarning.tr),
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey[700]),
             ),
@@ -62,9 +87,12 @@ class ConfirmDeactivationDialog extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Get.back();
+                      if (onConfirm != null) {
+                        onConfirm!();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[600],
+                      backgroundColor: isActivation ? AppColors.green : AppColors.primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(

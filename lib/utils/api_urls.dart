@@ -43,4 +43,8 @@ class ApiUrls {
   static String getMedicalHistory="/api/medicalHistory/get";
   static String deleteReport="api/patient/delete-report/";
   static String deleteDocumentDoctor="api/doctor/delete-document/";
+  static String getAllServices="api/service/getAll";
+  static String createService="api/service/create";
+  static String updateService="api/service/update/";
+  static String updateServiceStatus="api/service/status/";
 }

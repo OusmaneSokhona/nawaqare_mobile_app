@@ -928,7 +928,6 @@ RxString isPhoneValid="".obs;
       if (response.statusCode == 200 || response.statusCode == 201) {
         homeController.loadUserDataSecondTime();
         Get.back();
-        Get.snackbar("Success", "Document Added", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         return true;
       }
       return false;
@@ -962,7 +961,6 @@ RxString isPhoneValid="".obs;
       if (response.statusCode == 200 || response.statusCode == 201) {
         doctorHomeController.loadUserDataSecondTime();
         Get.back();
-        Get.snackbar("Success", "Profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         return true;
       }
       return false;
@@ -996,7 +994,6 @@ RxString isPhoneValid="".obs;
       if (response.statusCode == 200 || response.statusCode == 201) {
         doctorHomeController.loadUserDataSecondTime();
         Get.back();
-        Get.snackbar("Success", "Profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         return true;
       }
       return false;
@@ -1073,7 +1070,6 @@ RxString isPhoneValid="".obs;
       if (response.statusCode == 200 || response.statusCode == 201) {
         doctorHomeController.loadUserDataSecondTime();
         Get.back();
-        Get.snackbar("Success", "Profile updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
         return true;
       }
       return false;

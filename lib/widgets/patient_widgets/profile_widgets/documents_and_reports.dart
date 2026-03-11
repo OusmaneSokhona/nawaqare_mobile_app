@@ -17,7 +17,7 @@ class DocumentsAndReportsProfile extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find();
-    final SignUpController signUpController = Get.find<SignUpController>();
+    final SignUpController signUpController = Get.put(SignUpController());
 
     return Obx(() {
       final user = homeController.currentUser.value;

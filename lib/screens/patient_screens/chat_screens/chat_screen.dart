@@ -276,7 +276,9 @@ class ChatScreen extends StatelessWidget {
                         ),
                         10.verticalSpace,
                         Obx(
-                              () => chatController.filteredDoctors.isNotEmpty
+                              () => chatController.isLoading.value
+                              ? const Center(child: CircularProgressIndicator())
+                              : chatController.filteredConversations.isNotEmpty
                               ? Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -293,43 +295,62 @@ class ChatScreen extends StatelessWidget {
                               physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               padding: const EdgeInsets.only(top: 8),
-                              itemCount: chatController.filteredDoctors.length,
+                              itemCount: chatController.filteredConversations.length,
                               separatorBuilder: (context, index) => const Divider(
                                 height: 1,
                                 indent: 80,
                               ),
                               itemBuilder: (context, index) {
-                                final doctor = chatController.filteredDoctors[index];
+                                final conversation = chatController.filteredConversations[index];
+                                final doctor = conversation.getDoctor();
+                                final patient = conversation.getPatient();
+                                final lastMessage = conversation.lastMessage;
+
+                                if (doctor == null) return const SizedBox();
+
                                 return ListTile(
                                   leading: ClipOval(
-                                    child: Image.asset(
-                                      doctor.imageUrl,
+                                    child: Image.network(
+                                      doctor.profileImage,
                                       width: 56,
                                       height: 56,
                                       fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Image.asset(
+                                          "assets/demo_images/doctor_1.png",
+                                          width: 56,
+                                          height: 56,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
                                     ),
                                   ),
                                   title: Text(
-                                    doctor.name,
+                                    doctor.fullName,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  subtitle: Text(doctor.specialty),
+                                  subtitle: Text(
+                                    lastMessage?.message ?? 'No messages yet',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                   trailing: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      Text(
-                                        doctor.lastMessageTime,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: doctor.unreadCount > 0
-                                              ? Colors.blue.shade600
-                                              : Colors.grey,
+                                      if (lastMessage != null)
+                                        Text(
+                                          chatController.getLastMessageTime(lastMessage.createdAt),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: lastMessage.isUnseen && lastMessage.sender != homeController.currentUser.value?.id
+                                                ? Colors.blue.shade600
+                                                : Colors.grey,
+                                          ),
                                         ),
-                                      ),
-                                      if (doctor.unreadCount > 0)
+                                      if (lastMessage != null && lastMessage.isUnseen && lastMessage.sender != homeController.currentUser.value?.id)
                                         Container(
                                           margin: const EdgeInsets.only(top: 4),
                                           padding: const EdgeInsets.all(4),
@@ -338,7 +359,7 @@ class ChatScreen extends StatelessWidget {
                                             shape: BoxShape.circle,
                                           ),
                                           child: Text(
-                                            doctor.unreadCount.toString(),
+                                            '1',
                                             style: const TextStyle(
                                               color: Colors.white,
                                               fontSize: 10,
@@ -348,6 +369,7 @@ class ChatScreen extends StatelessWidget {
                                     ],
                                   ),
                                   onTap: () {
+                                    chatController.selectConversation(conversation);
                                     Get.to(() => ChatDetailScreen(), binding: AppBinding());
                                   },
                                 );

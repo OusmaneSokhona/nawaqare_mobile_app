@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -5,7 +6,6 @@ import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_images.dart';
 import 'package:patient_app/utils/app_strings.dart';
-
 import '../../../controllers/patient_controllers/chat_controller.dart';
 import '../../../models/chat_model.dart';
 
@@ -16,6 +16,7 @@ class ChatDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final doctor = controller.selectedDoctor;
+    final conversation = controller.selectedConversation.value;
 
     return Scaffold(
       body: Container(
@@ -46,18 +47,28 @@ class ChatDetailScreen extends StatelessWidget {
                     ),
                   ),
                   10.horizontalSpace,
-                  Image.asset(
-                    doctor.imageUrl,
-                    width: 40,
-                    height: 40,
-                    fit: BoxFit.cover,
+                  ClipOval(
+                    child: Image.network(
+                      doctor?.profileImage ?? '',
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "assets/demo_images/doctor_1.png",
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                   ),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        doctor.name,
+                        doctor?.fullName ?? 'Doctor',
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 16,
@@ -80,7 +91,9 @@ class ChatDetailScreen extends StatelessWidget {
               ),
               Expanded(
                 child: Obx(
-                      () => ListView.builder(
+                      () => controller.isLoadingMessages.value
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
                     reverse: true,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10),
@@ -92,27 +105,17 @@ class ChatDetailScreen extends StatelessWidget {
 
                       final showDateSeparator =
                           index == reversedMessages.length - 1 ||
-                              message.time.day !=
-                                  reversedMessages[index + 1].time.day;
+                              message.createdAt.day !=
+                                  reversedMessages[index + 1].createdAt.day;
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (index == 0)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                reversedMessages.last.text,
-                                style: TextStyle(
-                                    color: Colors.grey.shade600, fontSize: 12),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
                           if (showDateSeparator)
-                            DateSeparator(date: message.time),
+                            DateSeparator(date: message.createdAt),
                           MessageBubble(
                               message: message,
-                              doctorImageUrl: doctor.imageUrl),
+                              doctorImageUrl: doctor?.profileImage ?? ''),
                         ],
                       );
                     },
@@ -156,7 +159,7 @@ class DateSeparator extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  final Message message;
+  final ChatMessage message;
   final String doctorImageUrl;
 
   MessageBubble({
@@ -169,11 +172,6 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (message.text.contains('Encrypted Messaging') ||
-        message.text.contains('....')) {
-      return Container();
-    }
-
     final alignment =
     message.isMe ? Alignment.centerRight : Alignment.centerLeft;
     final color = message.isMe ? Colors.blue.shade600 : Colors.white;
@@ -206,7 +204,7 @@ class MessageBubble extends StatelessWidget {
           ],
         ),
         child: Text(
-          message.text,
+          message.message,
           style: TextStyle(color: textColor),
         ),
       ),
@@ -216,7 +214,7 @@ class MessageBubble extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          chatController.formatTime(message.time),
+          chatController.formatTime(message.createdAt),
           style: const TextStyle(fontSize: 10, color: Colors.grey),
         ),
         const SizedBox(width: 4),
@@ -244,11 +242,19 @@ class MessageBubble extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: ClipOval(
-                    child: Image.asset(
+                    child: Image.network(
                       doctorImageUrl,
                       width: 32,
                       height: 32,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Image.asset(
+                          "assets/demo_images/doctor_1.png",
+                          width: 32,
+                          height: 32,
+                          fit: BoxFit.cover,
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -285,10 +291,10 @@ class ChatInputField extends StatelessWidget {
       ),
       child: Row(
         children: [
-          IconButton(
-            icon: const Icon(Icons.add, color: Colors.grey),
-            onPressed: () {},
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.add, color: Colors.grey),
+          //   onPressed: () {},
+          // ),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -302,25 +308,25 @@ class ChatInputField extends StatelessWidget {
                   hintText: AppStrings.typeAMessage.tr,
                   hintStyle: TextStyle(color: Colors.grey.shade600),
                   border: InputBorder.none,
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.sentiment_satisfied_alt_outlined,
-                            color: Colors.grey),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.mic_none, color: Colors.grey),
-                        onPressed: () {},
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.camera_alt_outlined,
-                            color: Colors.grey),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
+                  // suffixIcon: Row(
+                  //   mainAxisSize: MainAxisSize.min,
+                  //   children: [
+                  //     IconButton(
+                  //       icon: const Icon(Icons.sentiment_satisfied_alt_outlined,
+                  //           color: Colors.grey),
+                  //       onPressed: () {},
+                  //     ),
+                  //     IconButton(
+                  //       icon: const Icon(Icons.mic_none, color: Colors.grey),
+                  //       onPressed: () {},
+                  //     ),
+                  //     IconButton(
+                  //       icon: const Icon(Icons.camera_alt_outlined,
+                  //           color: Colors.grey),
+                  //       onPressed: () {},
+                  //     ),
+                  //   ],
+                  // ),
                 ),
                 onSubmitted: (_) => controller.sendMessage(),
               ),

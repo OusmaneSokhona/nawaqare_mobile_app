@@ -202,7 +202,9 @@ class HomeScreen extends StatelessWidget {
                             title: AppStrings.ongoingAppointment.tr,
                             buttonText: AppStrings.join.tr,
                             appointment: homeController.ongoingAppointment.value!,
+
                             onTap: () {
+                              Get.to(AppointmentDetailScreen(appointment: homeController.ongoingAppointment.value!));
                             },
                           ):SizedBox(),
                         ),

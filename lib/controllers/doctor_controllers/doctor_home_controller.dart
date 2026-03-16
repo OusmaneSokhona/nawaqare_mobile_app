@@ -28,11 +28,9 @@ class DoctorHomeController extends GetxController {
       upcomingAppointment.value = null;
 
       final response = await _apiService.get(ApiUrls.getAppointments);
-      print("Response status: ${response.statusCode}");
-      print("Response data: ${response.data}");
+
 
       if (response.statusCode == 200) {
-        print("response with 200 ${response.data}");
 
         final jsonResponse = response.data is String
             ? json.decode(response.data)
@@ -42,22 +40,15 @@ class DoctorHomeController extends GetxController {
         final List<DoctorAppointment> appointments = appointmentResponse.value?.appointments ?? [];
         allAppointments.value = appointments;
 
-        print("Total appointments: ${appointments.length}");
-        print("Appointments statuses: ${appointments.map((a) => a.status).toList()}");
-        print("Appointment dates: ${appointments.map((a) => a.date).toList()}");
+
 
         if (appointments.isNotEmpty) {
           final now = DateTime.now();
-          print("Current time: $now");
 
           // First check for ongoing appointments
           for (var appointment in appointments) {
             try {
-              print("\nChecking appointment: ${appointment.id}");
-              print("Appointment status: ${appointment.status}");
-              print("Appointment date: ${appointment.date}");
-              print("Timeslot start: ${appointment.timeslot?.startTime}");
-              print("Timeslot end: ${appointment.timeslot?.endTime}");
+
 
               // Check if appointment is ongoing
               if (appointment.status == "ongoing" ||
@@ -70,7 +61,6 @@ class DoctorHomeController extends GetxController {
                 print("Comparing: $now is before $endTime = ${now.isBefore(endTime!)}");
 
                 if (now.isAfter(startTime) && now.isBefore(endTime)) {
-                  print("Found ongoing appointment!");
                   ongoingAppointment.value = appointment;
                   break;
                 }

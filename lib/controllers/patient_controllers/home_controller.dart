@@ -184,7 +184,7 @@ class HomeController extends GetxController {
             processedData['patientData'] = patientData;
 
             print('Processed data for UserModel creation');
-            print('Blood group data: ${userData['bloodGroup']}');
+            print('Blood group data: ${userData}');
 
             try {
               final user = UserModel.fromJson(processedData);

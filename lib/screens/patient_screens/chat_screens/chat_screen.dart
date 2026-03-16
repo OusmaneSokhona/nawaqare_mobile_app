@@ -8,6 +8,7 @@ import 'package:patient_app/utils/app_bindings.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
+import '../../../models/chat_model.dart';
 import '../notifications_screens/notifications_screen.dart';
 import '../video_call_screens/help_center_screen.dart';
 import 'chat_detail_screen.dart';
@@ -25,7 +26,6 @@ class ChatScreen extends StatelessWidget {
     final ChatController chatController = Get.find();
     final HomeController homeController = Get.find();
     final bool isDesktop = MediaQuery.of(context).size.width > 600;
-
 
     return Scaffold(
       body: Obx(
@@ -149,16 +149,6 @@ class ChatScreen extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    if (isDesktop)
-                      Text(
-                        userName,
-                        style: TextStyle(
-                          color: Colors.black54,
-                          fontFamily: AppFonts.jakartaBold,
-                          fontSize: 4.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
                   ],
                 ),
               Expanded(
@@ -345,15 +335,18 @@ class ChatScreen extends StatelessWidget {
   Widget buildConversationsList(ChatController controller) {
     return Obx(
           () {
-
-
         if (controller.filteredConversations.isEmpty) {
-          return Text(
-            AppStrings.noDataFound.tr,
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.all(20.h),
+              child: Text(
+                AppStrings.noDataFound.tr,
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+              ),
             ),
           );
         }
@@ -381,31 +374,37 @@ class ChatScreen extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               final conversation = controller.filteredConversations[index];
-              final doctor = conversation.getDoctor();
               final lastMessage = conversation.lastMessage;
               final currentUser = controller.homeController.currentUser.value;
 
-              if (doctor == null) return const SizedBox.shrink();
+              if (currentUser == null) return const SizedBox.shrink();
+
+              final otherParticipant = controller.getOtherParticipant(conversation);
+
+              if (otherParticipant == null || otherParticipant.id.isEmpty) {
+                return const SizedBox.shrink();
+              }
 
               return ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 leading: ClipOval(
-                  child: Image.network(
-                    doctor.profileImage,
+                  child: SizedBox(
                     width: 56,
                     height: 56,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        'assets/demo_images/doctor_1.png',
-                        width: 56,
-                        height: 56,
+                    child: Image.network(
+                      otherParticipant.profileImage.isNotEmpty
+                          ? otherParticipant.profileImage
+                          : 'assets/demo_images/home_demo_image.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'assets/demo_images/home_demo_image.png',
                         fit: BoxFit.cover,
-                      );
-                    },
+                      ),
+                    ),
                   ),
                 ),
                 title: Text(
-                  doctor.fullName,
+                  otherParticipant.fullName,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
@@ -413,45 +412,59 @@ class ChatScreen extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                trailing: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    if (lastMessage != null)
-                      Text(
-                        controller.getLastMessageTime(lastMessage.createdAt),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: lastMessage.isUnseen &&
-                              lastMessage.sender != currentUser?.id
-                              ? Colors.blue.shade600
-                              : Colors.grey,
-                        ),
-                      ),
-                    if (lastMessage != null &&
-                        lastMessage.isUnseen &&
-                        lastMessage.sender != currentUser?.id)
-                      Container(
-                        margin: const EdgeInsets.only(top: 4),
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.shade600,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Text(
-                          '1',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
+                trailing: SizedBox(
+                  width: 70,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (lastMessage != null)
+                        Flexible(
+                          child: Text(
+                            controller.getLastMessageTime(lastMessage.createdAt),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: lastMessage.status == 'unseen' &&
+                                  lastMessage.sender != currentUser.id
+                                  ? Colors.blue.shade600
+                                  : Colors.grey,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
-                  ],
+                      if (lastMessage != null &&
+                          lastMessage.status == 'unseen' &&
+                          lastMessage.sender != currentUser.id)
+                        Container(
+                          margin: const EdgeInsets.only(left: 4),
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade600,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 20,
+                            minHeight: 20,
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '1',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
                 onTap: () {
                   controller.selectConversation(conversation);
                   Get.to(
-                        () =>  ChatDetailScreen(),
+                        () => ChatDetailScreen(),
                     binding: AppBinding(),
                   );
                 },

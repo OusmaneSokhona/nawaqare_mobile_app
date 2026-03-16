@@ -47,6 +47,6 @@ class ApiUrls {
   static String createService="api/service/create";
   static String updateService="api/service/update/";
   static String updateServiceStatus="api/service/status/";
-  static String getConversation="/api/chats/conversations/";
+  static String getConversation="/api/chats/conversations";
   static String getMessages="/api/chats/messages/";
 }

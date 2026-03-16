@@ -35,21 +35,49 @@ class ChatController extends GetxController {
   late StreamSubscription<Map<String, dynamic>> _roomJoinedSubscription;
 
   List<Conversation> get filteredConversations {
+    final currentUserRole = homeController.currentUser.value?.role;
+    final currentUserId = homeController.currentUser.value?.id;
+
     if (searchQuery.value.isEmpty) {
       return conversations;
     }
+
     return conversations.where((conv) {
-      final doctor = conv.participants?.firstWhere(
-            (p) => p.role == 'doctor',
-        orElse: () => Participant(id: '', fullName: '', profileImage: '', role: ''),
-      );
-      return doctor!.fullName.toLowerCase().contains(searchQuery.value.toLowerCase());
+      // First apply role-based filtering
+      if (currentUserRole == 'doctor') {
+        if (!(conv.participants?.any((p) => p.role == 'patient') ?? false)) {
+          return false;
+        }
+      } else if (currentUserRole == 'patient') {
+        if (!(conv.participants?.any((p) => p.role == 'doctor') ?? false)) {
+          return false;
+        }
+      }
+
+      // Then apply search filter
+      final other = getOtherParticipant(conv);
+      if (other == null || other.id.isEmpty) return false;
+
+      return other.fullName.toLowerCase().contains(searchQuery.value.toLowerCase());
     }).toList();
   }
 
-  Participant? get selectedDoctor {
+  Participant? getOtherParticipant(Conversation conversation) {
+    final currentUserId = homeController.currentUser.value?.id;
+    if (currentUserId == null) return null;
+
+    return conversation.participants?.firstWhere(
+          (p) => p.id != currentUserId,
+      orElse: () => Participant(id: '', fullName: '', profileImage: '', role: ''),
+    );
+  }
+
+  Participant? get otherParticipant {
+    final currentUserId = homeController.currentUser.value?.id;
+    if (currentUserId == null || selectedConversation.value == null) return null;
+
     return selectedConversation.value?.participants?.firstWhere(
-          (p) => p.role == 'doctor',
+          (p) => p.id != currentUserId,
       orElse: () => Participant(id: '', fullName: '', profileImage: '', role: ''),
     );
   }
@@ -73,22 +101,18 @@ class ChatController extends GetxController {
 
   void _setupStreamSubscriptions() {
     _messageSubscription = socketService.onMessageReceived.listen((data) {
-      debugPrint('Message received: $data');
       _handleIncomingMessage(data);
     });
 
     _messageSentSubscription = socketService.onMessageSent.listen((data) {
-      debugPrint('Message sent confirmation: $data');
       _handleMessageSent(data);
     });
 
     _errorSubscription = socketService.onError.listen((error) {
-      debugPrint('Socket error: $error');
       _handleSocketError(error);
     });
 
     _connectionSubscription = socketService.onConnectionChanged.listen((connected) {
-      debugPrint('Connection changed: $connected');
       if (connected) {
         errorMessage.value = '';
         if (selectedConversation.value != null) {
@@ -100,7 +124,6 @@ class ChatController extends GetxController {
     });
 
     _roomJoinedSubscription = socketService.onRoomJoined.listen((data) {
-      debugPrint('Room joined: $data');
       currentRoomId = data['conversationId']?.toString() ??
           '${data['doctorId']}_${data['patientId']}';
     });
@@ -160,110 +183,82 @@ class ChatController extends GetxController {
       if (data.isEmpty) return;
 
       final currentConv = selectedConversation.value;
-      if (currentConv == null) return;
+      final currentUserId = homeController.currentUser.value?.id?.toString();
 
-      final participants = currentConv.participants ?? [];
-      final doctor = participants.firstWhere(
-            (p) => p.role == 'doctor',
-        orElse: () => Participant(id: '', fullName: '', profileImage: '', role: ''),
-      );
-      final patient = participants.firstWhere(
-            (p) => p.role == 'patient',
-        orElse: () => Participant(id: '', fullName: '', profileImage: '', role: ''),
-      );
-
-      if (doctor.id.isEmpty || patient.id.isEmpty) return;
-
-      final messageDoctorId = data['doctorId']?.toString();
-      final messagePatientId = data['patientId']?.toString();
-      final messageSender = data['sender']?.toString();
-      final messageId = data['_id']?.toString() ?? data['id']?.toString() ??
-          'msg_${DateTime.now().millisecondsSinceEpoch}';
+      final incomingConvId = data['conversationId']?.toString();
+      final messageSenderId = data['sender']?.toString() ?? data['senderId']?.toString();
       final messageText = data['message']?.toString() ?? '';
+
+      final messageId = data['_id']?.toString() ??
+          data['id']?.toString() ??
+          'msg_${DateTime.now().millisecondsSinceEpoch}';
+
       final createdAt = data['createdAt'] != null
-          ? DateTime.parse(data['createdAt'])
+          ? DateTime.parse(data['createdAt']).toLocal()
           : DateTime.now();
 
-      // Check if this is a confirmation of a message we sent
-      // Look for any pending timers that might match this message content
-      if (messageSender == homeController.currentUser.value?.id) {
-        // This is our own message coming back from server
-        // Find any temp message with same content and mark it as sent
-        final pendingMessage = messages.firstWhereOrNull(
-                (m) => m.status == 'sending' && m.message == messageText
-        );
+      if (currentConv != null && (incomingConvId == currentConv.id || incomingConvId == null)) {
+        final participants = currentConv.participants ?? [];
 
-        if (pendingMessage != null) {
-          final tempId = pendingMessage.id;
-          final index = messages.indexWhere((m) => m.id == tempId);
-          if (index != -1) {
-            final updatedMessage = ChatMessage(
+        if (messageSenderId == currentUserId) {
+          final pendingIndex = messages.indexWhere((m) =>
+          (m.status == 'sending' || m.id.startsWith('temp_')) && m.message == messageText);
+
+          if (pendingIndex != -1) {
+            final otherParticipant = getOtherParticipant(currentConv);
+
+            messages[pendingIndex] = ChatMessage(
               id: messageId,
               conversationId: currentConv.id,
-              sender: messageSender ?? '',
-              receiver: messageSender == doctor.id ? patient.id : doctor.id,
+              sender: currentUserId!,
+              receiver: otherParticipant?.id ?? '',
               message: messageText,
               status: 'sent',
               messageType: data['messageType']?.toString() ?? 'text',
               createdAt: createdAt,
-              senderDetails: pendingMessage.senderDetails,
-              receiverDetails: pendingMessage.receiverDetails,
+              senderDetails: messages[pendingIndex].senderDetails,
+              receiverDetails: messages[pendingIndex].receiverDetails,
             );
-            messages[index] = updatedMessage;
             messages.refresh();
-          }
 
-          final timer = _messageTimers[tempId];
-          if (timer != null) {
-            debugPrint('Cancelling timer for tempId: $tempId');
-            timer.cancel();
+            final tempId = messages[pendingIndex].id;
+            _messageTimers[tempId]?.cancel();
             _messageTimers.remove(tempId);
+            return;
           }
-          return;
-        }
-      }
-
-      final isMessageForCurrentChat =
-          (messageDoctorId == doctor.id || messageDoctorId == patient.id) &&
-              (messagePatientId == doctor.id || messagePatientId == patient.id);
-
-      if (isMessageForCurrentChat) {
-        Participant? senderDetails;
-        Participant? receiverDetails;
-
-        if (messageSender == doctor.id) {
-          senderDetails = doctor;
-          receiverDetails = patient;
-        } else if (messageSender == patient.id) {
-          senderDetails = patient;
-          receiverDetails = doctor;
-        } else {
-          return;
         }
 
-        final newMessage = ChatMessage(
-          id: messageId,
-          conversationId: currentConv.id,
-          sender: messageSender ?? '',
-          receiver: messageSender == doctor.id ? patient.id : doctor.id,
-          message: messageText,
-          status: 'delivered',
-          messageType: data['messageType']?.toString() ?? 'text',
-          createdAt: createdAt,
-          senderDetails: senderDetails,
-          receiverDetails: receiverDetails,
-        );
+        final isParticipant = participants.any((p) => p.id == messageSenderId);
+        if (isParticipant || incomingConvId == currentConv.id) {
+          final existingIndex = messages.indexWhere((m) => m.id == messageId);
+          if (existingIndex == -1) {
+            Participant? senderDetails = participants.firstWhereOrNull((p) => p.id == messageSenderId);
+            Participant? receiverDetails = participants.firstWhereOrNull((p) => p.id != messageSenderId);
 
-        final existingIndex = messages.indexWhere((m) => m.id == messageId);
-        if (existingIndex == -1) {
-          messages.insert(0, newMessage);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            scrollToBottom();
-          });
+            final newMessage = ChatMessage(
+              id: messageId,
+              conversationId: currentConv.id,
+              sender: messageSenderId ?? '',
+              receiver: receiverDetails?.id ?? '',
+              message: messageText,
+              status: 'delivered',
+              messageType: data['messageType']?.toString() ?? 'text',
+              createdAt: createdAt,
+              senderDetails: senderDetails,
+              receiverDetails: receiverDetails,
+            );
+
+            messages.insert(0, newMessage);
+            messages.refresh();
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              scrollToBottom();
+            });
+
+            _updateLastMessageInConversation(currentConv.id, newMessage);
+          }
         }
-
-        _updateLastMessageInConversation(currentConv.id, newMessage);
-      } else {
+      } else if (incomingConvId != null) {
         fetchConversations();
       }
     } catch (e) {
@@ -276,14 +271,9 @@ class ChatController extends GetxController {
       if (!isClosed) {
         final messageIndex = messages.indexWhere((m) => m.id == tempId);
         if (messageIndex != -1 && messages[messageIndex].status == 'sending') {
-          debugPrint('Message timeout for tempId: $tempId');
-
-          // Double check if the message actually exists in the messages list
-          // with a different ID (maybe it was already updated)
           final messageExists = messages.any((m) =>
           m.message == originalText &&
-              (m.status == 'sent' || m.status == 'delivered')
-          );
+              (m.status == 'sent' || m.status == 'delivered'));
 
           if (!messageExists) {
             final failedMessage = ChatMessage(
@@ -356,7 +346,6 @@ class ChatController extends GetxController {
 
         final timer = _messageTimers[tempId];
         if (timer != null) {
-          debugPrint('Cancelling timer for tempId: $tempId');
           timer.cancel();
           _messageTimers.remove(tempId);
         }
@@ -448,32 +437,37 @@ class ChatController extends GetxController {
   }
 
   Future<void> fetchConversations() async {
-    final userId = homeController.currentUser.value?.id;
-    if (userId == null) {
-      errorMessage.value = 'User ID not found';
-      return;
-    }
-
     isLoading.value = true;
     errorMessage.value = '';
 
     try {
-      final response = await apiService.get('${ApiUrls.getConversation}/$userId');
+      final response = await apiService.get('${ApiUrls.getConversation}');
 
       if (response.statusCode == 200) {
         List<dynamic> conversationsData = [];
 
         if (response.data is Map) {
-          conversationsData = response.data['data'] ??
-              response.data['conversations'] ??
-              response.data['results'] ??
-              [];
+          conversationsData = response.data['conversations'] ?? [];
         } else if (response.data is List) {
           conversationsData = response.data;
         }
 
+        final currentUserRole = homeController.currentUser.value?.role;
+        final currentUserId = homeController.currentUser.value?.id;
+
         final conversationList = conversationsData
             .map((c) => Conversation.fromJson(c as Map<String, dynamic>))
+            .where((conversation) {
+          // Filter based on user role
+          if (currentUserRole == 'doctor') {
+            // For doctors: show only conversations with patients
+            return conversation.participants?.any((p) => p.role == 'patient') ?? false;
+          } else if (currentUserRole == 'patient') {
+            // For patients: show only conversations with doctors
+            return conversation.participants?.any((p) => p.role == 'doctor') ?? false;
+          }
+          return true; // If role is unknown, show all
+        })
             .toList();
 
         conversationList.sort((a, b) {
@@ -504,23 +498,14 @@ class ChatController extends GetxController {
         List<dynamic> messagesData = [];
 
         if (response.data is Map) {
-          messagesData = response.data['messages'] ??
-              response.data['data'] ??
-              response.data['results'] ??
-              [];
+          messagesData = response.data['messages'] ?? [];
         } else if (response.data is List) {
           messagesData = response.data;
         }
 
         final messageList = messagesData
-            .map((m) {
-          try {
-            return ChatMessage.fromJson(m as Map<String, dynamic>);
-          } catch (e) {
-            return null;
-          }
-        })
-            .whereType<ChatMessage>()
+            .map((m) => ChatMessage.fromJson(m as Map<String, dynamic>))
+            .where((m) => m != null)
             .toList();
 
         messageList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -621,11 +606,11 @@ class ChatController extends GetxController {
       UserModel currentUser,
       String text,
       ) {
-    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}_${DateTime.now().microsecondsSinceEpoch}';
+    final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
 
     String profileImage = currentUser.patientData?.profileImage ?? '';
 
-    final isCurrentUserDoctor = currentUser.id == doctor.id;
+    final isCurrentUserDoctor = currentUser.role == 'doctor';
     final senderDetails = Participant(
       id: currentUser.id!,
       fullName: currentUser.fullName ?? '',
@@ -649,10 +634,9 @@ class ChatController extends GetxController {
     );
 
     messages.insert(0, tempMessage);
+    messages.refresh();
     messageInputController.clear();
     scrollToBottom();
-
-    joinCurrentRoom();
 
     socketService.sendMessage(
       doctorId: doctor.id,
@@ -664,8 +648,6 @@ class ChatController extends GetxController {
 
     _handleMessageTimeout(tempId, text);
   }
-
-
 
   void scrollToBottom() {
     if (scrollController.hasClients) {
@@ -694,28 +676,30 @@ class ChatController extends GetxController {
   }
 
   String formatTime(DateTime time) {
-    final hour = time.hour;
-    final minute = time.minute;
+    final localTime = time.toLocal();
+    final hour = localTime.hour;
+    final minute = localTime.minute;
     final period = hour >= 12 ? 'PM' : 'AM';
-    final displayHour = hour > 12 ? hour - 12 : hour;
+    final displayHour = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
     return '${displayHour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
   }
 
   String formatDate(DateTime date) {
+    final localDate = date.toLocal();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final messageDate = DateTime(date.year, date.month, date.day);
+    final messageDate = DateTime(localDate.year, localDate.month, localDate.day);
 
     if (messageDate.isAtSameMomentAs(today)) {
-      return 'Today, ${_getMonthName(date.month)} ${date.day}, ${date.year}';
+      return 'Today, ${_getMonthName(localDate.month)} ${localDate.day}, ${localDate.year}';
     }
 
     final yesterday = today.subtract(const Duration(days: 1));
     if (messageDate.isAtSameMomentAs(yesterday)) {
-      return 'Yesterday, ${_getMonthName(date.month)} ${date.day}, ${date.year}';
+      return 'Yesterday, ${_getMonthName(localDate.month)} ${localDate.day}, ${localDate.year}';
     }
 
-    return '${_getMonthName(date.month)} ${date.day}, ${date.year}';
+    return '${_getMonthName(localDate.month)} ${localDate.day}, ${localDate.year}';
   }
 
   String _getMonthName(int month) {
@@ -724,12 +708,13 @@ class ChatController extends GetxController {
   }
 
   String getLastMessageTime(DateTime date) {
+    final localDate = date.toLocal();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final messageDate = DateTime(date.year, date.month, date.day);
+    final messageDate = DateTime(localDate.year, localDate.month, localDate.day);
 
     if (messageDate.isAtSameMomentAs(today)) {
-      return formatTime(date);
+      return '${localDate.hour.toString().padLeft(2, '0')}:${localDate.minute.toString().padLeft(2, '0')}';
     }
 
     final yesterday = today.subtract(const Duration(days: 1));
@@ -737,6 +722,6 @@ class ChatController extends GetxController {
       return 'Yesterday';
     }
 
-    return '${date.day} ${_getMonthName(date.month)}';
+    return '${localDate.day}/${localDate.month}';
   }
 }

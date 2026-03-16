@@ -14,7 +14,7 @@ class ChatDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ChatController controller = Get.find();
-    final doctor = controller.selectedDoctor;
+    final doctor = controller.otherParticipant;
 
     return Scaffold(
       body: Container(
@@ -43,7 +43,6 @@ class ChatDetailScreen extends StatelessWidget {
                   )
                       : ListView.builder(
                     key: const PageStorageKey<String>('chat_messages_list'),
-                    controller: controller.scrollController,
                     reverse: true,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -92,6 +91,7 @@ class ChatDetailScreen extends StatelessWidget {
       children: [
         InkWell(
           onTap: () {
+            controller.messageInputController.clear();
             Get.back();
           },
           child: Image.asset(

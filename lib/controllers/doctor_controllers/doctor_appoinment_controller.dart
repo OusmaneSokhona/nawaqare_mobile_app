@@ -42,17 +42,14 @@ class DoctorAppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        print("Doctor Appointments response = ${response.data}");
         final jsonResponse = response.data is String
             ? json.decode(response.data)
             : response.data;
 
-        print("Parsed response keys: ${jsonResponse.keys}");
 
         if (jsonResponse.containsKey('appointements') || jsonResponse.containsKey('appointments')) {
           List<dynamic> appointmentsJson = jsonResponse['appointements'] ?? jsonResponse['appointments'] ?? [];
 
-          print("Found ${appointmentsJson.length} appointments");
 
           List<DoctorAppointment> appointments = [];
 
@@ -61,7 +58,6 @@ class DoctorAppointmentController extends GetxController {
               final appointment = DoctorAppointment.fromJson(json);
               appointments.add(appointment);
             } catch (e) {
-              print('Error parsing appointment: $e, JSON: $json');
             }
           }
 
@@ -77,7 +73,6 @@ class DoctorAppointmentController extends GetxController {
                   : DateTime.tryParse(appointment.date.toString());
               return date != null && date.isAfter(now);
             } catch (e) {
-              print('Error parsing date for upcoming: ${appointment.date}, error: $e');
               return false;
             }
           })
@@ -91,20 +86,15 @@ class DoctorAppointmentController extends GetxController {
                   : DateTime.tryParse(appointment.date.toString());
               return date != null && date.isBefore(now);
             } catch (e) {
-              print('Error parsing date for past: ${appointment.date}, error: $e');
               return false;
             }
           })
               .toList();
 
-          print('Total appointments: ${appointments.length}');
-          print('Upcoming: ${upcomingAppointments.length}');
-          print('Past: ${pastAppointments.length}');
 
           _updateCurrentList();
 
         } else {
-          print('No appointments found in response');
           allAppointments.value = [];
           upcomingAppointments.value = [];
           pastAppointments.value = [];
@@ -121,7 +111,6 @@ class DoctorAppointmentController extends GetxController {
         throw Exception('Failed to load appointments. Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching appointments: $e');
       Get.snackbar(
         AppStrings.warning.tr,
         'Failed to fetch appointments: ${e.toString()}',
@@ -509,7 +498,6 @@ class DoctorAppointmentController extends GetxController {
         throw Exception('Failed to update appointment status');
       }
     } catch (e) {
-      print('Error updating appointment status: $e');
       Get.snackbar(
         "Error",
         'Failed to update status: ${e.toString()}',

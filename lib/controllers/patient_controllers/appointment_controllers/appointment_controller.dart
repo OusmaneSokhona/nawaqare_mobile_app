@@ -38,7 +38,6 @@ class AppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        print("Appointments fetched: ${response.data}");
         final jsonResponse = response.data is String
             ? json.decode(response.data)
             : response.data;
@@ -55,7 +54,6 @@ class AppointmentController extends GetxController {
         throw Exception('Failed to load appointments. Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching appointments: $e');
       Get.snackbar(
         AppStrings.warning.tr,
         'Failed to fetch appointments: $e',
@@ -241,7 +239,6 @@ class AppointmentController extends GetxController {
         throw Exception('Failed to cancel appointment');
       }
     } catch (e) {
-      print('Error cancelling appointment: $e');
       Get.snackbar(
         AppStrings.warning.tr,
         'Failed to cancel appointment',
@@ -283,7 +280,6 @@ class AppointmentController extends GetxController {
         throw Exception('Failed to reschedule appointment');
       }
     } catch (e) {
-      print('Error rescheduling appointment: $e');
       Get.snackbar(
         AppStrings.warning.tr,
         'Failed to reschedule appointment',
@@ -302,7 +298,6 @@ class AppointmentController extends GetxController {
         'appointmentId': appointmentId,
       };
 
-      print("Accepting reschedule request for appointment: $appointmentId");
 
       final response = await _apiService.post(
         ApiUrls.acceptRescheduleRequest,
@@ -310,7 +305,6 @@ class AppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Reschedule request accepted successfully");
         Get.back();
         await fetchAppointments(); // Refresh appointments list
 
@@ -332,7 +326,6 @@ class AppointmentController extends GetxController {
         return false;
       }
     } catch (e) {
-      print('Accept reschedule request error: $e');
       Get.snackbar(
         AppStrings.warning.tr,
         'An error occurred: $e',
@@ -353,7 +346,6 @@ class AppointmentController extends GetxController {
         'appointmentId': appointmentId,
       };
 
-      print("Rejecting reschedule request for appointment: $appointmentId");
 
       final response = await _apiService.post(
         ApiUrls.rejectRescheduleRequest,
@@ -361,7 +353,6 @@ class AppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Reschedule request rejected successfully");
         Get.back();
         await fetchAppointments(); // Refresh appointments list
 
@@ -383,7 +374,6 @@ class AppointmentController extends GetxController {
         return false;
       }
     } catch (e) {
-      print('Reject reschedule request error: $e');
       Get.snackbar(
         AppStrings.warning.tr,
         'An error occurred: $e',

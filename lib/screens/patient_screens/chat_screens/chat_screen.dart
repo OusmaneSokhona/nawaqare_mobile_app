@@ -26,7 +26,7 @@ class ChatScreen extends StatelessWidget {
     final ChatController chatController = Get.find();
     final HomeController homeController = Get.find();
     final bool isDesktop = MediaQuery.of(context).size.width > 600;
-
+chatController.fetchConversations();
     return Scaffold(
       body: Obx(
             () {

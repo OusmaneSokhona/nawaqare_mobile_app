@@ -44,11 +44,11 @@ class ChatController extends GetxController {
 
     return conversations.where((conv) {
       // First apply role-based filtering
-      if (currentUserRole == 'doctor') {
+      if (currentUserRole?.value == 'doctor') {
         if (!(conv.participants?.any((p) => p.role == 'patient') ?? false)) {
           return false;
         }
-      } else if (currentUserRole == 'patient') {
+      } else if (currentUserRole?.value == 'patient') {
         if (!(conv.participants?.any((p) => p.role == 'doctor') ?? false)) {
           return false;
         }
@@ -452,41 +452,59 @@ class ChatController extends GetxController {
           conversationsData = response.data;
         }
 
-        final currentUserRole = homeController.currentUser.value?.role;
-        final currentUserId = homeController.currentUser.value?.id;
+        final String? currentUserId = homeController.currentUser.value?.userId?.toString().trim();
+
+        print("MY LOGGED IN ID: $currentUserId");
 
         final conversationList = conversationsData
             .map((c) => Conversation.fromJson(c as Map<String, dynamic>))
-            .where((conversation) {
-          // Filter based on user role
-          if (currentUserRole == 'doctor') {
-            // For doctors: show only conversations with patients
-            return conversation.participants?.any((p) => p.role == 'patient') ?? false;
-          } else if (currentUserRole == 'patient') {
-            // For patients: show only conversations with doctors
-            return conversation.participants?.any((p) => p.role == 'doctor') ?? false;
-          }
-          return true; // If role is unknown, show all
-        })
             .toList();
 
+        // 2. Sorting by Time
         conversationList.sort((a, b) {
           final aTime = a.lastMessage?.createdAt ?? a.updatedAt ?? a.createdAt;
           final bTime = b.lastMessage?.createdAt ?? b.updatedAt ?? b.createdAt;
-          return bTime.compareTo(aTime);
+          return bTime!.compareTo(aTime!);
         });
 
+        // 3. ASAL FIX: Partner dhoondne ka logic
+        for (var chat in conversationList) {
+          if (chat.participants != null && chat.participants!.length > 1) {
+
+            // Debug: Check karein ke API se IDs kya aa rahi hain
+            print("Checking Chat: ${chat.id}");
+            for(var p in chat.participants!) {
+              print("Participant ID: ${p.id} == My ID: $currentUserId");
+            }
+
+            // Partner wo hai jiski ID meri ID se match NAHI karti
+            int partnerIndex = chat.participants!.indexWhere(
+                    (p) => p.id.toString().trim() != currentUserId
+            );
+
+            if (partnerIndex != -1 && partnerIndex != 0) {
+              final partner = chat.participants!.removeAt(partnerIndex);
+              chat.participants!.insert(0, partner);
+            }
+          }
+        }
+
         conversations.assignAll(conversationList);
+
+        if (conversations.isNotEmpty) {
+          print(":white_check_mark: FIXED Partner Name at index 0: ${conversations.first.participants?.first.fullName}");
+        }
+
       } else {
-        errorMessage.value = 'Failed to load conversations: ${response.statusCode}';
+        errorMessage.value = 'Failed to load conversations';
       }
     } catch (e) {
-      errorMessage.value = 'Error fetching conversations: $e';
+      print(":x: ERROR: $e");
+      errorMessage.value = 'Error: $e';
     } finally {
       isLoading.value = false;
     }
   }
-
   Future<void> fetchMessages(String conversationId) async {
     isLoadingMessages.value = true;
     errorMessage.value = '';

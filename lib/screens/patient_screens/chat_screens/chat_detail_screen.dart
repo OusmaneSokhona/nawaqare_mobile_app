@@ -15,7 +15,7 @@ class ChatDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ChatController controller = Get.find();
     final doctor = controller.otherParticipant;
-
+controller.fetchMessages(controller.selectedConversation.value!.id);
     return Scaffold(
       body: Container(
         height: 1.sh,

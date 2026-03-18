@@ -1,18 +1,22 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/screens/patient_screens/prescription_screens/refill_staus.dart';
+import 'package:patient_app/services/api_service.dart';
+import 'package:patient_app/utils/api_urls.dart';
 import '../../models/delivery_options_model.dart';
 import '../../models/prscription_model.dart';
 import '../../screens/patient_screens/prescription_screens/prescription_details.dart';
-import '../../screens/patient_screens/prescription_screens/refill_staus.dart';
 import '../../screens/patient_screens/prescription_screens/request_refill.dart';
 
 class PrescriptionController extends GetxController {
+  ApiService apiService = ApiService();
   RxString prescriptionType = "activePrescription".obs;
   final prescriptions = <PrescriptionModel>[].obs;
   final postPrescriptions = <PrescriptionModel>[].obs;
 
   RxInt currentPage = 1.obs;
   final int itemsPerPage = 4;
+  RxBool isLoading = false.obs;
 
   List<PrescriptionModel> get paginatedList {
     List<PrescriptionModel> currentList =
@@ -35,165 +39,102 @@ class PrescriptionController extends GetxController {
   void onInit() {
     super.onInit();
     selectedOption.value = options.first;
-    loadDummyData();
+    fetchAllPrescriptions();
   }
 
-  void loadDummyData() {
-    prescriptions.assignAll([
-      PrescriptionModel(
-        id: 'p1',
-        doctorName: 'Dr. Maria Waston',
-        specialization: 'Heart Surgeon',
-        medicationName: 'Amoxicillin 500mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.active,
-        dateInfo: 'Refill until March 5, 2025',
-        refillsLeft: 2,
-        doctorImageUrl: 'assets/demo_images/doctor_2.png',
-      ),
-      PrescriptionModel(
-        id: 'p2',
-        doctorName: 'Dr. John Doe',
-        specialization: 'Family Physician',
-        medicationName: 'Amlodipine 10mg',
-        dosageInstruction: 'Morning & Evening',
-        status: PrescriptionStatus.expirySoon,
-        dateInfo: 'Refill until Sep 1, 2024',
-        refillsLeft: 1,
-        doctorImageUrl: 'assets/demo_images/doctor_3.png',
-      ),
-      PrescriptionModel(
-        id: 'p2',
-        doctorName: 'Dr. John Doe',
-        specialization: 'Family Physician',
-        medicationName: 'Amlodipine 10mg',
-        dosageInstruction: 'Morning & Evening',
-        status: PrescriptionStatus.expirySoon,
-        dateInfo: 'Refill until Sep 1, 2024',
-        refillsLeft: 1,
-        doctorImageUrl: 'assets/demo_images/doctor_3.png',
-      ),
-      PrescriptionModel(
-        id: 'p3',
-        doctorName: 'Dr. Jane Smith',
-        specialization: 'Pediatrician',
-        medicationName: 'Ibuprofen 200mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.expired,
-        dateInfo: 'Expire Sep 15, 2023',
-        refillsLeft: 0,
-        doctorImageUrl: 'assets/demo_images/doctor_4.png',
-      ),
-      PrescriptionModel(
-        id: 'p3',
-        doctorName: 'Dr. Jane Smith',
-        specialization: 'Pediatrician',
-        medicationName: 'Ibuprofen 200mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.expired,
-        dateInfo: 'Expire Sep 15, 2023',
-        refillsLeft: 0,
-        doctorImageUrl: 'assets/demo_images/doctor_4.png',
-      ),
-      PrescriptionModel(
-        id: 'p3',
-        doctorName: 'Dr. Jane Smith',
-        specialization: 'Pediatrician',
-        medicationName: 'Ibuprofen 200mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.expired,
-        dateInfo: 'Expire Sep 15, 2023',
-        refillsLeft: 0,
-        doctorImageUrl: 'assets/demo_images/doctor_4.png',
-      ),
-    ]);
-    postPrescriptions.assignAll([
-      PrescriptionModel(
-        id: 'p1',
-        doctorName: 'Dr. Maria Waston',
-        specialization: 'Heart Surgeon',
-        medicationName: 'Amoxicillin 500mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.completed,
-        dateInfo: 'Completed Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_2.png',
-      ),
-      PrescriptionModel(
-        id: 'p1',
-        doctorName: 'Dr. Maria Waston',
-        specialization: 'Heart Surgeon',
-        medicationName: 'Amoxicillin 500mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.completed,
-        dateInfo: 'Completed Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_2.png',
-      ),
-      PrescriptionModel(
-        id: 'p1',
-        doctorName: 'Dr. Maria Waston',
-        specialization: 'Heart Surgeon',
-        medicationName: 'Amoxicillin 500mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.completed,
-        dateInfo: 'Completed Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_2.png',
-      ),
-      PrescriptionModel(
-        id: 'p1',
-        doctorName: 'Dr. Maria Waston',
-        specialization: 'Heart Surgeon',
-        medicationName: 'Amoxicillin 500mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.completed,
-        dateInfo: 'Completed Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_2.png',
-      ),
-      PrescriptionModel(
-        id: 'p2',
-        doctorName: 'Dr. John Doe',
-        specialization: 'Family Physician',
-        medicationName: 'Amlodipine 10mg',
-        dosageInstruction: 'Morning & Evening',
-        status: PrescriptionStatus.expired,
-        dateInfo: 'Expired Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_4.png',
-      ),
-      PrescriptionModel(
-        id: 'p3',
-        doctorName: 'Dr. Jane Smith',
-        specialization: 'Pediatrician',
-        medicationName: 'Ibuprofen 200mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.completed,
-        dateInfo: 'Completed Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_3.png',
-      ),
-      PrescriptionModel(
-        id: 'p4',
-        doctorName: 'Dr. Alex Lee',
-        specialization: 'Neurologist',
-        medicationName: 'Ciprofloxacin 500mg',
-        dosageInstruction: '1 tablet, twice daily after meals',
-        status: PrescriptionStatus.expired,
-        dateInfo: 'Expired Date Sep 15, 2024',
-        refillsLeft: null,
-        doctorImageUrl: 'assets/demo_images/doctor_1.png',
-      ),
-    ]);
+  Future<void> fetchAllPrescriptions() async {
+    isLoading.value = true;
+    try {
+      var response = await apiService.get(ApiUrls.getAllPrescription);
+
+      if (response.data != null && response.data['prescriptions'] != null) {
+        List<dynamic> prescriptionsList = response.data['prescriptions'];
+        List<PrescriptionModel> allPrescriptions = [];
+
+        for (var item in prescriptionsList) {
+          String doctorName = item['doctorId']?['fullName'] ?? 'Unknown Doctor';
+          String specialization = item['doctorId']?['medicalSpecialty']?['name'] ?? 'General Physician';
+
+          String medicationName = '';
+          if (item['medications'] != null && item['medications'].isNotEmpty) {
+            medicationName = item['medications'][0]['name'] ?? '';
+          }
+
+          String dosageInstruction = '';
+          if (item['medications'] != null && item['medications'].isNotEmpty) {
+            var med = item['medications'][0];
+            dosageInstruction = '${med['dosage'] ?? ''}, ${med['frequency'] ?? ''} for ${med['duration'] ?? ''}';
+          }
+
+          String issueDate = item['issueDate'] ?? '';
+          String validUntil = item['validUntil'] ?? '';
+
+          DateTime now = DateTime.now();
+          DateTime validUntilDate = DateTime.parse(validUntil);
+          PrescriptionStatus status;
+
+          if (item['activestatus'] == 'active' && validUntilDate.isAfter(now)) {
+            status = PrescriptionStatus.active;
+          } else if (validUntilDate.isBefore(now)) {
+            status = PrescriptionStatus.expired;
+          } else if (validUntilDate.difference(now).inDays <= 7) {
+            status = PrescriptionStatus.expirySoon;
+          } else {
+            status = PrescriptionStatus.active;
+          }
+
+          int refillsLeft = 0;
+          if (status == PrescriptionStatus.active) {
+            refillsLeft = validUntilDate.difference(now).inDays ~/ 30;
+          }
+
+          allPrescriptions.add(PrescriptionModel(
+            id: item['_id'] ?? '',
+            doctorName: doctorName,
+            specialization: specialization,
+            medicationName: medicationName,
+            dosageInstruction: dosageInstruction,
+            status: status,
+            dateInfo: 'Valid until ${validUntil.split('T')[0]}',
+            refillsLeft: refillsLeft,
+            doctorImageUrl: 'assets/demo_images/doctor_2.png',
+            diagnosis: item['diagnosis'] ?? '',
+            notes: item['notes'] ?? '',
+            prescriptionNumber: item['prescriptionNumber'] ?? '',
+            medications: item['medications'] != null
+                ? List<Map<String, dynamic>>.from(item['medications'])
+                : [],
+            appointmentData: item['appointmentId'] != null ? {
+              'soap': item['appointmentId']['SOAP'] ?? {},
+              'date': item['appointmentId']['date'] ?? '',
+              'consultationType': item['appointmentId']['consultationType'] ?? '',
+            } : null,
+          ));
+        }
+
+        var activeList = allPrescriptions.where((p) =>
+        p.status == PrescriptionStatus.active ||
+            p.status == PrescriptionStatus.expirySoon).toList();
+        var pastList = allPrescriptions.where((p) =>
+        p.status == PrescriptionStatus.expired ||
+            p.status == PrescriptionStatus.completed).toList();
+
+        prescriptions.assignAll(activeList);
+        postPrescriptions.assignAll(pastList);
+      }
+    } catch (e) {
+      print('Error fetching prescriptions: $e');
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void requestRefill(PrescriptionModel prescription) {
-    Get.to(RequestRefill());
+    Get.to(() => RequestRefill());
   }
 
   void viewDetail(PrescriptionModel prescription) {
-    Get.to(PrescriptionDetails(prescriptionModel: prescription));
+    Get.to(() => PrescriptionDetails(prescriptionModel: prescription));
   }
 
   final selectedCycle = '1 month'.obs;
@@ -207,7 +148,7 @@ class PrescriptionController extends GetxController {
 
   TextEditingController noteController = TextEditingController();
   void sendRequest() {
-    Get.to(RefillStaus());
+    Get.to(() => RefillStaus());
   }
 
   final List<DeliveryOption> options = [

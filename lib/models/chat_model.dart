@@ -199,7 +199,7 @@ class ChatMessage {
 
   bool get isMe {
     try {
-      final currentUserId = Get.find<HomeController>().currentUser.value?.id;
+      final currentUserId = Get.find<HomeController>().currentUser.value?.userId;
       return sender == currentUserId;
     } catch (e) {
       return false;

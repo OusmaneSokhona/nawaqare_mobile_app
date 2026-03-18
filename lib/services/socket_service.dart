@@ -26,6 +26,9 @@ class SocketService extends GetxService {
   static const int _maxReconnectAttempts = 5;
   int _reconnectAttempts = 0;
 
+  // Track pending room join requests
+  final Map<String, Completer<String>> _pendingRoomJoins = {};
+
   @override
   void onClose() {
     _reconnectTimer?.cancel();
@@ -110,6 +113,7 @@ class SocketService extends GetxService {
     if (_socket == null) return;
 
     _socket!.onConnect((_) {
+      print('✅ Socket connected');
       isConnected.value = true;
       _connectionController.add(true);
       _reconnecting = false;
@@ -122,6 +126,7 @@ class SocketService extends GetxService {
     });
 
     _socket!.onDisconnect((_) {
+      print('❌ Socket disconnected');
       isConnected.value = false;
       _connectionController.add(false);
       _errorController.add({'error': 'Disconnected from server', 'showToUser': false});
@@ -129,6 +134,7 @@ class SocketService extends GetxService {
     });
 
     _socket!.onConnectError((error) {
+      print('⚠️ Socket connection error: $error');
       isConnected.value = false;
       _connectionController.add(false);
       _errorController.add({'error': 'Connection error', 'details': error.toString(), 'showToUser': true});
@@ -136,38 +142,71 @@ class SocketService extends GetxService {
     });
 
     _socket!.onError((error) {
+      print('⚠️ Socket error: $error');
       _errorController.add({'error': 'Socket error', 'details': error.toString(), 'showToUser': true});
     });
 
     _socket!.on('roomJoined', (data) {
+      print('🚪 Room joined event received: $data');
+
       if (data is Map) {
+        String? conversationId = data['conversationId']?.toString();
+
+        if (conversationId != null) {
+          // Try to find which pending room join this corresponds to
+          // Since we don't have doctorId/patientId in the response,
+          // we need to complete ALL pending joins with this conversationId
+          // This is safe because room joins are sequential per conversation
+
+          if (_pendingRoomJoins.isNotEmpty) {
+            // Get the first pending completer (FIFO)
+            var entry = _pendingRoomJoins.entries.first;
+            String compositeId = entry.key;
+            Completer<String> completer = entry.value;
+
+            if (!completer.isCompleted) {
+              print('✅ Completing room join for $compositeId with conversationId: $conversationId');
+              completer.complete(conversationId);
+              _pendingRoomJoins.remove(compositeId);
+            }
+          }
+        }
+
         _roomJoinedController.add(Map<String, dynamic>.from(data));
-      } else {
-        _roomJoinedController.add({'data': data});
       }
     });
 
     _socket!.on('receiveMessage', (data) {
+      print('📩 Receive message event: $data');
       if (data is Map) {
         _messageController.add(Map<String, dynamic>.from(data));
-      } else {
-        _messageController.add({'data': data});
       }
     });
 
     _socket!.on('messageSent', (data) {
+      print('✅ Message sent confirmation: $data');
       if (data is Map) {
         _messageSentController.add(Map<String, dynamic>.from(data));
-      } else {
-        _messageSentController.add({'data': data});
       }
     });
 
     _socket!.on('chatError', (data) {
+      print('⚠️ Chat error: $data');
       if (data is Map) {
         _errorController.add(Map<String, dynamic>.from(data));
-      } else {
-        _errorController.add({'error': data.toString(), 'showToUser': true});
+
+        // Check if this error corresponds to a pending room join
+        String? errorMsg = data['error']?.toString();
+        if (errorMsg != null && errorMsg.contains('room') && _pendingRoomJoins.isNotEmpty) {
+          var entry = _pendingRoomJoins.entries.first;
+          String compositeId = entry.key;
+          Completer<String> completer = entry.value;
+
+          if (!completer.isCompleted) {
+            completer.completeError('Failed to join room: $errorMsg');
+            _pendingRoomJoins.remove(compositeId);
+          }
+        }
       }
     });
   }
@@ -190,35 +229,118 @@ class SocketService extends GetxService {
     });
   }
 
-  void joinRoom({
+  /// Join a room and return a Future that completes with the conversation ID
+  Future<String> joinRoom({
     required String doctorId,
     required String patientId,
-  }) {
+  }) async {
     if (!isConnected.value) {
       _errorController.add({'error': 'Cannot join room: Not connected', 'showToUser': true});
-      return;
+      return Future.error('Not connected');
     }
 
+    final compositeId = '${doctorId}_${patientId}';
+
+    // Check if there's already a pending join for this composite ID
+    if (_pendingRoomJoins.containsKey(compositeId)) {
+      print('⏳ Room join already pending for: $compositeId');
+      return _pendingRoomJoins[compositeId]!.future;
+    }
+
+    print('🚪 Attempting to join room: $compositeId');
+
+    // Create completer for this room join attempt
+    Completer<String> completer = Completer();
+    _pendingRoomJoins[compositeId] = completer;
+
+    // Emit join room event with EXACT format your backend expects
     final roomData = {
       'doctorId': doctorId,
       'patientId': patientId,
-      'conversationId': '${doctorId}_${patientId}',
     };
 
     _socket!.emit('joinRoom', roomData);
+
+    // Set timeout for room join
+    Timer timeout = Timer(const Duration(seconds: 5), () {
+      if (!completer.isCompleted) {
+        print('⚠️ Room join timeout for: $compositeId');
+
+        // Remove from pending
+        _pendingRoomJoins.remove(compositeId);
+
+        if (!completer.isCompleted) {
+          completer.completeError('Failed to join chat room - timeout');
+        }
+
+        _errorController.add({
+          'error': 'Failed to join chat room',
+          'details': 'Timeout',
+          'showToUser': true,
+          'roomId': compositeId
+        });
+      }
+    });
+
+    // Clean up timeout when future completes
+    completer.future.whenComplete(() {
+      timeout.cancel();
+    });
+
+    // Return future that completes when room is joined or times out
+    return completer.future;
   }
 
-  void sendMessage({
+  /// Send message with automatic room joining if needed
+  Future<void> sendMessage({
     required String doctorId,
     required String patientId,
     required String sender,
     required String message,
     String? tempId,
-  }) {
+  }) async {
     if (!isConnected.value) {
       _errorController.add({'error': 'Cannot send message: Not connected', 'showToUser': true});
       return;
     }
+
+    final compositeId = '${doctorId}_${patientId}';
+
+    // Check if we need to join the room
+    bool needToJoin = true;
+
+    // Check if there's a pending or completed join for this room
+    if (_pendingRoomJoins.containsKey(compositeId)) {
+      try {
+        print('⏳ Waiting for pending room join: $compositeId');
+        await _pendingRoomJoins[compositeId]!.future;
+        needToJoin = false;
+      } catch (e) {
+        // If pending join failed, we'll try again
+        print('⚠️ Previous room join failed: $e');
+        _pendingRoomJoins.remove(compositeId);
+      }
+    }
+
+    // Join room if needed
+    if (needToJoin) {
+      print('📤 Not in room $compositeId, joining first...');
+      try {
+        String conversationId = await joinRoom(doctorId: doctorId, patientId: patientId);
+        print('✅ Joined room with conversation ID: $conversationId');
+      } catch (e) {
+        _errorController.add({
+          'error': 'Cannot send message: Failed to join room',
+          'details': e.toString(),
+          'showToUser': true,
+          'roomId': compositeId
+        });
+        return;
+      }
+    }
+
+    // Small delay to ensure room join is processed
+    await Future.delayed(const Duration(milliseconds: 100));
 
     final messageData = {
       'doctorId': doctorId,
@@ -226,15 +348,23 @@ class SocketService extends GetxService {
       'sender': sender,
       'message': message,
       'tempId': tempId ?? 'temp_${DateTime.now().millisecondsSinceEpoch}',
-      'timestamp': DateTime.now().toIso8601String(),
-      'conversationId': '${doctorId}_${patientId}',
     };
 
+    print('📤 Sending message to room $compositeId: $messageData');
     _socket!.emit('sendMessage', messageData);
   }
 
   void disconnect() {
     _reconnectTimer?.cancel();
+
+    // Complete all pending room joins with error
+    for (var entry in _pendingRoomJoins.entries) {
+      if (!entry.value.isCompleted) {
+        entry.value.completeError('Disconnected');
+      }
+    }
+    _pendingRoomJoins.clear();
+
     if (_socket != null) {
       _socket!.off('roomJoined');
       _socket!.off('receiveMessage');

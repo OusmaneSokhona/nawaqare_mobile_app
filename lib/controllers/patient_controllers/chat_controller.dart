@@ -36,7 +36,7 @@ class ChatController extends GetxController {
 
   List<Conversation> get filteredConversations {
     final currentUserRole = homeController.currentUser.value?.role;
-    final currentUserId = homeController.currentUser.value?.id;
+    final currentUserId = homeController.currentUser.value?.userId;
 
     if (searchQuery.value.isEmpty) {
       return conversations;
@@ -63,7 +63,7 @@ class ChatController extends GetxController {
   }
 
   Participant? getOtherParticipant(Conversation conversation) {
-    final currentUserId = homeController.currentUser.value?.id;
+    final currentUserId = homeController.currentUser.value?.userId;
     if (currentUserId == null) return null;
 
     return conversation.participants?.firstWhere(
@@ -73,7 +73,7 @@ class ChatController extends GetxController {
   }
 
   Participant? get otherParticipant {
-    final currentUserId = homeController.currentUser.value?.id;
+    final currentUserId = homeController.currentUser.value?.userId;
     if (currentUserId == null || selectedConversation.value == null) return null;
 
     return selectedConversation.value?.participants?.firstWhere(
@@ -166,7 +166,7 @@ class ChatController extends GetxController {
   }
 
   Future<void> initializeSocketConnection() async {
-    final userId = homeController.currentUser.value?.id;
+    final userId = homeController.currentUser.value?.userId;
     try {
       if (!socketService.isConnected.value) {
         await socketService.connect(userId: userId);
@@ -183,7 +183,7 @@ class ChatController extends GetxController {
       if (data.isEmpty) return;
 
       final currentConv = selectedConversation.value;
-      final currentUserId = homeController.currentUser.value?.id?.toString();
+      final currentUserId = homeController.currentUser.value?.userId?.toString();
 
       final incomingConvId = data['conversationId']?.toString();
       final messageSenderId = data['sender']?.toString() ?? data['senderId']?.toString();
@@ -555,7 +555,7 @@ class ChatController extends GetxController {
     if (socketService.isConnected.value) {
       joinCurrentRoom();
     } else {
-      socketService.connect(userId: homeController.currentUser.value?.id).then((_) {
+      socketService.connect(userId: homeController.currentUser.value?.userId).then((_) {
         joinCurrentRoom();
       }).catchError((error) {
         errorMessage.value = 'Failed to connect: $error';
@@ -575,7 +575,7 @@ class ChatController extends GetxController {
     }
 
     final currentUser = homeController.currentUser.value;
-    if (currentUser?.id == null) {
+    if (currentUser?.userId == null) {
       errorMessage.value = 'User not found';
       Get.snackbar('Error', 'User not found', snackPosition: SnackPosition.BOTTOM);
       return;
@@ -600,7 +600,7 @@ class ChatController extends GetxController {
     if (!socketService.isConnected.value) {
       errorMessage.value = 'Connecting to chat server...';
       Get.snackbar('Connecting', 'Establishing connection...', snackPosition: SnackPosition.BOTTOM);
-      socketService.connect(userId: currentUser?.id).then((_) {
+      socketService.connect(userId: currentUser?.userId).then((_) {
         if (socketService.isConnected.value) {
           errorMessage.value = '';
           Future.delayed(const Duration(milliseconds: 300), () {
@@ -630,7 +630,7 @@ class ChatController extends GetxController {
 
     final isCurrentUserDoctor = currentUser.role == 'doctor';
     final senderDetails = Participant(
-      id: currentUser.id!,
+      id: currentUser.userId!,
       fullName: currentUser.fullName ?? '',
       profileImage: profileImage,
       role: isCurrentUserDoctor ? 'doctor' : 'patient',
@@ -641,7 +641,7 @@ class ChatController extends GetxController {
     final tempMessage = ChatMessage(
       id: tempId,
       conversationId: conversation.id,
-      sender: currentUser.id!,
+      sender: currentUser.userId!,
       receiver: isCurrentUserDoctor ? patient.id : doctor.id,
       message: text,
       status: 'sending',
@@ -659,7 +659,7 @@ class ChatController extends GetxController {
     socketService.sendMessage(
       doctorId: doctor.id,
       patientId: patient.id,
-      sender: currentUser.id!,
+      sender: currentUser.userId!,
       message: text,
       tempId: tempId,
     );

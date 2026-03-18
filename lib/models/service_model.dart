@@ -63,6 +63,6 @@ class ServiceModel {
   bool get isActive => status.toLowerCase() == 'active';
 
   // Helper to format price with currency
-  String get formattedFee => '\$$fee';
-  String get formattedADTfee => '\$$aDTfee';
+  String get formattedFee => '$fee';
+  String get formattedADTfee => '$aDTfee';
 }

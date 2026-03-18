@@ -425,7 +425,7 @@ chatController.fetchConversations();
                             style: TextStyle(
                               fontSize: 12,
                               color: lastMessage.status == 'unseen' &&
-                                  lastMessage.sender != currentUser.id
+                                  lastMessage.sender != currentUser.userId
                                   ? Colors.blue.shade600
                                   : Colors.grey,
                             ),
@@ -435,7 +435,7 @@ chatController.fetchConversations();
                         ),
                       if (lastMessage != null &&
                           lastMessage.status == 'unseen' &&
-                          lastMessage.sender != currentUser.id)
+                          lastMessage.sender != currentUser.userId)
                         Container(
                           margin: const EdgeInsets.only(left: 4),
                           padding: const EdgeInsets.all(4),

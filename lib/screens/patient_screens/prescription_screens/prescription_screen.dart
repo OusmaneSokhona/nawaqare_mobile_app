@@ -131,25 +131,67 @@ class PrescriptionScreen extends StatelessWidget {
               10.verticalSpace,
               Expanded(
                 child: Obx(() {
+                  if (prescriptionController.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.primaryColor,
+                      ),
+                    );
+                  }
+
                   var list = prescriptionController.paginatedList;
                   bool isActive = prescriptionController.prescriptionType.value == "activePrescription";
-                  return ListView.builder(
-                    padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      return PrescriptionCard(
-                        onTap: () {
-                          prescriptionController.viewDetail(list[index]);
-                        },
-                        isActive: isActive,
-                        prescription: list[index],
-                      );
-                    },
+
+                  if (list.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                        Icon(
+                          isActive ? Icons.medical_services_outlined : Icons.history,
+                          size: 100.w,
+                          color: Colors.grey,
+                        ),
+                          20.verticalSpace,
+                          Text(
+                            isActive ? "No active prescriptions found" : "No past prescriptions found",
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.grey,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () => prescriptionController.fetchAllPrescriptions(),
+                    color: AppColors.primaryColor,
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(top: 20.h, bottom: 10.h),
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        return PrescriptionCard(
+                          onTap: () {
+                            prescriptionController.viewDetail(list[index]);
+                          },
+                          isActive: isActive,
+                          prescription: list[index],
+                        );
+                      },
+                    ),
                   );
                 }),
               ),
               10.verticalSpace,
-              _buildPagination(),
+              Obx(() {
+                if (prescriptionController.paginatedList.isEmpty) {
+                  return SizedBox.shrink();
+                }
+                return _buildPagination();
+              }),
               20.verticalSpace,
             ],
           ),
@@ -157,6 +199,7 @@ class PrescriptionScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget _buildPagination() {
     return Obx(
           () => Row(
@@ -172,8 +215,14 @@ class PrescriptionScreen extends StatelessWidget {
             int page = index + 1;
             return GestureDetector(
               onTap: () => prescriptionController.currentPage.value = page,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  color: prescriptionController.currentPage.value == page
+                      ? AppColors.primaryColor.withOpacity(0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
                 child: Text(
                   "$page",
                   style: TextStyle(
@@ -218,7 +267,11 @@ class PrescriptionScreen extends StatelessWidget {
         child: Icon(
           icon,
           size: 17.h,
-          color: Colors.black,
+          color: prescriptionController.currentPage.value == 1 && icon == Icons.arrow_back
+              ? Colors.grey
+              : prescriptionController.currentPage.value == prescriptionController.totalPages && icon == Icons.arrow_forward
+              ? Colors.grey
+              : Colors.black,
         ),
       ),
     );

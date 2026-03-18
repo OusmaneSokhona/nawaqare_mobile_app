@@ -49,4 +49,5 @@ class ApiUrls {
   static String updateServiceStatus="api/service/status/";
   static String getConversation="/api/chats/conversations";
   static String getMessages="/api/chats/messages/";
+  static String getAllPrescription="/api/prescriptions/All";
 }

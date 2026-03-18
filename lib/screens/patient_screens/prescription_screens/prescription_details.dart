@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/models/prscription_model.dart';
+import '../../../models/prscription_model.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
@@ -28,42 +28,98 @@ class PrescriptionDetails extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusChip(PrescriptionStatus status) {
-    String text;
+  String _getStatusText(PrescriptionStatus status) {
     switch (status) {
       case PrescriptionStatus.active:
-        text = AppStrings.active.tr;
-        break;
+        return AppStrings.active.tr;
       case PrescriptionStatus.expirySoon:
-        text = AppStrings.expirySoon.tr;
-        break;
+        return AppStrings.expirySoon.tr;
       case PrescriptionStatus.expired:
-        text = AppStrings.expired.tr;
-        break;
+        return AppStrings.expired.tr;
       case PrescriptionStatus.completed:
-        text = AppStrings.completed.tr;
-        break;
+        return AppStrings.completed.tr;
     }
+  }
 
+  String _formatDate(String dateString) {
+    if (dateString.isEmpty) return 'N/A';
+    try {
+      DateTime date = DateTime.parse(dateString);
+      return '${date.day}/${date.month}/${date.year}';
+    } catch (e) {
+      return dateString.split('T')[0];
+    }
+  }
+
+  int _calculateDaysLeft(String validUntil) {
+    try {
+      DateTime validDate = DateTime.parse(validUntil);
+      DateTime now = DateTime.now();
+      return validDate.difference(now).inDays;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Widget _buildMedicationCard(Map<String, dynamic> medication) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+      margin: EdgeInsets.only(bottom: 12.h),
+      padding: EdgeInsets.all(12.sp),
       decoration: BoxDecoration(
-        color: _getStatusColor(status),
-        borderRadius: BorderRadius.circular(20.r),
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: Colors.grey.shade200),
       ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 10.sp,
-          fontWeight: FontWeight.w600,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            medication['name'] ?? 'Medication',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+          4.verticalSpace,
+          Row(
+            children: [
+              Icon(Icons.medication, size: 14.sp, color: AppColors.primaryColor),
+              4.horizontalSpace,
+              Text(
+                '${medication['dosage'] ?? ''} - ${medication['frequency'] ?? ''}',
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: Colors.black54,
+                ),
+              ),
+            ],
+          ),
+          4.verticalSpace,
+          Text(
+            'Duration: ${medication['duration'] ?? ''}',
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: Colors.black54,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    String validUntil = prescriptionModel.dateInfo.replaceAll('Valid until ', '');
+    int daysLeft = _calculateDaysLeft(validUntil);
+    String issueDate = prescriptionModel.appointmentData?['date'] != null
+        ? _formatDate(prescriptionModel.appointmentData!['date'])
+        : 'N/A';
+
+    String clinicName = prescriptionModel.appointmentData?['consultationType'] == 'homevisit'
+        ? 'Home Visit'
+        : 'Elite Ortho Clinic, USA';
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -110,7 +166,6 @@ class PrescriptionDetails extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        height: 85.h,
                         width: 1.sw,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
@@ -119,39 +174,60 @@ class PrescriptionDetails extends StatelessWidget {
                         padding: EdgeInsets.all(12.sp),
                         child: Row(
                           children: [
-                            Image.asset(prescriptionModel.doctorImageUrl),
+                            Image.asset(
+                              prescriptionModel.doctorImageUrl,
+                              height: 60.h,
+                              width: 60.w,
+                              fit: BoxFit.cover,
+                            ),
                             10.horizontalSpace,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  prescriptionModel.doctorName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 14.sp,
-                                    fontFamily: AppFonts.jakartaBold,
-                                    color: Colors.black,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    prescriptionModel.doctorName,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14.sp,
+                                      fontFamily: AppFonts.jakartaBold,
+                                      color: Colors.black,
+                                    ),
                                   ),
-                                ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on_outlined,
+                                  4.verticalSpace,
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on_outlined,
+                                        size: 14.sp,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                      4.horizontalSpace,
+                                      Expanded(
+                                        child: Text(
+                                          clinicName,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 11.sp,
+                                            fontFamily: AppFonts.jakartaBold,
+                                            color: AppColors.lightGrey,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  4.verticalSpace,
+                                  Text(
+                                    prescriptionModel.specialization,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 11.sp,
                                       color: AppColors.primaryColor,
                                     ),
-                                    Text(
-                                      "Elite Ortho Clinic, USA",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 11.sp,
-                                        fontFamily: AppFonts.jakartaBold,
-                                        color: AppColors.lightGrey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                ],
+                              ),
                             ),
                             5.horizontalSpace,
                             _buildStatusChip(prescriptionModel.status),
@@ -202,7 +278,7 @@ class PrescriptionDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "12/Sep/2025",
+                              issueDate,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14.sp,
@@ -210,7 +286,7 @@ class PrescriptionDetails extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "12/Nov/2025",
+                              validUntil,
                               style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 14.sp,
@@ -221,27 +297,30 @@ class PrescriptionDetails extends StatelessWidget {
                         ),
                       ),
                       5.verticalSpace,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppStrings.eligibleTill.tr,
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
+                      if (daysLeft > 0)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppStrings.eligibleTill.tr,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          5.horizontalSpace,
-                          Text(
-                            "Next 20 days",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 16.sp,
-                              color: AppColors.lightGrey,
+                            5.horizontalSpace,
+                            Text(
+                              daysLeft <= 30
+                                  ? 'Next $daysLeft days'
+                                  : '${(daysLeft / 30).ceil()} months',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16.sp,
+                                color: AppColors.lightGrey,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
                       15.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
@@ -269,42 +348,47 @@ class PrescriptionDetails extends StatelessWidget {
                             children: [
                               Text(
                                 AppStrings.diagnosis.tr,
-                                style:TextStyle(
+                                style: TextStyle(
                                   fontSize: 17.sp,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.black,
                                 ),
                               ),
                               4.verticalSpace,
-                              const Text(
-                                'Migraine without aura',
+                              Text(
+                                prescriptionModel.diagnosis ?? 'No diagnosis provided',
                                 style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: Colors.black87,
                                 ),
                               ),
+                              if (prescriptionModel.appointmentData?['soap'] != null) ...[
+                                16.verticalSpace,
+                                if (prescriptionModel.appointmentData!['soap']['assessment'] != null)
+                                  _buildSoapSection(
+                                      'Assessment',
+                                      prescriptionModel.appointmentData!['soap']['assessment']
+                                  ),
+                                if (prescriptionModel.appointmentData!['soap']['plan'] != null)
+                                  _buildSoapSection(
+                                      'Plan',
+                                      prescriptionModel.appointmentData!['soap']['plan']
+                                  ),
+                              ],
                               16.verticalSpace,
                               Text(
                                 AppStrings.notes.tr,
                                 style: TextStyle(
                                   fontSize: 17.sp,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black,),
+                                  color: Colors.black,
+                                ),
                               ),
                               8.verticalSpace,
                               Text(
-                                'Symptoms improving, headache frequency reduced from 5 to 2 times per week.',
+                                prescriptionModel.notes ?? 'No additional notes',
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              4.verticalSpace,
-                              Text(
-                                'Advised patient to continue current regimen and maintain sleep hygiene',
-                                style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 16.sp,
                                   color: Colors.black87,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -339,8 +423,7 @@ class PrescriptionDetails extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     AppStrings.prescriptions.tr,
@@ -350,29 +433,31 @@ class PrescriptionDetails extends StatelessWidget {
                                       color: Colors.black,
                                     ),
                                   ),
-                                  const Icon(
-                                    Icons.chat_bubble_outline,
-                                    color: Colors.blue,
+                                  Text(
+                                    '#${prescriptionModel.prescriptionNumber ?? 'N/A'}',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Amoxicillin 500mg',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
+                              const SizedBox(height: 16),
+                              if (prescriptionModel.medications != null && prescriptionModel.medications!.isNotEmpty)
+                                ...prescriptionModel.medications!.map((med) => _buildMedicationCard(med))
+                              else
+                                Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(20.sp),
+                                    child: Text(
+                                      'No medications listed',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              const Text(
-                                'Morning & Evening – 7 Days',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black54,
-                                ),
-                              ),
                               const SizedBox(height: 12),
                               Row(
                                 children: [
@@ -382,11 +467,13 @@ class PrescriptionDetails extends StatelessWidget {
                                     color: Colors.black54,
                                   ),
                                   const SizedBox(width: 8),
-                                  Text(
-                                    AppStrings.encryptionNote.tr,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
+                                  Expanded(
+                                    child: Text(
+                                      AppStrings.encryptionNote.tr,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.black54,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -412,7 +499,7 @@ class PrescriptionDetails extends StatelessWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Drsarah',
+                          'Dr. ${prescriptionModel.doctorName.replaceAll('Dr. ', '')}',
                           style: GoogleFonts.dancingScript(
                             textStyle: const TextStyle(
                               fontSize: 40,
@@ -430,10 +517,8 @@ class PrescriptionDetails extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppStrings.note.tr,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleMedium?.copyWith(
+                              '${AppStrings.note.tr}: ',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
@@ -452,14 +537,18 @@ class PrescriptionDetails extends StatelessWidget {
                         ),
                       ),
                       30.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.getMedicine.tr,
-                        onTap: () {
-                          Get.to(OrderSummaryScreen());
-                        },
-                      ),
-                      15.verticalSpace,
+                      if (prescriptionModel.status != PrescriptionStatus.expired &&
+                          prescriptionModel.status != PrescriptionStatus.completed)
+                        CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.getMedicine.tr,
+                          onTap: () {
+                            Get.to(() => OrderSummaryScreen());
+                          },
+                        ),
+                      if (prescriptionModel.status != PrescriptionStatus.expired &&
+                          prescriptionModel.status != PrescriptionStatus.completed)
+                        15.verticalSpace,
                       CustomButton(
                         borderRadius: 15,
                         text: AppStrings.downloadPdf.tr,
@@ -475,6 +564,51 @@ class PrescriptionDetails extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(PrescriptionStatus status) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: _getStatusColor(status),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Text(
+        _getStatusText(status),
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSoapSection(String title, String content) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 8.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
+          2.verticalSpace,
+          Text(
+            content,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.black54,
+            ),
+          ),
+        ],
       ),
     );
   }

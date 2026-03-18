@@ -183,19 +183,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        5.verticalSpace,
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Dr Dupuis",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontFamily: AppFonts.jakartaBold,
-                              fontSize: 20.sp,
-                              color: AppColors.lightGrey,
-                            ),
-                          ),
-                        ),
+
                         Obx(()=> homeController.ongoingAppointment.value!=null? 15.verticalSpace:SizedBox()),
                         Obx(
         ()=> homeController.ongoingAppointment.value!=null?AppointmentCard(

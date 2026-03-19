@@ -1,18 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
+import 'package:patient_app/models/doctor_prescription_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
-import '../../../models/prscription_model.dart';
-
 class DoctorPrescriptionCard extends StatelessWidget {
   final Function onTap;
-  final PrescriptionModel prescription;
+  final DoctorPrescriptionModel prescription;
   final bool isActive;
-  DoctorPrescriptionCard({required this.prescription, super.key, this.isActive = true, required this.onTap});
+
+   DoctorPrescriptionCard({
+    required this.prescription,
+    super.key,
+    this.isActive = true,
+    required this.onTap,
+  });
 
   final DoctorPrescriptionController controller = Get.find();
 
@@ -29,23 +33,20 @@ class DoctorPrescriptionCard extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusChip(PrescriptionStatus status) {
-    String text;
+  String _getStatusText(PrescriptionStatus status) {
     switch (status) {
       case PrescriptionStatus.active:
-        text = AppStrings.active.tr;
-        break;
+        return AppStrings.active.tr;
       case PrescriptionStatus.expirySoon:
-        text = AppStrings.expirySoon.tr;
-        break;
+        return AppStrings.expirySoon.tr;
       case PrescriptionStatus.expired:
-        text = AppStrings.expired.tr;
-        break;
+        return AppStrings.expired.tr;
       case PrescriptionStatus.completed:
-        text = AppStrings.completed.tr;
-        break;
+        return AppStrings.completed.tr;
     }
+  }
 
+  Widget _buildStatusChip(PrescriptionStatus status) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
       decoration: BoxDecoration(
@@ -53,7 +54,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
-        text,
+        _getStatusText(status),
         style: TextStyle(
           color: Colors.white,
           fontSize: 12.sp,
@@ -87,9 +88,18 @@ class DoctorPrescriptionCard extends StatelessWidget {
     );
   }
 
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _getMedicationNames() {
+    if (prescription.medications.isEmpty) return 'No medications';
+    return prescription.medications.map((med) => med.name).join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
-    final bool showRefillButton = prescription.status != PrescriptionStatus.completed && isActive;
+    final bool showModifyButton = prescription.status != PrescriptionStatus.completed && isActive;
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.h),
@@ -112,40 +122,50 @@ class DoctorPrescriptionCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20.r,
-                backgroundImage: AssetImage(prescription.doctorImageUrl),
+                backgroundImage: prescription.patientInfo.profileImage.isNotEmpty
+                    ? NetworkImage(prescription.patientInfo.profileImage)
+                    : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                onBackgroundImageError: (_, __) {},
               ),
               15.horizontalSpace,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    prescription.doctorName,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF333333),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      prescription.patientInfo.fullName,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF333333),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 14.sp,
-                        color: AppColors.primaryColor,
-                      ),
-                      5.horizontalSpace,
-                      Text(
-                        "Elite Ortho Clinic, USA",
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: const Color(0xFF666666),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.medical_services_outlined,
+                          size: 14.sp,
+                          color: AppColors.primaryColor,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        5.horizontalSpace,
+                        Expanded(
+                          child: Text(
+                            prescription.diagnosis,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: const Color(0xFF666666),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              const Spacer(),
               _buildStatusChip(prescription.status),
             ],
           ),
@@ -157,24 +177,27 @@ class DoctorPrescriptionCard extends StatelessWidget {
           ),
           8.verticalSpace,
           Text(
-            prescription.medicationName,
+            _getMedicationNames(),
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.bold,
               color: const Color(0xFF333333),
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           4.verticalSpace,
-          Text(
-            prescription.dosageInstruction,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: const Color(0xFF666666),
+          if (prescription.medications.isNotEmpty)
+            Text(
+              '${prescription.medications.first.dosage} - ${prescription.medications.first.frequency}',
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: const Color(0xFF666666),
+              ),
             ),
-          ),
           8.verticalSpace,
           Text(
-            prescription.dateInfo,
+            'Valid until: ${_formatDate(prescription.validUntil)}',
             style: TextStyle(
               fontSize: 12.sp,
               color: const Color(0xFF999999),
@@ -183,17 +206,21 @@ class DoctorPrescriptionCard extends StatelessWidget {
           16.verticalSpace,
           Row(
             children: [
-              if (showRefillButton)
+              if (showModifyButton)
                 _buildActionChip(
                     AppStrings.modify.tr,
                     const Color(0xFFE0E0E0),
-                        () {}, Colors.black
+                        () {
+                      // Handle modify
+                    },
+                    Colors.black
                 ),
-              if (showRefillButton) 10.horizontalSpace,
+              if (showModifyButton) 10.horizontalSpace,
               _buildActionChip(
                   AppStrings.viewDetail.tr,
                   AppColors.primaryColor,
-                      () {onTap();}, Colors.white
+                      () { onTap(); },
+                  Colors.white
               ),
             ],
           ),

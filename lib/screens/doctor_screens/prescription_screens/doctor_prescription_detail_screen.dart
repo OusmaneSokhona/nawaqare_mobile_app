@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/models/prscription_model.dart';
+import 'package:patient_app/models/doctor_prescription_model.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
@@ -10,7 +10,7 @@ import '../../../utils/app_images.dart';
 import '../../../widgets/custom_button.dart';
 
 class DoctorPrescriptionDetailScreen extends StatelessWidget {
-  final PrescriptionModel prescriptionModel;
+  final DoctorPrescriptionModel prescriptionModel;
 
   DoctorPrescriptionDetailScreen({super.key, required this.prescriptionModel});
 
@@ -27,23 +27,20 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildStatusChip(PrescriptionStatus status) {
-    String text;
+  String _getStatusText(PrescriptionStatus status) {
     switch (status) {
       case PrescriptionStatus.active:
-        text = AppStrings.activeStatus.tr;
-        break;
+        return AppStrings.activeStatus.tr;
       case PrescriptionStatus.expirySoon:
-        text = AppStrings.expirySoonStatus.tr;
-        break;
+        return AppStrings.expirySoonStatus.tr;
       case PrescriptionStatus.expired:
-        text = AppStrings.expiredStatus.tr;
-        break;
+        return AppStrings.expiredStatus.tr;
       case PrescriptionStatus.completed:
-        text = AppStrings.completedStatus.tr;
-        break;
+        return AppStrings.completedStatus.tr;
     }
+  }
 
+  Widget _buildStatusChip(PrescriptionStatus status) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
       decoration: BoxDecoration(
@@ -51,7 +48,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
-        text,
+        _getStatusText(status),
         style: TextStyle(
           color: Colors.white,
           fontSize: 12.sp,
@@ -59,6 +56,23 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _getConsultationTypeIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'homevisit':
+        return '🏠';
+      case 'remote':
+        return '📹';
+      case 'inperson':
+        return '🏥';
+      default:
+        return '💊';
+    }
   }
 
   @override
@@ -109,51 +123,90 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        height: 85.h,
                         width: 1.sw,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12.r),
                           color: Colors.white,
                         ),
                         padding: EdgeInsets.all(12.sp),
-                        child: Row(
+                        child: Column(
                           children: [
-                            Image.asset(prescriptionModel.doctorImageUrl),
-                            10.horizontalSpace,
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            Row(
                               children: [
-                                Text(
-                                  prescriptionModel.doctorName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 18.sp,
-                                    fontFamily: AppFonts.jakartaBold,
-                                    color: Colors.black,
+                                CircleAvatar(
+                                  radius: 30.r,
+                                  backgroundImage: prescriptionModel.patientInfo.profileImage.isNotEmpty
+                                      ? NetworkImage(prescriptionModel.patientInfo.profileImage)
+                                      : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                                  onBackgroundImageError: (_, __) {},
+                                ),
+                                10.horizontalSpace,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        prescriptionModel.patientInfo.fullName,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 18.sp,
+                                          fontFamily: AppFonts.jakartaBold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      5.verticalSpace,
+                                      Row(
+                                        children: [
+                                          Text(
+                                            _getConsultationTypeIcon(prescriptionModel.appointmentInfo.consultationType),
+                                            style: TextStyle(fontSize: 14.sp),
+                                          ),
+                                          5.horizontalSpace,
+                                          Expanded(
+                                            child: Text(
+                                              "${prescriptionModel.appointmentInfo.consultationType} • ${_formatDate(prescriptionModel.appointmentInfo.date)}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 12.sp,
+                                                fontFamily: AppFonts.jakartaMedium,
+                                                color: AppColors.lightGrey,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on_outlined,
-                                      color: AppColors.primaryColor,
-                                    ),
-                                    Text(
-                                      "Elite Ortho Clinic, USA",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 12.sp,
-                                        fontFamily: AppFonts.jakartaBold,
-                                        color: AppColors.lightGrey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                _buildStatusChip(prescriptionModel.status),
                               ],
                             ),
-                            5.horizontalSpace,
-                            _buildStatusChip(prescriptionModel.status),
+                            if (prescriptionModel.appointmentInfo.visitAddress.isNotEmpty) ...[
+                              8.verticalSpace,
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on_outlined,
+                                    size: 16.sp,
+                                    color: AppColors.primaryColor,
+                                  ),
+                                  5.horizontalSpace,
+                                  Expanded(
+                                    child: Text(
+                                      prescriptionModel.appointmentInfo.visitAddress,
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -170,72 +223,88 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 33.w),
+                      10.verticalSpace,
+                      Container(
+                        padding: EdgeInsets.all(16.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              AppStrings.prescriptionIdLabel.tr,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13.sp,
-                                color: Colors.black,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.prescriptionIdLabel.tr,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                5.verticalSpace,
+                                Text(
+                                  prescriptionModel.prescriptionNumber,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13.sp,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              AppStrings.dateOfIssue.tr,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13.sp,
-                                color: Colors.black,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.dateOfIssue.tr,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                5.verticalSpace,
+                                Text(
+                                  _formatDate(prescriptionModel.issueDate),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13.sp,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              AppStrings.validUntil.tr,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13.sp,
-                                color: Colors.black,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.validUntil.tr,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                5.verticalSpace,
+                                Text(
+                                  _formatDate(prescriptionModel.validUntil),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13.sp,
+                                    color: prescriptionModel.status == PrescriptionStatus.expired
+                                        ? AppColors.red
+                                        : Colors.black,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                      5.verticalSpace,
-                      Padding(
-                        padding: EdgeInsets.only(right: 33.w),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "#12345678678",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13.sp,
-                                color: AppColors.lightGrey,
-                              ),
-                            ),
-                            Text(
-                              "12/Sep/2025",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13.sp,
-                                color: AppColors.lightGrey,
-                              ),
-                            ),
-                            Text(
-                              "12/Nov/2025",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13.sp,
-                                color: AppColors.lightGrey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      5.verticalSpace,
+                      15.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -248,9 +317,10 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      10.verticalSpace,
                       Container(
                         width: 1.sw,
-                        padding: EdgeInsets.all(12.sp),
+                        padding: EdgeInsets.all(16.sp),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12.r),
@@ -258,17 +328,16 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                             color: AppColors.lightGrey.withOpacity(0.2),
                           ),
                         ),
-                        alignment: Alignment.centerLeft,
                         child: Text(
-                          'Migraine without aura',
+                          prescriptionModel.diagnosis,
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.lightGrey,
+                            color: Colors.black87,
                           ),
                         ),
                       ),
-                      10.verticalSpace,
+                      15.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -281,6 +350,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      10.verticalSpace,
                       Card(
                         elevation: 2.0,
                         shape: RoundedRectangleBorder(
@@ -293,15 +363,14 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                width: 0.65.sw,
-                                height: 100.h,
+                              Expanded(
                                 child: Text(
-                                  'Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene',
+                                  prescriptionModel.notes,
                                   style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.lightGrey,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey[700],
+                                    height: 1.4,
                                   ),
                                 ),
                               ),
@@ -314,13 +383,13 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      10.verticalSpace,
+                      15.verticalSpace,
                       Row(
                         children: [
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              AppStrings.prescriptionDoctor.tr + "s",
+                              "${AppStrings.prescriptionDoctor.tr}s",
                               style: TextStyle(
                                 fontFamily: AppFonts.jakartaBold,
                                 fontSize: 18.sp,
@@ -329,7 +398,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Image.asset(
                             "assets/images/chat_icon.png",
                             height: 25.sp,
@@ -337,52 +406,144 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
+                      10.verticalSpace,
+                      ...prescriptionModel.medications.map((medication) => Container(
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        padding: EdgeInsets.all(16.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: Colors.grey[200]!),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.02),
+                              blurRadius: 5,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Amoxicillin 500mg',
-                              style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  AppStrings.dosageInstruction.tr,
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
+                                Expanded(
+                                  child: Text(
+                                    medication.name,
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  ' 1 tablet, twice daily after meals',
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: AppColors.lightGrey,
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  child: Text(
+                                    medication.duration,
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                             8.verticalSpace,
-                            Text(
-                              'Refill until Oct 15,2025',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                color: Colors.black54,
+                            Row(
+                              children: [
+                                Text(
+                                  "${AppStrings.dosageInstruction.tr}: ",
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    '${medication.dosage}, ${medication.frequency}',
+                                    style: TextStyle(
+                                      fontSize: 13.sp,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            4.verticalSpace,
+                            if (medication.instructions.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(top: 4.h),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      size: 14.sp,
+                                      color: AppColors.primaryColor,
+                                    ),
+                                    4.horizontalSpace,
+                                    Expanded(
+                                      child: Text(
+                                        medication.instructions,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[600],
+                                          fontStyle: FontStyle.italic,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
+                            8.verticalSpace,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.calendar_today,
+                                      size: 14.sp,
+                                      color: AppColors.orange,
+                                    ),
+                                    4.horizontalSpace,
+                                    Text(
+                                      'Refill: ${_formatDate(medication.refillDate)}',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (medication.specialInstruction.isNotEmpty)
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.orange.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: Text(
+                                      'Special',
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        color: AppColors.orange,
+                                      ),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ],
                         ),
-                      ),
-                      10.verticalSpace,
+                      )),
+                      15.verticalSpace,
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -391,16 +552,17 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                             fontFamily: AppFonts.jakartaBold,
                             fontSize: 19.sp,
                             color: Colors.black,
-                            fontWeight: FontWeight.w600,),
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 8),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Dr.sarah',
+                          'Dr. Sarah',
                           style: GoogleFonts.notoSans(
-                            textStyle:  TextStyle(
+                            textStyle: TextStyle(
                               fontSize: 27.sp,
                               color: Colors.black54,
                               height: 1.0,
@@ -416,13 +578,12 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           children: [
                             Text(
                               AppStrings.digitalNoteLabel.tr,
-                              style: Theme.of(
-                                context,
-                              ).textTheme.titleMedium?.copyWith(
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
                             ),
+                            8.horizontalSpace,
                             Expanded(
                               child: Text(
                                 AppStrings.digitalNoteSub.tr,

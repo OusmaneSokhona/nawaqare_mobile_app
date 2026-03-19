@@ -23,7 +23,7 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ChatController chatController = Get.find();
+    final ChatController chatController = Get.put(ChatController());
     final HomeController homeController = Get.find();
     final bool isDesktop = MediaQuery.of(context).size.width > 600;
 chatController.fetchConversations();

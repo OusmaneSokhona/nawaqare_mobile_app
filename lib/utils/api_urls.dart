@@ -50,4 +50,5 @@ class ApiUrls {
   static String getConversation="/api/chats/conversations";
   static String getMessages="/api/chats/messages/";
   static String getAllPrescription="/api/prescriptions/All";
+  static String createPrescription="/api/prescriptions/create";
 }

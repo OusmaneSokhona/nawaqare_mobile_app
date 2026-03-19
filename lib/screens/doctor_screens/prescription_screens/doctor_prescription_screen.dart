@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,7 @@ import '../../../widgets/doctor_widgets/prescription_widgets/template_card.dart'
 class DoctorPrescriptionScreen extends StatelessWidget {
   DoctorPrescriptionScreen({super.key});
 
-  final DoctorPrescriptionController doctorPrescriptionController = Get.put(
+  final DoctorPrescriptionController controller = Get.put(
     DoctorPrescriptionController(),
   );
 
@@ -69,7 +70,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Obx(
-                            () => doctorPrescriptionController.prescriptionType.value == "activePrescription"
+                            () => controller.prescriptionType.value == "activePrescription"
                             ? Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
@@ -82,7 +83,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                             ),
                           ),
                         )
-                            : SizedBox(),
+                            : const SizedBox(),
                       ),
                       10.verticalSpace,
                       Container(
@@ -95,33 +96,66 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Obx(() => _buildTab("activePrescription", "${AppStrings.activePrescriptionsDoctor.tr}(${doctorPrescriptionController.prescriptions.length})")),
-                            Obx(() => _buildTab("prescriptionTemplate", "${AppStrings.prescriptionTemplates.tr}(${doctorPrescriptionController.templates.length})")),
+                            Obx(() => _buildTab("activePrescription",
+                                "${AppStrings.activePrescriptionsDoctor.tr}(${controller.prescriptions.length})")),
+                            Obx(() => _buildTab("prescriptionTemplate",
+                                "${AppStrings.prescriptionTemplates.tr}(${controller.templates.length})")),
                           ],
                         ),
                       ),
                       15.verticalSpace,
                       Obx(
                             () => CustomTextField(
-                          hintText: doctorPrescriptionController.prescriptionType.value == "activePrescription"
+                          hintText: controller.prescriptionType.value == "activePrescription"
                               ? AppStrings.searchByPatient.tr
                               : AppStrings.searchByTemplate.tr,
                           prefixIcon: Icons.search,
-                          suffixIcon: doctorPrescriptionController.prescriptionType.value == "activePrescription"
+                          suffixIcon: controller.prescriptionType.value == "activePrescription"
                               ? Icons.filter_list
                               : null,
                           suffixIconColor: AppColors.primaryColor,
                           prefixIconColor: AppColors.darkGrey,
+                          onChanged: (value) {
+                            if (controller.prescriptionType.value == "activePrescription") {
+                              controller.searchQuery.value = value;
+                            } else {
+                              controller.searchTemplates(value);
+                            }
+                          },
                           onSuffixIconTap: () => _showFilterSheet(context),
                         ),
                       ),
                       10.verticalSpace,
                       Obx(
-                            () => doctorPrescriptionController.prescriptionType.value == "activePrescription"
+                            () {
+                          if (controller.isLoading.value) {
+                            return const Center(child: CircularProgressIndicator());
+                          }
+                          if (controller.errorMessage.isNotEmpty) {
+                            return Center(
+                              child: Column(
+                                children: [
+                                  Text(
+                                    controller.errorMessage.value,
+                                    style: const TextStyle(color: Colors.red),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: controller.fetchAllPrescriptions,
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                      Obx(
+                            () => controller.prescriptionType.value == "activePrescription"
                             ? Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "${doctorPrescriptionController.prescriptions.length} ${AppStrings.activePrescriptionsFound.tr}",
+                            "${controller.filteredCount} ${AppStrings.activePrescriptionsFound.tr}",
                             style: TextStyle(
                               color: AppColors.darkGrey,
                               fontSize: 15.sp,
@@ -130,38 +164,107 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                             ),
                           ),
                         )
-                            : SizedBox(),
+                            : const SizedBox(),
                       ),
                       Obx(
                             () {
-                          if (doctorPrescriptionController.prescriptionType.value == "activePrescription") {
-                            var list = doctorPrescriptionController.paginatedPrescriptions;
+                          if (controller.prescriptionType.value == "activePrescription") {
+                            if (controller.paginatedPrescriptions.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  children: [
+                                    50.verticalSpace,
+                                    Icon(
+                                      Icons.receipt_long_outlined,
+                                      size: 80.sp,
+                                      color: Colors.grey[400],
+                                    ),
+                                    20.verticalSpace,
+                                    Text(
+                                      'No prescriptions found',
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    10.verticalSpace,
+                                    Text(
+                                      controller.searchQuery.value.isNotEmpty
+                                          ? 'Try adjusting your search or filters'
+                                          : 'No prescriptions available',
+                                      style: TextStyle(
+                                        fontSize: 14.sp,
+                                        color: Colors.grey[500],
+                                      ),
+                                    ),
+                                    if (controller.searchQuery.value.isNotEmpty ||
+                                        controller.selectedStatus.value != 'All')
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 20.h),
+                                        child: CustomButton(
+                                          text: 'Clear Filters',
+                                          onTap: controller.resetAllFilters,
+                                          height: 40.h,
+                                       borderRadius: 15,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            var list = controller.paginatedPrescriptions;
                             return Column(
                               children: [
                                 ListView.builder(
                                   shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   padding: EdgeInsets.only(bottom: 20.h),
                                   itemCount: list.length,
                                   itemBuilder: (context, index) {
                                     return DoctorPrescriptionCard(
-                                      onTap: () => doctorPrescriptionController.viewDetail(list[index]),
+                                      onTap: () => controller.viewDetail(list[index]),
                                       isActive: true,
                                       prescription: list[index],
                                     );
                                   },
                                 ),
-                                _buildPagination(),
+                                if (controller.totalPages > 1) _buildPagination(),
                               ],
                             );
                           } else {
-                            var templateList = doctorPrescriptionController.paginatedTemplates;
+                            var templateList = controller.paginatedTemplates;
+                            if (templateList.isEmpty) {
+                              return Center(
+                                child: Column(
+                                  children: [
+                                    50.verticalSpace,
+                                    Icon(
+                                      Icons.description_outlined,
+                                      size: 80.sp,
+                                      color: Colors.grey[400],
+                                    ),
+                                    20.verticalSpace,
+                                    Text(
+                                      'No templates found',
+                                      style: TextStyle(
+                                        fontSize: 18.sp,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
                             return Column(
                               children: [
                                 ListView.builder(
                                   shrinkWrap: true,
                                   padding: EdgeInsets.only(top: 5.h, bottom: 20.h),
-                                  physics: NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount: templateList.length,
                                   itemBuilder: (context, index) {
                                     return TemplateCard(
@@ -174,7 +277,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                _buildPagination(),
+                                if (controller.totalPages > 1) _buildPagination(),
                               ],
                             );
                           }
@@ -184,11 +287,11 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                       Obx(
                             () => CustomButton(
                           borderRadius: 15,
-                          text: doctorPrescriptionController.prescriptionType.value == "activePrescription"
+                          text: controller.prescriptionType.value == "activePrescription"
                               ? AppStrings.addPrescription.tr
                               : AppStrings.addNewTemplate.tr,
                           onTap: () {
-                            if (doctorPrescriptionController.prescriptionType.value == "activePrescription") {
+                            if (controller.prescriptionType.value == "activePrescription") {
                               Get.to(AddNewPrescription());
                             } else {
                               Get.to(AddNewTemplate());
@@ -211,14 +314,17 @@ class DoctorPrescriptionScreen extends StatelessWidget {
   Widget _buildTab(String type, String label) {
     return InkWell(
       onTap: () {
-        doctorPrescriptionController.prescriptionType.value = type;
-        doctorPrescriptionController.currentPage.value = 1;
+        controller.prescriptionType.value = type;
+        controller.currentPage.value = 1;
+        if (type == "activePrescription") {
+          controller.applyFiltersAndSearch();
+        }
       },
       child: Container(
         height: 55.h,
         width: 0.455.sw,
         decoration: BoxDecoration(
-          color: doctorPrescriptionController.prescriptionType.value == type
+          color: controller.prescriptionType.value == type
               ? AppColors.primaryColor
               : Colors.white,
           borderRadius: BorderRadius.circular(14.sp),
@@ -227,7 +333,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
         child: Text(
           label,
           style: TextStyle(
-            color: doctorPrescriptionController.prescriptionType.value == type
+            color: controller.prescriptionType.value == type
                 ? Colors.white
                 : Colors.black,
             fontSize: 10.5.sp,
@@ -245,24 +351,31 @@ class DoctorPrescriptionScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           _paginationArrow(Icons.arrow_back, () {
-            if (doctorPrescriptionController.currentPage.value > 1) {
-              doctorPrescriptionController.currentPage.value--;
+            if (controller.currentPage.value > 1) {
+              controller.currentPage.value--;
             }
           }),
           15.horizontalSpace,
-          ...List.generate(doctorPrescriptionController.totalPages, (index) {
+          ...List.generate(controller.totalPages, (index) {
             int page = index + 1;
             return GestureDetector(
-              onTap: () => doctorPrescriptionController.currentPage.value = page,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
+              onTap: () => controller.currentPage.value = page,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 5.w),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: controller.currentPage.value == page
+                      ? AppColors.primaryColor.withOpacity(0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
                 child: Text(
                   "$page",
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontFamily: AppFonts.jakartaMedium,
                     fontWeight: FontWeight.w600,
-                    color: doctorPrescriptionController.currentPage.value == page
+                    color: controller.currentPage.value == page
                         ? AppColors.primaryColor
                         : Colors.grey,
                   ),
@@ -272,8 +385,8 @@ class DoctorPrescriptionScreen extends StatelessWidget {
           }),
           15.horizontalSpace,
           _paginationArrow(Icons.arrow_forward, () {
-            if (doctorPrescriptionController.currentPage.value < doctorPrescriptionController.totalPages) {
-              doctorPrescriptionController.currentPage.value++;
+            if (controller.currentPage.value < controller.totalPages) {
+              controller.currentPage.value++;
             }
           }),
         ],
@@ -285,19 +398,19 @@ class DoctorPrescriptionScreen extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(5.w),
+        padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(3.r),
+          borderRadius: BorderRadius.circular(8.r),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 4,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-        child: Icon(icon, size: 17.h, color: Colors.black),
+        child: Icon(icon, size: 20.h, color: Colors.black),
       ),
     );
   }
@@ -312,7 +425,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
       ),
       builder: (context) {
         return PrescriptionFilterBottomSheet(
-          initialStatus: 'Active',
+          initialStatus: controller.selectedStatus.value,
           onApply: () => Get.back(),
           onReset: () => Get.back(),
         );

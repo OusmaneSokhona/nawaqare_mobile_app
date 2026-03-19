@@ -43,7 +43,7 @@ class DoctorAddAppointmentController extends GetxController {
     // Initialize home controller and get doctor ID
     try {
       homeController = Get.find<DoctorHomeController>();
-      doctorId = appointmentController.allAppointments.first.doctorId;
+      doctorId = homeController.currentUser.value!.id!;
       print("Doctor ID initialized: $doctorId");
     } catch (e) {
       print("Error getting DoctorHomeController: $e");

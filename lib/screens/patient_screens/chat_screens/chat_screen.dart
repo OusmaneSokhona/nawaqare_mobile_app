@@ -444,19 +444,10 @@ chatController.fetchConversations();
                             shape: BoxShape.circle,
                           ),
                           constraints: const BoxConstraints(
-                            minWidth: 20,
-                            minHeight: 20,
+                            minWidth: 10,
+                            minHeight: 10,
                           ),
-                          child: const Center(
-                            child: Text(
-                              '1',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+
                         ),
                     ],
                   ),

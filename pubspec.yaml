@@ -26,6 +26,7 @@ dependencies:
   table_calendar: ^3.2.0
   flutter_stripe: ^12.2.0
   socket_io_client: ^3.1.4
+  fl_chart: ^1.2.0
 
 dev_dependencies:
   flutter_test:

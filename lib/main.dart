@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
             initialBinding: AppBinding(),
             translations: Languages(),
-            locale: LocalStorageUtils.getLanguage()=="french"?Locale('fr', 'FR'):Locale('en', 'US'), // Default language
+            locale: LocalStorageUtils.getLanguage()=="french"?Locale('fr', 'FR'):Locale('en', 'US'),
             fallbackLocale: const Locale('en', 'US'),
             debugShowCheckedModeBanner: false,
             home: SplashScreen()

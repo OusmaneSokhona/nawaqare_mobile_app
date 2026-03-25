@@ -51,4 +51,9 @@ class ApiUrls {
   static String getMessages="/api/chats/messages/";
   static String getAllPrescription="/api/prescriptions/All";
   static String createPrescription="/api/prescriptions/create";
+  static String quickStats="/api/stats/quickstats";
+  static String recentActivity="/api/stats/recent-activity";
+  static String getTemplates="/api/prescriptions/getTemp";
+  static String updateTemplate="/api/prescriptions/updateTemp/";
+  static String createTemplate="/api/prescriptions/createTemp";
 }

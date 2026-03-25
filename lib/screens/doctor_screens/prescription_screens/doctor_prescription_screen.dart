@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -116,11 +115,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                           suffixIconColor: AppColors.primaryColor,
                           prefixIconColor: AppColors.darkGrey,
                           onChanged: (value) {
-                            if (controller.prescriptionType.value == "activePrescription") {
-                              controller.searchQuery.value = value;
-                            } else {
-                              controller.searchTemplates(value);
-                            }
+                            controller.searchQuery.value = value;
                           },
                           onSuffixIconTap: () => _showFilterSheet(context),
                         ),
@@ -140,7 +135,13 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                                     style: const TextStyle(color: Colors.red),
                                   ),
                                   ElevatedButton(
-                                    onPressed: controller.fetchAllPrescriptions,
+                                    onPressed: () {
+                                      if (controller.prescriptionType.value == "activePrescription") {
+                                        controller.fetchAllPrescriptions();
+                                      } else {
+                                        controller.fetchAllTemplates();
+                                      }
+                                    },
                                     child: const Text('Retry'),
                                   ),
                                 ],
@@ -206,7 +207,7 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                                           text: 'Clear Filters',
                                           onTap: controller.resetAllFilters,
                                           height: 40.h,
-                                       borderRadius: 15,
+                                          borderRadius: 15,
                                         ),
                                       ),
                                   ],
@@ -267,13 +268,11 @@ class DoctorPrescriptionScreen extends StatelessWidget {
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: templateList.length,
                                   itemBuilder: (context, index) {
+                                    final template = templateList[index];
                                     return TemplateCard(
-                                      title: 'Hypertension Basic Set',
-                                      category: 'Cardiology',
-                                      details: 'Includes: Lisinopril 10mg, 30 days, daily dose.',
-                                      lastUpdate: '12/Sep/2025',
-                                      onEdit: () => Get.to(EditTemplateScreen()),
-                                      onUse: () => Get.to(TemplateDetailsScreen()),
+                                      template: template,
+                                      onEdit: () => Get.to(EditTemplateScreen(template: template,)),
+                                      onUse: () => Get.to(TemplateDetailsScreen(template: template,)),
                                     );
                                   },
                                 ),
@@ -318,6 +317,10 @@ class DoctorPrescriptionScreen extends StatelessWidget {
         controller.currentPage.value = 1;
         if (type == "activePrescription") {
           controller.applyFiltersAndSearch();
+          controller.fetchAllPrescriptions();
+        } else {
+          controller.applyTemplatesFilterAndSearch();
+          controller.fetchAllTemplates();
         }
       },
       child: Container(

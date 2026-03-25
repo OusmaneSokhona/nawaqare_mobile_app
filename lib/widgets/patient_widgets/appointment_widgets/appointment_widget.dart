@@ -156,9 +156,9 @@ class AppointmentWidget extends StatelessWidget {
               onTap: onTap,
               height: 40.h,
             ),
-            if(appointment.status==AppointmentStatus.completed&&appointment.reviews==null&&isCompleted)
+            if(appointment.status==AppointmentStatus.completed&&appointment.reviews!.isEmpty&&isCompleted)
               10.verticalSpace,
-            if(appointment.status==AppointmentStatus.completed&&appointment.reviews==null&&isCompleted)
+            if(appointment.status==AppointmentStatus.completed&&appointment.reviews!.isEmpty&&isCompleted)
               CustomButton(
                 borderRadius: 15,
                 text: AppStrings.addReview.tr,

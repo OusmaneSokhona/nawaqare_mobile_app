@@ -3,24 +3,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/doctor_prescription_controller.dart';
+import 'package:patient_app/models/prescription_template_model.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/electronic_signature_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
 import 'package:patient_app/widgets/patient_widgets/video_call_widgets/setting%20widgets.dart';
-
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 
 class EditTemplateScreen extends StatelessWidget {
-  EditTemplateScreen({super.key});
+  final PrescriptionTemplateModel template;
 
-  final DoctorPrescriptionController doctorPrescriptionController =
-  Get.find<DoctorPrescriptionController>();
+  const EditTemplateScreen({super.key, required this.template});
 
   @override
   Widget build(BuildContext context) {
+    final DoctorPrescriptionController controller = Get.find<DoctorPrescriptionController>();
+
+    // Initialize controllers
+    final TextEditingController templateNameController = TextEditingController();
+    final TextEditingController medicationNameController = TextEditingController();
+    final TextEditingController dosageController = TextEditingController();
+    final TextEditingController quantityController = TextEditingController();
+    final TextEditingController specialInstructionsController = TextEditingController();
+
+    // Populate fields after first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      templateNameController.text = template.templateName;
+      medicationNameController.text = template.medicationsName;
+      dosageController.text = template.dosage;
+      quantityController.text = template.qtd;
+      specialInstructionsController.text = template.specialInstruction;
+      controller.selectedMedicineForm.value = template.form;
+      controller.selectedMedicineCategory.value = template.diagnosis;
+      controller.selectedAdministrationRoute.value = template.roa;
+      controller.selectedDate.value = template.refillDate;
+    });
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -40,9 +61,7 @@ class EditTemplateScreen extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
+                    onTap: () => Get.back(),
                     child: Image.asset(
                       AppImages.backIcon,
                       height: 33.h,
@@ -67,58 +86,52 @@ class EditTemplateScreen extends StatelessWidget {
                     children: [
                       20.verticalSpace,
                       CustomTextField(
+                        controller: templateNameController,
                         labelText: AppStrings.templateName.tr,
                         hintText: "Hypertension Basic Set",
                       ),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: medicationNameController,
                         labelText: AppStrings.medicationName.tr,
                         hintText: "Amoxicillin 500mg capsule",
                       ),
                       10.verticalSpace,
                       Obx(() => CustomDropdown(
                         label: AppStrings.form.tr,
-                        options: doctorPrescriptionController.medicineForm,
-                        currentValue:
-                        doctorPrescriptionController
-                            .selectedMedicineForm
-                            .value,
+                        options: controller.medicineForm,
+                        currentValue: controller.selectedMedicineForm.value,
                         onChanged: (val) {
-                          if (val != null) doctorPrescriptionController.selectedMedicineForm.value = val;
+                          if (val != null) controller.selectedMedicineForm.value = val;
                         },
                       )),
                       10.verticalSpace,
                       Obx(() => CustomDropdown(
                         label: AppStrings.category.tr,
-                        options: doctorPrescriptionController.medicineCategory,
-                        currentValue:
-                        doctorPrescriptionController
-                            .selectedMedicineCategory
-                            .value,
+                        options: controller.medicineCategory,
+                        currentValue: controller.selectedMedicineCategory.value,
                         onChanged: (val) {
-                          if (val != null) doctorPrescriptionController.selectedMedicineCategory.value = val;
+                          if (val != null) controller.selectedMedicineCategory.value = val;
                         },
                       )),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: dosageController,
                         labelText: AppStrings.dosage.tr,
                         hintText: "1 capsule every 8 hours",
                       ),
                       10.verticalSpace,
                       Obx(() => CustomDropdown(
                         label: AppStrings.routeOfAdministration.tr,
-                        options:
-                        doctorPrescriptionController.administrationRoute,
-                        currentValue:
-                        doctorPrescriptionController
-                            .selectedAdministrationRoute
-                            .value,
+                        options: controller.administrationRoute,
+                        currentValue: controller.selectedAdministrationRoute.value,
                         onChanged: (val) {
-                          if (val != null) doctorPrescriptionController.selectedAdministrationRoute.value = val;
+                          if (val != null) controller.selectedAdministrationRoute.value = val;
                         },
                       )),
                       10.verticalSpace,
                       CustomTextField(
+                        controller: quantityController,
                         labelText: AppStrings.quantityToDispense.tr,
                         hintText: "15 tablets",
                       ),
@@ -136,12 +149,9 @@ class EditTemplateScreen extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       InkWell(
-                        onTap: () => _showDatePicker(context),
+                        onTap: () => _showDatePicker(context, controller),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 18,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -151,21 +161,16 @@ class EditTemplateScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Obx(() => Text(
-                                doctorPrescriptionController.formattedDate,
+                                controller.formattedDate,
                                 style: TextStyle(
                                   fontSize: 18,
-                                  color:
-                                  doctorPrescriptionController.selectedDate.value == null
+                                  color: controller.selectedDate.value == null
                                       ? Colors.grey
                                       : Colors.black,
                                   fontWeight: FontWeight.w500,
                                 ),
                               )),
-                              const Icon(
-                                Icons.calendar_today,
-                                color: Colors.blue,
-                                size: 24,
-                              ),
+                              const Icon(Icons.calendar_today, color: Colors.blue, size: 24),
                             ],
                           ),
                         ),
@@ -189,16 +194,12 @@ class EditTemplateScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(
-                            color: AppColors.lightGrey.withOpacity(0.2),
-                          ),
+                          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 15.w,
-                            vertical: 10.h,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
                           child: TextField(
+                            controller: specialInstructionsController,
                             maxLines: null,
                             expands: true,
                             textAlignVertical: TextAlignVertical.top,
@@ -214,21 +215,30 @@ class EditTemplateScreen extends StatelessWidget {
                         ),
                       ),
                       30.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.draft.tr,
-                        onTap: () {},
-                      ),
-                      10.verticalSpace,
-                      CustomButton(
+                      Obx(() => CustomButton(
                         borderRadius: 15,
                         text: AppStrings.generateAndSign.tr,
-                        onTap: () {
-                          Get.to(const ElectronicSignatureScreen());
+                        onTap: () async {
+                          final data = {
+                            'templateName': templateNameController.text.trim(),
+                            'diagnosis': controller.selectedMedicineCategory.value,
+                            'medicationsName': medicationNameController.text.trim(),
+                            'dosage': dosageController.text.trim(),
+                            'form': controller.selectedMedicineForm.value,
+                            'roa': controller.selectedAdministrationRoute.value,
+                            'qtd': quantityController.text.trim(),
+                            'refildate': controller.selectedDate.value
+                                ?.toIso8601String()
+                                .split('T')[0],
+                            'specialInsturuction': specialInstructionsController.text.trim(),
+                            'notes': ''
+                          };
+                          await controller.updateTemplate(template.id, data);
                         },
                         bgColor: AppColors.inACtiveButtonColor,
                         fontColor: Colors.black,
-                      ),
+                        isLoading: controller.isLoading.value,
+                      )),
                       30.verticalSpace,
                     ],
                   ),
@@ -241,7 +251,7 @@ class EditTemplateScreen extends StatelessWidget {
     );
   }
 
-  void _showDatePicker(BuildContext context) async {
+  void _showDatePicker(BuildContext context, DoctorPrescriptionController controller) async {
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
@@ -250,11 +260,11 @@ class EditTemplateScreen extends StatelessWidget {
         centerAlignModePicker: true,
       ),
       dialogSize: const Size(325, 400),
-      value: [doctorPrescriptionController.selectedDate.value],
+      value: [controller.selectedDate.value],
       borderRadius: BorderRadius.circular(15),
     );
     if (dates != null && dates.isNotEmpty) {
-      doctorPrescriptionController.selectedDate.value = dates.first;
+      controller.selectedDate.value = dates.first;
     }
   }
 }

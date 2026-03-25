@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/prescription_template_model.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
-
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 
 class TemplateDetailsScreen extends StatelessWidget {
-  const TemplateDetailsScreen({super.key});
+  final PrescriptionTemplateModel template;
+
+  const TemplateDetailsScreen({super.key, required this.template});
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Not set';
+    return '${date.day}/${date.month}/${date.year}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +66,10 @@ class TemplateDetailsScreen extends StatelessWidget {
                     children: [
                       20.verticalSpace,
                       _buildPrescriptionHeader(
-                        'Hypertension Basic Set',
-                        'Amoxicillin 500mg capsule',
+                        template.templateName,
+                        '${template.medicationsName} ${template.dosage}',
                       ),
-
                       SizedBox(height: 5.h),
-
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -77,17 +82,14 @@ class TemplateDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-
-                      _buildDosageCard('1 capsule every 8 hours'),
-
+                      _buildDosageCard(template.specialInstruction),
                       SizedBox(height: 5.h),
-
                       _buildDetailsSection(
-                        form: 'Tablet',
-                        route: 'Oral',
-                        quantity: '15 Tblets',
-                        refill: '12 June',
-                        category: 'Cardiology',
+                        form: template.form,
+                        route: template.roa,
+                        quantity: template.qtd,
+                        refill: _formatDate(template.refillDate),
+                        category: template.diagnosis,
                       ),
                       7.verticalSpace,
                       Align(
@@ -104,7 +106,7 @@ class TemplateDetailsScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "Hypertension follow-up. Blood pressure stable, continue medication",
+                        template.notes,
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Colors.grey.shade700,

@@ -68,7 +68,6 @@ class PastAppointmentWidgets extends StatelessWidget {
             borderRadius: 15,
             text: AppStrings.bookAgain.tr,
             onTap: () {
-              // Navigate to book again with same doctor
             },
           ),
           15.verticalSpace,

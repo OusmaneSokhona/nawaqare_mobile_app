@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/models/doctor_prescription_model.dart';
+import 'package:patient_app/models/prescription_template_model.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_detail_screen.dart';
 import 'package:patient_app/services/api_service.dart';
 import 'package:patient_app/utils/api_urls.dart';
@@ -12,12 +13,12 @@ class DoctorPrescriptionController extends GetxController {
   RxString prescriptionType = "activePrescription".obs;
 
   final allPrescriptions = <DoctorPrescriptionModel>[].obs;
-
   final filteredPrescriptions = <DoctorPrescriptionModel>[].obs;
-  final prescriptions = <DoctorPrescriptionModel>[].obs; // Display list
+  final prescriptions = <DoctorPrescriptionModel>[].obs;
 
-  final templates = <int>[].obs;
-  final filteredTemplates = <int>[].obs;
+  final allTemplates = <PrescriptionTemplateModel>[].obs;
+  final filteredTemplates = <PrescriptionTemplateModel>[].obs;
+  final templates = <PrescriptionTemplateModel>[].obs;
 
   final isLoading = false.obs;
   final errorMessage = ''.obs;
@@ -29,7 +30,6 @@ class DoctorPrescriptionController extends GetxController {
   final selectedMedicineCategory = 'All'.obs;
   final selectedAdministrationRoute = 'All'.obs;
 
-  // Pagination
   RxInt currentPage = 1.obs;
   final int itemsPerPage = 4;
 
@@ -38,14 +38,20 @@ class DoctorPrescriptionController extends GetxController {
     super.onInit();
     selectedOption.value = options.first;
     fetchAllPrescriptions();
+    fetchAllTemplates();
 
     debounce(
-        searchQuery,
-            (_) {
-          currentPage.value = 1;
+      searchQuery,
+          (_) {
+        if (prescriptionType.value == "activePrescription") {
           applyFiltersAndSearch();
-        },
-        time: const Duration(milliseconds: 500)
+          currentPage.value = 1;
+        } else {
+          applyTemplatesFilterAndSearch();
+          currentPage.value = 1;
+        }
+      },
+      time: const Duration(milliseconds: 500),
     );
   }
 
@@ -80,6 +86,31 @@ class DoctorPrescriptionController extends GetxController {
     }
   }
 
+  Future<void> fetchAllTemplates() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final response = await apiService.get(ApiUrls.getTemplates);
+
+      if (response.data["success"] == true) {
+        final List<dynamic> templatesJson = response.data["templates"];
+        final fetchedTemplates = templatesJson
+            .map((json) => PrescriptionTemplateModel.fromJson(json))
+            .toList();
+
+        allTemplates.assignAll(fetchedTemplates);
+        applyTemplatesFilterAndSearch();
+      } else {
+        errorMessage.value = 'Failed to fetch templates';
+      }
+    } catch (e) {
+      errorMessage.value = 'Error: ${e.toString()}';
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   void applyFiltersAndSearch() {
     List<DoctorPrescriptionModel> filtered = List.from(allPrescriptions);
 
@@ -102,15 +133,18 @@ class DoctorPrescriptionController extends GetxController {
 
     if (selectedDateRange.value != null) {
       filtered = filtered.where((prescription) {
-        return prescription.issueDate.isAfter(selectedDateRange.value!.start) &&
-            prescription.issueDate.isBefore(selectedDateRange.value!.end);
+        return prescription.issueDate
+            .isAfter(selectedDateRange.value!.start) &&
+            prescription.issueDate
+                .isBefore(selectedDateRange.value!.end);
       }).toList();
     }
 
     if (selectedMedicineForm.value != 'All') {
       filtered = filtered.where((prescription) {
-        return prescription.medications.any((med) =>
-            med.name.toLowerCase().contains(selectedMedicineForm.value.toLowerCase()));
+        return prescription.medications.any((med) => med.name
+            .toLowerCase()
+            .contains(selectedMedicineForm.value.toLowerCase()));
       }).toList();
     }
 
@@ -126,40 +160,49 @@ class DoctorPrescriptionController extends GetxController {
     }
 
     filteredPrescriptions.assignAll(filtered);
-    updateDisplayList();
+    prescriptions.assignAll(filteredPrescriptions);
+    currentPage.value = 1;
   }
 
-  void updateDisplayList() {
-    prescriptions.assignAll(filteredPrescriptions);
+  void applyTemplatesFilterAndSearch() {
+    List<PrescriptionTemplateModel> filtered = List.from(allTemplates);
+
+    if (searchQuery.value.isNotEmpty) {
+      final query = searchQuery.value.toLowerCase();
+      filtered = filtered.where((template) {
+        return template.templateName.toLowerCase().contains(query) ||
+            template.diagnosis.toLowerCase().contains(query) ||
+            template.medicationsName.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    filteredTemplates.assignAll(filtered);
+    templates.assignAll(filteredTemplates);
+    currentPage.value = 1;
   }
 
   void filterByStatus(String status) {
     selectedStatus.value = status;
-    currentPage.value = 1;
     applyFiltersAndSearch();
   }
 
   void filterByDateRange(DateTimeRange? range) {
     selectedDateRange.value = range;
-    currentPage.value = 1;
     applyFiltersAndSearch();
   }
 
   void filterByMedicineForm(String form) {
     selectedMedicineForm.value = form;
-    currentPage.value = 1;
     applyFiltersAndSearch();
   }
 
   void filterByMedicineCategory(String category) {
     selectedMedicineCategory.value = category;
-    currentPage.value = 1;
     applyFiltersAndSearch();
   }
 
   void filterByAdministrationRoute(String route) {
     selectedAdministrationRoute.value = route;
-    currentPage.value = 1;
     applyFiltersAndSearch();
   }
 
@@ -170,7 +213,6 @@ class DoctorPrescriptionController extends GetxController {
     selectedMedicineCategory.value = 'All';
     selectedAdministrationRoute.value = 'All';
     searchQuery.value = '';
-    currentPage.value = 1;
     applyFiltersAndSearch();
   }
 
@@ -182,18 +224,18 @@ class DoctorPrescriptionController extends GetxController {
         start, end > prescriptions.length ? prescriptions.length : end);
   }
 
-  List<int> get paginatedTemplates {
+  List<PrescriptionTemplateModel> get paginatedTemplates {
     int start = (currentPage.value - 1) * itemsPerPage;
     int end = start + itemsPerPage;
-    if (start >= filteredTemplates.length) return [];
-    return filteredTemplates.sublist(
-        start, end > filteredTemplates.length ? filteredTemplates.length : end);
+    if (start >= templates.length) return [];
+    return templates.sublist(
+        start, end > templates.length ? templates.length : end);
   }
 
   int get totalPages {
     int totalItems = prescriptionType.value == "activePrescription"
         ? prescriptions.length
-        : filteredTemplates.length;
+        : templates.length;
     if (totalItems == 0) return 1;
     return (totalItems / itemsPerPage).ceil();
   }
@@ -201,7 +243,7 @@ class DoctorPrescriptionController extends GetxController {
   int get filteredCount {
     return prescriptionType.value == "activePrescription"
         ? prescriptions.length
-        : filteredTemplates.length;
+        : templates.length;
   }
 
   void viewDetail(DoctorPrescriptionModel prescription) {
@@ -211,14 +253,8 @@ class DoctorPrescriptionController extends GetxController {
   }
 
   void searchTemplates(String query) {
-    if (query.isEmpty) {
-      filteredTemplates.assignAll(templates);
-    } else {
-      filteredTemplates.assignAll(
-          templates.where((template) => template.toString().contains(query)).toList()
-      );
-    }
-    currentPage.value = 1;
+    searchQuery.value = query;
+    applyTemplatesFilterAndSearch();
   }
 
   final selectedCycle = '1 month'.obs;
@@ -285,5 +321,76 @@ class DoctorPrescriptionController extends GetxController {
 
   void updateDate(DateTime? newDate) {
     selectedDate.value = newDate;
+  }
+
+  Future<void> updateTemplate(String templateId, Map<String, dynamic> data) async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final response = await apiService.put(
+        '${ApiUrls.updateTemplate}$templateId',
+        data: data,
+      );
+
+      if (response.statusCode == 200) {
+        Get.back();
+        Get.snackbar('Success', 'Template updated successfully',
+            backgroundColor: Colors.green, colorText: Colors.white);
+        await fetchAllTemplates();
+
+      } else {
+        errorMessage.value = response.data['message'] ?? 'Failed to update template';
+        Get.snackbar('Error', errorMessage.value,
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      errorMessage.value = 'Error: ${e.toString()}';
+      Get.snackbar('Error', errorMessage.value,
+          backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+  final templateNameController = TextEditingController();
+  final medicationNameController = TextEditingController();
+  final dosageController = TextEditingController();
+  final quantityController = TextEditingController();
+  final specialInstructionsController = TextEditingController();
+
+  Future<void> createTemplate() async {
+    try {
+      isLoading.value = true;
+
+      final data = {
+        'templateName': templateNameController.text.trim(),
+        'diagnosis': selectedMedicineCategory.value,
+        'medicationsName': medicationNameController.text.trim(),
+        'dosage': dosageController.text.trim(),
+        'form': selectedMedicineForm.value,
+        'roa': selectedAdministrationRoute.value,
+        'qtd': quantityController.text.trim(),
+        'refildate': selectedDate.value?.toIso8601String().split('T')[0],
+        'specialInsturuction': specialInstructionsController.text.trim(),
+        'notes': ''
+      };
+
+      final response = await apiService.post(ApiUrls.createTemplate, data: data);
+
+      if (response.statusCode == 201) {
+        Get.back();
+        Get.snackbar('Success', 'Template created successfully',
+            backgroundColor: Colors.green, colorText: Colors.white);
+        await fetchAllTemplates();
+      } else {
+        Get.snackbar('Error', response.data['message'] ?? 'Failed to create template',
+            backgroundColor: Colors.red, colorText: Colors.white);
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Error: ${e.toString()}',
+          backgroundColor: Colors.red, colorText: Colors.white);
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

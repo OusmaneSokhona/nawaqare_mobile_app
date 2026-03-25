@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/quick_statics_controller.dart';
 import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class QuickStatisticsCard extends StatelessWidget {
-  const QuickStatisticsCard({super.key});
-
+   QuickStatisticsCard({super.key});
+QuickStatisticsController quickStatisticsController = Get.put(QuickStatisticsController());
   static const Color primaryIconColor = Color(0xFF4285F4);
 
   Widget _buildStatItem(String icon, String label) {
@@ -37,6 +38,7 @@ class QuickStatisticsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    quickStatisticsController.fetchQuickStats();
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
       decoration: BoxDecoration(
@@ -51,22 +53,24 @@ class QuickStatisticsCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem(
-            "assets/images/consultation_plan_icon.png",
-            '${AppStrings.today.tr} : 05',
-          ),
-          _buildStatItem(
-            "assets/images/chat_icon.png",
-            '${AppStrings.messages.tr} : 02',
-          ),
-          _buildStatItem(
-            "assets/images/star_icon.png",
-            '${AppStrings.rating.tr} : 4.3/5',
-          ),
-        ],
+      child: Obx(
+        ()=> Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildStatItem(
+              "assets/images/consultation_plan_icon.png",
+              '${AppStrings.today.tr} : ${quickStatisticsController.formattedDay}',
+            ),
+            _buildStatItem(
+              "assets/images/chat_icon.png",
+              '${AppStrings.messages.tr} : ${quickStatisticsController.messagesCount}',
+            ),
+            _buildStatItem(
+              "assets/images/star_icon.png",
+              '${AppStrings.rating.tr} : ${quickStatisticsController.ratingDisplay}',
+            ),
+          ],
+        ),
       ),
     );
   }

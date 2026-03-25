@@ -1,31 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/models/prescription_template_model.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class TemplateCard extends StatelessWidget {
-  final String title;
-  final String category;
-  final String details;
-  final String lastUpdate;
+  final PrescriptionTemplateModel template;
   final VoidCallback onEdit;
   final VoidCallback onUse;
 
   const TemplateCard({
     super.key,
-    required this.title,
-    required this.category,
-    required this.details,
-    required this.lastUpdate,
+    required this.template,
     required this.onEdit,
     required this.onUse,
   });
 
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  String _getDetails() {
+    return '${template.medicationsName} ${template.dosage} (${template.form}) • ${template.qtd} • ${template.roa}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:  EdgeInsets.symmetric(vertical: 6.sp),
+      padding: EdgeInsets.symmetric(vertical: 6.sp),
       child: Card(
         elevation: 4,
         color: Colors.white,
@@ -43,7 +46,7 @@ class TemplateCard extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Text(
-                      title.tr, // Localizing title if it's a key
+                      template.templateName.tr,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -53,7 +56,7 @@ class TemplateCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    category.tr, // Localizing category if it's a key
+                    template.diagnosis.tr,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -64,7 +67,7 @@ class TemplateCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                details.tr, // Localizing details if it's a key
+                _getDetails().tr,
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.grey.shade700,
@@ -72,7 +75,7 @@ class TemplateCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${AppStrings.lastUpdate.tr}: $lastUpdate',
+                '${AppStrings.lastUpdate.tr}: ${_formatDate(template.updatedAt)}',
                 style: TextStyle(
                   fontSize: 13,
                   color: Colors.grey.shade500,

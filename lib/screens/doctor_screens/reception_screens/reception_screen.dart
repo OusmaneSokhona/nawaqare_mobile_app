@@ -21,6 +21,7 @@ class ReceptionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchWeeklySummary();
     bool isDesktop = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
@@ -227,25 +228,27 @@ class ReceptionScreen extends StatelessWidget {
                         15.verticalSpace,
                         CardHeader(title: AppStrings.weeklySummary.tr),
                         10.verticalSpace,
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Expanded(
-                              child: _buildCard(
-                                Icons.check_circle,
-                                AppStrings.available.tr,
-                                '15h',
+                        Obx(
+        ()=> Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Expanded(
+                                child: _buildCard(
+                                  Icons.check_circle,
+                                  AppStrings.available.tr,
+                                  controller.availableHours.value,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 16.w),
-                            Expanded(
-                              child: _buildCard(
-                                Icons.calendar_today,
-                                AppStrings.slotsBooked.tr,
-                                '20',
+                              SizedBox(width: 16.w),
+                              Expanded(
+                                child: _buildCard(
+                                  Icons.calendar_today,
+                                  AppStrings.slotsBooked.tr,
+                                  controller.slotsBooked.value.toString(),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                         SizedBox(height: 16.h),
                         SizedBox(
@@ -253,7 +256,7 @@ class ReceptionScreen extends StatelessWidget {
                           child: _buildCard(
                             Icons.bookmark,
                             AppStrings.plannedAbsences.tr,
-                            '2',
+                            controller.plannedAbsence.value.toString(),
                           ),
                         ),
                         15.verticalSpace,

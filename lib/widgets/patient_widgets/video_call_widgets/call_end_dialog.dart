@@ -125,6 +125,8 @@ class CallEndDialog extends StatelessWidget {
                               videoCallController.appointmentId.value,
                               AppointmentStatus.COMPLETED,true
                             );
+                             videoCallController.stopCallTimer();
+                             videoCallController.saveCallDuration(videoCallController.appointmentId.value);
                             Get.offAll(
                               MainScreenDoctor(),
                               binding: AppBinding(),

@@ -21,6 +21,7 @@ class AbsenceAndException extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.fetchPastAbsences();
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -100,13 +101,8 @@ class AbsenceAndException extends StatelessWidget {
                         borderRadius: 15,
                         text: AppStrings.declareAbsence.tr,
                         onTap: () {
-                          Get.to( CalenderSyncronizationScreen());
+                          Get.to(CalenderSyncronizationScreen());
                         },
-                      ),
-                      10.verticalSpace,
-                      CustomTextField(
-                        labelText: AppStrings.period.tr,
-                        hintText: "Nov 1 - Nov 3",
                       ),
                       10.verticalSpace,
                       Obx(() => CustomDropdown(
@@ -121,56 +117,18 @@ class AbsenceAndException extends StatelessWidget {
                           if (val != null) controller.selectedReason.value = val;
                         },
                       )),
-                      10.verticalSpace,
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppStrings.scope.tr,
-                          style: TextStyle(
-                            fontSize: 17.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      10.verticalSpace,
-                      Obx(
-                            () => CustomRadioTile(
-                          text: AppStrings.allServices.tr,
-                          isSelected: controller.allService.value,
-                          onTap: () {
-                            controller.allService.value =
-                            !controller.allService.value;
-                          },
-                        ),
-                      ),
-                      5.verticalSpace,
-                      Obx(
-                            () => CustomRadioTile(
-                          text: AppStrings.specific.tr,
-                          isSelected: controller.specific.value,
-                          onTap: () {
-                            controller.specific.value =
-                            !controller.specific.value;
-                          },
-                        ),
-                      ),
-                      15.verticalSpace,
-                      Obx(
-                            () => CustomRadioTile(
-                          text: AppStrings.notifyAffectedPatients.tr,
-                          isSelected: controller.notifyAffectedPatient.value,
-                          onTap: () {
-                            controller.notifyAffectedPatient.value =
-                            !controller.notifyAffectedPatient.value;
-                          },
-                          isCircle: false,
-                        ),
-                      ),
                       20.verticalSpace,
-                      CustomButton(
-                        borderRadius: 15,
-                        text: AppStrings.save.tr,
-                        onTap: () {},
+                      Obx(
+                            () => CustomButton(
+                          borderRadius: 15,
+                          text: AppStrings.save.tr,
+                          onTap: () {
+                            if (!controller.isLoading.value) {
+                              controller.sendAbsenceException();
+                            }
+                          },
+                          isLoading: controller.isLoading.value,
+                        ),
                       ),
                       10.verticalSpace,
                       CustomButton(
@@ -195,41 +153,70 @@ class AbsenceAndException extends StatelessWidget {
                         ),
                       ),
                       5.verticalSpace,
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(15.0),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16.0),
-                            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppStrings.identity.tr,
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                      Obx(() {
+                        if (controller.isLoadingHistory.value) {
+                          return const Center(child: CircularProgressIndicator(color: AppColors.primaryColor,));
+                        }
+                        if (controller.cancelledHistory.isEmpty) {
+                          return Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.0),
+                                border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+                            ),
+                            child: Center(
+                              child: Text(
+                                'No past absences found',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: AppColors.lightGrey,
+                                ),
                               ),
                             ),
-                            10.verticalSpace,
-                            _buildStatusRow(
-                              dateRange: 'Oct 10–12',
-                              status: AppStrings.completed.tr,
-                              isNotified: true,
-                            ),
-                            const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
-                            _buildStatusRow(
-                              dateRange: 'Oct 10–12',
-                              status: AppStrings.completed.tr,
-                              isNotified: true,
-                            ),
-                          ],
-                        ),
-                      ),
+                          );
+                        }
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(15.0),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.0),
+                              border: Border.all(color: AppColors.lightGrey.withOpacity(0.2))
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                AppStrings.identity.tr,
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              10.verticalSpace,
+                              ListView.separated(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.zero,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.cancelledHistory.length,
+                                separatorBuilder: (context, index) => const Divider(height: 1, thickness: 1, color: Color(0xFFEEEEEE)),
+                                itemBuilder: (context, index) {
+                                  final item = controller.cancelledHistory[index];
+                                  return _buildStatusRow(
+                                    dateRange: item.formattedDate,
+                                    status: item.status,
+                                    reason: item.reason,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                       30.verticalSpace,
                     ],
                   ),
@@ -242,7 +229,6 @@ class AbsenceAndException extends StatelessWidget {
     );
   }
 
-  // Configuration remains same, but you can localize month labels here if the package supports it
   CalendarDatePicker2Config _buildCalendarConfig() {
     return CalendarDatePicker2Config(
       calendarType: CalendarDatePicker2Type.single,
@@ -283,57 +269,58 @@ class AbsenceAndException extends StatelessWidget {
   Widget _buildStatusRow({
     required String dateRange,
     required String status,
+    String? reason,
     bool isNotified = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 12.0,vertical: 5),
+      child: Column(
         children: [
-          Text(
-            dateRange,
-            style: const TextStyle(
-              fontSize: 18,
-              color: Color(0xFF757575),
-            ),
-          ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(
-                Icons.check_box,
-                color: Color(0xFF4CAF50),
-                size: 20,
-              ),
-              const SizedBox(width: 8),
               Text(
-                status,
+                dateRange,
                 style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
+                  color: Color(0xFF757575),
                 ),
               ),
-              if (isNotified)
-                Row(
-                  children: [
-                    const Text(
-                      ' | ',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFFBDBDBD),
-                      ),
+              Row(
+                children: [
+
+
+                  Text(
+                    status,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                      fontWeight: FontWeight.w500,
                     ),
-                    Text(
-                      AppStrings.notified.tr,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF757575),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    Icons.check_box,
+                    color: Colors.red,
+                    size: 20,
+                  ),
+                ],
+              ),
             ],
           ),
+          if (reason != null) ...[
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                reason,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF9E9E9E),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

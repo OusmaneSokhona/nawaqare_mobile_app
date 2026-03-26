@@ -20,6 +20,7 @@ class VideoCallScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    controller.startCallTimer();
     return PopScope(
       canPop: false,
       child: Scaffold(

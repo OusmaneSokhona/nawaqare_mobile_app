@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -273,5 +275,39 @@ class VideoCallController extends GetxController {
   void onClose() {
     leaveChannel();
     super.onClose();
+  }
+  RxInt durationSeconds = 0.obs;
+  Timer? _timer;
+
+  void startCallTimer() {
+    if (_timer != null && _timer!.isActive) return;
+    durationSeconds.value = 0;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      durationSeconds.value++;
+    });
+  }
+
+  void stopCallTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  Future<void> saveCallDuration(String appointmentId) async {
+    try {
+      final response = await _apiService.post(
+        ApiUrls.saveCallDuration,
+        data: {
+          "appointmentId": appointmentId,
+          "duration": durationSeconds.value,
+        },
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+       print("Call duration saved successfully");
+      } else {
+        print("Failed to save call duration: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error saving call duration: $e");
+    }
   }
 }

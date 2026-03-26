@@ -56,4 +56,8 @@ class ApiUrls {
   static String getTemplates="/api/prescriptions/getTemp";
   static String updateTemplate="/api/prescriptions/updateTemp/";
   static String createTemplate="/api/prescriptions/createTemp";
+  static String weeklySummary="/api/receptions/weekly-summary";
+  static String absenceException="/api/appointments/cancel-appointments";
+  static String getAbsenceException="api/appointments/cancellations";
+  static String saveCallDuration="api/appointments/save-call-duration";
 }

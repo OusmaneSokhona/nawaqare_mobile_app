@@ -323,16 +323,16 @@ class CalenderScreen extends StatelessWidget {
                               controller.scaffoldKey.currentState!.openEndDrawer();
                             }
                         ),
-                        10.verticalSpace,
-                        CustomButton(
-                          borderRadius: 15,
-                          text: AppStrings.viewAsPatient.tr,
-                          onTap: () {
-                            Get.to(ViewAsPatient());
-                          },
-                          bgColor: AppColors.inACtiveButtonColor,
-                          fontColor: Colors.black,
-                        ),
+                        // 10.verticalSpace,
+                        // CustomButton(
+                        //   borderRadius: 15,
+                        //   text: AppStrings.viewAsPatient.tr,
+                        //   onTap: () {
+                        //     Get.to(ViewAsPatient());
+                        //   },
+                        //   bgColor: AppColors.inACtiveButtonColor,
+                        //   fontColor: Colors.black,
+                        // ),
                         30.verticalSpace,
                       ],
                     ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
+import '../../../controllers/doctor_controllers/notes_controller.dart';
 import '../../../utils/app_colors.dart';
 
 class NotesWidget extends StatelessWidget {
@@ -16,6 +18,14 @@ class NotesWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final NoteController controller = Get.put(NoteController());
+
+    if (patientId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.getNotes(patientId: patientId!);
+      });
+    }
+
     return Column(
       children: [
         Align(
@@ -26,15 +36,18 @@ class NotesWidget extends StatelessWidget {
           ),
         ),
         10.verticalSpace,
-        _buildNotesList(),
+        Obx(() => _buildNotesList(controller)),
         15.verticalSpace,
         CustomButton(
           borderRadius: 15,
           text: AppStrings.addNewNotes.tr,
-          onTap: () {
-            Get.to(() => AddNotesScreen(
+          onTap: () async {
+            final result = await Get.to(() => AddNotesScreen(
               patientId: patientId,
             ));
+            if (result == true && patientId != null) {
+              controller.getNotes(patientId: patientId!);
+            }
           },
         ),
         30.verticalSpace,
@@ -42,42 +55,89 @@ class NotesWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildNotesList() {
-    return Column(
-      children: [
-        _buildDiagnosisCard(
-          'Dr. Sarah Smith',
-          'Migraine without aura',
-          'Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene',
-          '12 Sep 2025',
-          'ID: MIG-001',
+  Widget _buildNotesList(NoteController controller) {
+    if (controller.isLoadingNotes.value) {
+      return Container(
+        height: 200.h,
+        child: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.primaryColor,
+          ),
         ),
-        10.verticalSpace,
-        _buildDiagnosisCard(
-          'Dr. Michael Johnson',
-          'Hypertension',
-          'Blood pressure reading 130/85. Patient advised to reduce salt intake and continue medication. Follow-up in 2 weeks.',
-          '05 Sep 2025',
-          'ID: HYP-002',
+      );
+    }
+
+    if (controller.notesList.isEmpty) {
+      return Container(
+        height: 150.h,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
         ),
-        10.verticalSpace,
-        _buildDiagnosisCard(
-          'Dr. Emily Williams',
-          'Seasonal Allergies',
-          'Prescribed antihistamines. Patient reported itching and sneezing. Recommended avoiding triggers.',
-          '28 Aug 2025',
-          'ID: ALG-003',
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.note_outlined,
+                size: 48.sp,
+                color: Colors.grey.shade400,
+              ),
+              10.verticalSpace,
+              Text(
+                'No notes available',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              Text(
+                'Tap "Add New Notes" to create one',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Colors.grey.shade500,
+                ),
+              ),
+            ],
+          ),
         ),
-      ],
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      padding: EdgeInsets.zero,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: controller.notesList.length,
+      itemBuilder: (context, index) {
+        final note = controller.notesList[index];
+        return Padding(
+          padding: EdgeInsets.only(bottom: 10.h),
+          child: _buildDiagnosisCard(
+            note.doctorId.fullName,
+            note.doctorId.profileImage,
+            note.diagnosis,
+            note.note,
+            note.icdCode,
+            _formatDate(note.createdAt),
+            note.id,
+            controller,
+          ),
+        );
+      },
     );
   }
 
   Widget _buildDiagnosisCard(
       String doctorName,
+      String doctorImage,
       String diagnosis,
       String notes,
+      String icdCode,
       String date,
-      String id,
+      String noteId,
+      NoteController controller,
       ) {
     return Container(
       width: 1.sw,
@@ -97,13 +157,13 @@ class NotesWidget extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          // Header with doctor name and actions
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Expanded(
                 child: Row(
                   children: [
+                   (doctorImage.isEmpty||doctorImage==null)?
                     Container(
                       padding: EdgeInsets.all(6.w),
                       decoration: BoxDecoration(
@@ -115,6 +175,12 @@ class NotesWidget extends StatelessWidget {
                         color: AppColors.primaryColor,
                         size: 14.sp,
                       ),
+                    ):
+                    CircleAvatar(
+                      radius: 14.sp,
+                      backgroundImage: NetworkImage(doctorImage),
+                      backgroundColor: Colors.transparent,
+                      onBackgroundImageError: (_, __) {},
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
@@ -134,8 +200,18 @@ class NotesWidget extends StatelessWidget {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      _editNote(diagnosis);
+                    onTap: () async {
+                      final result = await Get.to(() => AddNotesScreen(
+                        patientId: patientId,
+                        isEditing: true,
+                        noteId: noteId,
+                        diagnosis: diagnosis,
+                        existingNotes: notes,
+                        existingIcdCode: icdCode,
+                      ));
+                      if (result == true && patientId != null) {
+                        controller.getNotes(patientId: patientId!);
+                      }
                     },
                     child: Icon(
                       Icons.edit_outlined,
@@ -146,7 +222,7 @@ class NotesWidget extends StatelessWidget {
                   SizedBox(width: 8.w),
                   InkWell(
                     onTap: () {
-                      _deleteNote(diagnosis);
+                      _deleteNote(noteId, diagnosis, controller);
                     },
                     child: Icon(
                       Icons.delete_outline,
@@ -160,7 +236,6 @@ class NotesWidget extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
 
-          // Diagnosis and ID
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -182,7 +257,7 @@ class NotesWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4.r),
                 ),
                 child: Text(
-                  id,
+                  icdCode,
                   style: TextStyle(
                     fontSize: 11.sp,
                     color: Colors.grey.shade600,
@@ -193,7 +268,6 @@ class NotesWidget extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
 
-          // Notes
           Text(
             AppStrings.diagnosisNotes.tr,
             style: TextStyle(
@@ -213,7 +287,6 @@ class NotesWidget extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
 
-          // Date
           Row(
             children: [
               Icon(
@@ -236,17 +309,10 @@ class NotesWidget extends StatelessWidget {
     );
   }
 
-  void _editNote(String diagnosis) {
-    Get.to(() => AddNotesScreen(
-      patientId: patientId,
-      isEditing: true,
-      diagnosis: diagnosis,
-    ));
-  }
-
-  void _deleteNote(String diagnosis) {
+  void _deleteNote(String noteId, String diagnosis, NoteController controller) {
     Get.dialog(
       AlertDialog(
+        backgroundColor: Colors.white,
         title: Text(
           'Delete Note',
           style: TextStyle(
@@ -255,7 +321,7 @@ class NotesWidget extends StatelessWidget {
           ),
         ),
         content: Text(
-          'Are you sure you want to delete the note for "$diagnosis"?',
+          'Are you sure you want to delete the note "$diagnosis"?',
           style: TextStyle(fontSize: 14.sp),
         ),
         actions: [
@@ -267,15 +333,26 @@ class NotesWidget extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Get.back();
-              Get.snackbar(
-                'Deleted',
-                'Note deleted successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
+              final result = await controller.deleteNote(noteId: noteId);
+              if (result) {
+                Get.snackbar(
+                  'Success',
+                  'Note deleted successfully',
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: AppColors.green,
+                  colorText: Colors.white,
+                );
+              } else {
+                Get.snackbar(
+                  'Error',
+                  controller.errorMessage.value,
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
+              }
             },
             child: Text(
               'Delete',
@@ -285,5 +362,9 @@ class NotesWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd MMM yyyy').format(date);
   }
 }

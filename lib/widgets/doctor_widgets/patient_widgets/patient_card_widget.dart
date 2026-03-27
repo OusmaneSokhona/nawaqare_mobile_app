@@ -19,7 +19,6 @@ class PatientCardWidget extends StatelessWidget {
   final String patientId;
   final VoidCallback onScheduleTap;
   final VoidCallback onAddNoteTap;
-  final VoidCallback onFollowUpTap;
 
   const PatientCardWidget({
     Key? key,
@@ -33,10 +32,8 @@ class PatientCardWidget extends StatelessWidget {
     required this.patientId,
     required this.onScheduleTap,
     required this.onAddNoteTap,
-    required this.onFollowUpTap,
   }) : super(key: key);
 
-  // Factory constructor from PatientSummary model
   factory PatientCardWidget.fromSummary({
     required PatientSummary patientSummary,
     required VoidCallback onScheduleTap,
@@ -53,7 +50,6 @@ class PatientCardWidget extends StatelessWidget {
       patientId: patientSummary.patientId,
       onScheduleTap: onScheduleTap,
       onAddNoteTap: onAddNoteTap,
-      onFollowUpTap: onFollowUpTap,
     );
   }
 
@@ -84,26 +80,23 @@ class PatientCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFollowUpChip() {
-    return InkWell(
-      onTap: onFollowUpTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(8.r),
-        ),
-        child: Text(
-          AppStrings.followUp.tr,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 11.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildFollowUpChip() {
+  //   return Container(
+  //     padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+  //     decoration: BoxDecoration(
+  //       color: AppColors.primaryColor,
+  //       borderRadius: BorderRadius.circular(8.r),
+  //     ),
+  //     child: Text(
+  //       AppStrings.followUp.tr,
+  //       style: TextStyle(
+  //         color: Colors.white,
+  //         fontSize: 11.sp,
+  //         fontWeight: FontWeight.w600,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   String _formatDate(DateTime? date) {
     if (date == null) return 'No appointments';
@@ -171,7 +164,7 @@ class PatientCardWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              _buildFollowUpChip(),
+              // _buildFollowUpChip(),
             ],
           ),
 
@@ -291,7 +284,7 @@ class PatientCardWidget extends StatelessWidget {
                             size: 16.sp, color: AppColors.primaryColor),
                         4.horizontalSpace,
                         Text(
-                          '\$$totalSpent',
+                          '$totalSpent',
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: AppColors.lightGrey,

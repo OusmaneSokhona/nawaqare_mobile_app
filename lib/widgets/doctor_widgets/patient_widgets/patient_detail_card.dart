@@ -6,6 +6,7 @@ import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_scr
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/patient_model_doctor.dart';
+import '../../../screens/doctor_screens/patient_screens/add_appointment_patient_module.dart';
 
 class PatientDetailCard extends StatelessWidget {
   final PatientSummary patientSummary;
@@ -63,19 +64,7 @@ class PatientDetailCard extends StatelessWidget {
                   ),
                 ],
               ),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFEF9E4C),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                  elevation: 0,
-                ),
-                child: Text(AppStrings.followUp.tr, style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500)),
-              ),
+
             ],
           ),
           const Divider(height: 14, thickness: 1, color: Color(0xFFF1F1F1)),
@@ -189,7 +178,9 @@ class PatientDetailCard extends StatelessWidget {
             children: [
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.to(() => AddAppointmentPatientModule(patient: patientSummary));
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFE5E7EB),
                     foregroundColor: const Color(0xFF374151),
@@ -206,7 +197,7 @@ class PatientDetailCard extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                      Get.to(() => AddNotesScreen());
+                      Get.to(() => AddNotesScreen(patientId: patientSummary.patientId,));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF4285F4),

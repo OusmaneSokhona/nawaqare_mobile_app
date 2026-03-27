@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/controllers/doctor_controllers/patient_controller.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_add_appointment_screen.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/add_appointment_patient_module.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_detail_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
@@ -18,6 +21,7 @@ class PatientScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    patientController.fetchPatients();
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -105,29 +109,12 @@ class PatientScreen extends StatelessWidget {
                                 totalSpent: patient.totalSpent,
                                 patientId: patient.patientId,
                                 onScheduleTap: () {
-                                  // Handle schedule tap
-                                  Get.snackbar(
-                                    'Schedule',
-                                    'Schedule appointment for ${patient.fullName}',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  );
+                                 Get.to(AddAppointmentPatientModule(patient: patient));
                                 },
                                 onAddNoteTap: () {
-                                  // Handle add note tap
-                                  Get.snackbar(
-                                    'Add Note',
-                                    'Add note for ${patient.fullName}',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  );
+                                  Get.to(AddNotesScreen(patientId: patient.patientId,));
                                 },
-                                onFollowUpTap: () {
-                                  // Handle follow up tap
-                                  Get.snackbar(
-                                    'Follow Up',
-                                    'Follow up with ${patient.fullName}',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                  );
-                                },
+
                               ),
                             );
                           },

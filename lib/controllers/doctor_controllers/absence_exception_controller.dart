@@ -15,9 +15,7 @@ class AbsenceExceptionController extends GetxController {
   final ApiService _apiService = ApiService();
   RxBool isLoading = false.obs;
   RxBool isLoadingHistory = true.obs;
-  RxList<CancelledAppointment> cancelledHistory = <CancelledAppointment>[].obs;
-
-
+  RxList<CancelledSlot> cancelledHistory = <CancelledSlot>[].obs;
 
   void selectNewDate(DateTime date) {
     selectedDate.value = date;
@@ -68,8 +66,9 @@ class AbsenceExceptionController extends GetxController {
     try {
       final response = await _apiService.get(ApiUrls.getAbsenceException);
       if (response.statusCode == 200 && response.data['success'] == true) {
-        List<dynamic> historyData = response.data['cancelledHistory'];
-        cancelledHistory.value = historyData.map((item) => CancelledAppointment.fromJson(item)).toList();
+        // Updated to use 'data' field instead of 'cancelledHistory'
+        List<dynamic> historyData = response.data['data'];
+        cancelledHistory.value = historyData.map((item) => CancelledSlot.fromJson(item)).toList();
       } else {
         Get.snackbar('Error', 'Failed to load past absences',
             snackPosition: SnackPosition.BOTTOM,
@@ -101,27 +100,38 @@ class AbsenceExceptionController extends GetxController {
   }
 }
 
-class CancelledAppointment {
-  final DateTime appointmentDate;
-  final DateTime cancelledAt;
-  final String status;
+class CancelledSlot {
+  final DateTime date;
   final String reason;
+  final String slotId;
+  final String status;
 
-  CancelledAppointment({
-    required this.appointmentDate,
-    required this.cancelledAt,
-    required this.status,
+  CancelledSlot({
+    required this.date,
     required this.reason,
+    required this.slotId,
+    required this.status,
   });
 
-  factory CancelledAppointment.fromJson(Map<String, dynamic> json) {
-    return CancelledAppointment(
-      appointmentDate: DateTime.parse(json['appointmentDate']),
-      cancelledAt: DateTime.parse(json['cancelledAt']),
-      status: json['status'],
-      reason: json['reason'],
+  factory CancelledSlot.fromJson(Map<String, dynamic> json) {
+    return CancelledSlot(
+      date: DateTime.parse(json['cancelledAt']),
+      reason: json['reason'] ?? '',
+      slotId: json['slotId'] ?? '',
+      status: json['status'] ?? '',
     );
   }
 
-  String get formattedDate => DateFormat('MMM d, yyyy').format(cancelledAt);
+  // Helper method to get formatted date for display
+  String get formattedDate => DateFormat('MMM d, yyyy').format(date);
+
+  // Helper method to get a user-friendly status text
+  String get statusText {
+    switch(status.toLowerCase()) {
+      case 'cancelled':
+        return 'Cancelled';
+      default:
+        return status;
+    }
+  }
 }

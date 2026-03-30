@@ -135,14 +135,6 @@ class ChatController extends GetxController {
 
     if (showToUser) {
       errorMessage.value = errorText;
-      Get.snackbar(
-        'Connection Error',
-        errorText,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade900,
-        duration: const Duration(seconds: 3),
-      );
     }
 
     _handleMessageFailure();

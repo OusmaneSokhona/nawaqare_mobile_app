@@ -95,17 +95,17 @@ class PatientDetailScreen extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        IconButton(
-          onPressed: () {
-            // Add more options like share, edit, etc.
-            _showOptionsMenu();
-          },
-          icon: Icon(
-            Icons.more_vert,
-            color: AppColors.primaryColor,
-            size: 24.sp,
-          ),
-        ),
+        // IconButton(
+        //   onPressed: () {
+        //     // Add more options like share, edit, etc.
+        //     _showOptionsMenu();
+        //   },
+        //   icon: Icon(
+        //     Icons.more_vert,
+        //     color: AppColors.primaryColor,
+        //     size: 24.sp,
+        //   ),
+        // ),
       ],
     );
   }

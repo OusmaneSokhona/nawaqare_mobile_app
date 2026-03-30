@@ -9,7 +9,7 @@ import 'doctor_appoinment_controller.dart';
 
 class DoctorFollowupController extends GetxController {
   final ApiService _apiService = ApiService();
-  final DoctorAppointmentController appointmentController = Get.find();
+  final DoctorAppointmentController appointmentController = Get.put(DoctorAppointmentController());
   final isLoadingAppointment = false.obs;
   final selectedDate = Rx<DateTime?>(null);
   final selectedTimeSlot = Rx<TimeSlot?>(null);
@@ -167,7 +167,7 @@ class DoctorFollowupController extends GetxController {
         print("Follow-up created successfully: ${response.data}");
         Get.back();
         Get.back();
-        appointmentController.fetchDoctorAppointments();
+
 
         Get.snackbar(
           "Success",
@@ -177,7 +177,7 @@ class DoctorFollowupController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           duration: const Duration(seconds: 2),
         );
-
+        appointmentController.fetchDoctorAppointments();
         return true;
       } else {
         errorMessage.value =

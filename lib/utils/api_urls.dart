@@ -64,4 +64,9 @@ class ApiUrls {
   static String updateNoteApi="api/note/update/";
   static String deleteNoteApi="api/note/delete/";
   static String getNotesApi="api/note/all/";
+  static String getReports="/api/reports/get/";
+  static String updateReport="/api/reports/update/";
+  static String createReport="/api/reports/create/";
+  static String deleteReportOfPatient="/api/reports/dlt/";
+  static String getPatientDetails="/api/doctor/patient-details/";
 }

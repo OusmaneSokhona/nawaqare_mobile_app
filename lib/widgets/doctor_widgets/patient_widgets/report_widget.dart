@@ -4,17 +4,25 @@ import 'package:get/get.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/widgets/doctor_widgets/patient_widgets/add_reports_dialog.dart';
+
+import '../../../controllers/doctor_controllers/report_controller.dart';
 
 class ReportWidget extends StatelessWidget {
   final String? patientId;
+  final String? doctorId;
 
-  const ReportWidget({
+   ReportWidget({
     Key? key,
     this.patientId,
+    this.doctorId,
   }) : super(key: key);
+  final ReportController controller = Get.put(ReportController());
 
   @override
   Widget build(BuildContext context) {
+controller.patientId=patientId??"";
+controller.fetchReports();
     return Column(
       children: [
         Align(
@@ -25,13 +33,64 @@ class ReportWidget extends StatelessWidget {
           ),
         ),
         10.verticalSpace,
-        _buildMedicalRecordsCard(context),
+        Obx(() {
+          if (controller.isLoading.value && controller.reports.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (controller.errorMessage.value.isNotEmpty) {
+            return Center(
+              child: Column(
+                children: [
+                  Text(
+                    controller.errorMessage.value,
+                    style: TextStyle(color: Colors.red, fontSize: 14.sp),
+                  ),
+                  SizedBox(height: 10.h),
+                  CustomButton(
+                    text: 'Retry',
+                    onTap: () => controller.fetchReports(),
+                   borderRadius: 15,
+                    height: 40.h,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (controller.reports.isEmpty) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 40.h),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.folder_open_outlined,
+                    size: 60.sp,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    'No reports found',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return _buildMedicalRecordsCard(context, controller);
+        }),
         20.verticalSpace,
         CustomButton(
           borderRadius: 15,
           text: AppStrings.addNewReports.tr,
           onTap: () {
-            _showAddReportDialog();
+           Get.dialog(AddReportDialog(controller: controller, patientId: patientId!));
           },
         ),
         30.verticalSpace,
@@ -41,9 +100,8 @@ class ReportWidget extends StatelessWidget {
 
   Widget _buildRecordTile(
       BuildContext context,
-      IconData iconData,
-      String title,
-      String date,
+      ReportController controller,
+      Report report,
       ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,11 +113,15 @@ class ReportWidget extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Icon(iconData, color: Colors.blue.shade700, size: 19.sp),
+                  Icon(
+                    controller.getIconForCategory(report.category),
+                    color: Colors.blue.shade700,
+                    size: 19.sp,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      title,
+                      report.name,
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -75,7 +137,7 @@ class ReportWidget extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    _viewReport(title);
+                    controller.viewReport(report);
                   },
                   child: Icon(
                     Icons.visibility_outlined,
@@ -86,7 +148,7 @@ class ReportWidget extends StatelessWidget {
                 SizedBox(width: 10.w),
                 InkWell(
                   onTap: () {
-                    _showDeleteConfirmation(title);
+                    _showDeleteConfirmation(controller, report);
                   },
                   child: Icon(
                     Icons.delete_outline,
@@ -104,7 +166,7 @@ class ReportWidget extends StatelessWidget {
             Icon(Icons.check_circle, color: Colors.green.shade600, size: 16.sp),
             const SizedBox(width: 8),
             Text(
-              date,
+              controller.formatDate(report.createdAt),
               style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
             ),
           ],
@@ -113,7 +175,10 @@ class ReportWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildMedicalRecordsCard(BuildContext context) {
+  Widget _buildMedicalRecordsCard(
+      BuildContext context,
+      ReportController controller,
+      ) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -130,58 +195,32 @@ class ReportWidget extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _buildRecordTile(
-              context,
-              Icons.science_outlined,
-              AppStrings.bloodTest.tr,
-              'Jan 2025',
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: Divider(
-                height: 0,
-                thickness: 1,
-                color: Colors.grey.shade300,
-              ),
-            ),
-            _buildRecordTile(
-              context,
-              Icons.description_outlined,
-              AppStrings.chestXray.tr,
-              'Jan 2025',
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.h),
-              child: Divider(
-                height: 0,
-                thickness: 1,
-                color: Colors.grey.shade300,
-              ),
-            ),
-            _buildRecordTile(
-              context,
-              Icons.medical_services_outlined,
-              'MRI Scan',
-              'Dec 2024',
-            ),
-          ],
+          children: List.generate(
+            controller.reports.length,
+                (index) {
+              final report = controller.reports[index];
+              return Column(
+                children: [
+                  _buildRecordTile(context, controller, report),
+                  if (index < controller.reports.length - 1)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      child: Divider(
+                        height: 0,
+                        thickness: 1,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
 
-  void _viewReport(String reportTitle) {
-    Get.snackbar(
-      'Viewing Report',
-      'Opening $reportTitle',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppColors.primaryColor,
-      colorText: Colors.white,
-    );
-  }
-
-  void _showDeleteConfirmation(String reportTitle) {
+  void _showDeleteConfirmation(ReportController controller, Report report) {
     Get.dialog(
       AlertDialog(
         title: Text(
@@ -192,7 +231,7 @@ class ReportWidget extends StatelessWidget {
           ),
         ),
         content: Text(
-          'Are you sure you want to delete $reportTitle?',
+          'Are you sure you want to delete ${report.name}?',
           style: TextStyle(fontSize: 14.sp),
         ),
         actions: [
@@ -206,13 +245,7 @@ class ReportWidget extends StatelessWidget {
           TextButton(
             onPressed: () {
               Get.back();
-              Get.snackbar(
-                'Deleted',
-                'Report deleted successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
+              controller.deleteReport(report.id);
             },
             child: Text(
               'Delete',
@@ -224,85 +257,4 @@ class ReportWidget extends StatelessWidget {
     );
   }
 
-  void _showAddReportDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: Text(
-          'Add New Report',
-          style: TextStyle(
-            fontSize: 18.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Report Title',
-                hintText: 'e.g., Blood Test Report',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Date',
-                hintText: 'Select date',
-                suffixIcon: Icon(Icons.calendar_today),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-              ),
-            ),
-            SizedBox(height: 10.h),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Notes',
-                hintText: 'Enter any additional notes',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-              ),
-              maxLines: 3,
-            ),
-            SizedBox(height: 10.h),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Upload file
-              },
-              icon: Icon(Icons.upload_file),
-              label: Text('Upload File'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey.shade200,
-                foregroundColor: Colors.black,
-                minimumSize: Size(1.sw, 45.h),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-              Get.snackbar(
-                'Success',
-                'Report added successfully',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: AppColors.green,
-                colorText: Colors.white,
-              );
-            },
-            child: Text('Add'),
-          ),
-        ],
-      ),
-    );
-  }
 }

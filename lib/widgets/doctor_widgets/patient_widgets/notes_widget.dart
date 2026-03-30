@@ -267,7 +267,6 @@ class NotesWidget extends StatelessWidget {
             ],
           ),
           SizedBox(height: 12.h),
-
           Text(
             AppStrings.diagnosisNotes.tr,
             style: TextStyle(

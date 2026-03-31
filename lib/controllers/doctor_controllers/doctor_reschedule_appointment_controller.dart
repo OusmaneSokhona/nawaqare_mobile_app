@@ -10,8 +10,9 @@ import '../../../utils/api_urls.dart';
 class DoctorRescheduleAppointmentController extends GetxController {
   final ApiService _apiService = ApiService();
   late DoctorHomeController homeController;
-  DoctorAppointmentController appointmentController = Get.put(DoctorAppointmentController());
-   String appointmentId="";
+  DoctorAppointmentController appointmentController = Get.find();
+  String appointmentId = "";
+
   final selectedDate = Rx<DateTime?>(null);
   final selectedTimeSlot = Rx<TimeSlot?>(null);
   final reasonController = TextEditingController();
@@ -27,13 +28,10 @@ class DoctorRescheduleAppointmentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
     try {
       homeController = Get.find<DoctorHomeController>();
       doctorId = homeController.currentUser.value?.id ?? "";
-      print("Doctor ID initialized: $doctorId");
     } catch (e) {
-      print("Error getting DoctorHomeController: $e");
       doctorId = "";
     }
   }
@@ -71,37 +69,33 @@ class DoctorRescheduleAppointmentController extends GetxController {
 
   Future<void> fetchTimeSlots() async {
     if (selectedDate.value == null || doctorId.isEmpty) {
-      print("Cannot fetch time slots: date=${selectedDate.value}, doctorId=$doctorId");
       return;
     }
 
     isLoadingTimeSlots.value = true;
     try {
-      print("Fetching time slots for doctor: $doctorId");
       final response = await _apiService.get(
-        '${ApiUrls.getDoctorTimeSlots}/$doctorId',
+        '${ApiUrls.getDoctorTimeSlots}$doctorId',
       );
 
       if (response.statusCode == 200) {
-        print("Time slots response received");
         final timeSlotResponse = TimeSlotResponse.fromJson(response.data);
         final selectedDateStr = DateFormat('yyyy-MM-dd').format(selectedDate.value!);
 
-        final slots = timeSlotResponse.slots.where((slot) {
+        final allSlots = timeSlotResponse.doctor?.allSlots ?? timeSlotResponse.slots;
+
+        final slots = allSlots.where((slot) {
           final isAvailable = slot.status.toLowerCase() == 'available';
           final slotDate = slot.slotDate ?? DateFormat('yyyy-MM-dd').format(slot.startTime);
           return slotDate == selectedDateStr && isAvailable;
         }).toList();
 
         slots.sort((a, b) => a.startTime.compareTo(b.startTime));
-        print("Filtered slots for $selectedDateStr: ${slots.length}");
         availableTimeSlots.assignAll(slots);
       } else {
-        print("Failed to fetch time slots: ${response.statusCode}");
         availableTimeSlots.clear();
       }
     } catch (e) {
-      print('Fetch time slots error: $e');
       availableTimeSlots.clear();
     } finally {
       isLoadingTimeSlots.value = false;
@@ -118,7 +112,7 @@ class DoctorRescheduleAppointmentController extends GetxController {
 
   bool validateFields() {
     if (appointmentId.isEmpty) {
-      errorMessage.value = 'Appointment Id not Selected';
+      errorMessage.value = 'Appointment not selected';
       return false;
     }
 
@@ -132,7 +126,7 @@ class DoctorRescheduleAppointmentController extends GetxController {
       return false;
     }
 
-    if (reasonController.text.isEmpty) {
+    if (reasonController.text.trim().isEmpty) {
       errorMessage.value = 'Please provide a reason for rescheduling';
       return false;
     }
@@ -152,8 +146,6 @@ class DoctorRescheduleAppointmentController extends GetxController {
         'reason': reasonController.text.trim(),
       };
 
-      print("Rescheduling appointment with data: $rescheduleData");
-
       final response = await _apiService.post(
         ApiUrls.rescheduleAppointment,
         data: rescheduleData,
@@ -168,7 +160,6 @@ class DoctorRescheduleAppointmentController extends GetxController {
         return false;
       }
     } catch (e) {
-      print('Reschedule appointment error: $e');
       errorMessage.value = 'An error occurred: $e';
       return false;
     } finally {
@@ -177,7 +168,7 @@ class DoctorRescheduleAppointmentController extends GetxController {
   }
 
   void resetForm() {
-    appointmentId="";
+    appointmentId = "";
     selectedDate.value = null;
     selectedTimeSlot.value = null;
     reasonController.clear();

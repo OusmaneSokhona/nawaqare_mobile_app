@@ -227,9 +227,9 @@ class EditDayDrawer extends StatelessWidget {
                     Obx(
                           () => CustomRadioTile(
                           text: AppStrings.inPerson.tr,
-                          isSelected: controller.inPerson.value,
+                          isSelected: controller.consultationType.value == 'inperson',
                           onTap: () {
-                            controller.inPerson.value = !controller.inPerson.value;
+                            controller.setConsultationType('inperson');
                           }
                       ),
                     ),
@@ -237,66 +237,20 @@ class EditDayDrawer extends StatelessWidget {
                     Obx(
                           () => CustomRadioTile(
                           text: AppStrings.teleconsultation.tr,
-                          isSelected: controller.teleConsultation.value,
+                          isSelected: controller.consultationType.value == 'remote',
                           onTap: () {
-                            controller.teleConsultation.value = !controller.teleConsultation.value;
+                            controller.setConsultationType('remote');
                           }
                       ),
                     ),
                     10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
-                          text: AppStrings.mixed.tr,
-                          isSelected: controller.mixed.value,
+                          text: AppStrings.homeVisit.tr,
+                          isSelected: controller.consultationType.value == 'homevisit',
                           onTap: () {
-                            controller.mixed.value = !controller.mixed.value;
+                            controller.setConsultationType('homevisit');
                           }
-                      ),
-                    ),
-                    10.verticalSpace,
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        AppStrings.services.tr,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: AppFonts.jakartaBold,
-                        ),
-                      ),
-                    ),
-                    10.verticalSpace,
-                    Obx(
-                          () => CustomRadioTile(
-                        text: AppStrings.consultation.tr,
-                        isSelected: controller.consultation.value,
-                        onTap: () {
-                          controller.consultation.value = !controller.consultation.value;
-                        },
-                        isCircle: false,
-                      ),
-                    ),
-                    10.verticalSpace,
-                    Obx(
-                          () => CustomRadioTile(
-                        text: AppStrings.followUp.tr,
-                        isSelected: controller.followUp.value,
-                        onTap: () {
-                          controller.followUp.value = !controller.followUp.value;
-                        },
-                        isCircle: false,
-                      ),
-                    ),
-                    10.verticalSpace,
-                    Obx(
-                          () => CustomRadioTile(
-                        text: AppStrings.physiotherapy.tr,
-                        isSelected: controller.physiotherapy.value,
-                        onTap: () {
-                          controller.physiotherapy.value = !controller.physiotherapy.value;
-                        },
-                        isCircle: false,
                       ),
                     ),
                     30.verticalSpace,
@@ -321,17 +275,6 @@ class EditDayDrawer extends StatelessWidget {
                       },
                       bgColor: AppColors.inACtiveButtonColor,
                       fontColor: Colors.black,
-                    ),
-                    10.verticalSpace,
-                    Center(
-                      child: Text(
-                        "${AppStrings.autoSaved.tr}: ${AppStrings.lastSaved.tr} ${DateFormat('HH:mm').format(DateTime.now())}",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.lightGrey,
-                        ),
-                      ),
                     ),
                     30.verticalSpace,
                   ],

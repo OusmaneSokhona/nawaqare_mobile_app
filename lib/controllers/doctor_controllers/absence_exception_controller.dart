@@ -102,12 +102,14 @@ class AbsenceExceptionController extends GetxController {
 
 class CancelledSlot {
   final DateTime date;
+  final DateTime cancelledAt;
   final String reason;
   final String slotId;
   final String status;
 
   CancelledSlot({
     required this.date,
+    required this.cancelledAt,
     required this.reason,
     required this.slotId,
     required this.status,
@@ -115,7 +117,8 @@ class CancelledSlot {
 
   factory CancelledSlot.fromJson(Map<String, dynamic> json) {
     return CancelledSlot(
-      date: DateTime.parse(json['cancelledAt']),
+      date: DateTime.parse(json['date']),
+      cancelledAt: DateTime.parse(json['cancelledAt']),
       reason: json['reason'] ?? '',
       slotId: json['slotId'] ?? '',
       status: json['status'] ?? '',
@@ -124,6 +127,7 @@ class CancelledSlot {
 
   // Helper method to get formatted date for display
   String get formattedDate => DateFormat('MMM d, yyyy').format(date);
+  String get cancelledDate => DateFormat('MMM d, yyyy').format(cancelledAt);
 
   // Helper method to get a user-friendly status text
   String get statusText {

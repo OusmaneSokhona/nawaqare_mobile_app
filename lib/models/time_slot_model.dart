@@ -22,21 +22,27 @@ class TimeSlotResponse {
 class Doctor {
   final String id;
   final String fullName;
+  final String medicalSpecialty;
   final List<TimeSlot> allSlots;
+  final String clinicAddress;
 
   Doctor({
     required this.id,
     required this.fullName,
+    required this.medicalSpecialty,
     required this.allSlots,
+    required this.clinicAddress,
   });
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
-      id: json['_id'],
-      fullName: json['fullName'],
+      id: json['_id'] ?? '',
+      fullName: json['fullName'] ?? '',
+      medicalSpecialty: json['medicalSpecialty'] ?? '',
       allSlots: (json['allSlots'] as List)
           .map((slot) => TimeSlot.fromJson(slot))
           .toList(),
+      clinicAddress: json['clinicAddress'] ?? '',
     );
   }
 }
@@ -45,29 +51,30 @@ class TimeSlot {
   final String id;
   final DateTime startTime;
   final DateTime endTime;
+  final String consultationType;
   final String status;
-  String? slotDate; // Add slotDate field
+  String? slotDate;
 
   TimeSlot({
     required this.id,
     required this.startTime,
     required this.endTime,
+    required this.consultationType,
     required this.status,
     this.slotDate,
   });
 
   factory TimeSlot.fromJson(Map<String, dynamic> json) {
-    // FIX: Parse UTC time and convert to local
     final startTimeUtc = DateTime.parse(json['startTime']);
     final endTimeUtc = DateTime.parse(json['endTime']);
 
     return TimeSlot(
       id: json['_id'] ?? '',
-      // Convert UTC to local time (Pakistan Time - UTC+5)
       startTime: startTimeUtc.toLocal(),
       endTime: endTimeUtc.toLocal(),
+      consultationType: json['consultationType'] ?? '',
       status: json['status'] ?? '',
-      slotDate: json['date'] ?? DateFormat('yyyy-MM-dd').format(startTimeUtc.toLocal()),
+      slotDate: DateFormat('yyyy-MM-dd').format(startTimeUtc.toLocal()),
     );
   }
 

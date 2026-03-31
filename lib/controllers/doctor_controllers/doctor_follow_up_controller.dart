@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../models/time_slot_model.dart';
-import '../../../models/appointment_model.dart';
 import '../../../services/api_service.dart';
 import '../../../utils/api_urls.dart';
 import 'doctor_appoinment_controller.dart';
@@ -10,11 +9,12 @@ import 'doctor_appoinment_controller.dart';
 class DoctorFollowupController extends GetxController {
   final ApiService _apiService = ApiService();
   final DoctorAppointmentController appointmentController = Get.put(DoctorAppointmentController());
-  final isLoadingAppointment = false.obs;
+
   final selectedDate = Rx<DateTime?>(null);
   final selectedTimeSlot = Rx<TimeSlot?>(null);
   final followupPriceController = TextEditingController();
   final notesController = TextEditingController();
+
   final availableTimeSlots = <TimeSlot>[].obs;
   final isLoadingTimeSlots = false.obs;
   final isLoading = false.obs;
@@ -62,44 +62,33 @@ class DoctorFollowupController extends GetxController {
 
   Future<void> fetchTimeSlots() async {
     if (selectedDate.value == null || doctorId.isEmpty) {
-      print(
-        "Cannot fetch time slots: date=${selectedDate.value}, doctorId=$doctorId",
-      );
       return;
     }
 
     isLoadingTimeSlots.value = true;
     try {
-      print("Fetching time slots for doctor: $doctorId");
       final response = await _apiService.get(
-        '${ApiUrls.getDoctorTimeSlots}/$doctorId',
+        '${ApiUrls.getDoctorTimeSlots}$doctorId',
       );
 
       if (response.statusCode == 200) {
-        print("Time slots response received");
         final timeSlotResponse = TimeSlotResponse.fromJson(response.data);
-        final selectedDateStr = DateFormat(
-          'yyyy-MM-dd',
-        ).format(selectedDate.value!);
+        final selectedDateStr = DateFormat('yyyy-MM-dd').format(selectedDate.value!);
 
-        final slots =
-            timeSlotResponse.slots.where((slot) {
-              final isAvailable = slot.status.toLowerCase() == 'available';
-              final slotDate =
-                  slot.slotDate ??
-                  DateFormat('yyyy-MM-dd').format(slot.startTime);
-              return slotDate == selectedDateStr && isAvailable;
-            }).toList();
+        final allSlots = timeSlotResponse.doctor?.allSlots ?? timeSlotResponse.slots;
+
+        final slots = allSlots.where((slot) {
+          final isAvailable = slot.status.toLowerCase() == 'available';
+          final slotDate = slot.slotDate ?? DateFormat('yyyy-MM-dd').format(slot.startTime);
+          return slotDate == selectedDateStr && isAvailable;
+        }).toList();
 
         slots.sort((a, b) => a.startTime.compareTo(b.startTime));
-        print("Filtered slots for $selectedDateStr: ${slots.length}");
         availableTimeSlots.assignAll(slots);
       } else {
-        print("Failed to fetch time slots: ${response.statusCode}");
         availableTimeSlots.clear();
       }
     } catch (e) {
-      print('Fetch time slots error: $e');
       availableTimeSlots.clear();
     } finally {
       isLoadingTimeSlots.value = false;
@@ -125,12 +114,11 @@ class DoctorFollowupController extends GetxController {
       return false;
     }
 
-    if (followupPriceController.text.isEmpty) {
+    if (followupPriceController.text.trim().isEmpty) {
       errorMessage.value = 'Please enter follow-up price';
       return false;
     }
 
-    // Validate price is a number
     if (double.tryParse(followupPriceController.text) == null) {
       errorMessage.value = 'Please enter a valid price';
       return false;
@@ -151,12 +139,9 @@ class DoctorFollowupController extends GetxController {
         'followupPrice': int.parse(followupPriceController.text),
       };
 
-      // Add notes if provided
-      if (notesController.text.isNotEmpty) {
-        followupData['notes'] = notesController.text;
+      if (notesController.text.trim().isNotEmpty) {
+        followupData['notes'] = notesController.text.trim();
       }
-
-      print("Creating follow-up with data: $followupData");
 
       final response = await _apiService.post(
         ApiUrls.createFollowUp,
@@ -164,43 +149,15 @@ class DoctorFollowupController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print("Follow-up created successfully: ${response.data}");
-        Get.back();
-        Get.back();
-
-
-        Get.snackbar(
-          "Success",
-          "Follow-up appointment scheduled successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 2),
-        );
         appointmentController.fetchDoctorAppointments();
+        resetForm();
         return true;
       } else {
-        errorMessage.value =
-            response.data['message'] ?? 'Failed to create follow-up';
-        Get.snackbar(
-          "Error",
-          errorMessage.value,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
+        errorMessage.value = response.data['message'] ?? 'Failed to create follow-up';
         return false;
       }
     } catch (e) {
-      print('Create follow-up error: $e');
       errorMessage.value = 'An error occurred: $e';
-      Get.snackbar(
-        "Error",
-        errorMessage.value,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-      );
       return false;
     } finally {
       isLoading.value = false;
@@ -209,8 +166,8 @@ class DoctorFollowupController extends GetxController {
 
   void resetForm() {
     selectedDate.value = null;
-    followupPriceController.text="";
     selectedTimeSlot.value = null;
+    followupPriceController.clear();
     notesController.clear();
     availableTimeSlots.clear();
     errorMessage.value = '';

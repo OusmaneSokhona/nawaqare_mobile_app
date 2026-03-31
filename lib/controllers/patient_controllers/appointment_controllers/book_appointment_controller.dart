@@ -149,6 +149,7 @@ class BookAppointmentController extends GetxController {
         startTime: DateTime.now(),
         endTime: DateTime.now(),
         status: '',
+        consultationType: ""
       ),
     );
   }

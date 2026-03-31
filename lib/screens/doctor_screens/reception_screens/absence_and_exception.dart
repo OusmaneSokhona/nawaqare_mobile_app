@@ -210,6 +210,7 @@ class AbsenceAndException extends StatelessWidget {
                                     dateRange: item.formattedDate,
                                     status: item.status,
                                     reason: item.reason,
+                                    cancelledAt: item.cancelledDate,
                                   );
                                 },
                               ),
@@ -268,6 +269,7 @@ class AbsenceAndException extends StatelessWidget {
 
   Widget _buildStatusRow({
     required String dateRange,
+    required String cancelledAt,
     required String status,
     String? reason,
     bool isNotified = false,
@@ -319,6 +321,26 @@ class AbsenceAndException extends StatelessWidget {
                   color: Color(0xFF9E9E9E),
                 ),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  "Cancelled At:",
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFFBDBDBD),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  cancelledAt,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFFBDBDBD),
+                  ),
+                ),
+              ],
             ),
           ],
         ],

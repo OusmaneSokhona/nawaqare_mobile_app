@@ -14,6 +14,7 @@ class DoctorFollowupScreen extends StatelessWidget {
   final DoctorFollowupController controller = Get.put(
     DoctorFollowupController(),
   );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +35,6 @@ class DoctorFollowupScreen extends StatelessWidget {
             child: Column(
               children: [
                 20.verticalSpace,
-                // Header
                 Row(
                   children: [
                     InkWell(
@@ -84,6 +84,24 @@ class DoctorFollowupScreen extends StatelessWidget {
                               final result = await controller.createFollowUp(appointmentId);
                               if (result) {
                                 Get.back();
+                                Get.back();
+                                Get.snackbar(
+                                  "Success",
+                                  "Follow-up scheduled successfully",
+                                  backgroundColor: Colors.green,
+                                  colorText: Colors.white,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  duration: const Duration(seconds: 2),
+                                );
+                              } else {
+                                Get.snackbar(
+                                  "Error",
+                                  controller.errorMessage.value,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                  snackPosition: SnackPosition.BOTTOM,
+                                  duration: const Duration(seconds: 2),
+                                );
                               }
                             },
                           ),
@@ -100,8 +118,6 @@ class DoctorFollowupScreen extends StatelessWidget {
       ),
     );
   }
-
-
 
   Widget _buildDateField() {
     return Column(
@@ -219,10 +235,7 @@ class DoctorFollowupScreen extends StatelessWidget {
                     child: Obx(
                           () => Text(
                         controller.selectedTimeSlot.value != null
-                            ? controller
-                            .selectedTimeSlot
-                            .value!
-                            .formattedTime
+                            ? '${controller.formatTime(controller.selectedTimeSlot.value!.startTime)} - ${controller.formatTime(controller.selectedTimeSlot.value!.endTime)} (${_getConsultationTypeLabel(controller.selectedTimeSlot.value!.consultationType)})'
                             : controller.selectedDate.value != null
                             ? "Tap to select time slot"
                             : "Select date first",
@@ -247,7 +260,6 @@ class DoctorFollowupScreen extends StatelessWidget {
             ),
           ),
         ),
-        // Availability info
         Obx(() {
           if (controller.selectedDate.value != null &&
               !controller.isLoadingTimeSlots.value) {
@@ -279,17 +291,51 @@ class DoctorFollowupScreen extends StatelessWidget {
     );
   }
 
+  String _getConsultationTypeLabel(String type) {
+    switch (type.toLowerCase()) {
+      case 'remote':
+        return 'Remote';
+      case 'inperson':
+        return 'In-Person';
+      case 'homevisit':
+        return 'Home Visit';
+      default:
+        return type;
+    }
+  }
+
+  Color _getConsultationTypeColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'remote':
+        return Colors.blue;
+      case 'inperson':
+        return Colors.green;
+      case 'homevisit':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
+  }
+
   Widget _buildPriceField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          "Follow-up Price",
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            fontFamily: AppFonts.jakartaMedium,
+            color: Colors.black87,
+          ),
+        ),
         8.verticalSpace,
         CustomTextField(
-          labelText: "Follow-up Price",
+          labelText: "Price",
           hintText: "Enter follow-up price",
           controller: controller.followupPriceController,
           keyboardType: TextInputType.number,
-
         ),
       ],
     );
@@ -321,7 +367,7 @@ class DoctorFollowupScreen extends StatelessWidget {
   void _showTimeSlotsBottomSheet() {
     Get.bottomSheet(
       Container(
-        height: 0.6.sh,
+        height: 0.7.sh,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.sp)),
@@ -377,84 +423,112 @@ class DoctorFollowupScreen extends StatelessWidget {
                   );
                 }
 
-                return Padding(
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.all(16.sp),
-                  child: GridView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.6,
-                      crossAxisSpacing: 12.w,
-                      mainAxisSpacing: 12.h,
-                    ),
-                    itemCount: controller.availableTimeSlots.length,
-                    itemBuilder: (context, index) {
-                      final slot = controller.availableTimeSlots[index];
-                      final isSelected =
-                          controller.selectedTimeSlot.value?.id == slot.id;
+                  itemCount: controller.availableTimeSlots.length,
+                  itemBuilder: (context, index) {
+                    final slot = controller.availableTimeSlots[index];
+                    final isSelected =
+                        controller.selectedTimeSlot.value?.id == slot.id;
 
-                      return GestureDetector(
-                        onTap: () {
-                          controller.selectedTimeSlot.value = slot;
-                          Get.back();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
+                    return GestureDetector(
+                      onTap: () {
+                        controller.selectedTimeSlot.value = slot;
+                        Get.back();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primaryColor.withOpacity(0.1)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(12.sp),
+                          border: Border.all(
                             color: isSelected
-                                ? AppColors.primaryColor.withOpacity(0.1)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12.sp),
-                            border: Border.all(
-                              color: isSelected
-                                  ? AppColors.primaryColor
-                                  : Colors.grey.shade300,
-                              width: isSelected ? 2 : 1,
-                            ),
+                                ? AppColors.primaryColor
+                                : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 16.h,
+                          ),
+                          child: Row(
                             children: [
-                              Icon(
-                                Icons.access_time,
-                                color: isSelected
-                                    ? AppColors.primaryColor
-                                    : Colors.grey,
-                                size: 20.sp,
-                              ),
-                              5.verticalSpace,
-                              Text(
-                                controller.formatTime(slot.startTime),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w600,
+                              Container(
+                                padding: EdgeInsets.all(10.sp),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.primaryColor.withOpacity(0.1)
+                                      : Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(10.sp),
+                                ),
+                                child: Icon(
+                                  Icons.access_time,
                                   color: isSelected
                                       ? AppColors.primaryColor
-                                      : Colors.black,
+                                      : Colors.grey,
+                                  size: 20.sp,
                                 ),
                               ),
-                              Text(
-                                "-",
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Colors.grey,
+                              15.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${controller.formatTime(slot.startTime)} - ${controller.formatTime(slot.endTime)}',
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: isSelected
+                                            ? AppColors.primaryColor
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                    4.verticalSpace,
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _getConsultationTypeColor(
+                                          slot.consultationType,
+                                        ).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8.sp),
+                                      ),
+                                      child: Text(
+                                        _getConsultationTypeLabel(
+                                          slot.consultationType,
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: _getConsultationTypeColor(
+                                            slot.consultationType,
+                                          ),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                controller.formatTime(slot.endTime),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: isSelected
-                                      ? AppColors.primaryColor
-                                      : Colors.black,
+                              if (isSelected)
+                                Icon(
+                                  Icons.check_circle,
+                                  color: AppColors.primaryColor,
+                                  size: 20.sp,
                                 ),
-                              ),
                             ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               }),
             ),

@@ -87,44 +87,47 @@ class CalenderScreen extends StatelessWidget {
                                 color: Colors.black,
                               ),
                             ),
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 0),
-                              decoration: BoxDecoration(
-                                color: AppColors.lightGrey.withOpacity(0.1),
-                                border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: Obx(
-                                      () => DropdownButton<String>(
-                                    value: controller.selectedDuration.value,
-                                    icon: Icon(Icons.keyboard_arrow_down, color: AppColors.lightGrey),
-                                    items: [
-                                      DropdownMenuItem<String>(
-                                        value: 'daily',
-                                        child: Text(AppStrings.daily.tr),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 0),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.lightGrey.withOpacity(0.1),
+                                    border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+                                    borderRadius: BorderRadius.circular(8.r),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: Obx(
+                                          () => DropdownButton<String>(
+                                        value: controller.selectedDuration.value,
+                                        icon: Icon(Icons.keyboard_arrow_down, color: AppColors.lightGrey),
+                                        items: [
+                                          DropdownMenuItem<String>(
+                                            value: 'daily',
+                                            child: Text(AppStrings.daily.tr),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'weekly',
+                                            child: Text(AppStrings.weekly.tr),
+                                          ),
+                                          DropdownMenuItem<String>(
+                                            value: 'monthly',
+                                            child: Text(AppStrings.monthly.tr),
+                                          ),
+                                        ],
+                                        onChanged: (String? newValue) {
+                                          if (newValue != null) {
+                                            controller.selectedDuration.value = newValue;
+                                            controller.filterSlotsByDuration();
+                                          }
+                                        },
+                                        dropdownColor: Colors.white,
+                                        isExpanded: false,
+                                        hint: Text(_getDisplayValue(controller.selectedDuration.value)),
                                       ),
-                                      DropdownMenuItem<String>(
-                                        value: 'weekly',
-                                        child: Text(AppStrings.weekly.tr),
-                                      ),
-                                      DropdownMenuItem<String>(
-                                        value: 'monthly',
-                                        child: Text(AppStrings.monthly.tr),
-                                      ),
-                                    ],
-                                    onChanged: (String? newValue) {
-                                      if (newValue != null) {
-                                        controller.selectedDuration.value = newValue;
-                                      }
-                                    },
-                                    dropdownColor: Colors.white,
-                                    isExpanded: false,
-                                    hint: Text(_getDisplayValue(controller.selectedDuration.value)),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+
                           ],
                         ),
                         SizedBox(height: 16.h),
@@ -164,6 +167,50 @@ class CalenderScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             )),
+                            Container(
+                              height: 35.h,
+                              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 0),
+                              decoration: BoxDecoration(
+                                color: AppColors.lightGrey.withOpacity(0.1),
+                                border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: Obx(
+                                      () => DropdownButton<String>(
+                                    value: controller.selectedConsultationType.value,
+                                    icon: Icon(Icons.keyboard_arrow_down, color: AppColors.lightGrey,size: 20.sp,),
+                                    items: [
+                                      DropdownMenuItem<String>(
+                                        value: 'all',
+                                        child: Text('All Types',style: TextStyle(fontSize:14.sp),),
+                                      ),
+                                      DropdownMenuItem<String>(
+                                        value: 'inperson',
+                                        child: Text('In Person',style: TextStyle(fontSize:14.sp),),
+                                      ),
+                                      DropdownMenuItem<String>(
+                                        value: 'remote',
+                                        child: Text('Remote',style: TextStyle(fontSize:14.sp),),
+                                      ),
+                                      DropdownMenuItem<String>(
+                                        value: 'homevisit',
+                                        child: Text('Home Visit',style: TextStyle(fontSize:14.sp),),
+                                      ),
+                                    ],
+                                    onChanged: (String? newValue) {
+                                      if (newValue != null) {
+                                        controller.selectedConsultationType.value = newValue;
+                                        controller.filterSlotsByDuration();
+                                      }
+                                    },
+                                    dropdownColor: Colors.white,
+                                    isExpanded: false,
+                                    hint: Text(_getConsultationTypeDisplayValue(controller.selectedConsultationType.value)),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         SizedBox(height: 16.h),
@@ -323,16 +370,6 @@ class CalenderScreen extends StatelessWidget {
                               controller.scaffoldKey.currentState!.openEndDrawer();
                             }
                         ),
-                        // 10.verticalSpace,
-                        // CustomButton(
-                        //   borderRadius: 15,
-                        //   text: AppStrings.viewAsPatient.tr,
-                        //   onTap: () {
-                        //     Get.to(ViewAsPatient());
-                        //   },
-                        //   bgColor: AppColors.inACtiveButtonColor,
-                        //   fontColor: Colors.black,
-                        // ),
                         30.verticalSpace,
                       ],
                     ),
@@ -354,6 +391,21 @@ class CalenderScreen extends StatelessWidget {
         return AppStrings.weekly.tr;
       case 'monthly':
         return AppStrings.monthly.tr;
+      default:
+        return value;
+    }
+  }
+
+  String _getConsultationTypeDisplayValue(String value) {
+    switch (value) {
+      case 'all':
+        return 'All Types';
+      case 'inperson':
+        return 'In Person';
+      case 'video':
+        return 'Video Call';
+      case 'audio':
+        return 'Audio Call';
       default:
         return value;
     }
@@ -509,7 +561,6 @@ class CalenderScreen extends StatelessWidget {
                   right: 0,
                   child: InkWell(
                     onTap: () {
-                      print("object");
                       if (!isDeleting) {
                         controller.deleteTimeSlot(slotId);
                       }

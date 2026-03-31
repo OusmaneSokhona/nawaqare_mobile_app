@@ -2,25 +2,26 @@ class TimeSlotModelDoctor {
   final String id;
   final DateTime startTime;
   final DateTime endTime;
+  final String consultationType;
   final String status;
 
   TimeSlotModelDoctor({
     required this.id,
     required this.startTime,
     required this.endTime,
+    required this.consultationType,
     required this.status,
   });
 
   factory TimeSlotModelDoctor.fromJson(Map<String, dynamic> json) {
-    // FIX: Parse UTC time and convert to local
     final startTimeUtc = DateTime.parse(json['startTime']);
     final endTimeUtc = DateTime.parse(json['endTime']);
 
     return TimeSlotModelDoctor(
       id: json['_id'] ?? '',
-      // Convert UTC to local time (Pakistan Time - UTC+5)
       startTime: startTimeUtc.toLocal(),
       endTime: endTimeUtc.toLocal(),
+      consultationType: json['consultationType'] ?? 'inperson',
       status: json['status'] ?? '',
     );
   }
@@ -28,9 +29,9 @@ class TimeSlotModelDoctor {
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
-      // FIX: When sending to backend, convert to UTC
       'startTime': startTime.toUtc().toIso8601String(),
       'endTime': endTime.toUtc().toIso8601String(),
+      'consultationType': consultationType,
       'status': status,
     };
   }
@@ -58,12 +59,14 @@ class DoctorWithSlots {
   final String fullName;
   final String medicalSpecialty;
   final List<TimeSlotModelDoctor> allSlots;
+  final String clinicAddress;
 
   DoctorWithSlots({
     required this.id,
     required this.fullName,
     required this.medicalSpecialty,
     required this.allSlots,
+    required this.clinicAddress,
   });
 
   factory DoctorWithSlots.fromJson(Map<String, dynamic> json) {
@@ -74,6 +77,7 @@ class DoctorWithSlots {
       allSlots: (json['allSlots'] as List? ?? [])
           .map((slot) => TimeSlotModelDoctor.fromJson(slot))
           .toList(),
+      clinicAddress: json['clinicAddress'] ?? '',
     );
   }
 }

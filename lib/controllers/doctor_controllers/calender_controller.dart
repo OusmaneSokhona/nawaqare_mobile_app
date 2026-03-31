@@ -18,11 +18,13 @@ class CalenderController extends GetxController {
 
   final selectedDate = DateTime.now().obs;
   final initialDate = DateTime.now().obs;
-  final selectedDuration = AppStrings.daily.obs;
+  final selectedDuration = 'daily'.obs;
+  final selectedConsultationType = 'all'.obs;
   final selectedTime = "".obs;
   final deletingSlotId = "".obs;
 
   final allSlots = <TimeSlotModelDoctor>[].obs;
+  final filteredSlots = <TimeSlotModelDoctor>[].obs;
   final isLoading = false.obs;
   final isCreating = false.obs;
   final isDeleting = false.obs;
@@ -32,6 +34,7 @@ class CalenderController extends GetxController {
   final cancelledTimes = <String>[].obs;
 
   final slotIdMap = <String, String>{}.obs;
+  final slotConsultationTypeMap = <String, String>{}.obs;
 
   final startTime = TimeOfDay.now().obs;
   final endTime = TimeOfDay.now().obs;
@@ -39,9 +42,7 @@ class CalenderController extends GetxController {
   final breakEndTime = const TimeOfDay(hour: 14, minute: 0).obs;
   final bufferTime = 15.obs;
 
-  final inPerson = false.obs;
-  final teleConsultation = false.obs;
-  final mixed = false.obs;
+  final consultationType = 'inperson'.obs;
 
   final consultation = false.obs;
   final followUp = false.obs;
@@ -54,15 +55,15 @@ class CalenderController extends GetxController {
     fetchSlotsForDate(selectedDate.value);
   }
 
+  void setConsultationType(String type) {
+    consultationType.value = type;
+  }
+
   TimeOfDay _addMinutesToTimeOfDay(TimeOfDay time, int minutes) {
     final totalMinutes = time.hour * 60 + time.minute + minutes;
     final newHour = totalMinutes ~/ 60;
     final newMinute = totalMinutes % 60;
     return TimeOfDay(hour: newHour % 24, minute: newMinute);
-  }
-
-  String _formatTimeOfDayForApi(TimeOfDay time) {
-    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
   String formatTimeOfDayForDisplay(TimeOfDay time) {
@@ -74,7 +75,7 @@ class CalenderController extends GetxController {
 
   void selectNewDate(DateTime date) {
     selectedDate.value = date;
-    fetchSlotsForDate(date);
+    filterSlotsByDuration();
   }
 
   void selectNewTime(String time) {
@@ -85,20 +86,26 @@ class CalenderController extends GetxController {
     return slotIdMap[timeString] ?? '';
   }
 
-  void _updateSlotIdMap() {
+  String getConsultationTypeByTime(String timeString) {
+    return slotConsultationTypeMap[timeString] ?? 'inperson';
+  }
+
+  void updateSlotIdMap() {
     slotIdMap.clear();
-    for (var slot in allSlots) {
+    slotConsultationTypeMap.clear();
+    for (var slot in filteredSlots) {
       final timeString = DateFormat('hh:mm a').format(slot.startTime.toLocal());
       slotIdMap[timeString] = slot.id;
+      slotConsultationTypeMap[timeString] = slot.consultationType;
     }
   }
 
-  void _categorizeSlots() {
+  void categorizeSlots() {
     availableTimes.clear();
     bookedTimes.clear();
     cancelledTimes.clear();
 
-    for (var slot in allSlots) {
+    for (var slot in filteredSlots) {
       final timeString = DateFormat('hh:mm a').format(slot.startTime.toLocal());
 
       if (slot.status == 'available') {
@@ -115,27 +122,74 @@ class CalenderController extends GetxController {
     cancelledTimes.sort();
   }
 
+  void filterSlotsByDuration() {
+    final now = selectedDate.value;
+    DateTime startDate;
+    DateTime endDate;
+
+    switch (selectedDuration.value) {
+      case 'daily':
+        startDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+        break;
+      case 'weekly':
+        final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+        startDate = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day, 0, 0, 0);
+        endDate = startDate.add(Duration(days: 7));
+        break;
+      case 'monthly':
+        startDate = DateTime(now.year, now.month, 1, 0, 0, 0);
+        endDate = DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+        break;
+      default:
+        startDate = DateTime(now.year, now.month, now.day, 0, 0, 0);
+        endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+    }
+
+    DateTime startDateLocal = startDate;
+    DateTime endDateLocal = endDate;
+
+    var durationFiltered = allSlots.where((slot) {
+      return slot.startTime.isAfter(startDateLocal) && slot.startTime.isBefore(endDateLocal);
+    }).toList();
+
+    if (selectedConsultationType.value != 'all') {
+      durationFiltered = durationFiltered.where((slot) {
+        return slot.consultationType == selectedConsultationType.value;
+      }).toList();
+    }
+
+    filteredSlots.value = durationFiltered;
+    updateSlotIdMap();
+    categorizeSlots();
+  }
+
   Future<void> fetchSlotsForDate(DateTime date) async {
     try {
       isLoading.value = true;
       allSlots.clear();
+      filteredSlots.clear();
 
       final response = await _apiService.get(ApiUrls.doctorSlotsApi);
 
       if (response.statusCode == 200) {
         final data = response.data;
-        final doctorResponse = DoctorSlotsResponse.fromJson(data);
 
-        // TimeSlotModelDoctor.fromJson already converts UTC to local
-        final filteredSlots = doctorResponse.doctor.allSlots.where((slot) {
-          final slotDate = DateFormat('yyyy-MM-dd').format(slot.startTime);
-          final selectedDateFormatted = DateFormat('yyyy-MM-dd').format(date);
-          return slotDate == selectedDateFormatted;
-        }).toList();
+        if (data['doctor'] != null && data['doctor']['allSlots'] != null) {
+          final slotsList = data['doctor']['allSlots'] as List;
 
-        allSlots.value = filteredSlots;
-        _updateSlotIdMap();
-        _categorizeSlots();
+          allSlots.value = slotsList.map((slotData) {
+            return TimeSlotModelDoctor(
+              id: slotData['_id'],
+              startTime: DateTime.parse(slotData['startTime']).toLocal(),
+              endTime: DateTime.parse(slotData['endTime']).toLocal(),
+              consultationType: slotData['consultationType'] ?? 'inperson',
+              status: slotData['status'] ?? 'available',
+            );
+          }).toList();
+
+          filterSlotsByDuration();
+        }
       }
     } catch (e) {
       print('Error fetching slots: $e');
@@ -155,6 +209,18 @@ class CalenderController extends GetxController {
     try {
       isCreating.value = true;
 
+      if (consultationType.value.isEmpty) {
+        Get.snackbar(
+          AppStrings.warning.tr,
+          'Please select a consultation type',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        isCreating.value = false;
+        return;
+      }
+
       if (endTime.value.hour < startTime.value.hour ||
           (endTime.value.hour == startTime.value.hour &&
               endTime.value.minute <= startTime.value.minute)) {
@@ -169,9 +235,8 @@ class CalenderController extends GetxController {
         return;
       }
 
-      final timeSlots = <Map<String, String>>[];
+      final timeSlots = <Map<String, dynamic>>[];
 
-      // Create local datetime (Pakistan Time - UTC+5)
       DateTime currentSlotTime = DateTime(
         selectedDate.value.year,
         selectedDate.value.month,
@@ -218,14 +283,13 @@ class CalenderController extends GetxController {
             : slotEndTime;
 
         if (actualEndTime.isAfter(currentSlotTime)) {
-          // FIX: Format as ISO 8601 datetime strings (UTC)
-          // Convert local time to UTC for API
           final startTimeUtc = currentSlotTime.toUtc();
           final endTimeUtc = actualEndTime.toUtc();
 
           timeSlots.add({
             'startTime': startTimeUtc.toIso8601String(),
             'endTime': endTimeUtc.toIso8601String(),
+            'consultationType': consultationType.value,
           });
         }
 
@@ -248,7 +312,7 @@ class CalenderController extends GetxController {
         'slots': timeSlots,
       };
 
-      print('Creating slots: ${jsonEncode(requestBody)}'); // Debug print
+      print('Creating slots: ${jsonEncode(requestBody)}');
 
       final response = await _apiService.post(
         ApiUrls.createSlotApi,
@@ -291,6 +355,7 @@ class CalenderController extends GetxController {
       isCreating.value = false;
     }
   }
+
   Future<void> deleteTimeSlot(String slotId) async {
     if (slotId.isEmpty) {
       Get.snackbar(
@@ -361,7 +426,7 @@ class CalenderController extends GetxController {
       isDeleting.value = true;
       deletingSlotId.value = slotId;
 
-      final slotToDelete = allSlots.firstWhereOrNull((slot) => slot.id == slotId);
+      final slotToDelete = filteredSlots.firstWhereOrNull((slot) => slot.id == slotId);
       if (slotToDelete == null) {
         Get.snackbar(
           AppStrings.warning.tr,
@@ -373,11 +438,8 @@ class CalenderController extends GetxController {
         return;
       }
 
-      final timeString = DateFormat('hh:mm a').format(slotToDelete.startTime.toLocal());
-
       allSlots.removeWhere((slot) => slot.id == slotId);
-      _categorizeSlots();
-      _updateSlotIdMap();
+      filterSlotsByDuration();
 
       final deleteUrl = '${ApiUrls.deleteSlotApi}$slotId';
       final response = await _apiService.delete(deleteUrl);
@@ -391,10 +453,9 @@ class CalenderController extends GetxController {
           colorText: Colors.white,
           duration: Duration(seconds: 2),
         );
-        fetchSlotsForDate(selectedDate.value);
+        await fetchSlotsForDate(selectedDate.value);
       } else {
         await fetchSlotsForDate(selectedDate.value);
-
         Get.snackbar(
           AppStrings.warning.tr,
           'Failed to delete slot. Please try again.',
@@ -405,14 +466,12 @@ class CalenderController extends GetxController {
       }
     } on DioException catch (e) {
       await fetchSlotsForDate(selectedDate.value);
-
       String errorMessage = AppStrings.failedToDeleteSlot.tr;
       if (e.response != null) {
         if (e.response?.data is Map && e.response?.data['message'] != null) {
           errorMessage = e.response?.data['message'];
         }
       }
-
       Get.snackbar(
         AppStrings.warning.tr,
         errorMessage,
@@ -422,7 +481,6 @@ class CalenderController extends GetxController {
       );
     } catch (e) {
       await fetchSlotsForDate(selectedDate.value);
-
       Get.snackbar(
         AppStrings.warning.tr,
         AppStrings.failedToDeleteSlot.tr,
@@ -437,15 +495,15 @@ class CalenderController extends GetxController {
   }
 
   int get availableSlotsCount {
-    return allSlots.where((slot) => slot.status == 'available').length;
+    return filteredSlots.where((slot) => slot.status == 'available').length;
   }
 
   int get bookedSlotsCount {
-    return allSlots.where((slot) => slot.status == 'booked').length;
+    return filteredSlots.where((slot) => slot.status == 'booked').length;
   }
 
   int get cancelledSlotsCount {
-    return allSlots.where((slot) => slot.status == 'cancelled').length;
+    return filteredSlots.where((slot) => slot.status == 'cancelled').length;
   }
 
   Future<void> showTimePickerCustom(bool isStartTime) async {
@@ -550,9 +608,7 @@ class CalenderController extends GetxController {
     breakStartTime.value = const TimeOfDay(hour: 13, minute: 0);
     breakEndTime.value = const TimeOfDay(hour: 14, minute: 0);
     bufferTime.value = 15;
-    inPerson.value = false;
-    teleConsultation.value = false;
-    mixed.value = false;
+    consultationType.value = 'inperson';
     consultation.value = false;
     followUp.value = false;
     physiotherapy.value = false;

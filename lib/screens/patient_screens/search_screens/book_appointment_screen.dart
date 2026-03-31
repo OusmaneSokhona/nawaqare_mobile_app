@@ -265,7 +265,7 @@ class BookAppointmentScreen extends StatelessWidget {
                             final result = await controller.createAppointment(
                               doctorId: doctor.id!,
                               timeslotId: selectedSlot.id,
-                              consultationType: apiConsultationType,
+                              consultationType: selectedSlot.consultationType,
                             );
 
                             if (result != null && result['success'] == true) {

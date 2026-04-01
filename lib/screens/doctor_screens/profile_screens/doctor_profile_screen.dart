@@ -12,7 +12,7 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/revalidation.
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../patient_screens/notifications_screens/notifications_screen.dart';
-import '../../patient_screens/video_call_screens/help_center_screen.dart';
+import '../../help_center_screen.dart';
 
 class DoctorProfileScreen extends StatelessWidget {
   DoctorProfileScreen({super.key});

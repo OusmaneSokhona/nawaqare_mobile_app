@@ -475,6 +475,8 @@ class _DateTile extends StatelessWidget {
     });
   }
 }
+
+
 class TimeSlotsGrid extends StatelessWidget {
   final BookAppointmentController controller;
   final DoctorModel doctor;
@@ -499,20 +501,24 @@ class TimeSlotsGrid extends StatelessWidget {
         );
       }
 
-      final selectedDate = controller.selectedDate.value!;
-      final dateString = DateFormat('yyyy-MM-dd').format(selectedDate);
-
-      final filteredSlots = controller.availableTimeSlots.where((slot) {
-        return slot.slotDate == dateString && slot.status == 'available';
-      }).toList();
-
-      if (filteredSlots.isEmpty) {
+      if (controller.filteredTimeSlots.isEmpty) {
         return Container(
           padding: EdgeInsets.symmetric(vertical: 20.h),
           alignment: Alignment.center,
-          child: Text(
-            'No time slots available for selected date',
-            style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+          child: Column(
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 48.sp,
+                color: AppColors.lightGrey,
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                'No time slots available for ${controller.appointmentType.value == "inPerson" ? "In-Person" : controller.appointmentType.value == "remote" ? "Remote" : "Home Visit"} consultation on selected date',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+              ),
+            ],
           ),
         );
       }
@@ -520,7 +526,7 @@ class TimeSlotsGrid extends StatelessWidget {
       return Wrap(
         spacing: 10.w,
         runSpacing: 10.h,
-        children: filteredSlots.map((TimeSlot timeSlot) {
+        children: controller.filteredTimeSlots.map((TimeSlot timeSlot) {
           final startHour = timeSlot.startTime.hour % 12 == 0 ? 12 : timeSlot.startTime.hour % 12;
           final startMinute = timeSlot.startTime.minute.toString().padLeft(2, '0');
           final startPeriod = timeSlot.startTime.hour < 12 ? 'AM' : 'PM';

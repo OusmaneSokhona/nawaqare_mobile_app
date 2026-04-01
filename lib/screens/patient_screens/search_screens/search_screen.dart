@@ -10,7 +10,7 @@ import '../../../utils/app_fonts.dart';
 import '../../../widgets/patient_widgets/search_widgets/doctor_widget.dart';
 import '../../../widgets/patient_widgets/search_widgets/search_bottom_sheet.dart';
 import '../notifications_screens/notifications_screen.dart';
-import '../video_call_screens/help_center_screen.dart';
+import '../../help_center_screen.dart';
 
 class SearchScreen extends StatelessWidget {
   SearchScreen({super.key});

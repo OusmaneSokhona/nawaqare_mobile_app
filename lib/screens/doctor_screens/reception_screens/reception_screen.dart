@@ -12,7 +12,7 @@ import 'package:patient_app/controllers/doctor_controllers/doctor_home_controlle
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../patient_screens/notifications_screens/notifications_screen.dart';
-import '../../patient_screens/video_call_screens/help_center_screen.dart';
+import '../../help_center_screen.dart';
 
 class ReceptionScreen extends StatelessWidget {
   ReceptionScreen({super.key});

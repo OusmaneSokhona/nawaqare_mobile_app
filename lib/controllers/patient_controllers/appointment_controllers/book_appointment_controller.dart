@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -12,13 +11,14 @@ class BookAppointmentController extends GetxController {
   RxString appointmentType = "inPerson".obs;
   RxString appointmentId = "".obs;
   final duration = '30 mint'.obs;
-  TextEditingController addressController=TextEditingController();
-  TextEditingController notesController=TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
   final fee = '\$156'.obs;
-  final Rx<DateTime> selectedDate =   DateTime.now().obs;
+  final Rx<DateTime> selectedDate = DateTime.now().obs;
   final selectedTime = ''.obs;
   final Rx<DateTime> _focusedMonth = DateTime.now().obs;
   final RxList<TimeSlot> availableTimeSlots = <TimeSlot>[].obs;
+  final RxList<TimeSlot> filteredTimeSlots = <TimeSlot>[].obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   ApiService _apiService = ApiService();
@@ -34,8 +34,49 @@ class BookAppointmentController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Initialize with today's date if you want
     selectDate(DateTime.now());
+    ever(appointmentType, (_) {
+      _filterTimeSlotsByType();
+    });
+    ever(selectedDate, (_) {
+      _filterTimeSlotsByType();
+    });
+  }
+
+  void _filterTimeSlotsByType() {
+    if (availableTimeSlots.isEmpty) {
+      filteredTimeSlots.clear();
+      return;
+    }
+
+    String apiConsultationType;
+    switch (appointmentType.value) {
+      case "inPerson":
+        apiConsultationType = "inperson";
+        break;
+      case "homeVisit":
+        apiConsultationType = "homevisit";
+        break;
+      default:
+        apiConsultationType = "remote";
+    }
+
+    final dateString = selectedDate.value != null
+        ? DateFormat('yyyy-MM-dd').format(selectedDate.value!)
+        : null;
+
+    filteredTimeSlots.value = availableTimeSlots.where((slot) {
+      final matchesType = slot.consultationType.toLowerCase() == apiConsultationType;
+      final matchesDate = dateString != null ? slot.slotDate == dateString : true;
+      final isAvailable = slot.status == 'available';
+      return matchesType && matchesDate && isAvailable;
+    }).toList();
+
+    if (filteredTimeSlots.isNotEmpty) {
+      selectedTime.value = filteredTimeSlots.first.id;
+    } else {
+      selectedTime.value = '';
+    }
   }
 
   Future<void> fetchTimeSlots({required String doctorId}) async {
@@ -43,7 +84,9 @@ class BookAppointmentController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
       availableTimeSlots.clear();
+      filteredTimeSlots.clear();
 
+      print('Fetching time slots for doctorId: $doctorId');
       final response = await _apiService.get(
         '${ApiUrls.getDoctorTimeSlots}$doctorId',
       );
@@ -53,25 +96,13 @@ class BookAppointmentController extends GetxController {
         if (data['slots'] != null) {
           final timeSlotResponse = TimeSlotResponse.fromJson(data);
 
-          // FIX: Remove duplicate conversion - fromJson already does toLocal()
-          // Directly assign the slots
-          print("Fetched ${timeSlotResponse.slots.length} slots");
-
-          // Debug: Check if times are already in local
           if (timeSlotResponse.slots.isNotEmpty) {
             print('Sample slot time (local): ${timeSlotResponse.slots.first.startTime}');
             print('Is UTC? ${timeSlotResponse.slots.first.startTime.isUtc}');
           }
 
           availableTimeSlots.assignAll(timeSlotResponse.slots);
-
-          // Auto-select first available time slot for selected date
-          if (availableTimeSlots.isNotEmpty && selectedDate.value != null) {
-            final todaySlots = _getTimeSlotsForDate(selectedDate.value!);
-            if (todaySlots.isNotEmpty) {
-              selectedTime.value = todaySlots.first.id;
-            }
-          }
+          _filterTimeSlotsByType();
         } else {
           errorMessage.value = 'No slots found in response';
         }
@@ -82,13 +113,15 @@ class BookAppointmentController extends GetxController {
       print('Error fetching time slots: $e');
       errorMessage.value = 'Error: ${e.toString()}';
       availableTimeSlots.clear();
+      filteredTimeSlots.clear();
     } finally {
       isLoading.value = false;
     }
   }
+
   List<TimeSlot> _getTimeSlotsForDate(DateTime date) {
     final dateString = DateFormat('yyyy-MM-dd').format(date);
-    return availableTimeSlots
+    return filteredTimeSlots
         .where((slot) => slot.slotDate == dateString && slot.status == 'available')
         .toList();
   }
@@ -101,16 +134,7 @@ class BookAppointmentController extends GetxController {
 
   void selectDate(DateTime date) {
     selectedDate.value = date;
-
-    // Auto-select first available time slot for the selected date
-    if (availableTimeSlots.isNotEmpty) {
-      final slotsForDate = _getTimeSlotsForDate(date);
-      if (slotsForDate.isNotEmpty) {
-        selectedTime.value = slotsForDate.first.id;
-      } else {
-        selectedTime.value = '';
-      }
-    }
+    _filterTimeSlotsByType();
   }
 
   void selectTime(String timeId) {
@@ -142,18 +166,18 @@ class BookAppointmentController extends GetxController {
       return null;
     }
 
-    return availableTimeSlots.firstWhere(
+    return filteredTimeSlots.firstWhere(
           (slot) => slot.id == selectedTime.value,
       orElse: () => TimeSlot(
-        id: '',
-        startTime: DateTime.now(),
-        endTime: DateTime.now(),
-        status: '',
-        consultationType: ""
+          id: '',
+          startTime: DateTime.now(),
+          endTime: DateTime.now(),
+          status: '',
+          consultationType: ""
       ),
     );
   }
-  // Add this to your BookAppointmentController class
+
   RxBool isCreatingAppointment = false.obs;
   RxString appointmentError = ''.obs;
 
@@ -169,7 +193,6 @@ class BookAppointmentController extends GetxController {
       final Map<String, dynamic> requestBody = {
         "doctorId": doctorId,
         "timeslotId": timeslotId,
-        "consultationType": consultationType,
       };
 
       if (consultationType == "homevisit") {

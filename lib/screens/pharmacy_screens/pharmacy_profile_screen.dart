@@ -12,7 +12,7 @@ import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart';
 import '../patient_screens/chat_screens/chat_screen.dart';
 import '../patient_screens/notifications_screens/notifications_screen.dart';
-import '../patient_screens/video_call_screens/help_center_screen.dart';
+import '../help_center_screen.dart';
 
 class PharmacyProfileScreen extends StatelessWidget {
   PharmacyProfileScreen({super.key});

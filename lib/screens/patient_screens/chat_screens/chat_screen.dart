@@ -10,7 +10,7 @@ import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/chat_model.dart';
 import '../notifications_screens/notifications_screen.dart';
-import '../video_call_screens/help_center_screen.dart';
+import '../../help_center_screen.dart';
 import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {

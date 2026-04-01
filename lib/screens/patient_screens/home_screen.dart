@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:patient_app/controllers/patient_controllers/home_controller.dart';
 import 'package:patient_app/screens/patient_screens/appointment_screens/appointment_detail_screen.dart';
 import 'package:patient_app/screens/patient_screens/prescription_screens/prescription_screen.dart';
-import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
+import 'package:patient_app/screens/help_center_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/utils/app_strings.dart';

@@ -8,7 +8,7 @@ import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_ap
 import 'package:patient_app/screens/doctor_screens/patient_screens/patient_screen.dart';
 import 'package:patient_app/screens/doctor_screens/prescription_screens/doctor_prescription_screen.dart';
 import 'package:patient_app/screens/doctor_screens/statics_screen/statics_screen.dart';
-import 'package:patient_app/screens/patient_screens/video_call_screens/help_center_screen.dart';
+import 'package:patient_app/screens/help_center_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
 import 'package:patient_app/widgets/category_button.dart';

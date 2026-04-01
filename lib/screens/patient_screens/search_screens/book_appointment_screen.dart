@@ -171,8 +171,8 @@ class BookAppointmentScreen extends StatelessWidget {
                         ),
                       ),
                       15.verticalSpace,
-                      _buildTypeToggle(),
-                      10.verticalSpace,
+                      // _buildTypeToggle(),
+                      // 10.verticalSpace,
                       ConsultationDetailsCard(
                         controller: controller,
                         doctor: doctor,
@@ -505,22 +505,50 @@ class BookAppointmentScreen extends StatelessWidget {
                 ],
               ),
             )
-          else if (controller.availableTimeSlots.isEmpty)
+          else if (controller.selectedDate.value == null)
               Container(
                 padding: EdgeInsets.symmetric(vertical: 20.h),
                 alignment: Alignment.center,
                 child: Text(
-                  'No time slots available',
+                  'Please select a date first',
                   style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
                 ),
               )
-            else
-              TimeSlotsGrid(controller: controller, doctor: doctor),
+            else if (controller.availableTimeSlots.isEmpty)
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  alignment: Alignment.center,
+                  child: Text(
+                    'No time slots available for this doctor',
+                    style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+                  ),
+                )
+              else if (controller.filteredTimeSlots.isEmpty)
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                    alignment: Alignment.center,
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.access_time,
+                          size: 48.sp,
+                          color: AppColors.lightGrey,
+                        ),
+                        SizedBox(height: 10.h),
+                        Text(
+                          'No ${controller.appointmentType.value == "inPerson" ? "in-person" : controller.appointmentType.value == "remote" ? "remote" : "home visit"} time slots available for selected date',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  TimeSlotsGrid(controller: controller, doctor: doctor),
         ],
       ),
     );
   }
-
   Widget _buildAlertBox() {
     return Container(
       width: 1.sw,

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/main.dart';
+import 'package:patient_app/controllers/help_center_controller.dart';
 import 'package:patient_app/utils/app_strings.dart';
-import '../../../controllers/patient_controllers/appointment_controllers/setting_controller.dart';
-import '../../../utils/app_colors.dart';
-import '../../../utils/app_fonts.dart';
+import '../main.dart';
+import '../utils/app_colors.dart';
+import '../utils/app_fonts.dart';
 
 class HelpCenterScreen extends StatelessWidget {
   HelpCenterScreen({super.key});
 
-  final SettingsController controller = Get.put(SettingsController());
+  final HelpCenterController controller = Get.put(HelpCenterController());
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class HelpCenterScreen extends StatelessWidget {
                     AppStrings.helpCenter.tr,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: isWeb?12.sp:23.sp,
+                      fontSize: isWeb ? 12.sp : 23.sp,
                       fontWeight: FontWeight.w800,
                       fontFamily: AppFonts.jakartaBold,
                     ),
@@ -52,7 +52,13 @@ class HelpCenterScreen extends StatelessWidget {
                 ],
               ),
               20.verticalSpace,
-              Container(
+              Obx(() => controller.isLoading.value
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.primaryColor,
+                ),
+              )
+                  : Container(
                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 15.h),
                 decoration: BoxDecoration(
                   border: Border.all(color: AppColors.lightGrey.withOpacity(0.3)),
@@ -62,24 +68,32 @@ class HelpCenterScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      Image.asset('assets/images/help_center_image.png',height: 0.3.sh),
+                      Image.asset(
+                        'assets/images/help_center_image.png',
+                        height: 0.3.sh,
+                      ),
                       10.verticalSpace,
                       _buildContactCard(
                         icon: Icons.phone,
                         title: AppStrings.phone.tr,
-                        subtitle: '03 5432 1234',
+                        subtitle: controller.contactPhone.value.isEmpty
+                            ? 'Not available'
+                            : controller.contactPhone.value,
                       ),
                       10.verticalSpace,
                       _buildContactCard(
                         icon: Icons.email,
                         title: AppStrings.email.tr,
-                        subtitle: 'Abc@gmail.com',
+                        subtitle: controller.contactEmail.value.isEmpty
+                            ? 'Not available'
+                            : controller.contactEmail.value,
                       ),
                       const SizedBox(height: 15),
-                      Obx(() => _buildFaqSection(context)),
+                      _buildFaqSection(context),
                     ],
                   ),
                 ),
+              ),
               ),
             ],
           ),
@@ -110,7 +124,7 @@ class HelpCenterScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Icon(icon, color: Color(0xFF4285F4), size: 30),
+          const Icon(Icons.phone, color: Color(0xFF4285F4), size: 30),
           const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,7 +154,7 @@ class HelpCenterScreen extends StatelessWidget {
   }
 
   Widget _buildFaqSection(BuildContext context) {
-    return Container(
+    return Obx(() => Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -196,24 +210,36 @@ class HelpCenterScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppStrings.faqQuestion1.tr,
-                    style: const TextStyle(fontSize: 16, height: 1.8),
-                  ),
-                  Text(
-                    AppStrings.faqQuestion2.tr,
-                    style: const TextStyle(fontSize: 16, height: 1.8),
-                  ),
-                  Text(
-                    AppStrings.faqQuestion3.tr,
-                    style: const TextStyle(fontSize: 16, height: 1.8),
-                  ),
-                ],
+                children: controller.faqs.map((faq) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        faq.question,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          height: 1.8,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        faq.answer,
+                        style: TextStyle(
+                          fontSize: 14,
+                          height: 1.6,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  );
+                }).toList(),
               ),
             ),
         ],
       ),
-    );
+    ));
   }
 }

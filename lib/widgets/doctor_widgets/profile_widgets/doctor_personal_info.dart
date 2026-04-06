@@ -14,7 +14,7 @@ import '../../patient_widgets/profile_widgets/info_row.dart';
 
 class DoctorPersonalInfo extends StatelessWidget {
   DoctorPersonalInfo({super.key});
-  final DoctorProfileController controller = Get.find();
+  final DoctorProfileController controller = Get.put(DoctorProfileController());
   final DoctorHomeController homeController = Get.find<DoctorHomeController>();
 
   @override

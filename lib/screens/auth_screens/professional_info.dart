@@ -10,10 +10,7 @@ import '../../utils/app_fonts.dart';
 import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
-import '../../widgets/display_field.dart';
-import '../../widgets/profile_picture_widget.dart';
 import '../../widgets/progress_stepper.dart';
-import 'medical_vitals.dart';
 
 class ProfessionalInfo extends StatelessWidget {
   ProfessionalInfo({super.key});
@@ -45,7 +42,7 @@ class ProfessionalInfo extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
-              80.verticalSpace,
+              60.verticalSpace,
               Row(
                 children: [
                   InkWell(
@@ -54,30 +51,28 @@ class ProfessionalInfo extends StatelessWidget {
                     },
                     child: Image.asset(
                       "assets/images/back_icon.png",
-                      height: 32.h,
-                      width: 32.w,
+                      height: 28.h,
+                      width: 28.w,
                     ),
                   ),
                   7.horizontalSpace,
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      AppStrings.professionalInfo.tr,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: AppFonts.jakartaBold,
-                        fontSize: 19.sp,
-                        fontWeight: FontWeight.w800,
-                      ),
+                  Text(
+                    AppStrings.professionalInfo.tr,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: AppFonts.jakartaBold,
+                      fontSize: 19.sp,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ],
               ),
+              10.verticalSpace,
               Expanded(
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      20.verticalSpace,
                       ProgressStepper(currentStep: 3, totalSteps: 5),
                       10.verticalSpace,
                       buildDropdownField(
@@ -92,110 +87,204 @@ class ProfessionalInfo extends StatelessWidget {
                         keyboardType: TextInputType.number,
                         controller: signUpController.experienceController,
                       ),
-                      buildDropdownField(
-                        title: AppStrings.fee.tr,
-                        items: signUpController.feeList,
-                        selectedValue: signUpController.selectedFee,
-                        onChanged: signUpController.updateFee,
+                      _buildFeeField(
+                        labelText: "Remote Consultation Fee",
+                        hintText: "e.g., 50",
+                        controller: signUpController.remoteConsultationFeeController,
                       ),
-                      Obx(
-                            () => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Text(
-                                AppStrings.dateOfRegistration.tr,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () => _showDatePicker(context),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      getFormattedRegistrationDate(),
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        color: signUpController.dateOfRegistration == null
-                                            ? Colors.grey
-                                            : Colors.black,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const Icon(
-                                      Icons.calendar_today,
-                                      color: Colors.blue,
-                                      size: 24,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                      _buildFeeField(
+                        labelText: "In-Person Consultation Fee",
+                        hintText: "e.g., 100",
+                        controller: signUpController.inPersonConsultationFeeController,
                       ),
-                      10.verticalSpace,
+                      _buildFeeField(
+                        labelText: "Home Visit Consultation Fee",
+                        hintText: "e.g., 150",
+                        controller: signUpController.homeVisitConsultationFeeController,
+                      ),
+                      Obx(()=> _buildDateOfRegistrationField(context)),
                       CustomTextField(
                         labelText: AppStrings.placeOfPractice.tr,
                         hintText: "asd Hospital, abc",
                         controller: signUpController.placeOfPracticeController,
                       ),
-                      10.verticalSpace,
                       CustomTextField(
                         labelText: AppStrings.year.tr,
-                        hintText: "2008",
+                        hintText: "2026",
                         keyboardType: TextInputType.number,
                         controller: signUpController.yearOfWorkController,
                       ),
+                      20.verticalSpace,
+                      CustomButton(
+                        borderRadius: 15,
+                        text: AppStrings.continueText.tr,
+                        onTap: () {
+                          if (signUpController.selectedSpecialist.value == null ||
+                              signUpController.selectedSpecialist.value!.isEmpty ||
+                              signUpController.experienceController.text.isEmpty ||
+                              signUpController.remoteConsultationFeeController.text.isEmpty ||
+                              signUpController.inPersonConsultationFeeController.text.isEmpty ||
+                              signUpController.homeVisitConsultationFeeController.text.isEmpty ||
+                              signUpController.dateOfRegistration == null ||
+                              signUpController.placeOfPracticeController.text.isEmpty ||
+                              signUpController.yearOfWorkController.text.isEmpty) {
+                            Get.snackbar(
+                              AppStrings.warning.tr,
+                              "Please fill all required fields",
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white,
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                            return;
+                          }
+
+                          signUpController.remoteConsultationFeeController.text = signUpController.remoteConsultationFeeController.text;
+                          signUpController.inPersonConsultationFeeController.text = signUpController.inPersonConsultationFeeController.text;
+
+                          Get.to(SupportingDocuments());
+                        },
+                      ),
+                      30.verticalSpace,
                     ],
                   ),
                 ),
               ),
-              20.verticalSpace,
-              CustomButton(
-                borderRadius: 15,
-                text: AppStrings.continueText.tr,
-                onTap: () {
-                  if (signUpController.selectedSpecialist.value == null ||
-                      signUpController.selectedFee.value == null ||
-                      signUpController.dateOfRegistration == null ||
-                      signUpController.experienceController.text.isEmpty ||
-                      signUpController.placeOfPracticeController.text.isEmpty ||
-                      signUpController.yearOfWorkController.text.isEmpty) {
-                    Get.snackbar(
-                      AppStrings.warning.tr,
-                      AppStrings.pleaseFillAllFields.tr,
-                      backgroundColor: Colors.redAccent,
-                      colorText: Colors.white,
-                    );
-                    return;
-                  }
-                  Get.to( SupportingDocuments());
-                },
-              ),
-              50.verticalSpace,
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildFeeField({
+    required String labelText,
+    required String hintText,
+    required TextEditingController controller,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
+            child: Row(
+              children: [
+                Text(
+                  labelText,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Text(
+                  ' *',
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    '\$ ',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: TextField(
+                    controller: controller,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: hintText,
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateOfRegistrationField(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 12.0, bottom: 4.0),
+          child: Row(
+            children: [
+              Text(
+                AppStrings.dateOfRegistration.tr,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
+              ),
+              const Text(
+                ' *',
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        InkWell(
+          onTap: () => _showDatePicker(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  getFormattedRegistrationDate(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: signUpController.dateOfRegistration == null
+                        ? Colors.grey
+                        : Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const Icon(
+                  Icons.calendar_today,
+                  color: Colors.blue,
+                  size: 24,
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
@@ -224,47 +313,53 @@ class ProfessionalInfo extends StatelessWidget {
     required Function(String?) onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
-            child: Text(
-              title,
-              style: const TextStyle(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+            padding: const EdgeInsets.only(bottom: 4.0, left: 12.0),
+            child: Row(
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Text(
+                  ' *',
+                  style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
           ),
-          Obx(
-                () => DropdownButtonFormField<String>(
-              value: selectedValue.value,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 14.0,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.white,
+          DropdownButtonFormField<String>(
+            value: selectedValue.value,
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 14.0,
               ),
-              isExpanded: true,
-              icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
-              style: TextStyle(fontSize: 16.sp, color: Colors.black),
-              items: items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: onChanged,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: Colors.white,
             ),
+            isExpanded: true,
+            icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.darkGrey),
+            style: TextStyle(fontSize: 16.sp, color: Colors.black),
+            items: items.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: onChanged,
           ),
         ],
       ),

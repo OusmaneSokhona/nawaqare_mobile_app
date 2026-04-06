@@ -463,8 +463,6 @@ RxString isPhoneValid="".obs;
   RxString selectedSpecialist = "Cardiology".obs;
   void updateSpecialization(String? newValue) => selectedSpecialist.value = newValue!;
 
-  TextEditingController videoConsultationFeeController = TextEditingController();
-  TextEditingController inPersonConsultationFeeController = TextEditingController();
 
   final List<String> feeList = ['\$25/ 30 mint45', '\$50/ 60 mint75', '\$125/ 90 mint'];
   RxString selectedFee = "\$25/ 30 mint45".obs;
@@ -484,7 +482,8 @@ RxString isPhoneValid="".obs;
     phoneNumberController.dispose();
     passwordController.dispose();
     dateController.dispose();
-    videoConsultationFeeController.dispose();
+    remoteConsultationFeeController.dispose();
+    homeVisitConsultationFeeController.dispose();
     inPersonConsultationFeeController.dispose();
     for (var controller in controllers) controller.dispose();
     for (var node in focusNodes) node.dispose();
@@ -653,6 +652,12 @@ RxString isPhoneValid="".obs;
     }
   }
 
+  TextEditingController remoteConsultationFeeController = TextEditingController();
+  TextEditingController inPersonConsultationFeeController = TextEditingController();
+  TextEditingController homeVisitConsultationFeeController = TextEditingController();
+
+  RxBool hasAttemptedSubmit = false.obs;
+
   Future<bool> updateDoctorProfile() async {
     try {
       isLoading.value = true;
@@ -675,19 +680,19 @@ RxString isPhoneValid="".obs;
         "ratings": "0"
       });
 
-      // Add fee fields separately
-      if (videoConsultationFeeController.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry(
-          "fee[videoconsultation]",
-          videoConsultationFeeController.text.trim(),
-        ));
-      }
-      if (inPersonConsultationFeeController.text.trim().isNotEmpty) {
-        formData.fields.add(MapEntry(
-          "fee[inpersonconsultation]",
-          inPersonConsultationFeeController.text.trim(),
-        ));
-      }
+      // Add all three fee fields as required
+      formData.fields.add(MapEntry(
+        "fee[remoteconsultation]",
+        remoteConsultationFeeController.text.trim(),
+      ));
+      formData.fields.add(MapEntry(
+        "fee[inpersonconsultation]",
+        inPersonConsultationFeeController.text.trim(),
+      ));
+      formData.fields.add(MapEntry(
+        "fee[homevisitconsultation]",
+        homeVisitConsultationFeeController.text.trim(),
+      ));
 
       if (pickedImage.value != null) {
         formData.files.add(MapEntry(
@@ -764,6 +769,102 @@ RxString isPhoneValid="".obs;
       _handleError(e);
       return false;
     }
+  }
+
+  Future<bool> editProfessionalInfoDoctor() async {
+    try {
+      isLoading.value = true;
+      final formData = FormData();
+
+      void addIfValid(String key, dynamic value) {
+        if (value != null && value.toString().trim().isNotEmpty) {
+          formData.fields.add(MapEntry(key, value.toString()));
+        }
+      }
+
+      addIfValid("experience", experienceController.text.trim());
+      addIfValid("dateOfRegistration", _registrationDate.value?.toIso8601String());
+      addIfValid("placeOfPractice", placeOfPracticeController.text.trim());
+      addIfValid("year", yearOfWorkController.text.trim());
+      addIfValid("country", selectedCountry.value);
+      addIfValid("fee[remoteconsultation]", remoteConsultationFeeController.text.trim());
+      addIfValid("fee[inpersonconsultation]", inPersonConsultationFeeController.text.trim());
+      addIfValid("fee[homevisitconsultation]", homeVisitConsultationFeeController.text.trim());
+
+      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
+      isLoading.value = false;
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        doctorHomeController.loadUserDataSecondTime();
+        Get.back();
+        Get.snackbar("Success", "Professional info updated", snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.green, colorText: Colors.white);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print("Error updating doctor profile: $e");
+      isLoading.value = false;
+      _handleError(e);
+      return false;
+    }
+  }
+
+  void clearAllControllersAndFields() {
+    nameController.clear();
+    emailController.clear();
+    confirmPasswordController.clear();
+    isConfirmPasswordVisible.value = false;
+    phoneNumberController.clear();
+    passwordController.clear();
+    addressController.clear();
+    heightController.clear();
+    weightController.clear();
+    bmiController.clear();
+    bloodPressureController.clear();
+    heartRateController.clear();
+    idNumberController.clear();
+    clinicAddressController.clear();
+    aboutMeController.clear();
+    experienceController.clear();
+    placeOfPracticeController.clear();
+    yearOfWorkController.clear();
+    registrationIdController.clear();
+    pharmacyAddressController.clear();
+    cityController.clear();
+    areaLocalityController.clear();
+    licenseNumberController.clear();
+    issuingAuthorityController.clear();
+    buisnessRegNoController.clear();
+    registeredNameController.clear();
+    remoteConsultationFeeController.clear();
+    inPersonConsultationFeeController.clear();
+    homeVisitConsultationFeeController.clear();
+
+    pickedImage.value = null;
+    pickedImageBytes.value = null;
+
+    selectedFileName.value = null;
+    selectedFileIdCard.value = null;
+    selectedFilePassport.value = null;
+    selectedFileMedicalLicense.value = null;
+    selectedFileDiploma.value = null;
+    selectedFileInsuranceProof.value = null;
+    selectedFileCnpd.value = null;
+    selectedFileBankVerification.value = null;
+    selectedFileBankPaymentAuthorization.value = null;
+    selectedLicenseCertificate.value = null;
+    selectedTaxClearance.value = null;
+    selectedNocCertificate.value = null;
+    selectedPharmacyBankVerificationLetter.value = null;
+    selectedPharmacyBankPaymentAuthorization.value = null;
+
+    _selectedDate.value = DateTime.now();
+    _registrationDate.value = DateTime.now();
+    _issueDate.value = DateTime.now();
+    _expiryDate.value = DateTime.now();
+
+    isVerifiedEmail.value = false;
+    isVerifiedPhone.value = false;
+    hasAttemptedSubmit.value = false;
   }
   Future<bool> updatePharmacyProfile() async {
     try {
@@ -971,39 +1072,7 @@ RxString isPhoneValid="".obs;
       return false;
     }
   }
-  Future<bool> editProfessionalInfoDoctor() async {
-    try {
-      isLoading.value = true;
-      final formData = FormData();
 
-// Helper to add if not null/empty
-      void addIfValid(String key, dynamic value) {
-        if (value != null && value.toString().trim().isNotEmpty) {
-          formData.fields.add(MapEntry(key, value.toString()));
-        }
-      }
-      addIfValid("experience", experienceController.text.trim());
-      addIfValid("dateOfRegistration", _registrationDate.value?.toIso8601String());
-      addIfValid("placeOfPractice", placeOfPracticeController.text.trim());
-      addIfValid("year", yearOfWorkController.text.trim());
-      addIfValid("country", selectedCountry.value);
-      addIfValid("fee[videoconsultation]", videoConsultationFeeController.text.trim());
-      addIfValid("fee[inpersonconsultation]", inPersonConsultationFeeController.text.trim());
-      final response = await _apiService.put(ApiUrls.updateProfileUrl, data: formData);
-      isLoading.value = false;
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        doctorHomeController.loadUserDataSecondTime();
-        Get.back();
-        return true;
-      }
-      return false;
-    } catch (e) {
-      print("Error updating doctor profile: $e");
-      isLoading.value = false;
-      _handleError(e);
-      return false;
-    }
-  }
   Future<bool> editDocumentDoctors() async {
     try {
       isLoading.value = true;
@@ -1096,62 +1165,6 @@ RxString isPhoneValid="".obs;
       errorMessage = e.toString();
     }
     Get.snackbar("Error", errorMessage, snackPosition: SnackPosition.BOTTOM, backgroundColor: Colors.red, colorText: Colors.white);
-  }
-  void clearAllControllersAndFields() {
-    nameController.clear();
-    emailController.clear();
-    confirmPasswordController.clear();
-    isConfirmPasswordVisible.value = false;
-    phoneNumberController.clear();
-    passwordController.clear();
-    addressController.clear();
-    heightController.clear();
-    weightController.clear();
-    bmiController.clear();
-    bloodPressureController.clear();
-    heartRateController.clear();
-    idNumberController.clear();
-    clinicAddressController.clear();
-    aboutMeController.clear();
-    experienceController.clear();
-    placeOfPracticeController.clear();
-    yearOfWorkController.clear();
-    registrationIdController.clear();
-    pharmacyAddressController.clear();
-    cityController.clear();
-    areaLocalityController.clear();
-    licenseNumberController.clear();
-    issuingAuthorityController.clear();
-    buisnessRegNoController.clear();
-    registeredNameController.clear();
-    videoConsultationFeeController.clear();
-    inPersonConsultationFeeController.clear();
-
-    pickedImage.value = null;
-    pickedImageBytes.value = null;
-
-    selectedFileName.value = null;
-    selectedFileIdCard.value = null;
-    selectedFilePassport.value = null;
-    selectedFileMedicalLicense.value = null;
-    selectedFileDiploma.value = null;
-    selectedFileInsuranceProof.value = null;
-    selectedFileCnpd.value = null;
-    selectedFileBankVerification.value = null;
-    selectedFileBankPaymentAuthorization.value = null;
-    selectedLicenseCertificate.value = null;
-    selectedTaxClearance.value = null;
-    selectedNocCertificate.value = null;
-    selectedPharmacyBankVerificationLetter.value = null;
-    selectedPharmacyBankPaymentAuthorization.value = null;
-
-    _selectedDate.value = DateTime.now();
-    _registrationDate.value = DateTime.now();
-    _issueDate.value = DateTime.now();
-    _expiryDate.value = DateTime.now();
-
-    isVerifiedEmail.value = false;
-    isVerifiedPhone.value = false;
   }
 
   void calculateAndUpdateBMI(String heightStr, String weightStr) {

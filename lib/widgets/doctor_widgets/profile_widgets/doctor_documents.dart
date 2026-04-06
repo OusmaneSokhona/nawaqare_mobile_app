@@ -13,7 +13,7 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/profile_compl
 
 class DoctorDocuments extends StatelessWidget {
   DoctorDocuments({super.key});
-  final DoctorProfileController controller = Get.find();
+  final DoctorProfileController controller = Get.put(DoctorProfileController());
   final DoctorHomeController homeController = Get.find<DoctorHomeController>();
   final SignUpController signUpController = Get.find<SignUpController>();
 

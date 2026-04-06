@@ -12,7 +12,7 @@ import 'package:patient_app/widgets/doctor_widgets/profile_widgets/submit_revali
 
 class Revalidation extends StatelessWidget {
   Revalidation({super.key});
-  final DoctorProfileController controller = Get.find();
+  final DoctorProfileController controller = Get.put(DoctorProfileController());
   final DoctorHomeController homeController = Get.find<DoctorHomeController>();
 
   @override

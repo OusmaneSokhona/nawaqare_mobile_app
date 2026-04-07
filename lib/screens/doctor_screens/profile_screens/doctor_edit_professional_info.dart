@@ -293,84 +293,23 @@ class DoctorEditProfessionalInfo extends GetView<SignUpController> {
   }
 
   bool _validateFields() {
-    if (controller.experienceController.text.isEmpty) {
-      Get.snackbar(
-        "Validation Error",
-        "Please enter experience years",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
+    if (controller.experienceController.text.isNotEmpty ||
+        controller.remoteConsultationFeeController.text.isNotEmpty ||
+        controller.inPersonConsultationFeeController.text.isNotEmpty ||
+        controller.homeVisitConsultationFeeController.text.isNotEmpty ||
+        controller.placeOfPracticeController.text.isNotEmpty ||
+        controller.yearOfWorkController.text.isNotEmpty ) {
+      return true;
     }
 
-    if (controller.remoteConsultationFeeController.text.isEmpty) {
-      Get.snackbar(
-        "Validation Error",
-        "Please enter remote consultation fee",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (controller.inPersonConsultationFeeController.text.isEmpty) {
-      Get.snackbar(
-        "Validation Error",
-        "Please enter in-person consultation fee",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (controller.homeVisitConsultationFeeController.text.isEmpty) {
-      Get.snackbar(
-        "Validation Error",
-        "Please enter home visit consultation fee",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (controller.selectedDate == null) {
-      Get.snackbar(
-        "Validation Error",
-        "Please select date of registration",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (controller.placeOfPracticeController.text.isEmpty) {
-      Get.snackbar(
-        "Validation Error",
-        "Please enter place of practice",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    if (controller.yearOfWorkController.text.isEmpty) {
-      Get.snackbar(
-        "Validation Error",
-        "Please enter year of work",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return false;
-    }
-
-    return true;
+    Get.snackbar(
+      "Validation Error",
+      "Please fill at least one field",
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+    return false;
   }
 
   void _showDatePicker(BuildContext context) async {

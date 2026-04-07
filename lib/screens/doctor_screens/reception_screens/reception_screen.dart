@@ -5,6 +5,7 @@ import 'package:patient_app/controllers/doctor_controllers/reception_controller.
 import 'package:patient_app/main.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/absence_and_exception.dart';
 import 'package:patient_app/screens/doctor_screens/reception_screens/calender_screen.dart';
+import 'package:patient_app/screens/doctor_screens/reception_screens/service_pricing_screen.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/doctor_widgets/reception_widgets/feautre_card_widget.dart';
 import 'package:patient_app/widgets/patient_widgets/appointment_widgets/past_appointment_widgets.dart';
@@ -272,7 +273,9 @@ class ReceptionScreen extends StatelessWidget {
                           hasButton: true,
                         ),
                         FeatureCard(
-                          onTap: () {},
+                          onTap: () {
+                            Get.to(() => ServicePricingScreen());
+                          },
                           icon: Icons.monetization_on_outlined,
                           title: AppStrings.servicesPricing.tr,
                           subtitle: AppStrings.servicesPricingSubtitle.tr,

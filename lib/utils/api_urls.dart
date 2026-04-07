@@ -70,4 +70,5 @@ class ApiUrls {
   static String deleteReportOfPatient="/api/reports/dlt/";
   static String getPatientDetails="/api/doctor/patient-details/";
   static String helpCenter="api/helpcenter/details";
+  static String servicePricing="/api/doctor/update-pricing";
 }

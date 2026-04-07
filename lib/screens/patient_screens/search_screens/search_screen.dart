@@ -366,7 +366,7 @@ class SearchScreen extends StatelessWidget {
           ...List.generate(searchController.totalPages, (index) {
             int page = index + 1;
             return GestureDetector(
-              onTap: () => searchController.currentPage.value = page,
+              onTap: () { searchController.currentPage.value = page; searchController.scrollValue.value = 0.0; },
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Text(

@@ -65,9 +65,9 @@ class DoctorHealthSpaceGrid extends StatelessWidget {
           color: AppColors.red,
           textColor: AppColors.red,
           onTap: () async {
-            await Get.deleteAll(force: true);
             LocalStorageUtils.deleteUser();
             Get.offAll(SignInScreen(), binding: AppBinding());
+            await Get.deleteAll(force: true);
           },
         ),
         HealthSpaceCard(

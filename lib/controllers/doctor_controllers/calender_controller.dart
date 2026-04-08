@@ -43,6 +43,7 @@ class CalenderController extends GetxController {
   final bufferTime = 15.obs;
 
   final consultationType = 'inperson'.obs;
+  final serviceType = 'consultation'.obs;
 
   final consultation = false.obs;
   final followUp = false.obs;
@@ -57,6 +58,9 @@ class CalenderController extends GetxController {
 
   void setConsultationType(String type) {
     consultationType.value = type;
+  }
+  void setServiceType(String type) {
+    serviceType.value = type;
   }
 
   TimeOfDay _addMinutesToTimeOfDay(TimeOfDay time, int minutes) {

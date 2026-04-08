@@ -280,7 +280,7 @@ class DoctorHomeScreen extends StatelessWidget {
                                 },
                                 title: AppStrings.prescriptionDoctor.tr,
                                 icon: "assets/images/prescription_icon.png",
-                                color: AppColors.secondryColor,
+                                color: AppColors.orange,
                               ),
                               CategoryButton(
                                 onTap: () {
@@ -289,7 +289,7 @@ class DoctorHomeScreen extends StatelessWidget {
                                 title: AppStrings.statistics.tr,
                                 icon:
                                     "assets/images/statistics_button_icon.png",
-                                color: AppColors.orange,
+                                color: AppColors.secondryColor,
                               ),
                             ],
                           ),

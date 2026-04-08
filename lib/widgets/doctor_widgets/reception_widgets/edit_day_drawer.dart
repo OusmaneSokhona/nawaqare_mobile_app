@@ -226,6 +226,7 @@ class EditDayDrawer extends StatelessWidget {
                     10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
+                              isCircle: false,
                           text: AppStrings.inPerson.tr,
                           isSelected: controller.consultationType.value == 'inperson',
                           onTap: () {
@@ -236,6 +237,7 @@ class EditDayDrawer extends StatelessWidget {
                     10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
+                            isCircle: false,
                           text: AppStrings.teleconsultation.tr,
                           isSelected: controller.consultationType.value == 'remote',
                           onTap: () {
@@ -246,10 +248,57 @@ class EditDayDrawer extends StatelessWidget {
                     10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
+                            isCircle:false,
                           text: AppStrings.homeVisit.tr,
                           isSelected: controller.consultationType.value == 'homevisit',
                           onTap: () {
                             controller.setConsultationType('homevisit');
+                          }
+                      ),
+                    ),
+                    10.verticalSpace,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        AppStrings.services.tr,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: AppFonts.jakartaBold,
+                        ),
+                      ),
+                    ),
+                      10.verticalSpace,
+                    Obx(
+                          () => CustomRadioTile(
+                            isCircle:false,
+                          text: AppStrings.consultation.tr,
+                          isSelected: controller.serviceType.value == 'consultation',
+                          onTap: () {
+                            controller.setServiceType('consultation');
+                          }
+                      ),
+                    ),
+                    10.verticalSpace,
+                    Obx(
+                          () => CustomRadioTile(
+                            isCircle:false,
+                          text: AppStrings.followUp.tr,
+                          isSelected: controller.serviceType.value == 'followup',
+                          onTap: () {
+                            controller.setServiceType('followup');
+                          }
+                      ),
+                    ),
+                    10.verticalSpace,
+                    Obx(
+                          () => CustomRadioTile(
+                          isCircle:false,
+                          text: AppStrings.physiotherapy.tr,
+                          isSelected: controller.serviceType.value == 'physiotherpy',
+                          onTap: () {
+                            controller.setServiceType('physiotherpy');
                           }
                       ),
                     ),

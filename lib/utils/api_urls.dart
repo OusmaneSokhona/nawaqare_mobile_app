@@ -40,7 +40,6 @@ class ApiUrls {
   static String getAllReviews="/api/review/getAll";
   static String updateBloodType="/api/patient/blood-grp";
   static String createMedicalHistory="api/medicalHistory/create";
-  static String getMedicalHistory="/api/medicalHistory/get";
   static String deleteReport="api/patient/delete-report/";
   static String deleteDocumentDoctor="api/doctor/delete-document/";
   static String getAllServices="api/service/getAll";
@@ -71,4 +70,8 @@ class ApiUrls {
   static String getPatientDetails="/api/doctor/patient-details/";
   static String helpCenter="api/helpcenter/details";
   static String servicePricing="/api/doctor/update-pricing";
+  static String referPatient="api/appointments/refer/";
+  static String getMedicalHistory="api/medicalHistory/get?patientId=";
+  static String markVerified="api/medicalHistory/markverified";
+  static String addNoteApi="api/medicalHistory/add-note";
 }

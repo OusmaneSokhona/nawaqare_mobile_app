@@ -12,8 +12,10 @@ import 'package:patient_app/widgets/patient_widgets/appointment_widgets/past_app
 import 'package:patient_app/controllers/doctor_controllers/doctor_home_controller.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
+import '../../../widgets/patient_widgets/profile_widgets/health_space_card.dart';
 import '../../patient_screens/notifications_screens/notifications_screen.dart';
 import '../../help_center_screen.dart';
+import '../profile_screens/my_services_screen.dart';
 
 class ReceptionScreen extends StatelessWidget {
   ReceptionScreen({super.key});
@@ -208,7 +210,7 @@ class ReceptionScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Image.asset(
-                                "assets/images/calender_icon.png",
+                                "assets/images/calender_booked_icon.png",
                                 height: 20.h,
                                 color: AppColors.primaryColor,
                                 fit: BoxFit.fill,
@@ -235,7 +237,7 @@ class ReceptionScreen extends StatelessWidget {
                             children: <Widget>[
                               Expanded(
                                 child: _buildCard(
-                                  Icons.check_circle,
+                                  "assets/images/available_hours.png",
                                   AppStrings.available.tr,
                                   controller.availableHours.value,
                                 ),
@@ -243,7 +245,7 @@ class ReceptionScreen extends StatelessWidget {
                               SizedBox(width: 16.w),
                               Expanded(
                                 child: _buildCard(
-                                  Icons.calendar_today,
+                                 "assets/images/calender_booked_icon.png",
                                   AppStrings.slotsBooked.tr,
                                   controller.slotsBooked.value.toString(),
                                 ),
@@ -255,7 +257,7 @@ class ReceptionScreen extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: _buildCard(
-                            Icons.bookmark,
+                           "assets/images/planned_absence_icon.png",
                             AppStrings.plannedAbsences.tr,
                             controller.plannedAbsence.value.toString(),
                           ),
@@ -267,16 +269,25 @@ class ReceptionScreen extends StatelessWidget {
                           onTap: () {
                             Get.to(() => CalenderScreen());
                           },
-                          icon: Icons.calendar_today,
+                          icon: "assets/images/calendar_icon.png",
                           title: AppStrings.calendar.tr,
                           subtitle: AppStrings.calendarSubtitle.tr,
                           hasButton: true,
                         ),
+                        10.verticalSpace,
+                        HealthSpaceCard(
+                          icon: "assets/images/my_services_icon.png",
+                          title: AppStrings.myServices.tr,
+                          onTap: () {
+                            Get.to(MyServicesScreen());
+                          },
+                        ),
+                        10.verticalSpace,
                         FeatureCard(
                           onTap: () {
                             Get.to(() => ServicePricingScreen());
                           },
-                          icon: Icons.monetization_on_outlined,
+                          icon: "assets/images/services_and_pricing_icon.png",
                           title: AppStrings.servicesPricing.tr,
                           subtitle: AppStrings.servicesPricingSubtitle.tr,
                           hasButton: false,
@@ -285,7 +296,7 @@ class ReceptionScreen extends StatelessWidget {
                           onTap: () {
                             Get.to(() => AbsenceAndException());
                           },
-                          icon: Icons.do_not_disturb_on_outlined,
+                          icon: "assets/images/absence_and_exception_icon.png",
                           title: AppStrings.absencesExceptions.tr,
                           subtitle: AppStrings.absencesExceptionsSubtitle.tr,
                           hasButton: false,
@@ -303,7 +314,7 @@ class ReceptionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(IconData icon, String title, String value) {
+  Widget _buildCard(String icon, String title, String value) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -316,7 +327,7 @@ class ReceptionScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Icon(icon, color: const Color(0xFF1E88E5), size: isWeb ? 8.sp : 24.sp),
+            Image.asset(icon, color: const Color(0xFF1E88E5), height: isWeb ? 8.sp : 24.sp),
             const SizedBox(height: 10),
             Text(
               title,

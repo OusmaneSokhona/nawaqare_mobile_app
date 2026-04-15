@@ -1,34 +1,71 @@
-class MedicationHistoryResponse {
-  final String? medicineName;
-  final String? dosage;
-  final String? doctorId; // Renamed for clarity
-  final bool? refill;
-  final String? status;
+class MedicalHistoryResponse {
+  String? id;
+  String? patientId;
+  dynamic addMedications;
+  dynamic addLifestyle;
+  dynamic addVaccinations;
+  dynamic addFamilyHistory;
+  dynamic addSurgical;
+  dynamic addAllergical;
+  dynamic addInfectional;
+  dynamic addVitals;
+  dynamic addProblem;
+  String? createdAt;
+  String? updatedAt;
+  int? v;
 
-  MedicationHistoryResponse({
-    this.medicineName,
-    this.dosage,
-    this.doctorId,
-    this.refill,
-    this.status,
+  MedicalHistoryResponse({
+    this.id,
+    this.patientId,
+    this.addMedications,
+    this.addLifestyle,
+    this.addVaccinations,
+    this.addFamilyHistory,
+    this.addSurgical,
+    this.addAllergical,
+    this.addInfectional,
+    this.addVitals,
+    this.addProblem,
+    this.createdAt,
+    this.updatedAt,
+    this.v,
   });
 
-  factory MedicationHistoryResponse.fromJson(Map<String, dynamic> json) {
-    String? extractedDoctorId;
-
-    // Check if doctor is a Map (Object) or a String (ID)
-    if (json['doctor'] is Map) {
-      extractedDoctorId = json['doctor']['_id'] ?? json['doctor']['id'];
-    } else if (json['doctor'] is String) {
-      extractedDoctorId = json['doctor'];
-    }
-
-    return MedicationHistoryResponse(
-      medicineName: json['medicineName'],
-      dosage: json['dosage'],
-      doctorId: extractedDoctorId,
-      refill: json['refill'] ?? false,
-      status: json['status'],
+  factory MedicalHistoryResponse.fromJson(Map<String, dynamic> json) {
+    return MedicalHistoryResponse(
+      id: json['_id'] as String?,
+      patientId: json['patientId'] as String?,
+      addMedications: json['addMedications'],
+      addLifestyle: json['addLifestyle'],
+      addVaccinations: json['addVaccinations'],
+      addFamilyHistory: json['addFamilyHistory'],
+      addSurgical: json['addSurgical'],
+      addAllergical: json['addAllergical'],
+      addInfectional: json['addInfectional'],
+      addVitals: json['addVitals'],
+      addProblem: json['addProblem'],
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      v: json['__v'] as int?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'patientId': patientId,
+      'addMedications': addMedications,
+      'addLifestyle': addLifestyle,
+      'addVaccinations': addVaccinations,
+      'addFamilyHistory': addFamilyHistory,
+      'addSurgical': addSurgical,
+      'addAllergical': addAllergical,
+      'addInfectional': addInfectional,
+      'addVitals': addVitals,
+      'addProblem': addProblem,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      '__v': v,
+    };
   }
 }

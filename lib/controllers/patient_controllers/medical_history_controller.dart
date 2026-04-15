@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:dio/dio.dart';
 import '../../models/doctor_model.dart';
@@ -10,6 +11,7 @@ import '../../models/family_history_model.dart';
 import '../../models/life_style_model.dart';
 import '../../models/medical_history_model.dart';
 import '../../models/vaccination_history_model.dart';
+import '../../utils/app_colors.dart';
 import '../../utils/app_strings.dart';
 import '../../services/api_service.dart';
 import '../../utils/api_urls.dart';
@@ -22,41 +24,82 @@ class MedicalHistoryController extends GetxController {
 
   RxString historyType = AppStrings.currentMedication.obs;
 
-  RxList<MedicationHistoryResponse> apiMedicationList = <MedicationHistoryResponse>[].obs;
+  RxList<MedicalHistoryResponse> apiMedicationList = <MedicalHistoryResponse>[].obs;
   RxList<VaccinationHistoryModel> apiVaccinationList = <VaccinationHistoryModel>[].obs;
 
-  Future<void> fetchMedicationHistory(String type) async {
+  RxList<MedicalHistoryResponse> medicalHistoryList = <MedicalHistoryResponse>[].obs;
+  RxMap<String, dynamic> medicalHistoryData = <String, dynamic>{}.obs;
+
+  TextEditingController noteController = TextEditingController();
+  RxString selectedHistoryId = ''.obs;
+  RxString selectedSectionType = ''.obs;
+
+  Future<void> fetchMedicalHistory() async {
     try {
       isLoading.value = true;
       String patientId = homeController.currentUser.value?.id ?? "";
 
-      if (patientId.isEmpty) return;
+      if (patientId.isEmpty) {
+        debugPrint('Patient ID is empty');
+        return;
+      }
 
       final response = await apiService.get(
-        ApiUrls.getMedicalHistory,
-        query: {
-          "patientId": patientId,
-          "type": "medications",
-        },
+        "${ApiUrls.getMedicalHistory}$patientId",
       );
 
       if (response.statusCode == 200) {
         var rawData = response.data;
-        List<dynamic> listData = [];
 
-        if (rawData is List) {
-          listData = rawData;
+        if (rawData is List && rawData.isNotEmpty) {
+          medicalHistoryList.assignAll(
+            rawData.map((json) => MedicalHistoryResponse.fromJson(json.cast<String, dynamic>())).toList(),
+          );
+          if (medicalHistoryList.isNotEmpty) {
+            medicalHistoryData.value = Map<String, dynamic>.from(medicalHistoryList.first.toJson());
+          }
+          debugPrint('Fetched ${medicalHistoryList.length} medical history records');
         } else if (rawData is Map && rawData['data'] is List) {
-          listData = rawData['data'];
-        } else if (rawData is Map && rawData['medications'] is List) {
-          listData = rawData['medications'];
+          List<dynamic> listData = rawData['data'];
+          if (listData.isNotEmpty) {
+            medicalHistoryList.assignAll(
+              listData.map((json) => MedicalHistoryResponse.fromJson(json.cast<String, dynamic>())).toList(),
+            );
+            if (medicalHistoryList.isNotEmpty) {
+              medicalHistoryData.value = Map<String, dynamic>.from(medicalHistoryList.first.toJson());
+            }
+          }
+          debugPrint('Fetched ${medicalHistoryList.length} medical history records from data field');
+        } else if (rawData is Map && rawData.containsKey('addMedications')) {
+          Map<String, dynamic> castedData = Map<String, dynamic>.from(rawData);
+          medicalHistoryData.value = castedData;
+          MedicalHistoryResponse singleRecord = MedicalHistoryResponse.fromJson(castedData);
+          medicalHistoryList.add(singleRecord);
+          debugPrint('Fetched single medical history record');
+        } else if (rawData is Map) {
+          Map<String, dynamic> castedData = Map<String, dynamic>.from(rawData);
+          medicalHistoryData.value = castedData;
+          MedicalHistoryResponse singleRecord = MedicalHistoryResponse.fromJson(castedData);
+          medicalHistoryList.add(singleRecord);
+          debugPrint('Fetched medical history as single object');
+        } else {
+          debugPrint('Unexpected response format: ${rawData.runtimeType}');
         }
 
-        apiMedicationList.assignAll(
-          listData.map((json) => MedicationHistoryResponse.fromJson(json)).toList(),
-        );
-
-        debugPrint('Fetched ${apiMedicationList.length} medications');
+        if (medicalHistoryData.isNotEmpty) {
+          debugPrint('Medical History Data Keys: ${medicalHistoryData.keys}');
+          if (medicalHistoryData.containsKey('addMedications')) {
+            debugPrint('Has Medications: ${medicalHistoryData['addMedications']}');
+          }
+          if (medicalHistoryData.containsKey('addProblem')) {
+            debugPrint('Has Problem: ${medicalHistoryData['addProblem']}');
+          }
+          if (medicalHistoryData.containsKey('addAllergical')) {
+            debugPrint('Has Allergies: ${medicalHistoryData['addAllergical']}');
+          }
+        }
+      } else {
+        debugPrint('Failed to fetch medical history: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('Fetch Error: $e');
@@ -65,151 +108,235 @@ class MedicalHistoryController extends GetxController {
     }
   }
 
-  Future<void> fetchVaccinationHistory(String type) async {
-    try {
-      isLoading.value = true;
-      String patientId = homeController.currentUser.value?.id ?? "";
-
-      if (patientId.isEmpty) return;
-
-      final response = await apiService.get(
-        ApiUrls.getMedicalHistory,
-        query: {
-          "patientId": patientId,
-          "type": "vaccinations",
-        },
+  Future<void> addNote(String historyId, String sectionType) async {
+    if (noteController.text.trim().isEmpty) {
+      Get.snackbar(
+        'Error',
+        'Please enter a note',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
       );
-
-      if (response.statusCode == 200) {
-        var rawData = response.data;
-        List<dynamic> listData = [];
-
-        if (rawData is List) {
-          listData = rawData;
-        } else if (rawData is Map && rawData['data'] is List) {
-          listData = rawData['data'];
-        } else if (rawData is Map && rawData['vaccinations'] is List) {
-          listData = rawData['vaccinations'];
-        }
-
-        List<VaccinationHistoryModel> vaccinations = listData.map((json) {
-          return VaccinationHistoryModel(
-            vaccineName: json['vaccineName'] ?? 'Unknown Vaccine',
-            testName: json['certificate'] != null
-                ? (json['certificate'].toString().split('/').last.length > 20
-                ? 'Certificate.pdf'
-                : json['certificate'].toString().split('/').last)
-                : 'No certificate',
-            status: json['status'] != null
-                ? json['status'].toString().capitalizeFirst ?? 'Pending'
-                : 'Pending',
-            lastUpdated: json['date'] != null
-                ? _formatDate(json['date'].toString())
-                : 'Date not available',
-            certificate: json['certificate'],
-          );
-        }).toList();
-
-        apiVaccinationList.assignAll(vaccinations);
-        debugPrint('Fetched ${apiVaccinationList.length} vaccinations');
-      }
-    } catch (e) {
-      debugPrint('Fetch Vaccination Error: $e');
-    } finally {
-      isLoading.value = false;
+      return;
     }
-  }
-  RxList<FamilyHistoryModel> apiFamilyHistoryList = <FamilyHistoryModel>[].obs;
 
-  Future<void> fetchFamilyHistory() async {
     try {
       isLoading.value = true;
+
       String patientId = homeController.currentUser.value?.id ?? "";
-      print("Fetching family history for patient ID: $patientId");
 
-      if (patientId.isEmpty) return;
+      if (patientId.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Patient ID not found',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        return;
+      }
 
-      final response = await apiService.get(
-        ApiUrls.getMedicalHistory,
-        query: {
-          "patientId": patientId,
-          "type": "familyHistory",
-        },
+      Map<String, dynamic> requestData = {
+        "patientId": patientId,
+        "note": noteController.text.trim(),
+      };
+
+      final response = await apiService.patch(
+        ApiUrls.addNoteApi,
+        data: requestData,
       );
 
-      if (response.statusCode == 200) {
-        var rawData = response.data;
-        List<dynamic> listData = [];
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        noteController.clear();
+        selectedHistoryId.value = '';
+        selectedSectionType.value = '';
 
-        if (rawData is List) {
-          listData = rawData;
-        } else if (rawData is Map && rawData['data'] is List) {
-          listData = rawData['data'];
-        } else if (rawData is Map && rawData['familyHistory'] is List) {
-          listData = rawData['familyHistory'];
-        }
+        Get.back();
 
-        apiFamilyHistoryList.assignAll(
-          listData.map((json) => FamilyHistoryModel.fromJson(json)).toList(),
+        Get.snackbar(
+          'Success',
+          'Note added successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
         );
 
-        debugPrint('Fetched ${apiFamilyHistoryList.length} family history records');
+        await fetchMedicalHistory();
+      } else {
+        String errorMessage = 'Failed to add note';
+        if (response.data is Map && response.data['message'] != null) {
+          errorMessage = response.data['message'];
+        } else if (response.data is Map && response.data['error'] != null) {
+          errorMessage = response.data['error'];
+        }
+
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
+    } on DioException catch (e) {
+      String errorMessage = 'Network error occurred';
+
+      if (e.response != null) {
+        if (e.response?.data is Map) {
+          errorMessage = e.response?.data['message'] ??
+              e.response?.data['error'] ??
+              'Server error: ${e.response?.statusCode}';
+        } else {
+          errorMessage = 'Server error: ${e.response?.statusCode}';
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection timeout. Please try again.';
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        errorMessage = 'Server not responding. Please try again.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection. Please check your network.';
+      }
+
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } catch (e) {
-      debugPrint('Fetch Family History Error: $e');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
   }
-  // Add this Rx to your controller
-  Rx<LifestyleModel?> lifestyleData = Rx<LifestyleModel?>(null);
 
-// Add this method to fetch lifestyle data
-  Future<void> fetchLifestyleData() async {
-    try {
-      String patientId = homeController.currentUser.value?.id ?? "";
-      if (patientId.isEmpty) return;
+  void showAddNoteDialog(String historyId, String sectionType) {
+    selectedHistoryId.value = historyId;
+    selectedSectionType.value = sectionType;
+    noteController.clear();
 
-      final response = await apiService.get(
-        ApiUrls.getMedicalHistory,
-        query: {
-          "patientId": patientId,
-          "type": "lifestyle",
-        },
-      );
-
-      if (response.statusCode == 200) {
-        var rawData = response.data;
-
-        if (rawData is Map && rawData['data'] != null) {
-          var dataList = rawData['data'];
-          if (dataList is List && dataList.isNotEmpty) {
-            lifestyleData.value = LifestyleModel.fromJson(dataList.first as Map<String, dynamic>);
-          } else if (dataList is Map<String, dynamic>) {
-            lifestyleData.value = LifestyleModel.fromJson(dataList);
-          }
-        } else if (rawData is List && rawData.isNotEmpty) {
-          lifestyleData.value = LifestyleModel.fromJson(rawData.first as Map<String, dynamic>);
-        } else if (rawData is Map<String, dynamic>) {
-          lifestyleData.value = LifestyleModel.fromJson(rawData);
-        }
-
-        debugPrint('Fetched lifestyle data: ${lifestyleData.value != null}');
-      }
-    } catch (e) {
-      debugPrint('Fetch Lifestyle Error: $e');
-    }
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Add Note',
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              16.verticalSpace,
+              TextField(
+                controller: noteController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: 'Enter your note here...',
+                  hintStyle: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.grey,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: AppColors.primaryColor, width: 2),
+                  ),
+                  contentPadding: EdgeInsets.all(12.w),
+                ),
+              ),
+              20.verticalSpace,
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Get.back(),
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                          side: BorderSide(color: Colors.grey.shade400),
+                        ),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                  ),
+                  12.horizontalSpace,
+                  Expanded(
+                    child: Obx(() => ElevatedButton(
+                      onPressed: isLoading.value
+                          ? null
+                          : () => addNote(historyId, sectionType),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                      ),
+                      child: isLoading.value
+                          ? SizedBox(
+                        height: 20.h,
+                        width: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : Text(
+                        'Add Note',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 
   @override
   void onInit() {
     super.onInit();
     loadDoctors();
-    fetchMedicationHistory("medications");
-    fetchVaccinationHistory("vaccinations");
-    fetchFamilyHistory();
-    fetchLifestyleData();
+    fetchMedicalHistory();
   }
+
   String _formatDate(String dateString) {
     try {
       DateTime date = DateTime.parse(dateString);
@@ -222,8 +349,6 @@ class MedicalHistoryController extends GetxController {
       return dateString;
     }
   }
-
-
 
   List<String> medicationStatusList = ["Active", "Stopped", "Completed"];
   List<String> vacinationStatusList = ["Pending", "Completed"];
@@ -376,7 +501,7 @@ class MedicalHistoryController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         clearForm();
-        fetchMedicationHistory("medications");
+        fetchMedicalHistory();
         Get.back();
       } else {
         String errorMessage = 'Failed to add medication';
@@ -512,7 +637,7 @@ class MedicalHistoryController extends GetxController {
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           clearVaccinationForm();
-          fetchVaccinationHistory("vaccinations");
+          fetchMedicalHistory();
           Get.back();
           Get.snackbar('Success', 'Vaccination added successfully',
               snackPosition: SnackPosition.BOTTOM,
@@ -545,7 +670,7 @@ class MedicalHistoryController extends GetxController {
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           clearVaccinationForm();
-          fetchVaccinationHistory("vaccinations");
+          fetchMedicalHistory();
           Get.back();
           Get.snackbar('Success', 'Vaccination added successfully',
               snackPosition: SnackPosition.BOTTOM,
@@ -647,7 +772,7 @@ class MedicalHistoryController extends GetxController {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         clearFamilyHistoryForm();
-        fetchFamilyHistory();
+        fetchMedicalHistory();
         Get.back();
       } else {
         String msg = response.data?['message'] ??
@@ -707,7 +832,7 @@ class MedicalHistoryController extends GetxController {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        fetchLifestyleData();
+        fetchMedicalHistory();
         Get.back();
       } else {
         String errorMsg = 'Failed to save lifestyle data';
@@ -753,13 +878,89 @@ class MedicalHistoryController extends GetxController {
     }
   }
 
+  Future<void> markAsVerified(String historyId, String type) async {
+    try {
+      isLoading.value = true;
+
+      final response = await apiService.patch(
+          ApiUrls.markVerified,
+          data: {
+            "patientId": homeController.currentUser.value?.id ?? "",
+            "type": type,
+          }
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.snackbar(
+          'Success',
+          'Marked as verified successfully',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+        fetchMedicalHistory();
+      } else {
+        String errorMessage = 'Failed to mark as verified';
+        if (response.data is Map) {
+          errorMessage = response.data['message'] ??
+              response.data['error'] ??
+              'Server error: ${response.statusCode}';
+        }
+
+        Get.snackbar(
+          'Error',
+          errorMessage,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      }
+    } on DioException catch (e) {
+      String errorMessage = 'Network error occurred';
+
+      if (e.response != null) {
+        if (e.response?.data is Map) {
+          errorMessage = e.response?.data['message'] ??
+              e.response?.data['error'] ??
+              'Server error: ${e.response?.statusCode}';
+        } else {
+          errorMessage = 'Server error: ${e.response?.statusCode}';
+        }
+      } else if (e.type == DioExceptionType.connectionTimeout) {
+        errorMessage = 'Connection timeout. Please try again.';
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        errorMessage = 'Server not responding. Please try again.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        errorMessage = 'No internet connection. Please check your network.';
+      }
+
+      Get.snackbar(
+        'Error',
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   @override
   void onClose() {
     familyConditionController.dispose();
     familyAgeController.dispose();
     familyNotesController.dispose();
     vaccineNameController.dispose();
+    noteController.dispose();
     super.onClose();
   }
-
 }

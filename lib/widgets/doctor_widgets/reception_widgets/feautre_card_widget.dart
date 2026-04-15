@@ -6,7 +6,7 @@ import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class FeatureCard extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String title;
   final String subtitle;
   final bool hasButton;
@@ -38,10 +38,10 @@ class FeatureCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(
+              Image.asset(
                 icon,
                 color: AppColors.primaryColor,
-                size: 32.0,
+                height: 32.0,
               ),
               SizedBox(width: 10.w),
               Expanded(

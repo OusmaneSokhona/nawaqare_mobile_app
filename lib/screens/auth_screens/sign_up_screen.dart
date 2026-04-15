@@ -99,16 +99,16 @@ class SignUpScreen extends StatelessWidget {
                                 () => signUpController.type.value = "patient",
                           ),
                         ),
-                        5.verticalSpace,
-                        Obx(
-                              () => CustomRadioTile(
-                            text: AppStrings.iAmPharmacist.tr,
-                            isSelected:
-                            signUpController.type.value == "pharmacy",
-                            onTap:
-                                () => signUpController.type.value = "pharmacy",
-                          ),
-                        ),
+                        // 5.verticalSpace,
+                        // Obx(
+                        //       () => CustomRadioTile(
+                        //     text: AppStrings.iAmPharmacist.tr,
+                        //     isSelected:
+                        //     signUpController.type.value == "pharmacy",
+                        //     onTap:
+                        //         () => signUpController.type.value = "pharmacy",
+                        //   ),
+                        // ),
                         15.verticalSpace,
                         Obx(
                               () => ProgressStepper(

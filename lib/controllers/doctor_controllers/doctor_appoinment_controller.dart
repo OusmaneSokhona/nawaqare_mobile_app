@@ -508,4 +508,38 @@ class DoctorAppointmentController extends GetxController {
       isLoading.value = false;
     }
   }
+  Future<void> referPatient(String appointmentId, String comment) async {
+    try {
+      isLoading.value = true;
+
+
+    final response = await ApiService().patch(
+    '${ApiUrls.referPatient}$appointmentId',
+    data: {'comment': comment},
+    );
+
+    if (response.statusCode == 200) {
+    Get.back();
+    Get.snackbar(
+    "Success",
+    "Patient referred successfully",
+    snackPosition: SnackPosition.BOTTOM,
+    duration: Duration(seconds: 2),
+    );
+    await fetchDoctorAppointments();
+    } else {
+    throw Exception('Failed to refer patient');
+    }
+
+    } catch (e) {
+    Get.snackbar(
+    "Error",
+    'Failed to refer: ${e.toString()}',
+    snackPosition: SnackPosition.BOTTOM,
+    duration: Duration(seconds: 3),
+    );
+    } finally {
+    isLoading.value = false;
+    }
+  }
 }

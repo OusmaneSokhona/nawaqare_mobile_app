@@ -681,18 +681,18 @@ RxString isPhoneValid="".obs;
       });
 
       // Add all three fee fields as required
-      formData.fields.add(MapEntry(
-        "fee[remoteconsultation]",
-        remoteConsultationFeeController.text.trim(),
-      ));
-      formData.fields.add(MapEntry(
-        "fee[inpersonconsultation]",
-        inPersonConsultationFeeController.text.trim(),
-      ));
-      formData.fields.add(MapEntry(
-        "fee[homevisitconsultation]",
-        homeVisitConsultationFeeController.text.trim(),
-      ));
+      // formData.fields.add(MapEntry(
+      //   "fee[remoteconsultation]",
+      //   remoteConsultationFeeController.text.trim(),
+      // ));
+      // formData.fields.add(MapEntry(
+      //   "fee[inpersonconsultation]",
+      //   inPersonConsultationFeeController.text.trim(),
+      // ));
+      // formData.fields.add(MapEntry(
+      //   "fee[homevisitconsultation]",
+      //   homeVisitConsultationFeeController.text.trim(),
+      // ));
 
       if (pickedImage.value != null) {
         formData.files.add(MapEntry(

@@ -32,13 +32,6 @@ class DoctorHealthSpaceGrid extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       children: [
         HealthSpaceCard(
-          icon: "assets/images/my_services_icon.png",
-          title: AppStrings.myServices.tr,
-          onTap: () {
-            profileController.handleHealthSpaceTap(MyServicesScreen());
-          },
-        ),
-        HealthSpaceCard(
           icon: "assets/images/privacy_security_icon.png",
           title: AppStrings.privacySecurity.tr,
           onTap: () {

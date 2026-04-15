@@ -1140,17 +1140,96 @@ class FollowUpRecommendationCard extends StatelessWidget {
   final List<String> options;
   final DoctorAppointment appointmentModel;
 
-   FollowUpRecommendationCard({
+  FollowUpRecommendationCard({
     required this.recommendation,
     required this.options,
     required this.appointmentModel,
     super.key,
   });
   DoctorAppointmentController appointmentController=Get.find();
+
+  void _showReferPatientDialog() {
+    TextEditingController commentController = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Refer Patient",
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Please provide referral comments:",
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+            ),
+            SizedBox(height: 12.h),
+            TextField(
+              controller: commentController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: "Enter referral reason and comments...",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: AppColors.primaryColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (commentController.text.trim().isNotEmpty) {
+                Get.back();
+                await appointmentController.referPatient(
+                  appointmentModel.id,
+                  commentController.text.trim(),
+                );
+              } else {
+                Get.snackbar(
+                  "Warning",
+                  "Please enter referral comments",
+                  snackPosition: SnackPosition.BOTTOM,
+                  duration: Duration(seconds: 2),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              "Refer",
+              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     appointmentModel.status==AppointmentStatus.CANCELLED?options.remove(AppStrings.closeConsultation.tr):null;
+    appointmentModel.status==AppointmentStatus.CANCELLED?options.remove(AppStrings.referPatient.tr):null;
     appointmentModel.status==AppointmentStatus.COMPLETED?options.remove(AppStrings.closeConsultation.tr):null;
+    appointmentModel.status==AppointmentStatus.COMPLETED?options.remove(AppStrings.referPatient.tr):null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1175,8 +1254,10 @@ class FollowUpRecommendationCard extends StatelessWidget {
                   onTap: (){
                     if(option == AppStrings.scheduleFollowUp.tr){
                       Get.to(DoctorFollowupScreen(appointmentId: appointmentModel.id));
-                    }else if(option ==AppStrings.closeConsultation.tr){
+                    }else if(option == AppStrings.closeConsultation.tr){
                       showCancelConfirmationDialog(appointmentModel.id);
+                    }else if(option == AppStrings.referPatient.tr){
+                      _showReferPatientDialog();
                     }
                   },
                   child: Row(
@@ -1190,8 +1271,10 @@ class FollowUpRecommendationCard extends StatelessWidget {
                           onChanged: (bool? newValue) {
                             if(option == AppStrings.scheduleFollowUp.tr){
                               Get.to(DoctorFollowupScreen(appointmentId: appointmentModel.id));
-                            }else if(option ==AppStrings.closeConsultation.tr){
+                            }else if(option == AppStrings.closeConsultation.tr){
                               showCancelConfirmationDialog(appointmentModel.id);
+                            }else if(option == AppStrings.referPatient.tr){
+                              _showReferPatientDialog();
                             }
                           },
                           shape: RoundedRectangleBorder(
@@ -1217,6 +1300,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
       ],
     );
   }
+
   void showCancelConfirmationDialog(String appointmentId) {
     Get.dialog(
       AlertDialog(
@@ -1240,7 +1324,7 @@ class FollowUpRecommendationCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               Get.back();
-             await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED,false);
+              await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED,false);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
@@ -1319,7 +1403,7 @@ class ReviewCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                             "${appoitment.reviews!.first.rating}.0",
+                              "${appoitment.reviews!.first.rating}.0",
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,

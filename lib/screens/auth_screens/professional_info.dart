@@ -87,21 +87,21 @@ class ProfessionalInfo extends StatelessWidget {
                         keyboardType: TextInputType.number,
                         controller: signUpController.experienceController,
                       ),
-                      _buildFeeField(
-                        labelText: "Remote Consultation Fee",
-                        hintText: "e.g., 50",
-                        controller: signUpController.remoteConsultationFeeController,
-                      ),
-                      _buildFeeField(
-                        labelText: "In-Person Consultation Fee",
-                        hintText: "e.g., 100",
-                        controller: signUpController.inPersonConsultationFeeController,
-                      ),
-                      _buildFeeField(
-                        labelText: "Home Visit Consultation Fee",
-                        hintText: "e.g., 150",
-                        controller: signUpController.homeVisitConsultationFeeController,
-                      ),
+                      // _buildFeeField(
+                      //   labelText: "Remote Consultation Fee",
+                      //   hintText: "e.g., 50",
+                      //   controller: signUpController.remoteConsultationFeeController,
+                      // ),
+                      // _buildFeeField(
+                      //   labelText: "In-Person Consultation Fee",
+                      //   hintText: "e.g., 100",
+                      //   controller: signUpController.inPersonConsultationFeeController,
+                      // ),
+                      // _buildFeeField(
+                      //   labelText: "Home Visit Consultation Fee",
+                      //   hintText: "e.g., 150",
+                      //   controller: signUpController.homeVisitConsultationFeeController,
+                      // ),
                       Obx(()=> _buildDateOfRegistrationField(context)),
                       CustomTextField(
                         labelText: AppStrings.placeOfPractice.tr,
@@ -122,9 +122,9 @@ class ProfessionalInfo extends StatelessWidget {
                           if (signUpController.selectedSpecialist.value == null ||
                               signUpController.selectedSpecialist.value!.isEmpty ||
                               signUpController.experienceController.text.isEmpty ||
-                              signUpController.remoteConsultationFeeController.text.isEmpty ||
-                              signUpController.inPersonConsultationFeeController.text.isEmpty ||
-                              signUpController.homeVisitConsultationFeeController.text.isEmpty ||
+                              // signUpController.remoteConsultationFeeController.text.isEmpty ||
+                              // signUpController.inPersonConsultationFeeController.text.isEmpty ||
+                              // signUpController.homeVisitConsultationFeeController.text.isEmpty ||
                               signUpController.dateOfRegistration == null ||
                               signUpController.placeOfPracticeController.text.isEmpty ||
                               signUpController.yearOfWorkController.text.isEmpty) {

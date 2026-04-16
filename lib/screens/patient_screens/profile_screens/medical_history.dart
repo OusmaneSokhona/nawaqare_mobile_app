@@ -6,6 +6,7 @@ import '../../../utils/app_colors.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_images.dart';
 import '../../../utils/app_strings.dart';
+import 'add_edit_medicalentry_Screen.dart';
 
 class MedicalHistory extends StatelessWidget {
   MedicalHistory({super.key});
@@ -68,86 +69,132 @@ class MedicalHistory extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (controller.medicalHistoryData.containsKey('addProblem') && controller.medicalHistoryData['addProblem'] != null)
-                        _buildProblemHistoryCard(
+                      _buildSectionCard(
+                        title: "Problem History",
+                        type: "addProblem",
+                        hasData: controller.medicalHistoryData.containsKey('addProblem') && controller.medicalHistoryData['addProblem'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addProblem') && controller.medicalHistoryData['addProblem'] != null
+                            ? _buildProblemHistoryCard(
                           controller.medicalHistoryData['addProblem'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'problem'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addAllergical') && controller.medicalHistoryData['addAllergical'] != null)
-                        _buildAllergiesCard(
+                      _buildSectionCard(
+                        title: "Allergies and intolerances",
+                        type: "addAllergical",
+                        hasData: controller.medicalHistoryData.containsKey('addAllergical') && controller.medicalHistoryData['addAllergical'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addAllergical') && controller.medicalHistoryData['addAllergical'] != null
+                            ? _buildAllergiesCard(
                           controller.medicalHistoryData['addAllergical'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'allergy'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addMedications') && controller.medicalHistoryData['addMedications'] != null)
-                        _buildCurrentMedicationsCard(
+                      _buildSectionCard(
+                        title: "Current medications",
+                        type: "addMedications",
+                        hasData: controller.medicalHistoryData.containsKey('addMedications') && controller.medicalHistoryData['addMedications'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addMedications') && controller.medicalHistoryData['addMedications'] != null
+                            ? _buildCurrentMedicationsCard(
                           controller.medicalHistoryData['addMedications'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'medication'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addFamilyHistory') && controller.medicalHistoryData['addFamilyHistory'] != null)
-                        _buildFamilyHistoryCard(
+                      _buildSectionCard(
+                        title: "Family history",
+                        type: "addFamilyHistory",
+                        hasData: controller.medicalHistoryData.containsKey('addFamilyHistory') && controller.medicalHistoryData['addFamilyHistory'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addFamilyHistory') && controller.medicalHistoryData['addFamilyHistory'] != null
+                            ? _buildFamilyHistoryCard(
                           controller.medicalHistoryData['addFamilyHistory'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'familyHistory'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addVaccinations') && controller.medicalHistoryData['addVaccinations'] != null)
-                        _buildVaccinationsCard(
+                      _buildSectionCard(
+                        title: "Vaccinations",
+                        type: "addVaccinations",
+                        hasData: controller.medicalHistoryData.containsKey('addVaccinations') && controller.medicalHistoryData['addVaccinations'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addVaccinations') && controller.medicalHistoryData['addVaccinations'] != null
+                            ? _buildVaccinationsCard(
                           controller.medicalHistoryData['addVaccinations'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'vaccination'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addVitals') && controller.medicalHistoryData['addVitals'] != null)
-                        _buildBaselineVitalsCard(
+                      _buildSectionCard(
+                        title: "Baseline vitals",
+                        type: "addVitals",
+                        hasData: controller.medicalHistoryData.containsKey('addVitals') && controller.medicalHistoryData['addVitals'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addVitals') && controller.medicalHistoryData['addVitals'] != null
+                            ? _buildBaselineVitalsCard(
                           controller.medicalHistoryData['addVitals'],
                           controller.medicalHistoryData['updatedAt']?.toString() ?? '',
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'vitals'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addSurgical') && controller.medicalHistoryData['addSurgical'] != null)
-                        _buildSurgicalHistoryCard(
+                      _buildSectionCard(
+                        title: "Surgical history",
+                        type: "addSurgical",
+                        hasData: controller.medicalHistoryData.containsKey('addSurgical') && controller.medicalHistoryData['addSurgical'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addSurgical') && controller.medicalHistoryData['addSurgical'] != null
+                            ? _buildSurgicalHistoryCard(
                           controller.medicalHistoryData['addSurgical'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'surgical'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addInfectional') && controller.medicalHistoryData['addInfectional'] != null)
-                        _buildInfectiousHistoryCard(
+                      _buildSectionCard(
+                        title: "Infectious history",
+                        type: "addInfectional",
+                        hasData: controller.medicalHistoryData.containsKey('addInfectional') && controller.medicalHistoryData['addInfectional'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addInfectional') && controller.medicalHistoryData['addInfectional'] != null
+                            ? _buildInfectiousHistoryCard(
                           controller.medicalHistoryData['addInfectional'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'infection'),
+                      ),
                       20.verticalSpace,
-
-                      if (controller.medicalHistoryData.containsKey('addLifestyle') && controller.medicalHistoryData['addLifestyle'] != null)
-                        _buildLifestyleCard(
+                      _buildSectionCard(
+                        title: "Lifestyle habits / risk factors",
+                        type: "addLifestyle",
+                        hasData: controller.medicalHistoryData.containsKey('addLifestyle') && controller.medicalHistoryData['addLifestyle'] != null,
+                        dataWidget: controller.medicalHistoryData.containsKey('addLifestyle') && controller.medicalHistoryData['addLifestyle'] != null
+                            ? _buildLifestyleCard(
                           controller.medicalHistoryData['addLifestyle'],
                           controller.medicalHistoryData['_id']?.toString() ?? '',
                           controller,
-                        ),
-
+                        )
+                            : null,
+                        onAdd: () => _navigateToAddScreen(controller, 'lifestyle'),
+                      ),
                       40.verticalSpace,
                     ],
                   ),
@@ -160,6 +207,70 @@ class MedicalHistory extends StatelessWidget {
     );
   }
 
+  void _navigateToAddScreen(MedicalHistoryController controller, String type) {
+    Get.to(() => AddEditMedicalEntryScreen(
+      entryType: type,
+      existingData: null,
+    ));
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    required String type,
+    required bool hasData,
+    Widget? dataWidget,
+    required VoidCallback onAdd,
+  }) {
+    if (!hasData) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+            InkWell(
+              onTap: onAdd,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryColor,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.add, color: Colors.white, size: 16.sp),
+                    4.horizontalSpace,
+                    Text(
+                      "Add",
+                      style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return dataWidget ?? Container();
+  }
+
   Widget _buildProblemHistoryCard(dynamic problemData, String historyId, MedicalHistoryController controller) {
     String verificationStatus = problemData['status']?.toString() ?? 'false';
     bool isVerified = verificationStatus.toLowerCase() == 'verified';
@@ -170,7 +281,7 @@ class MedicalHistory extends StatelessWidget {
       note: problemData['note'] != null ? "Note: ${problemData['note']}" : null,
       subtitle: problemData['problemName'] ?? 'N/A',
       details: problemData['treatment'] ?? 'No treatment details',
-      doctor: problemData['doctorName'] ?? 'Unknown Doctor',
+      doctor: problemData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -178,6 +289,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "problem",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'problem'),
     );
   }
 
@@ -190,7 +302,7 @@ class MedicalHistory extends StatelessWidget {
       showAddNote: false,
       subtitle: allergyData['allergen'] ?? 'N/A',
       details: "Reaction: ${allergyData['reaction'] ?? 'N/A'}\nSeverity: ${allergyData['severity'] ?? 'Normal'}",
-      doctor: allergyData['doctorName'] ?? 'Unknown Doctor',
+      doctor: allergyData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -198,6 +310,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "allergical",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'allergy'),
     );
   }
 
@@ -210,7 +323,7 @@ class MedicalHistory extends StatelessWidget {
       showAddNote: false,
       subtitle: medicationData['medicineName'] ?? 'N/A',
       details: "Dosage: ${medicationData['dosage'] ?? 'N/A'}\nRefill: ${medicationData['refill'] == true ? 'Yes' : 'No'}",
-      doctor: "Dr. ${medicationData['doctor'] ?? 'Unknown'}",
+      doctor: "${medicationData['doctorName'] ?? null}",
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -218,6 +331,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "medications",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'medication'),
     );
   }
 
@@ -230,7 +344,7 @@ class MedicalHistory extends StatelessWidget {
       showAddNote: false,
       subtitle: "${familyData['relation'] ?? 'Unknown'} - ${familyData['condition'] ?? 'N/A'}",
       details: "Severity: ${familyData['severity'] ?? 'Normal'}\nAge at diagnosis: ${familyData['age'] ?? 'N/A'}",
-      doctor: familyData['doctorName'] ?? 'Family History Record',
+      doctor: familyData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -238,6 +352,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "familyHistory",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'familyHistory'),
     );
   }
 
@@ -250,7 +365,7 @@ class MedicalHistory extends StatelessWidget {
       showAddNote: false,
       subtitle: vaccinationData['vaccineName'] ?? 'N/A',
       details: "Date: ${_formatDateFromString(vaccinationData['date'] ?? 'N/A')}\nStatus: ${vaccinationData['status'] ?? 'Unknown'}",
-      doctor: vaccinationData['doctorName'] ?? 'Vaccination Record',
+      doctor: vaccinationData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -258,6 +373,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "vaccinations",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'vaccination'),
     );
   }
 
@@ -269,7 +385,7 @@ class MedicalHistory extends StatelessWidget {
       title: "Baseline vitals",
       showAddNote: false,
       details: "BP: ${vitalsData['bp'] ?? 'N/A'}\nWeight: ${vitalsData['weight'] ?? 'N/A'}\nHeight: ${vitalsData['height'] ?? 'N/A'}\nBMI: ${vitalsData['bmi'] ?? 'N/A'}",
-      doctor: vitalsData['doctorName'] ?? 'Vitals Record',
+      doctor: vitalsData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -277,6 +393,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "vitals",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'vitals'),
     );
   }
 
@@ -289,7 +406,7 @@ class MedicalHistory extends StatelessWidget {
       showAddNote: false,
       subtitle: "${surgicalData['procedure'] ?? 'N/A'} — ${surgicalData['date'] ?? 'Unknown Year'}",
       details: "Severity: ${surgicalData['severity'] ?? 'Normal'}",
-      doctor: surgicalData['doctorName'] ?? 'Unknown Doctor',
+      doctor: surgicalData['doctorName'] ??null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -297,6 +414,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "surgical",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'surgical'),
     );
   }
 
@@ -309,7 +427,7 @@ class MedicalHistory extends StatelessWidget {
       showAddNote: false,
       subtitle: "${infectionData['infectionType'] ?? 'N/A'} — ${infectionData['date'] ?? 'Unknown Date'}",
       details: infectionData['notes'] ?? 'No additional notes',
-      doctor: infectionData['doctorName'] ?? 'Infectious Disease Record',
+      doctor: infectionData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -317,6 +435,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "infectional",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'infection'),
     );
   }
 
@@ -328,7 +447,7 @@ class MedicalHistory extends StatelessWidget {
       title: "Lifestyle habits / risk factors",
       showAddNote: false,
       details: "Smoking: ${lifestyleData['smoking'] ?? 'N/A'}\nAlcohol: ${lifestyleData['alcohol'] ?? 'N/A'}\nPhysical Activity: ${lifestyleData['physicalActivity'] ?? 'N/A'}\nDiet: ${lifestyleData['dietType'] ?? 'N/A'}\nSleep: ${lifestyleData['sleepQuality'] ?? 'N/A'}",
-      doctor: lifestyleData['doctorName'] ?? 'Lifestyle Record',
+      doctor: lifestyleData['doctorName'] ?? null,
       status: isVerified ? "Verified" : "Unverified",
       statusColor: isVerified ? Colors.green : Colors.orange,
       isVerified: isVerified,
@@ -336,6 +455,7 @@ class MedicalHistory extends StatelessWidget {
       historyId: historyId,
       sectionType: "lifestyle",
       controller: controller,
+      onEdit: () => _navigateToAddScreen(controller, 'lifestyle'),
     );
   }
 
@@ -348,13 +468,14 @@ class MedicalHistory extends StatelessWidget {
     String? doctor,
     bool showActionLinks = true,
     bool showAddNote = false,
-    String? note ,
+    String? note,
     Widget? customActions,
     bool isVerified = false,
     VoidCallback? onMarkVerified,
     required String historyId,
     required String sectionType,
     required MedicalHistoryController controller,
+    VoidCallback? onEdit,
   }) {
     return Container(
       width: double.infinity,
@@ -411,7 +532,7 @@ class MedicalHistory extends StatelessWidget {
           8.verticalSpace,
           Text(details, style: TextStyle(fontSize: 11.sp, color: Colors.black87, height: 1.4)),
           if (note != null)
-          Text(note, style: TextStyle(fontSize: 11.sp, color: Colors.black87, height: 1.4)),
+            Text(note, style: TextStyle(fontSize: 11.sp, color: Colors.black87, height: 1.4)),
           if (doctor != null) ...[
             8.verticalSpace,
             Container(
@@ -427,8 +548,11 @@ class MedicalHistory extends StatelessWidget {
               if (showActionLinks)
                 Row(
                   children: [
-                    Text("View History", style: TextStyle(color: AppColors.primaryColor, fontSize: 11.sp, decoration: TextDecoration.underline)),
-                    12.horizontalSpace,
+                    InkWell(
+                      onTap: onEdit,
+                      child: Text("Edit", style: TextStyle(color: AppColors.primaryColor, fontSize: 11.sp, decoration: TextDecoration.underline)),
+                    ),
+                    10.horizontalSpace,
                     if (!isVerified && onMarkVerified != null)
                       InkWell(
                         onTap: onMarkVerified,
@@ -437,6 +561,7 @@ class MedicalHistory extends StatelessWidget {
                           style: TextStyle(color: Colors.green, fontSize: 11.sp, decoration: TextDecoration.underline),
                         ),
                       ),
+                    10.horizontalSpace,
                     if (showAddNote)
                       InkWell(
                         onTap: () => controller.showAddNoteDialog(historyId, sectionType),
@@ -449,7 +574,6 @@ class MedicalHistory extends StatelessWidget {
                 )
               else if (customActions != null)
                 customActions,
-              Icon(Icons.edit_note, color: AppColors.primaryColor, size: 20.sp),
             ],
           ),
         ],

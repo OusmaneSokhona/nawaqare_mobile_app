@@ -282,15 +282,6 @@ class AddEditMedicalEntryScreen extends StatelessWidget {
           ),
         10.verticalSpace,
         _buildRefillField(),
-        10.verticalSpace,
-        _buildDropdownField(
-          title: "Status",
-          items: controller.medicationStatusList,
-          selectedValue: controller.medicationStatus,
-          onChanged: (value) {
-            if (value != null) controller.medicationStatus.value = value;
-          },
-        ),
       ],
     );
   }
@@ -350,44 +341,44 @@ class AddEditMedicalEntryScreen extends StatelessWidget {
           },
         ),
         10.verticalSpace,
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            "Upload Certificate (Optional)",
-            style: TextStyle(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              fontFamily: AppFonts.jakartaMedium,
-            ),
-          ),
-        ),
-        InkWell(
-          onTap: controller.pickFile,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
-            ),
-            child: Obx(
-                  () => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.cloud_upload_outlined, size: 40, color: Colors.blue.shade700),
-                  const SizedBox(height: 12),
-                  Text(
-                    _getUploadText(controller.selectedFileName.value!),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+        // Align(
+        //   alignment: Alignment.centerLeft,
+        //   child: Text(
+        //     "Upload Certificate (Optional)",
+        //     style: TextStyle(
+        //       fontSize: 18.sp,
+        //       fontWeight: FontWeight.w600,
+        //       fontFamily: AppFonts.jakartaMedium,
+        //     ),
+        //   ),
+        // ),
+        // InkWell(
+        //   onTap: controller.pickFile,
+        //   borderRadius: BorderRadius.circular(12),
+        //   child: Container(
+        //     width: double.infinity,
+        //     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+        //     decoration: BoxDecoration(
+        //       color: Colors.white,
+        //       borderRadius: BorderRadius.circular(12),
+        //       border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
+        //     ),
+        //     child: Obx(
+        //           () => Column(
+        //         mainAxisAlignment: MainAxisAlignment.center,
+        //         children: [
+        //           Icon(Icons.cloud_upload_outlined, size: 40, color: Colors.blue.shade700),
+        //           const SizedBox(height: 12),
+        //           Text(
+        //             _getUploadText(controller.selectedFileName.value!),
+        //             textAlign: TextAlign.center,
+        //             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: Colors.black),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -511,7 +502,7 @@ class AddEditMedicalEntryScreen extends StatelessWidget {
     return Column(
       children: [
         CustomTextField(
-          labelText: "Allergen",
+          labelText: "Allergy",
           hintText: "Enter allergen (e.g., Penicillin)",
           controller: controller.allergenController,
         ),
@@ -583,6 +574,8 @@ class AddEditMedicalEntryScreen extends StatelessWidget {
             if (value != null) controller.selectedSurgicalSeverity.value = value;
           },
         ),
+        if (controller.allDoctorList.isNotEmpty)
+          _buildDoctorDropdown(),
       ],
     );
   }

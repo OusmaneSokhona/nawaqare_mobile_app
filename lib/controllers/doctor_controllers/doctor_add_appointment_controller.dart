@@ -129,8 +129,9 @@ class DoctorAddAppointmentController extends GetxController {
 
         final slots = allSlots.where((slot) {
           final isAvailable = slot.status.toLowerCase() == 'available';
+          final isConsultation = slot.service?.toLowerCase() == 'consultation';
           final slotDate = slot.slotDate ?? DateFormat('yyyy-MM-dd').format(slot.startTime);
-          return slotDate == selectedDateStr && isAvailable;
+          return slotDate == selectedDateStr && isAvailable && isConsultation;
         }).toList();
 
         slots.sort((a, b) => a.startTime.compareTo(b.startTime));

@@ -79,8 +79,9 @@ class DoctorFollowupController extends GetxController {
 
         final slots = allSlots.where((slot) {
           final isAvailable = slot.status.toLowerCase() == 'available';
+          final isFollowup = slot.service?.toLowerCase() == 'followup';
           final slotDate = slot.slotDate ?? DateFormat('yyyy-MM-dd').format(slot.startTime);
-          return slotDate == selectedDateStr && isAvailable;
+          return slotDate == selectedDateStr && isAvailable && isFollowup;
         }).toList();
 
         slots.sort((a, b) => a.startTime.compareTo(b.startTime));

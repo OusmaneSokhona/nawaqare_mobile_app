@@ -59,8 +59,12 @@ class CalenderController extends GetxController {
   void setConsultationType(String type) {
     consultationType.value = type;
   }
+
   void setServiceType(String type) {
     serviceType.value = type;
+    if (type == 'followup') {
+      consultationType.value = 'remote';
+    }
   }
 
   TimeOfDay _addMinutesToTimeOfDay(TimeOfDay time, int minutes) {
@@ -294,6 +298,7 @@ class CalenderController extends GetxController {
             'startTime': startTimeUtc.toIso8601String(),
             'endTime': endTimeUtc.toIso8601String(),
             'consultationType': consultationType.value,
+            'service': serviceType.value,
           });
         }
 
@@ -329,7 +334,7 @@ class CalenderController extends GetxController {
 
         Get.snackbar(
           "Success",
-          '${timeSlots.length} Time Slots Created',
+          '${timeSlots.length} Time Slots Created Successfully',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
@@ -337,15 +342,55 @@ class CalenderController extends GetxController {
 
         clearForm();
       } else {
+        String errorMessage = AppStrings.failedToCreateSlot.tr;
+        if (response.data != null) {
+          if (response.data is Map && response.data['message'] != null) {
+            errorMessage = response.data['message'];
+          } else if (response.data is String) {
+            errorMessage = response.data;
+          }
+        }
+
         Get.snackbar(
           AppStrings.warning.tr,
-          AppStrings.failedToCreateSlot.tr,
+          errorMessage,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
         await fetchSlotsForDate(selectedDate.value);
       }
+    } on DioException catch (e) {
+      String errorMessage = AppStrings.failedToCreateSlot.tr;
+
+      if (e.response != null) {
+        final responseData = e.response?.data;
+
+        if (responseData is Map) {
+          if (responseData['message'] != null) {
+            errorMessage = responseData['message'];
+          } else if (responseData['error'] != null) {
+            errorMessage = responseData['error'];
+          }
+        } else if (responseData is String) {
+          errorMessage = responseData;
+        }
+
+        if (e.response?.statusCode == 409) {
+          errorMessage = 'Slot already exists or overlaps at this time';
+        }
+      }
+
+      Get.snackbar(
+        AppStrings.warning.tr,
+        errorMessage,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+
+      await fetchSlotsForDate(selectedDate.value);
     } catch (e) {
       print('Error creating slots: $e');
       Get.snackbar(
@@ -459,10 +504,17 @@ class CalenderController extends GetxController {
         );
         await fetchSlotsForDate(selectedDate.value);
       } else {
+        String errorMessage = 'Failed to delete slot. Please try again.';
+        if (response.data != null) {
+          if (response.data is Map && response.data['message'] != null) {
+            errorMessage = response.data['message'];
+          }
+        }
+
         await fetchSlotsForDate(selectedDate.value);
         Get.snackbar(
           AppStrings.warning.tr,
-          'Failed to delete slot. Please try again.',
+          errorMessage,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -471,11 +523,15 @@ class CalenderController extends GetxController {
     } on DioException catch (e) {
       await fetchSlotsForDate(selectedDate.value);
       String errorMessage = AppStrings.failedToDeleteSlot.tr;
+
       if (e.response != null) {
         if (e.response?.data is Map && e.response?.data['message'] != null) {
           errorMessage = e.response?.data['message'];
+        } else if (e.response?.data is String) {
+          errorMessage = e.response?.data;
         }
       }
+
       Get.snackbar(
         AppStrings.warning.tr,
         errorMessage,

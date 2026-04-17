@@ -18,6 +18,9 @@ class DoctorAddAppointmentScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Doctor ID in Add Appointment Screen: ${controller.doctorId}");
+    print("Selected Patient: ${controller.selectedPatient.value?.id}");
+    print("Selected Time Slot: ${controller.selectedTimeSlot.value?.id}");
     return Scaffold(
       backgroundColor: AppColors.onboardingBackground,
       body: SafeArea(

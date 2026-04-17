@@ -49,12 +49,12 @@ class MedicalHistoryController extends GetxController {
   TextEditingController infectionNotesController = TextEditingController();
 
   RxString medicationStatus = "Active".obs;
-  RxString vaccinationStatus = "Pending".obs;
+  RxString vaccinationStatus = "pending".obs;
   RxString activeRelation = "Father".obs;
   RxBool hasRefill = false.obs;
-  final Rx<String?> selectedSeverityFamilyHistory = Rx<String?>('Mild');
-  final Rx<String?> selectedSeverity = Rx<String?>('Mild');
-  final Rx<String?> selectedSurgicalSeverity = Rx<String?>('Mild');
+  final Rx<String?> selectedSeverityFamilyHistory = Rx<String?>('Normal');
+  final Rx<String?> selectedSeverity = Rx<String?>('Normal');
+  final Rx<String?> selectedSurgicalSeverity = Rx<String?>('Normal');
   final RxString selectedSmoking = 'Yes'.obs;
   final RxString selectedAlcohol = 'None'.obs;
   final RxString selectedActivity = 'Sedentary'.obs;
@@ -71,9 +71,9 @@ class MedicalHistoryController extends GetxController {
   };
 
   List<String> medicationStatusList = ["Active", "Stopped", "Completed"];
-  List<String> vacinationStatusList = ["Pending", "Completed"];
+  List<String> vacinationStatusList = ["pending", "verified"];
   List<String> relationList = ["Father", "Mother", "Son", "Brother", "Sister"];
-  final List<String> severityList = ['Mild', 'Moderate', 'Severe'];
+  final List<String> severityList = ["Normal", "Moderate", "Critical"];
   final selectedFileName = Rx<String?>('No file selected');
 
   final RxList<DoctorModel> allDoctorList = <DoctorModel>[].obs;
@@ -212,6 +212,7 @@ class MedicalHistoryController extends GetxController {
           "dosage": dosageController.text.trim(),
           "doctor": doctorId,
           "refill": hasRefill.value,
+          "status": "pending"
         }
       };
 
@@ -220,6 +221,11 @@ class MedicalHistoryController extends GetxController {
       final response = await apiService.post(ApiUrls.createMedicalHistory, data: requestData);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        _clearMedicationForm();
+        await fetchMedicalHistory();
+        Get.back();
+        Get.snackbar('Success', 'Medication added successfully',
+            backgroundColor: Colors.green, colorText: Colors.white);
         // Success handling
       } else {
         // Try to extract more error details
@@ -314,7 +320,7 @@ class MedicalHistoryController extends GetxController {
         FormData formData = FormData.fromMap({
           'patientId': patientId,
           'type': 'vaccinations',
-          'certificate': multipartFile,
+          // 'certificate': multipartFile,
           'data': jsonEncode(vaccineData),
         });
 
@@ -379,14 +385,15 @@ class MedicalHistoryController extends GetxController {
 
     try {
       isLoading.value = true;
-
+      String doctorName = selectedDoctor.value!.fullName!;
       Map<String, dynamic> requestData = {
         "patientId": homeController.currentUser.value?.id ?? "",
         "type": "surgical",
         "data": {
           "procedure": procedureController.text.trim(),
           "date": surgicalDateController.text.trim().isEmpty ? DateTime.now().year.toString() : surgicalDateController.text.trim(),
-          "severity": selectedSurgicalSeverity.value?.toLowerCase() ?? "mild",
+          "severity": selectedSurgicalSeverity.value ?? "Normal",
+          "doctor": doctorName,
         }
       };
 
@@ -436,7 +443,7 @@ class MedicalHistoryController extends GetxController {
         "data": {
           "relation": activeRelation.value,
           "condition": familyConditionController.text.trim(),
-          "severity": selectedSeverityFamilyHistory.value?.toLowerCase() ?? "mild",
+          "severity": selectedSeverityFamilyHistory.value ?? "Normal",
           "age": age,
           "notes": familyNotesController.text.trim(),
         }
@@ -566,7 +573,7 @@ class MedicalHistoryController extends GetxController {
         "data": {
           "allergen": allergenController.text.trim(),
           "reaction": reactionController.text.trim(),
-          "severity": selectedSeverity.value?.toLowerCase() ?? "mild",
+          "severity": selectedSeverity.value ?? "Normal",
         }
       };
 
@@ -839,7 +846,7 @@ class MedicalHistoryController extends GetxController {
   void _clearAllergyForm() {
     allergenController.clear();
     reactionController.clear();
-    selectedSeverity.value = 'Mild';
+    selectedSeverity.value = 'Normal';
   }
 
   void _clearVitalsForm() {
@@ -851,7 +858,7 @@ class MedicalHistoryController extends GetxController {
   void _clearSurgicalForm() {
     procedureController.clear();
     surgicalDateController.clear();
-    selectedSurgicalSeverity.value = 'Mild';
+    selectedSurgicalSeverity.value = 'Normal';
   }
 
   void _clearInfectionForm() {

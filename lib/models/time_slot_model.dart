@@ -53,6 +53,7 @@ class TimeSlot {
   final DateTime endTime;
   final String consultationType;
   final String status;
+  final String service;
   String? slotDate;
 
   TimeSlot({
@@ -61,6 +62,7 @@ class TimeSlot {
     required this.endTime,
     required this.consultationType,
     required this.status,
+    required this.service,
     this.slotDate,
   });
 
@@ -74,6 +76,7 @@ class TimeSlot {
       endTime: endTimeUtc.toLocal(),
       consultationType: json['consultationType'] ?? '',
       status: json['status'] ?? '',
+      service: json['service'] ?? '',
       slotDate: DateFormat('yyyy-MM-dd').format(startTimeUtc.toLocal()),
     );
   }

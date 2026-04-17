@@ -225,35 +225,47 @@ class EditDayDrawer extends StatelessWidget {
                     ),
                     10.verticalSpace,
                     Obx(
-                          () => CustomRadioTile(
-                              isCircle: false,
-                          text: AppStrings.inPerson.tr,
-                          isSelected: controller.consultationType.value == 'inperson',
-                          onTap: () {
-                            controller.setConsultationType('inperson');
-                          }
-                      ),
-                    ),
-                    10.verticalSpace,
-                    Obx(
-                          () => CustomRadioTile(
+                          () => Opacity(
+                        opacity: controller.serviceType.value == 'followup' ? 0.5 : 1.0,
+                        child: IgnorePointer(
+                          ignoring: controller.serviceType.value == 'followup',
+                          child: CustomRadioTile(
                             isCircle: false,
-                          text: AppStrings.teleconsultation.tr,
-                          isSelected: controller.consultationType.value == 'remote',
-                          onTap: () {
-                            controller.setConsultationType('remote');
-                          }
+                            text: AppStrings.inPerson.tr,
+                            isSelected: controller.consultationType.value == 'inperson',
+                            onTap: () {
+                              controller.setConsultationType('inperson');
+                            },
+                          ),
+                        ),
                       ),
                     ),
                     10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
-                            isCircle:false,
-                          text: AppStrings.homeVisit.tr,
-                          isSelected: controller.consultationType.value == 'homevisit',
-                          onTap: () {
-                            controller.setConsultationType('homevisit');
-                          }
+                        isCircle: false,
+                        text: AppStrings.remote.tr,
+                        isSelected: controller.consultationType.value == 'remote',
+                        onTap: () {
+                          controller.setConsultationType('remote');
+                        },
+                      ),
+                    ),
+                    10.verticalSpace,
+                    Obx(
+                          () => Opacity(
+                        opacity: controller.serviceType.value == 'followup' ? 0.5 : 1.0,
+                        child: IgnorePointer(
+                          ignoring: controller.serviceType.value == 'followup',
+                          child: CustomRadioTile(
+                            isCircle: false,
+                            text: AppStrings.homeVisit.tr,
+                            isSelected: controller.consultationType.value == 'homevisit',
+                            onTap: () {
+                              controller.setConsultationType('homevisit');
+                            },
+                          ),
+                        ),
                       ),
                     ),
                     10.verticalSpace,
@@ -269,49 +281,39 @@ class EditDayDrawer extends StatelessWidget {
                         ),
                       ),
                     ),
-                      10.verticalSpace,
+                    10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
-                            isCircle:false,
-                          text: AppStrings.consultation.tr,
-                          isSelected: controller.serviceType.value == 'consultation',
-                          onTap: () {
-                            controller.setServiceType('consultation');
-                          }
+                        isCircle: false,
+                        text: AppStrings.consultation.tr,
+                        isSelected: controller.serviceType.value == 'consultation',
+                        onTap: () {
+                          controller.setServiceType('consultation');
+                        },
                       ),
                     ),
                     10.verticalSpace,
                     Obx(
                           () => CustomRadioTile(
-                            isCircle:false,
-                          text: AppStrings.followUp.tr,
-                          isSelected: controller.serviceType.value == 'followup',
-                          onTap: () {
-                            controller.setServiceType('followup');
-                          }
-                      ),
-                    ),
-                    10.verticalSpace,
-                    Obx(
-                          () => CustomRadioTile(
-                          isCircle:false,
-                          text: AppStrings.physiotherapy.tr,
-                          isSelected: controller.serviceType.value == 'physiotherpy',
-                          onTap: () {
-                            controller.setServiceType('physiotherpy');
-                          }
+                        isCircle: false,
+                        text: AppStrings.followUp.tr,
+                        isSelected: controller.serviceType.value == 'followup',
+                        onTap: () {
+                          controller.setServiceType('followup');
+                          controller.setConsultationType('remote');
+                        },
                       ),
                     ),
                     30.verticalSpace,
                     Obx(
                           () => CustomButton(
-                          borderRadius: 15,
-                          text: controller.isCreating.value ? 'Creating...' : AppStrings.apply.tr,
-                          onTap: () {
-                            if (!controller.isCreating.value) {
-                              controller.createTimeSlotsForDay();
-                            }
+                        borderRadius: 15,
+                        text: controller.isCreating.value ? 'Creating...' : AppStrings.apply.tr,
+                        onTap: () {
+                          if (!controller.isCreating.value) {
+                            controller.createTimeSlotsForDay();
                           }
+                        },
                       ),
                     ),
                     10.verticalSpace,

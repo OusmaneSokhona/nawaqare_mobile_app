@@ -267,7 +267,7 @@ class DoctorFollowupScreen extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(top: 8.h),
                 child: Text(
-                  "No time slots available for this date",
+                  "No follow-up time slots available for this date",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.red,
@@ -279,7 +279,7 @@ class DoctorFollowupScreen extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(top: 8.h),
                 child: Text(
-                  "${controller.availableTimeSlots.length} slot(s) available for follow-up",
+                  "${controller.availableTimeSlots.length} follow-up slot(s) available",
                   style: TextStyle(fontSize: 12.sp, color: Colors.green),
                 ),
               );
@@ -417,7 +417,7 @@ class DoctorFollowupScreen extends StatelessWidget {
                 if (controller.availableTimeSlots.isEmpty) {
                   return Center(
                     child: Text(
-                      "No time slots available",
+                      "No follow-up time slots available",
                       style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                     ),
                   );

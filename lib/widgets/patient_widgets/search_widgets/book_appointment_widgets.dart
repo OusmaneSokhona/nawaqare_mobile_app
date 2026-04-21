@@ -54,53 +54,48 @@ class ConsultationDetailsCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.h),
-            Obx(
-                  () => controller.appointmentType.value != "homeVisit"
-                  ? Text(
+             Text(
                 AppStrings.typeOfAppointment.tr,
                 style: TextStyle(
                   color: const Color(0xFF666666),
                   fontSize: 14.sp,
                 ),
-              )
-                  : SizedBox(),
-            ),
-            Obx(() => controller.appointmentType.value != "homeVisit" ? SizedBox(height: 8.h) : SizedBox()),
-            Obx(
-                  () => controller.appointmentType.value != "homeVisit"
-                  ? Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: controller.appointmentType.value,
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      size: 24.sp,
-                      color: const Color(0xFF666666),
-                    ),
-                    onChanged: controller.selectAppointmentType,
-                    items: controller.appointmentOptions.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(
-                          value.tr,
-                          style: TextStyle(
-                            color: const Color(0xFF333333),
-                            fontSize: 14.sp,
+              ),
+           SizedBox(height: 8.h),
+          Obx(
+              ()=> Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xFFE5E5E5), width: 1.w),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: controller.appointmentType.value,
+                      icon: Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 24.sp,
+                        color: const Color(0xFF666666),
+                      ),
+                      onChanged: controller.selectAppointmentType,
+                      items: controller.appointmentOptions.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value.tr,
+                            style: TextStyle(
+                              color: const Color(0xFF333333),
+                              fontSize: 14.sp,
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ),
-              )
-                  : SizedBox(),
-            ),
+          ),
+            8.verticalSpace,
             Obx(
                   () => controller.appointmentType.value == "homeVisit"
                   ? CustomTextField(

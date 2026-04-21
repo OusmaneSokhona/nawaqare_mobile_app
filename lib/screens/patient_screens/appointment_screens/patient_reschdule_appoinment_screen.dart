@@ -248,10 +248,7 @@ class PatientReschduleAppoinmentScreen extends StatelessWidget {
                     child: Obx(
                           () => Text(
                         controller.selectedTimeSlot.value != null
-                            ? controller
-                            .selectedTimeSlot
-                            .value!
-                            .formattedTime
+                            ? '${controller.formatTime(controller.selectedTimeSlot.value!.startTime)} - ${controller.formatTime(controller.selectedTimeSlot.value!.endTime)} (${_getConsultationTypeLabel(controller.selectedTimeSlot.value!.consultationType)})'
                             : controller.selectedDate.value != null
                             ? "Tap to select new time slot"
                             : "Select date first",
@@ -284,7 +281,7 @@ class PatientReschduleAppoinmentScreen extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(top: 8.h),
                 child: Text(
-                  "No time slots available for this date",
+                  "No consultation time slots available for this date",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Colors.red,
@@ -296,7 +293,7 @@ class PatientReschduleAppoinmentScreen extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(top: 8.h),
                 child: Text(
-                  "${controller.availableTimeSlots.length} slot(s) available",
+                  "${controller.availableTimeSlots.length} consultation slot(s) available",
                   style: TextStyle(fontSize: 12.sp, color: Colors.green),
                 ),
               );
@@ -306,6 +303,32 @@ class PatientReschduleAppoinmentScreen extends StatelessWidget {
         }),
       ],
     );
+  }
+
+  String _getConsultationTypeLabel(String type) {
+    switch (type.toLowerCase()) {
+      case 'remote':
+        return 'Remote';
+      case 'inperson':
+        return 'In-Person';
+      case 'homevisit':
+        return 'Home Visit';
+      default:
+        return type;
+    }
+  }
+
+  Color _getConsultationTypeColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'remote':
+        return Colors.blue;
+      case 'inperson':
+        return Colors.green;
+      case 'homevisit':
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
   }
 
   Widget _buildReasonField() {
@@ -334,7 +357,7 @@ class PatientReschduleAppoinmentScreen extends StatelessWidget {
   void _showTimeSlotsBottomSheet() {
     Get.bottomSheet(
       Container(
-        height: 0.6.sh,
+        height: 0.7.sh,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.vertical(top: Radius.circular(20.sp)),
@@ -384,95 +407,118 @@ class PatientReschduleAppoinmentScreen extends StatelessWidget {
                 if (controller.availableTimeSlots.isEmpty) {
                   return Center(
                     child: Text(
-                      "No time slots available for this date",
+                      "No consultation time slots available for this date",
                       style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                     ),
                   );
                 }
 
-                return Padding(
+                return ListView.builder(
+                  physics: const BouncingScrollPhysics(),
                   padding: EdgeInsets.all(16.sp),
-                  child: GridView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.6,
-                      crossAxisSpacing: 12.w,
-                      mainAxisSpacing: 12.h,
-                    ),
-                    itemCount: controller.availableTimeSlots.length,
-                    itemBuilder: (context, index) {
-                      final slot = controller.availableTimeSlots[index];
-                      final isSelected =
-                          controller.selectedTimeSlot.value?.id == slot.id;
+                  itemCount: controller.availableTimeSlots.length,
+                  itemBuilder: (context, index) {
+                    final slot = controller.availableTimeSlots[index];
+                    final isSelected =
+                        controller.selectedTimeSlot.value?.id == slot.id;
 
-                      return GestureDetector(
-                        onTap: () {
-                          controller.selectedTimeSlot.value = slot;
-                          Get.back();
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
-                            isSelected
-                                ? AppColors.primaryColor.withOpacity(0.1)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(12.sp),
-                            border: Border.all(
-                              color:
-                              isSelected
-                                  ? AppColors.primaryColor
-                                  : Colors.grey.shade300,
-                              width: isSelected ? 2 : 1,
-                            ),
+                    return GestureDetector(
+                      onTap: () {
+                        controller.selectedTimeSlot.value = slot;
+                        Get.back();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primaryColor.withOpacity(0.1)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(12.sp),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.primaryColor
+                                : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 16.h,
+                          ),
+                          child: Row(
                             children: [
-                              Icon(
-                                Icons.access_time,
-                                color:
-                                isSelected
-                                    ? AppColors.primaryColor
-                                    : Colors.grey,
-                                size: 20.sp,
-                              ),
-                              5.verticalSpace,
-                              Text(
-                                controller.formatTime(slot.startTime),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color:
-                                  isSelected
+                              Container(
+                                padding: EdgeInsets.all(10.sp),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.primaryColor.withOpacity(0.1)
+                                      : Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(10.sp),
+                                ),
+                                child: Icon(
+                                  Icons.access_time,
+                                  color: isSelected
                                       ? AppColors.primaryColor
-                                      : Colors.black,
+                                      : Colors.grey,
+                                  size: 20.sp,
                                 ),
                               ),
-                              Text(
-                                "-",
-                                style: TextStyle(
-                                  fontSize: 12.sp,
-                                  color: Colors.grey,
+                              15.horizontalSpace,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '${controller.formatTime(slot.startTime)} - ${controller.formatTime(slot.endTime)}',
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: isSelected
+                                            ? AppColors.primaryColor
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                    4.verticalSpace,
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8.w,
+                                        vertical: 4.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _getConsultationTypeColor(
+                                          slot.consultationType,
+                                        ).withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8.sp),
+                                      ),
+                                      child: Text(
+                                        _getConsultationTypeLabel(
+                                          slot.consultationType,
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: _getConsultationTypeColor(
+                                            slot.consultationType,
+                                          ),
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Text(
-                                controller.formatTime(slot.endTime),
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color:
-                                  isSelected
-                                      ? AppColors.primaryColor
-                                      : Colors.black,
+                              if (isSelected)
+                                Icon(
+                                  Icons.check_circle,
+                                  color: AppColors.primaryColor,
+                                  size: 20.sp,
                                 ),
-                              ),
                             ],
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 );
               }),
             ),

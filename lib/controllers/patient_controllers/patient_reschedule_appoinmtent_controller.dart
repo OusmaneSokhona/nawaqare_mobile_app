@@ -80,10 +80,13 @@ class PatientRescheduleAppoinmtentController extends GetxController {
         final timeSlotResponse = TimeSlotResponse.fromJson(response.data);
         final selectedDateStr = DateFormat('yyyy-MM-dd').format(selectedDate.value!);
 
-        final slots = timeSlotResponse.slots.where((slot) {
+        final allSlots = timeSlotResponse.doctor?.allSlots ?? timeSlotResponse.slots;
+
+        final slots = allSlots.where((slot) {
           final isAvailable = slot.status.toLowerCase() == 'available';
+          final isConsultation = slot.service?.toLowerCase() == 'consultation';
           final slotDate = slot.slotDate ?? DateFormat('yyyy-MM-dd').format(slot.startTime);
-          return slotDate == selectedDateStr && isAvailable;
+          return slotDate == selectedDateStr && isAvailable && isConsultation;
         }).toList();
 
         slots.sort((a, b) => a.startTime.compareTo(b.startTime));

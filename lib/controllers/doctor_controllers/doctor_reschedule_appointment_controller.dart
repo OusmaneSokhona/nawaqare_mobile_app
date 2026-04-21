@@ -75,19 +75,21 @@ class DoctorRescheduleAppointmentController extends GetxController {
     isLoadingTimeSlots.value = true;
     try {
       final response = await _apiService.get(
-        '${ApiUrls.getDoctorTimeSlots}$doctorId',
+        '${ApiUrls.getDoctorTimeSlots}$doctorId',  // Note: You might need to add a slash here depending on your API URL
       );
 
       if (response.statusCode == 200) {
         final timeSlotResponse = TimeSlotResponse.fromJson(response.data);
+        print("Fetched ${timeSlotResponse.slots.length} time slots for doctor $doctorId");
         final selectedDateStr = DateFormat('yyyy-MM-dd').format(selectedDate.value!);
 
         final allSlots = timeSlotResponse.doctor?.allSlots ?? timeSlotResponse.slots;
 
         final slots = allSlots.where((slot) {
           final isAvailable = slot.status.toLowerCase() == 'available';
+          final isConsultation = slot.service?.toLowerCase() == 'consultation';  // ADD THIS LINE
           final slotDate = slot.slotDate ?? DateFormat('yyyy-MM-dd').format(slot.startTime);
-          return slotDate == selectedDateStr && isAvailable;
+          return slotDate == selectedDateStr && isAvailable && isConsultation;  // ADD isConsultation condition
         }).toList();
 
         slots.sort((a, b) => a.startTime.compareTo(b.startTime));
@@ -96,6 +98,7 @@ class DoctorRescheduleAppointmentController extends GetxController {
         availableTimeSlots.clear();
       }
     } catch (e) {
+      print('Error fetching time slots: $e');
       availableTimeSlots.clear();
     } finally {
       isLoadingTimeSlots.value = false;

@@ -74,4 +74,5 @@ class ApiUrls {
   static String markVerified="api/medicalHistory/markverified";
   static String addNoteApi="api/medicalHistory/add-note";
   static String createMedicalHistory="api/medicalHistory/create";
+  static String profileCompletion="api/profile/rate";
 }

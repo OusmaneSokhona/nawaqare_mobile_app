@@ -5,6 +5,7 @@ import 'package:patient_app/models/profile_models.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../controllers/patient_controllers/home_controller.dart';
 import '../../../controllers/patient_controllers/profile_controller.dart';
+import '../../doctor_widgets/profile_widgets/profile_completion_loading.dart';
 import 'heatlh_space_grid.dart';
 import 'info_row.dart';
 
@@ -79,7 +80,9 @@ class PersonalInfo extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 30),
+          10.verticalSpace,
+          ProfileCompletionLoading(),
+          const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(

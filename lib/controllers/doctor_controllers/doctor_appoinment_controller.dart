@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/utils/appointment_status.dart';
 import 'dart:convert';
+import '../../models/clinical_notes.dart';
 import '../../models/doctor_appointment_model.dart';
 import '../../services/api_service.dart';
 import '../../utils/api_urls.dart';
@@ -21,6 +22,7 @@ class DoctorAppointmentController extends GetxController {
   RxList<DoctorAppointment> pastAppointments = <DoctorAppointment>[].obs;
   RxList<DoctorAppointment> currentList = <DoctorAppointment>[].obs;
   RxList<DoctorAppointment> filteredList = <DoctorAppointment>[].obs;
+  Rx<ClinicalNotes> clinicalNote = ClinicalNotes.empty().obs;
 
   @override
   void onInit() {
@@ -30,8 +32,6 @@ class DoctorAppointmentController extends GetxController {
       _updateCurrentList();
     });
   }
-
-
 
   Future<void> fetchDoctorAppointments() async {
     try {
@@ -46,10 +46,8 @@ class DoctorAppointmentController extends GetxController {
             ? json.decode(response.data)
             : response.data;
 
-
         if (jsonResponse.containsKey('appointements') || jsonResponse.containsKey('appointments')) {
           List<dynamic> appointmentsJson = jsonResponse['appointements'] ?? jsonResponse['appointments'] ?? [];
-
 
           List<DoctorAppointment> appointments = [];
 
@@ -90,7 +88,6 @@ class DoctorAppointmentController extends GetxController {
             }
           })
               .toList();
-
 
           _updateCurrentList();
 
@@ -436,7 +433,7 @@ class DoctorAppointmentController extends GetxController {
     }
   }
 
-  RxString notesText = "Symptoms improving, headache frequency reduced from 5 to 2 times per week. Advised patient to continue current regimen and maintain sleep hygiene".obs;
+  RxString notesText = "No Notes Available".obs;
   TextEditingController notesController = TextEditingController();
 
   void saveNotes() {
@@ -476,7 +473,8 @@ class DoctorAppointmentController extends GetxController {
       file.value = 'File selection cancelled';
     }
   }
-  Future<void> updateAppointmentStatus(String appointmentId, String status,bool isBackTrue) async {
+
+  Future<void> updateAppointmentStatus(String appointmentId, String status, bool isBackTrue) async {
     try {
       isLoading.value = true;
 
@@ -486,7 +484,7 @@ class DoctorAppointmentController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        isBackTrue?Get.back():null;
+        if(isBackTrue) Get.back();
         Get.snackbar(
           "Success",
           "Appointment status updated successfully",
@@ -508,38 +506,144 @@ class DoctorAppointmentController extends GetxController {
       isLoading.value = false;
     }
   }
+
   Future<void> referPatient(String appointmentId, String comment) async {
     try {
       isLoading.value = true;
 
+      final response = await ApiService().patch(
+        '${ApiUrls.referPatient}$appointmentId',
+        data: {'comment': comment},
+      );
 
-    final response = await ApiService().patch(
-    '${ApiUrls.referPatient}$appointmentId',
-    data: {'comment': comment},
-    );
-
-    if (response.statusCode == 200) {
-    Get.back();
-    Get.snackbar(
-    "Success",
-    "Patient referred successfully",
-    snackPosition: SnackPosition.BOTTOM,
-    duration: Duration(seconds: 2),
-    );
-    await fetchDoctorAppointments();
-    } else {
-    throw Exception('Failed to refer patient');
-    }
+      if (response.statusCode == 200) {
+        Get.back();
+        Get.snackbar(
+          "Success",
+          "Patient referred successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 2),
+        );
+        await fetchDoctorAppointments();
+      } else {
+        throw Exception('Failed to refer patient');
+      }
 
     } catch (e) {
-    Get.snackbar(
-    "Error",
-    'Failed to refer: ${e.toString()}',
-    snackPosition: SnackPosition.BOTTOM,
-    duration: Duration(seconds: 3),
-    );
+      Get.snackbar(
+        "Error",
+        'Failed to refer: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
     } finally {
-    isLoading.value = false;
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> addClinicalNotes(String appointmentId, String drNotes) async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiService().post(
+        ApiUrls.doctorNotes,
+        data: {
+          'appointmentId': appointmentId,
+          'drNotes': drNotes,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Get.back();
+        Get.snackbar(
+          "Success",
+          "Clinical notes added successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 2),
+        );
+        await getClinicalNotes(appointmentId);
+      } else {
+        throw Exception('Failed to add clinical notes');
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        'Failed to add clinical notes: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> getClinicalNotes(String appointmentId) async {
+    try {
+      final response = await ApiService().get(
+        '${ApiUrls.getDoctorNotes}$appointmentId',
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = response.data is String
+            ? json.decode(response.data)
+            : response.data;
+
+        if (jsonResponse.containsKey('data')) {
+          clinicalNote.value = ClinicalNotes.fromJson(jsonResponse['data']);
+        } else if (jsonResponse.containsKey('success') && jsonResponse['success'] == true) {
+          clinicalNote.value = ClinicalNotes.fromJson(jsonResponse['data'] ?? {});
+        } else {
+          clinicalNote.value = ClinicalNotes.fromJson(jsonResponse);
+        }
+      } else if (response.statusCode == 404) {
+        clinicalNote.value = ClinicalNotes.empty();
+      } else {
+        throw Exception('Failed to fetch clinical notes');
+      }
+    } catch (e) {
+      clinicalNote.value = ClinicalNotes.empty();
+      Get.snackbar(
+        "Info",
+        'No clinical notes found for this appointment',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 2),
+      );
+    }
+  }
+
+  Future<void> updateClinicalNotes(String appointmentId, String drNotes) async {
+    try {
+      isLoading.value = true;
+
+      final response = await ApiService().put(
+        '${ApiUrls.doctorNotes}/$appointmentId',
+        data: {
+          'appointmentId': appointmentId,
+          'drNotes': drNotes,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Get.back();
+        Get.snackbar(
+          "Success",
+          "Clinical notes updated successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          duration: Duration(seconds: 2),
+        );
+        await getClinicalNotes(appointmentId);
+      } else {
+        throw Exception('Failed to update clinical notes');
+      }
+    } catch (e) {
+      Get.snackbar(
+        "Error",
+        'Failed to update clinical notes: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 3),
+      );
+    } finally {
+      isLoading.value = false;
     }
   }
 }

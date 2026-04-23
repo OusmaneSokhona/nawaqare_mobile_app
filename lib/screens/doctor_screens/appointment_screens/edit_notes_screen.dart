@@ -10,12 +10,17 @@ import '../../../utils/app_strings.dart';
 import '../../../widgets/custom_button.dart';
 
 class EditNotesScreen extends StatelessWidget {
-  EditNotesScreen({super.key});
+  final String appointmentId;
+
+  EditNotesScreen({super.key, required this.appointmentId});
+
   final DoctorAppointmentController doctorAppointmentController =
   Get.find<DoctorAppointmentController>();
 
   @override
   Widget build(BuildContext context) {
+    doctorAppointmentController.notesController.text = doctorAppointmentController.clinicalNote.value.drNotes;
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -105,14 +110,34 @@ class EditNotesScreen extends StatelessWidget {
                 ),
               ),
               30.verticalSpace,
-              CustomButton(
+              Obx(() => CustomButton(
                 borderRadius: 15,
                 text: AppStrings.noteSave.tr,
-                onTap: () {
-                  doctorAppointmentController.saveNotes();
-                  Get.back();
+                isLoading: doctorAppointmentController.isLoading.value,
+                onTap: () async {
+                  if (doctorAppointmentController.notesController.text.trim().isNotEmpty) {
+                    if (doctorAppointmentController.clinicalNote.value.drNotes.isNotEmpty) {
+                      await doctorAppointmentController.updateClinicalNotes(
+                        appointmentId,
+                        doctorAppointmentController.notesController.text.trim(),
+                      );
+                    } else {
+                      await doctorAppointmentController.addClinicalNotes(
+                        appointmentId,
+                        doctorAppointmentController.notesController.text.trim(),
+                      );
+                    }
+                    doctorAppointmentController.notesText.value = doctorAppointmentController.notesController.text;
+                  } else {
+                    Get.snackbar(
+                      "Warning",
+                      "Please enter clinical notes",
+                      snackPosition: SnackPosition.BOTTOM,
+                      duration: Duration(seconds: 2),
+                    );
+                  }
                 },
-              ),
+              )),
               10.verticalSpace,
               CustomButton(
                 borderRadius: 15,

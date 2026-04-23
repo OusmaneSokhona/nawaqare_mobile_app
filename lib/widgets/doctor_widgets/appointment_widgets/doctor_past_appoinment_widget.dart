@@ -33,6 +33,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    doctorAppointmentController.getClinicalNotes(appointmentModel.id);
     print("${appointmentModel.id}");
     return Column(
       children: [
@@ -72,7 +73,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
               ),
               10.verticalSpace,
               Text(
-                appointmentModel.notes ?? AppStrings.symptomsPlaceholder.tr,
+                appointmentModel.notes ?? "no symptoms provided",
                 style: TextStyle(color: Colors.grey, fontSize: 14.sp),
               ),
             ],
@@ -148,6 +149,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
                       diagnosis: appointmentModel.prescriptionId?.diagnosis ??
                           "No diagnosis",
                       icd: "ICD-10",
+                      appointmentId: appointmentModel.id,
                       notes: doctorAppointmentController.notesText.value.isEmpty
                           ? (appointmentModel.prescriptionId?.notes ??
                           "No notes available")
@@ -634,11 +636,13 @@ class DiagnosisHistoryCard extends StatelessWidget {
   final String notes;
   final String diagnosis;
   final String icd;
+  final String appointmentId;
 
   const DiagnosisHistoryCard({
     required this.notes,
     required this.diagnosis,
     required this.icd,
+    required this.appointmentId,
     super.key,
   });
 
@@ -647,6 +651,8 @@ class DiagnosisHistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DoctorAppointmentController controller = Get.find<DoctorAppointmentController>();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -715,7 +721,7 @@ class DiagnosisHistoryCard extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Get.to(EditNotesScreen());
+                      Get.to(EditNotesScreen(appointmentId: appointmentId));
                     },
                     child: const Icon(
                       Icons.edit,
@@ -726,10 +732,16 @@ class DiagnosisHistoryCard extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 5.h),
-              Text(
-                notes,
-                style: TextStyle(fontSize: 14.sp, color: _secondaryColor),
-              ),
+              Obx(() {
+                final clinicalNote = controller.clinicalNote.value;
+                final displayNotes = clinicalNote.drNotes.isNotEmpty
+                    ? clinicalNote.drNotes
+                    : notes;
+                return Text(
+                  displayNotes,
+                  style: TextStyle(fontSize: 14.sp, color: _secondaryColor),
+                );
+              }),
             ],
           ),
         ),

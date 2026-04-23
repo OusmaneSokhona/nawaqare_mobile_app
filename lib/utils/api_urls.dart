@@ -75,4 +75,6 @@ class ApiUrls {
   static String addNoteApi="api/medicalHistory/add-note";
   static String createMedicalHistory="api/medicalHistory/create";
   static String profileCompletion="api/profile/rate";
+  static String doctorNotes="api/clinicalNotes/add";
+  static String getDoctorNotes="api/clinicalNotes/get/";
 }

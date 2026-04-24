@@ -461,7 +461,7 @@ class AppointmentDetailScreen extends StatelessWidget {
         ),
         10.verticalSpace,
         Text(
-          appointment.notes ?? AppStrings.medicalNotesDemo.tr,
+          appointment.notes ?? "no notes available",
           style: TextStyle(
             color: Colors.grey,
             fontSize: 16.sp,

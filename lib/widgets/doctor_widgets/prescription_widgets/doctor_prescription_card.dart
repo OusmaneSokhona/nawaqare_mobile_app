@@ -11,7 +11,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
   final DoctorPrescriptionModel prescription;
   final bool isActive;
 
-   DoctorPrescriptionCard({
+  DoctorPrescriptionCard({
     required this.prescription,
     super.key,
     this.isActive = true,
@@ -97,6 +97,38 @@ class DoctorPrescriptionCard extends StatelessWidget {
     return prescription.medications.map((med) => med.name).join(', ');
   }
 
+  String _getPatientName() {
+    if (prescription.patientName != null && prescription.patientName!.isNotEmpty) {
+      return prescription.patientName!;
+    }
+    return prescription.patientInfo?.fullName ?? 'Unknown Patient';
+  }
+
+  String _getProfileImage() {
+    return prescription.patientInfo?.profileImage ?? '';
+  }
+
+  String _getValidUntilText() {
+    if (prescription.validUntil != null) {
+      return 'Valid until: ${_formatDate(prescription.validUntil!)}';
+    }
+    return 'No expiry date';
+  }
+
+  String _getFirstMedicationDosage() {
+    if (prescription.medications.isNotEmpty) {
+      final med = prescription.medications.first;
+      if (med.dosage.isNotEmpty && med.frequency.isNotEmpty) {
+        return '${med.dosage} - ${med.frequency}';
+      } else if (med.dosage.isNotEmpty) {
+        return med.dosage;
+      } else if (med.frequency.isNotEmpty) {
+        return med.frequency;
+      }
+    }
+    return 'As prescribed';
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool showModifyButton = prescription.status != PrescriptionStatus.completed && isActive;
@@ -122,8 +154,8 @@ class DoctorPrescriptionCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 20.r,
-                backgroundImage: prescription.patientInfo.profileImage.isNotEmpty
-                    ? NetworkImage(prescription.patientInfo.profileImage)
+                backgroundImage: _getProfileImage().isNotEmpty
+                    ? NetworkImage(_getProfileImage())
                     : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                 onBackgroundImageError: (_, __) {},
               ),
@@ -133,7 +165,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      prescription.patientInfo.fullName,
+                      _getPatientName(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -152,7 +184,9 @@ class DoctorPrescriptionCard extends StatelessWidget {
                         5.horizontalSpace,
                         Expanded(
                           child: Text(
-                            prescription.diagnosis,
+                            prescription.diagnosis.isNotEmpty
+                                ? prescription.diagnosis
+                                : 'No diagnosis',
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: const Color(0xFF666666),
@@ -189,7 +223,7 @@ class DoctorPrescriptionCard extends StatelessWidget {
           4.verticalSpace,
           if (prescription.medications.isNotEmpty)
             Text(
-              '${prescription.medications.first.dosage} - ${prescription.medications.first.frequency}',
+              _getFirstMedicationDosage(),
               style: TextStyle(
                 fontSize: 14.sp,
                 color: const Color(0xFF666666),
@@ -197,10 +231,12 @@ class DoctorPrescriptionCard extends StatelessWidget {
             ),
           8.verticalSpace,
           Text(
-            'Valid until: ${_formatDate(prescription.validUntil)}',
+            _getValidUntilText(),
             style: TextStyle(
               fontSize: 12.sp,
-              color: const Color(0xFF999999),
+              color: prescription.status == PrescriptionStatus.expired
+                  ? AppColors.red
+                  : const Color(0xFF999999),
             ),
           ),
           16.verticalSpace,

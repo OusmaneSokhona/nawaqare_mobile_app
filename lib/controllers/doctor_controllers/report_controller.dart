@@ -47,11 +47,13 @@ class ReportController extends GetxController {
   var reports = <Report>[].obs;
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var selectedFileName = Rxn<String>();
+  RxString selectedFileName ="".obs;
   var selectedFileBytes = Rxn<List<int>>();
   var isUploading = false.obs;
+  var selectedReportType = 'Blood Test'.obs;
   String patientId = "";
   String doctorId = "";
+
 
   @override
   void onInit() {
@@ -99,7 +101,7 @@ class ReportController extends GetxController {
       );
 
       if (result != null) {
-        selectedFileName.value = result.files.first.path;
+        selectedFileName.value = result.files.first.path!;
         selectedFileBytes.value = result.files.first.bytes;
       }
     } catch (e) {
@@ -144,7 +146,7 @@ class ReportController extends GetxController {
       final response = await _apiService.post(ApiUrls.createReport, data: formData);
 
       if (response.data['success'] == true) {
-        selectedFileName.value = null;
+        selectedFileName.value = "";
         selectedFileBytes.value = null;
         await fetchReports();
         Get.back();
@@ -221,7 +223,7 @@ class ReportController extends GetxController {
   }
 
   void clearSelectedFile() {
-    selectedFileName.value = null;
+    selectedFileName.value = "";
     selectedFileBytes.value = null;
   }
 

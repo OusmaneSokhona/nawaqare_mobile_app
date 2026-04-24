@@ -192,8 +192,7 @@ appointmentController.fetchDoctorAppointments();
                           ),
                         10.verticalSpace,
                         MedicalReportCard(
-                          title: appointmentModel.patientId.reports!,
-                          onlyView: true,
+                          onlyView: true, patientId:appointmentModel.patientId.id, doctorId: appointmentModel.doctorId,
                         ),
 
                         30.verticalSpace,

@@ -9,7 +9,9 @@ import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_note
 import 'package:patient_app/screens/document_view_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/appointment_status.dart';
+import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/delete_report_dialog.dart';
+import '../../../controllers/doctor_controllers/report_controller.dart';
 import '../../../models/doctor_appointment_model.dart';
 import '../../../utils/app_fonts.dart';
 import '../../../utils/app_strings.dart';
@@ -192,8 +194,7 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
 
         15.verticalSpace,
         MedicalReportCard(
-          title: appointmentModel.patientId.reports ?? [],
-          onlyView: false,
+          onlyView: false, patientId: appointmentModel.patientId.id, doctorId:appointmentModel.doctorId,
         ),
         15.verticalSpace,
         FollowUpRecommendationCard(
@@ -956,12 +957,14 @@ class PrescriptionHistoryCard extends StatelessWidget {
 }
 
 class MedicalReportCard extends StatelessWidget {
-  final List<String> title;
+  final String patientId;
+  final String doctorId;
   final bool onlyView;
 
   const MedicalReportCard({
-    required this.title,
     super.key,
+    required this.patientId,
+    required this.doctorId,
     required this.onlyView,
   });
 
@@ -972,178 +975,244 @@ class MedicalReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (title.isNotEmpty) ? Column(
-      children: [
-        CardHeader(title: AppStrings.medicalReports.tr),
-        5.verticalSpace,
-        SizedBox(
-          height: title.length < 2 ? onlyView ? 100.h : 200.h : 200.h,
-          child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: title.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  padding: EdgeInsets.all(onlyView ? 0.sp : 10.sp),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                        color: onlyView ? Colors.transparent : AppColors
-                            .lightGrey.withOpacity(0.2)),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: AppColors.lightGrey.withOpacity(0.2),
+    final ReportController reportController = Get.put(ReportController());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (patientId.isNotEmpty) {
+        reportController.initialize(patientId, doctorId);
+      }
+    });
+
+    return Obx(() {
+      if (reportController.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (reportController.reports.isEmpty) {
+        return Column(
+          children: [
+            CardHeader(title: AppStrings.medicalReports.tr),
+            20.verticalSpace,
+            CustomButton(borderRadius: 15, text: "Add Report", onTap: (){
+              Get.to(() => AddReportScreen(
+                patientId: patientId,
+                doctorId: doctorId,
+              ));
+            }),
+          ],
+        );
+      }
+
+      return Column(
+        children: [
+          CardHeader(title: AppStrings.medicalReports.tr),
+          5.verticalSpace,
+          SizedBox(
+            height: reportController.reports.length < 2
+                ? onlyView ? 100.h : 200.h
+                : 200.h,
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: reportController.reports.length,
+                itemBuilder: (context, index) {
+                  final report = reportController.reports[index];
+                  return Container(
+                    padding: EdgeInsets.all(onlyView ? 0.sp : 10.sp),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: onlyView ? Colors.transparent : AppColors.lightGrey.withOpacity(0.2)
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: AppColors.lightGrey.withOpacity(0.2),
+                            ),
+                            borderRadius: BorderRadius.circular(13.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                          borderRadius: BorderRadius.circular(13.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: _iconBgColor,
-                                borderRadius: BorderRadius.circular(8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: _iconBgColor,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Icon(
+                                  reportController.getIconForCategory(report.category),
+                                  color: _blueColor,
+                                  size: 24,
+                                ),
                               ),
-                              child: const Icon(
-                                Icons.description_outlined,
-                                color: _blueColor,
-                                size: 24,
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      report.name,
+                                      maxLines: 3,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: _primaryColor,
+                                      ),
+                                    ),
+                                    4.verticalSpace,
+                                    Text(
+                                      reportController.formatDate(report.createdAt),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: _secondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    title[index],
-                                    maxLines: 3,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: _primaryColor,
+                              onlyView
+                                  ? InkWell(
+                                onTap: () {
+                                  reportController.viewReport(report);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.sp,
+                                    vertical: 4.sp,
+                                  ),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(9.sp),
+                                  ),
+                                  child: Text(
+                                    AppStrings.view.tr,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15.sp,
+                                      fontFamily: AppFonts.jakartaMedium,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            onlyView
-                                ? InkWell(
-                              onTap: () {
-                                Get.to(DocumentViewerScreen(
-                                    documentUrl: title[index],
-                                    fileName: title[index]));
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 12.sp,
-                                  vertical: 4.sp,
                                 ),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: AppColors.primaryColor,
-                                  borderRadius: BorderRadius.circular(9.sp),
+                              )
+                                  : InkWell(
+                                onTap: () {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: const Text('Delete Report'),
+                                      content: const Text('Are you sure you want to delete this report?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            reportController.deleteReport(report.id);
+                                          },
+                                          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: AppColors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onlyView ? 0.verticalSpace : 12.verticalSpace,
+                        onlyView
+                            ? const SizedBox()
+                            : Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.to(() => AddReportScreen(
+                                    patientId: patientId,
+                                    doctorId: doctorId,
+                                  ));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.inACtiveButtonColor,
+                                  foregroundColor: _primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 0,
                                 ),
                                 child: Text(
-                                  AppStrings.view.tr,
+                                  AppStrings.addReport.tr,
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15.sp,
-                                    fontFamily: AppFonts.jakartaMedium,
-                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                            )
-                                : InkWell(
-                              onTap: () {
-                                Get.dialog(DeleteReportDialog());
-                              },
-                              child: Icon(
-                                Icons.delete_outline,
-                                color: AppColors.red,
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  // Implement download functionality
+                                  Get.snackbar(
+                                    'Info',
+                                    'Download feature coming soon',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryColor,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  AppStrings.downloadReport.tr,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      onlyView ? 0.verticalSpace : 12.verticalSpace,
-                      onlyView ? const SizedBox() : Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Get.to(AddReportScreen());
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.inACtiveButtonColor,
-                                foregroundColor: _primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14),
-                                elevation: 0,
-                              ),
-                              child: Text(
-                                AppStrings.addReport.tr,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryColor,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 14),
-                                elevation: 0,
-                              ),
-                              child: Text(
-                                AppStrings.downloadReport.tr,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }
+                      ],
+                    ),
+                  );
+                }
+            ),
           ),
-        ),
-      ],
-    ) : const SizedBox();
+        ],
+      );
+    });
   }
 }
 

@@ -26,6 +26,7 @@ class PastAppointmentWidgets extends StatelessWidget {
             15.verticalSpace,
             DiagnosisHistoryCard(
               notes: appointment.notes ?? "No diagnosis notes available",
+              id: appointment.id,
             ),
           ],
           if (appointmentController.selectedTab.value == "Ordonnance") ...[
@@ -116,15 +117,17 @@ class CardHeader extends StatelessWidget {
 
 class DiagnosisHistoryCard extends StatelessWidget {
   final String notes;
+  final String id;
 
-  const DiagnosisHistoryCard({required this.notes, super.key});
+   DiagnosisHistoryCard({required this.notes,required this.id, super.key});
 
   static const Color _primaryColor = Color(0xFF1F2937);
   static const Color _secondaryColor = Color(0xFF6B7280);
   static const Color _buttonBgColor = Color(0xFFE5E7EB);
-
+  final AppointmentController appointmentController = Get.find<AppointmentController>();
   @override
   Widget build(BuildContext context) {
+    appointmentController.getClinicalNotes(id);
     return Column(
       children: [
         CardHeader(title: AppStrings.diagnosisHistory.tr),
@@ -156,7 +159,7 @@ class DiagnosisHistoryCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                notes,
+                appointmentController.clinicalNote.value.drNotes,
                 style: TextStyle(fontSize: 13.sp, color: _secondaryColor),
               ),
               const SizedBox(height: 16),

@@ -6,6 +6,8 @@ import 'package:patient_app/services/api_service.dart';
 import 'package:patient_app/utils/api_urls.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
+import '../../../models/clinical_notes.dart';
+
 class AppointmentController extends GetxController {
   RxString appointmentType = "upcoming".obs;
   RxInt currentPage = 1.obs;
@@ -394,4 +396,39 @@ class AppointmentController extends GetxController {
     "Medical Report",
     "Reviews"
   ];
+  Rx<ClinicalNotes> clinicalNote = ClinicalNotes.empty().obs;
+
+  Future<void> getClinicalNotes(String appointmentId) async {
+    try {
+      final response = await ApiService().get(
+        '${ApiUrls.getDoctorNotes}$appointmentId',
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = response.data is String
+            ? json.decode(response.data)
+            : response.data;
+
+        if (jsonResponse.containsKey('data')) {
+          clinicalNote.value = ClinicalNotes.fromJson(jsonResponse['data']);
+        } else if (jsonResponse.containsKey('success') && jsonResponse['success'] == true) {
+          clinicalNote.value = ClinicalNotes.fromJson(jsonResponse['data'] ?? {});
+        } else {
+          clinicalNote.value = ClinicalNotes.fromJson(jsonResponse);
+        }
+      } else if (response.statusCode == 404) {
+        clinicalNote.value = ClinicalNotes.empty();
+      } else {
+        throw Exception('Failed to fetch clinical notes');
+      }
+    } catch (e) {
+      clinicalNote.value = ClinicalNotes.empty();
+      Get.snackbar(
+        "Info",
+        'No clinical notes found for this appointment',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: Duration(seconds: 2),
+      );
+    }
+  }
 }

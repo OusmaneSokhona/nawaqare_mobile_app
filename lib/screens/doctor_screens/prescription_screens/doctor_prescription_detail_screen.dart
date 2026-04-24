@@ -75,6 +75,46 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
     }
   }
 
+  String _getPatientName() {
+    if (prescriptionModel.patientName != null && prescriptionModel.patientName!.isNotEmpty) {
+      return prescriptionModel.patientName!;
+    }
+    return prescriptionModel.patientInfo?.fullName ?? 'Unknown Patient';
+  }
+
+  String _getProfileImage() {
+    return prescriptionModel.patientInfo?.profileImage ?? '';
+  }
+
+  String _getValidUntilText() {
+    if (prescriptionModel.validUntil != null) {
+      return _formatDate(prescriptionModel.validUntil!);
+    }
+    return 'No expiry date';
+  }
+
+  String _getVisitAddress() {
+    return prescriptionModel.appointmentInfo?.visitAddress ?? '';
+  }
+
+  String _getConsultationType() {
+    return prescriptionModel.appointmentInfo?.consultationType ?? 'Not specified';
+  }
+
+  String _getAppointmentDate() {
+    if (prescriptionModel.appointmentInfo?.date != null) {
+      return _formatDate(prescriptionModel.appointmentInfo!.date!);
+    }
+    return 'Date not specified';
+  }
+
+  String _getRefillDate(MedicationInfo medication) {
+    if (medication.refillDate != null) {
+      return _formatDate(medication.refillDate!);
+    }
+    return 'Not specified';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,8 +175,8 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                               children: [
                                 CircleAvatar(
                                   radius: 30.r,
-                                  backgroundImage: prescriptionModel.patientInfo.profileImage.isNotEmpty
-                                      ? NetworkImage(prescriptionModel.patientInfo.profileImage)
+                                  backgroundImage: _getProfileImage().isNotEmpty
+                                      ? NetworkImage(_getProfileImage())
                                       : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                                   onBackgroundImageError: (_, __) {},
                                 ),
@@ -146,7 +186,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        prescriptionModel.patientInfo.fullName,
+                                        _getPatientName(),
                                         style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 18.sp,
@@ -158,13 +198,13 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                       Row(
                                         children: [
                                           Text(
-                                            _getConsultationTypeIcon(prescriptionModel.appointmentInfo.consultationType),
+                                            _getConsultationTypeIcon(_getConsultationType()),
                                             style: TextStyle(fontSize: 14.sp),
                                           ),
                                           5.horizontalSpace,
                                           Expanded(
                                             child: Text(
-                                              "${prescriptionModel.appointmentInfo.consultationType} • ${_formatDate(prescriptionModel.appointmentInfo.date)}",
+                                              "${_getConsultationType()} • ${_getAppointmentDate()}",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 12.sp,
@@ -183,7 +223,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                 _buildStatusChip(prescriptionModel.status),
                               ],
                             ),
-                            if (prescriptionModel.appointmentInfo.visitAddress.isNotEmpty) ...[
+                            if (_getVisitAddress().isNotEmpty) ...[
                               8.verticalSpace,
                               Row(
                                 children: [
@@ -195,7 +235,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                   5.horizontalSpace,
                                   Expanded(
                                     child: Text(
-                                      prescriptionModel.appointmentInfo.visitAddress,
+                                      _getVisitAddress(),
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Colors.grey[600],
@@ -290,7 +330,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                 ),
                                 5.verticalSpace,
                                 Text(
-                                  _formatDate(prescriptionModel.validUntil),
+                                  _getValidUntilText(),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: 13.sp,
@@ -329,7 +369,9 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          prescriptionModel.diagnosis,
+                          prescriptionModel.diagnosis.isNotEmpty
+                              ? prescriptionModel.diagnosis
+                              : 'No diagnosis provided',
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
@@ -365,7 +407,9 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  prescriptionModel.notes,
+                                  prescriptionModel.notes.isNotEmpty
+                                      ? prescriptionModel.notes
+                                      : 'No additional notes',
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w500,
@@ -438,47 +482,49 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(20.r),
-                                  ),
-                                  child: Text(
-                                    medication.duration,
-                                    style: TextStyle(
-                                      fontSize: 11.sp,
-                                      color: AppColors.primaryColor,
-                                      fontWeight: FontWeight.w600,
+                                if (medication.duration.isNotEmpty && medication.duration != 'Not specified')
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    child: Text(
+                                      medication.duration,
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        color: AppColors.primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
-                                ),
                               ],
                             ),
                             8.verticalSpace,
-                            Row(
-                              children: [
-                                Text(
-                                  "${AppStrings.dosageInstruction.tr}: ",
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    '${medication.dosage}, ${medication.frequency}',
+                            if (medication.dosage.isNotEmpty || medication.frequency.isNotEmpty)
+                              Row(
+                                children: [
+                                  Text(
+                                    "${AppStrings.dosageInstruction.tr}: ",
                                     style: TextStyle(
                                       fontSize: 13.sp,
-                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Expanded(
+                                    child: Text(
+                                      '${medication.dosage.isNotEmpty ? medication.dosage : ''}${medication.dosage.isNotEmpty && medication.frequency.isNotEmpty ? ', ' : ''}${medication.frequency.isNotEmpty ? medication.frequency : ''}',
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             4.verticalSpace,
-                            if (medication.instructions.isNotEmpty)
+                            if (medication.instructions.isNotEmpty && medication.instructions != 'As directed')
                               Padding(
                                 padding: EdgeInsets.only(top: 4.h),
                                 child: Row(
@@ -515,7 +561,7 @@ class DoctorPrescriptionDetailScreen extends StatelessWidget {
                                     ),
                                     4.horizontalSpace,
                                     Text(
-                                      'Refill: ${_formatDate(medication.refillDate)}',
+                                      'Refill: ${_getRefillDate(medication)}',
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         color: Colors.grey[600],

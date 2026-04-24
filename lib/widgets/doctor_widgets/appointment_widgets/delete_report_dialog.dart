@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/controllers/doctor_controllers/report_controller.dart';
 import 'package:patient_app/controllers/patient_controllers/profile_controller.dart';
 import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
 import 'package:patient_app/utils/app_bindings.dart';
@@ -8,8 +9,9 @@ import 'package:patient_app/utils/locat_storage.dart';
 import 'package:patient_app/utils/app_strings.dart';
 
 class DeleteReportDialog extends StatelessWidget {
-  const DeleteReportDialog({super.key});
-
+  String reportId;
+   DeleteReportDialog({super.key, required this.reportId});
+ReportController reportController = Get.put(ReportController());
   @override
   Widget build(BuildContext context) {
 
@@ -66,7 +68,7 @@ class DeleteReportDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      Get.back();
+                      reportController.deleteReport(reportId);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue[600],

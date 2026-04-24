@@ -151,7 +151,7 @@ class DoctorPrescriptionController extends GetxController {
     if (searchQuery.value.isNotEmpty) {
       final query = searchQuery.value.toLowerCase();
       filtered = filtered.where((prescription) {
-        return prescription.patientInfo.fullName.toLowerCase().contains(query) ||
+        return prescription.patientInfo!.fullName.toLowerCase().contains(query) ||
             prescription.diagnosis.toLowerCase().contains(query) ||
             prescription.prescriptionNumber.toLowerCase().contains(query) ||
             prescription.medications.any((med) =>

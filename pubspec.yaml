@@ -16,8 +16,17 @@ dependencies:
   calendar_date_picker2: ^2.0.1
   shared_preferences: ^2.5.3
   google_fonts: ^6.3.2
-
-
+  url_launcher: ^6.3.2
+  clipboard: ^3.0.14
+  dio: ^5.9.0
+  flutter_inappwebview: ^6.1.5
+  intl: ^0.20.2
+  permission_handler: ^12.0.1
+  agora_rtc_engine: ^6.5.3
+  table_calendar: ^3.2.0
+  flutter_stripe: ^12.2.0
+  socket_io_client: ^3.1.4
+  fl_chart: ^1.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
+import 'package:patient_app/main.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/utils/onBoarding_widgets.dart';
 import 'package:patient_app/widgets/custom_small_button.dart';
+
+import '../../controllers/on_boarding_splash_controllers/on_boarding_controller.dart';
+
 
 class OnBoardingScreen extends StatelessWidget {
   OnBoardingScreen({super.key});
@@ -24,33 +28,33 @@ class OnBoardingScreen extends StatelessWidget {
         child: Column(
           children: [
             120.verticalSpace,
-Obx(()=>onBoardingController.currentPageIndex.value<3?OnboardingWidgets(onBoardingController: onBoardingController):SizedBox()),
+            Obx(()=>onBoardingController.currentPageIndex.value<3?OnboardingWidgets(onBoardingController: onBoardingController):SizedBox()),
             20.verticalSpace,
             Obx(
-              () => Row(
+                  () => Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   onBoardingController.onBoardingPages.length,
-                  (index) {
+                      (index) {
                     return Padding(
                       padding: EdgeInsets.symmetric(horizontal: 2.sp),
                       child: Container(
                         height: 10.h,
                         width:
-                            onBoardingController.currentPageIndex.value == index
-                                ? 25.w
-                                : 10.w,
+                        onBoardingController.currentPageIndex.value == index
+                            ? 25.w
+                            : 10.w,
                         decoration: BoxDecoration(
                           color:
-                              onBoardingController.currentPageIndex.value ==
-                                      index
-                                  ? AppColors.primaryColor
-                                  : AppColors.secondryColor,
+                          onBoardingController.currentPageIndex.value ==
+                              index
+                              ? AppColors.primaryColor
+                              : AppColors.secondryColor,
                           borderRadius:
-                              onBoardingController.currentPageIndex.value ==
-                                      index
-                                  ? BorderRadius.circular(5.r)
-                                  : BorderRadius.circular(10.r),
+                          onBoardingController.currentPageIndex.value ==
+                              index
+                              ? BorderRadius.circular(5.r)
+                              : BorderRadius.circular(10.r),
                         ),
                       ),
                     );
@@ -69,9 +73,9 @@ Obx(()=>onBoardingController.currentPageIndex.value<3?OnboardingWidgets(onBoardi
                       onBoardingController.skipPage();
                     },
                     child: Text(
-                      "Skip",
+                      AppStrings.skip.tr,
                       style: TextStyle(
-                        fontSize: 20.sp,
+                        fontSize: isWeb?14.sp:20.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaMedium,
@@ -81,7 +85,7 @@ Obx(()=>onBoardingController.currentPageIndex.value<3?OnboardingWidgets(onBoardi
                   ),
                   CustomSmallButton(
                     borderRadius: 17,
-                    text: "Next",
+                    text: AppStrings.next.tr,
                     onTap: () {
                       onBoardingController.nextPage();
                     },

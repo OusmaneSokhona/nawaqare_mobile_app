@@ -1,0 +1,353 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import '../../../controllers/patient_controllers/blood_type_controller.dart';
+import '../../../utils/app_colors.dart';
+import '../../../utils/app_fonts.dart';
+import '../../../utils/app_images.dart';
+import '../../../widgets/custom_button.dart';
+import '../../../utils/app_strings.dart';
+
+class EditBloodType extends StatelessWidget {
+  EditBloodType({super.key});
+
+  final BloodTypeController controller = Get.put(BloodTypeController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        height: 1.sh,
+        width: 1.sw,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.onboardingBackground, Colors.white],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              70.verticalSpace,
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Image.asset(
+                      AppImages.backIcon,
+                      height: 33.h,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  10.horizontalSpace,
+                  Text(
+                    AppStrings.editBloodType.tr,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w800,
+                      fontFamily: AppFonts.jakartaBold,
+                    ),
+                  ),
+                ],
+              ),
+              20.verticalSpace,
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Obx(
+                        () => Stack(
+                      children: [
+                        Column(
+                          children: [
+                            buildDropdownField(
+                              title: AppStrings.bloodType.tr,
+                              items: controller.bloodList,
+                              selectedValue: controller.selectedBloodType,
+                              onChanged: controller.isLoading.value
+                                  ? null
+                                  : (value) {
+                                controller.selectedBloodType.value = value;
+                              },
+                            ),
+                            10.verticalSpace,
+                            buildDatePickerField(context),
+                            10.verticalSpace,
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                AppStrings.uploadProofOptional.tr,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ),
+                            3.verticalSpace,
+                            InkWell(
+                              onTap: controller.isLoading.value
+                                  ? null
+                                  : controller.pickFile,
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                  horizontal: 20,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: const Color(0xFFE5E7EB),
+                                    width: 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.05),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Obx(
+                                      () => Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.cloud_upload_outlined,
+                                        size: 40,
+                                        color: controller.isLoading.value
+                                            ? Colors.grey
+                                            : Colors.blue.shade700,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        controller.selectedFileName.value ==
+                                            'No file selected' ||
+                                            controller.selectedFileName.value ==
+                                                'File selection cancelled'
+                                            ? AppStrings.uploadTestProof.tr
+                                            : controller.selectedFileName.value!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: controller.isLoading.value
+                                              ? Colors.grey
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                      if (controller.selectedFileName.value !=
+                                          'No file selected' &&
+                                          controller.selectedFileName.value !=
+                                              'File selection cancelled')
+                                        Text(
+                                          AppStrings.tapToSelectNew.tr,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: controller.isLoading.value
+                                                ? Colors.grey.shade300
+                                                : Colors.grey,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            30.verticalSpace,
+                            CustomButton(
+                              borderRadius: 15,
+                              text: AppStrings.update.tr,
+                              onTap: controller.isLoading.value
+                                  ? (){}
+                                  : controller.updateBloodType,
+                              bgColor: controller.isLoading.value
+                                  ? AppColors.inACtiveButtonColor
+                                  : AppColors.primaryColor,
+                            ),
+                            15.verticalSpace,
+                            CustomButton(
+                              borderRadius: 15,
+                              text: AppStrings.cancel.tr,
+                              bgColor: AppColors.inACtiveButtonColor,
+                              fontColor: controller.isLoading.value
+                                  ? Colors.grey
+                                  : Colors.black,
+                              onTap: controller.isLoading.value
+                                  ?  (){}
+                                  : () {
+                                controller.clearSelection();
+                                Get.back();
+                              },
+                            ),
+                            15.verticalSpace,
+                          ],
+                        ),
+                        if (controller.isLoading.value)
+                          Container(
+                            color: Colors.black.withOpacity(0.3),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildDatePickerField(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
+            child: Text(
+              'Last Confirmed Date',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                color: controller.isLoading.value ? Colors.grey : Colors.black87,
+              ),
+            ),
+          ),
+          InkWell(
+            onTap: controller.isLoading.value
+                ? null
+                : () => _showDatePicker(context),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Obx(
+                    () => Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '${controller.selectedDate.value.year}-${controller.selectedDate.value.month.toString().padLeft(2, '0')}-${controller.selectedDate.value.day.toString().padLeft(2, '0')}',
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          color: controller.isLoading.value ? Colors.grey : Colors.black
+                      ),
+                    ),
+                    Icon(
+                        Icons.calendar_today,
+                        color: controller.isLoading.value ? Colors.grey : AppColors.darkGrey,
+                        size: 20
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDatePicker(BuildContext context) async {
+    final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
+      context: context,
+      config: CalendarDatePicker2WithActionButtonsConfig(
+        calendarType: CalendarDatePicker2Type.single,
+        selectedDayHighlightColor: Colors.blue,
+        centerAlignModePicker: true,
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now(),
+      ),
+      dialogSize: const Size(325, 400),
+      value: [controller.selectedDate.value],
+      borderRadius: BorderRadius.circular(15),
+    );
+
+    if (dates != null && dates.isNotEmpty && dates.first != null) {
+      controller.setDate(dates.first!);
+    }
+  }
+
+  Widget buildDropdownField({
+    required String title,
+    required List<String> items,
+    required Rx<String?> selectedValue,
+    required Function(String?)? onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2.0, left: 10.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                color: controller.isLoading.value ? Colors.grey : Colors.black87,
+              ),
+            ),
+          ),
+          Obx(
+                () => DropdownButtonFormField<String>(
+              value: selectedValue.value,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 14.0,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              isExpanded: true,
+              icon: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: controller.isLoading.value ? Colors.grey : AppColors.darkGrey
+              ),
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  color: controller.isLoading.value ? Colors.grey : Colors.black
+              ),
+              items: items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              onChanged: onChanged,
+              hint: Text(
+                'Select blood type',
+                style: TextStyle(
+                    color: controller.isLoading.value ? Colors.grey : Colors.black54
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

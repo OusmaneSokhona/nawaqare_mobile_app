@@ -1,92 +1,96 @@
 import 'dart:async';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/auth_screens/forgot_password.dart';
 import 'package:patient_app/screens/auth_screens/sign_up_screen.dart';
-import 'package:patient_app/screens/main_screen.dart';
-import 'package:patient_app/utils/shared_prefrence.dart';
-
-import '../../widgets/validation_check_list.dart';
+import 'package:patient_app/screens/auth_screens/web_reset_password_screen.dart';
+import 'package:patient_app/screens/auth_screens/web_sign_up_screen.dart';
+import 'package:patient_app/screens/doctor_screens/main_screen_doctor.dart';
+import 'package:patient_app/screens/patient_screens/main_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/main_screen_pharmacy.dart';
+import 'package:patient_app/services/api_service.dart';
+import 'package:patient_app/utils/api_urls.dart';
+import 'package:patient_app/utils/app_bindings.dart';
+import 'package:patient_app/utils/locat_storage.dart';
+import '../../utils/app_strings.dart';
+import '../../../widgets/validation_check_list.dart';
 
 class SignInController extends GetxController {
-  RxString signInType="doctor".obs;
-  RxBool passwordVisibility=false.obs;
-
+  final ApiService _apiService = ApiService();
+  RxBool isLoading = false.obs;
+  RxString signInType = "doctor".obs;
+  RxBool passwordVisibility = false.obs;
   RxBool isPasswordActive = false.obs;
 
-  TextEditingController emailController=TextEditingController();
-  TextEditingController passwordController=TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  void clearControllers() {
+    emailController.clear();
+    passwordController.clear();
+  }
 
   String? emailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required.';
+      return AppStrings.email.tr;
     }
     const pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
     final regExp = RegExp(pattern);
     if (!regExp.hasMatch(value)) {
-      return 'Please enter a valid email address.';
+      return AppStrings.email.tr;
     }
     return null;
   }
+
   String? nameValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Name is required and cannot be empty.';
+      return AppStrings.fullName.tr;
     }
     return null;
   }
+
   String? phoneNumberValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Phone number is required.';
+      return AppStrings.phoneNumber.tr;
     }
-
-    // 1. Clean the input: Remove common non-digit characters (spaces, dashes, parens, dots)
     final cleanedValue = value.replaceAll(RegExp(r'[^\d+]'), '');
-
-    // 2. Define a flexible pattern.
-    // This pattern matches:
-    // - Optional leading '+' (for international format)
-    // - Followed by 7 to 15 digits (a reasonable range for most international and domestic numbers)
     const pattern = r'^\+?\d{7,15}$';
     final regExp = RegExp(pattern);
-
     if (!regExp.hasMatch(cleanedValue)) {
-      // If you need to enforce a specific 10-digit US/Canadian format,
-      // you would change the pattern to r'^\+?1?\d{10}$' and adjust the error message.
-      return 'Please enter a valid phone number (7-15 digits, optional leading +).';
+      return AppStrings.phoneNumber.tr;
     }
-
     return null;
   }
 
   final RxString currentPassword = ''.obs;
 
   bool get hasMinLength => currentPassword.value.length >= 8;
-  bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
-  bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
-  bool get hasSpecialChar => currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
 
-  void toggleVisibility() {
+  bool get hasUppercase => currentPassword.value.contains(RegExp(r'[A-Z]'));
+
+  bool get hasDigit => currentPassword.value.contains(RegExp(r'[0-9]'));
+
+  bool get hasSpecialChar =>
+      currentPassword.value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'));
+
+  Future<void> toggleVisibility() async {
+    print("Local Storage Token: ${await LocalStorageUtils()}");
     passwordVisibility.value = !passwordVisibility.value;
   }
 
   List<ValidationRule> getValidationRules() {
     return [
+      ValidationRule(text: AppStrings.atLeast8Chars.tr, isValid: hasMinLength),
       ValidationRule(
-        text: 'At least 8 characters',
-        isValid: hasMinLength,
-      ),
-      ValidationRule(
-        text: 'At least one uppercase letter E.g: X,Y,Z',
+        text: AppStrings.atLeastOneUpper.tr,
         isValid: hasUppercase,
       ),
+      ValidationRule(text: AppStrings.atLeastOneNumber.tr, isValid: hasDigit),
       ValidationRule(
-        text: 'At least one number E.g: 1,2,3',
-        isValid: hasDigit,
-      ),
-      ValidationRule(
-        text: 'At least one special character E.g: @,!, \$',
+        text: AppStrings.atLeastOneSpecial.tr,
         isValid: hasSpecialChar,
       ),
     ];
@@ -98,13 +102,14 @@ class SignInController extends GetxController {
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required.';
+      return AppStrings.password.tr;
     }
     if (!isPasswordValid()) {
-      return 'Password does not meet all requirements.';
+      return AppStrings.incompleteCodeMsg.tr;
     }
     return null;
   }
+
   RxBool hasPasswordInteracted = false.obs;
 
   void setPasswordActive(bool isActive) {
@@ -117,32 +122,135 @@ class SignInController extends GetxController {
   void markPasswordInteracted() {
     hasPasswordInteracted.value = true;
   }
-  void goToForgotPasswordScreen(){
+
+  void goToForgotPasswordScreen() {
     Get.to(ForgotPassword());
   }
-  void goToSignUpScreen(){
-    Get.to(SignUpScreen());
+
+  void goToForgotPasswordScreenWeb() {
+    Get.to(WebResetPasswordScreen());
   }
-  void goToMainScreen(){
-    Get.offAll(MainScreen());
+
+  void goToSignUpScreen() {
+    Get.to(SignUpScreen(), binding: AppBinding());
   }
-void signInTap(){
-  if (formKey.currentState!.validate()) {
-    if (isPasswordValid()) {
-      LocalStorageUtils.setLogined();
-      goToMainScreen();
-      print("Validation passed!");
+
+  void goToSignUpScreenWeb() {
+    Get.to(WebSignUpScreen(), binding: AppBinding());
+  }
+
+  void goToMainScreen() {
+    Get.offAll(MainScreen(), binding: AppBinding());
+  }
+
+  void goToMainScreenDocotor() {
+    Get.offAll(MainScreenDoctor(), binding: AppBinding());
+  }
+
+  void goToMainScreenPharmacist() {
+    Get.offAll(MainScreenPharmacy(), binding: AppBinding());
+  }
+
+  Future<void> signInTap() async {
+    if (formKey.currentState!.validate()) {
+      if (isPasswordValid()) {
+        try {
+          isLoading.value = true;
+          final Map<String, dynamic> loginData = {
+            "email": emailController.text.trim(),
+            "password": passwordController.text,
+          };
+          print("Login Data: $loginData");
+          final response = await _apiService.post(
+            ApiUrls.signInUrl,
+            data: loginData,
+          );
+
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            final String role = response.data['user']['role'];
+            print("User role: $role");
+            LocalStorageUtils.setToken(response.data['token']);
+            moveToMainScreenBasedOnRole(role);
+            clearControllers();
+          }
+        } catch (e) {
+          String errorMessage = "An unexpected error occurred";
+
+          if (e is DioException) {
+            if (e.response != null) {
+              // If data is null, use the status code to determine the message
+              if (e.response?.data != null && e.response?.data is Map) {
+                errorMessage = e.response?.data["message"] ?? "Error occurred";
+              } else if (e.response?.statusCode == 401) {
+                errorMessage = "Invalid credentials"; // Hardcoded fallback for 401
+              } else {
+                errorMessage = "Server error: ${e.response?.statusCode}";
+              }
+            } else {
+              errorMessage = "Check your internet connection";
+            }
+          }
+
+          Get.snackbar("Error", errorMessage, backgroundColor: Colors.red, colorText: Colors.white);
+        } finally {
+          isLoading.value = false;
+        }
+      } else {
+        markPasswordInteracted();
+        FocusManager.instance.primaryFocus!.unfocus();
+      }
     } else {
       markPasswordInteracted();
-      FocusManager.instance.primaryFocus!.unfocus();
-      print("Password validation failed.");
     }
-  } else {
-    markPasswordInteracted();
-    print("Form validation failed.");
   }
-}
 
+  void webSignInTap() async {
+    if (formKey.currentState!.validate()) {
+      if (isPasswordValid()) {
+        try {
+          isLoading.value = true;
+          final response = await _apiService.post(
+            ApiUrls.signInUrl,
+            data: {
+              "email": emailController.text.trim(),
+              "password": passwordController.text,
+            },
+          );
 
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            LocalStorageUtils.setLoginedDoctor();
+            goToMainScreenDocotor();
+            clearControllers();
+          }
+        } catch (e) {
+          Get.snackbar(
+            "Warning",
+            "Wrong Credentials",
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+        } finally {
+          isLoading.value = false;
+        }
+      } else {
+        markPasswordInteracted();
+        FocusManager.instance.primaryFocus!.unfocus();
+      }
+    } else {
+      markPasswordInteracted();
+    }
+  }
 
+  void moveToMainScreenBasedOnRole(String role) {
+    if (role == "patient") {
+      LocalStorageUtils.setLogined();
+      goToMainScreen();
+    } else if (role == "doctor") {
+      LocalStorageUtils.setLoginedDoctor();
+      goToMainScreenDocotor();
+    } else if (role == "pharmacy") {
+      LocalStorageUtils.setLoginedPharmacy();
+      goToMainScreenPharmacist();
+    }
+  }
 }

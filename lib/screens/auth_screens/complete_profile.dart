@@ -2,13 +2,13 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/auth_controllers/sign_up_controller.dart';
 import 'package:patient_app/screens/auth_screens/medical_vitals.dart';
 import 'package:patient_app/widgets/display_field.dart';
 import 'package:patient_app/widgets/profile_picture_widget.dart';
-
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/progress_stepper.dart';
@@ -53,7 +53,7 @@ class CompleteProfile extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Complete Your Profile",
+                      AppStrings.completeProfile.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -77,7 +77,7 @@ class CompleteProfile extends StatelessWidget {
                       ),
                       10.verticalSpace,
                       DisplayFieldContainer(
-                        label: "Full Name",
+                        label: AppStrings.fullName.tr,
                         value: signUpController.nameController.text,
                       ),
                       10.verticalSpace,
@@ -88,11 +88,11 @@ class CompleteProfile extends StatelessWidget {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: Text(
-                                "Date of Birth",
+                                AppStrings.dob.tr,
                                 style: const TextStyle(
                                   fontSize: 16,
-                                  fontWeight: FontWeight.w500, // Medium boldness
-                                  color: Colors.black87, // Darker text for the label
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
                                 ),
                               ),
                             ),
@@ -113,7 +113,6 @@ class CompleteProfile extends StatelessWidget {
                                   children: [
                                     Text(
                                       signUpController.formattedDate,
-                                      // Display the formatted date
                                       style: TextStyle(
                                         fontSize: 18,
                                         color:
@@ -136,43 +135,45 @@ class CompleteProfile extends StatelessWidget {
                         ),
                       ),
                       10.verticalSpace,
-                      DisplayFieldContainer(label: "Email", value: signUpController.emailController.text),
+                      DisplayFieldContainer(label: AppStrings.email.tr, value: signUpController.emailController.text),
                       10.verticalSpace,
-                      DisplayFieldContainer(label: "Phone Number", value: signUpController.phoneNumberController.text),
+                      DisplayFieldContainer(label: AppStrings.phoneNumber.tr, value: signUpController.phoneNumberController.text),
                       10.verticalSpace,
                       buildDropdownField(
-                        title: 'Gender',
+                        title: AppStrings.gender.tr,
                         items: signUpController.genderList,
                         selectedValue: signUpController.selectedGender,
                         onChanged: signUpController.updateSelectedGender,
                       ),
                       buildDropdownField(
-                        title: 'Country of Residence',
+                        title: AppStrings.countryResidence.tr,
                         items: signUpController.countryList,
                         selectedValue: signUpController.selectedCountry,
                         onChanged: signUpController.updateSelectedCountry,
                       ),
                       buildDropdownField(
-                        title: 'Religion',
+                        title: AppStrings.religion.tr,
                         items: signUpController.religionList,
                         selectedValue: signUpController.selectedReligion,
                         onChanged: signUpController.updateSelectedReligion,
                       ),
-                      buildDropdownField(
-                        title: 'Department',
-                        items: signUpController.departmentList,
-                        selectedValue: signUpController.selectedDepartment,
-                        onChanged: signUpController.updateSelectedDepartment,
-                      ),
-                      CustomTextField(labelText: "Address",hintText: "32 Examaple St",)
+                      CustomTextField(labelText: AppStrings.address.tr, hintText: "32 Examaple St",controller: signUpController.addressController,)
                     ],
                   ),
                 ),
               ),
 
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Continue", onTap: () {
-                Get.to(MedicalVitals());
+              CustomButton(borderRadius: 15, text: AppStrings.continueText.tr, onTap: () {
+                if(signUpController.selectedDate == null||
+                    signUpController.selectedGender.value == null||
+                    signUpController.selectedCountry.value == null||
+                    signUpController.selectedReligion.value==null||
+                    signUpController.selectedDepartment.value == null||signUpController.addressController.text.isEmpty
+                ){
+                  Get.snackbar(AppStrings.warning.tr, AppStrings.pleaseFillAllFields.tr,snackPosition: SnackPosition.BOTTOM,backgroundColor: AppColors.red,colorText: Colors.white);
+                }else{
+                  Get.to(MedicalVitals());}
               }),
               50.verticalSpace,
             ],
@@ -183,19 +184,77 @@ class CompleteProfile extends StatelessWidget {
   }
 
   void _showDatePicker(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime maxDate = DateTime(now.year - 18, now.month, now.day);
+    final DateTime minDate = DateTime(now.year - 120, now.month, now.day); // Optional: set a reasonable minimum age
+
     final List<DateTime?>? dates = await showCalendarDatePicker2Dialog(
       context: context,
       config: CalendarDatePicker2WithActionButtonsConfig(
         calendarType: CalendarDatePicker2Type.single,
         selectedDayHighlightColor: Colors.blue,
         centerAlignModePicker: true,
+        firstDate: minDate,
+        lastDate: maxDate,
       ),
       dialogSize: const Size(325, 400),
       value: [signUpController.selectedDate],
-      // Current date value
       borderRadius: BorderRadius.circular(15),
     );
+
+    if (dates != null && dates.isNotEmpty && dates[0] != null) {
+      final selectedDate = dates[0]!;
+
+      if (_isAtLeast18YearsOld(selectedDate)) {
+        signUpController.updateDate(selectedDate);
+      } else {
+        _showAgeErrorDialog(context);
+      }
+    }
   }
+
+  bool _isAtLeast18YearsOld(DateTime birthDate) {
+    final DateTime now = DateTime.now();
+    final DateTime eighteenYearsAgo = DateTime(now.year - 18, now.month, now.day);
+    return birthDate.isBefore(eighteenYearsAgo) ||
+        (birthDate.year == eighteenYearsAgo.year &&
+            birthDate.month == eighteenYearsAgo.month &&
+            birthDate.day == eighteenYearsAgo.day);
+  }
+
+  void _showAgeErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Age Restriction',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'You must be at least 18 years old to register.',
+          style: TextStyle(
+            fontSize: 16.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   static Widget buildDropdownField({
     required String title,
     required List<String> items,
@@ -224,8 +283,8 @@ class CompleteProfile extends StatelessWidget {
               decoration: InputDecoration(
                 contentPadding:  EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                  borderSide: BorderSide.none
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none
                 ),
                 filled: true,
                 fillColor: Colors.white,

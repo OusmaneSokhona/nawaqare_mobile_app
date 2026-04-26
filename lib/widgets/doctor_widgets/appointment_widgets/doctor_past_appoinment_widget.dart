@@ -1,0 +1,1526 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_controller.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/add_report_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_follow_up_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_notes_screen.dart';
+import 'package:patient_app/screens/document_view_screen.dart';
+import 'package:patient_app/utils/app_colors.dart';
+import 'package:patient_app/utils/appointment_status.dart';
+import 'package:patient_app/widgets/custom_button.dart';
+import 'package:patient_app/widgets/doctor_widgets/appointment_widgets/delete_report_dialog.dart';
+import '../../../controllers/doctor_controllers/report_controller.dart';
+import '../../../models/doctor_appointment_model.dart';
+import '../../../utils/app_fonts.dart';
+import '../../../utils/app_strings.dart';
+
+class DoctorPastAppoinmentWidget extends StatelessWidget {
+  final DoctorAppointment appointmentModel;
+
+  DoctorPastAppoinmentWidget({super.key, required this.appointmentModel});
+
+  DoctorAppointmentController doctorAppointmentController =
+  Get.find<DoctorAppointmentController>();
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('dd MMM yyyy').format(date);
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('dd MMM yyyy • hh:mm a').format(dateTime);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    doctorAppointmentController.getClinicalNotes(appointmentModel.id);
+    print("${appointmentModel.id}");
+    return Column(
+      children: [
+        15.verticalSpace,
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: Text(
+            AppStrings.symptomsHistory.tr,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: AppFonts.jakartaBold,
+            ),
+          ),
+        ),
+        10.verticalSpace,
+        Container(
+          width: 1.sw,
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppStrings.patientSymptoms.tr,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFonts.jakartaBold,
+                ),
+              ),
+              10.verticalSpace,
+              Text(
+                appointmentModel.notes ?? "no symptoms provided",
+                style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+        10.verticalSpace,
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: Text(
+            AppStrings.coveredByPlan.tr,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 17.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: AppFonts.jakartaBold,
+            ),
+          ),
+        ),
+        10.verticalSpace,
+        Container(
+          width: 1.sw,
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${AppStrings.plan.tr}: Silver 4-Consultation Plan",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFonts.jakartaBold,
+                ),
+              ),
+              10.verticalSpace,
+              Text(
+                "${AppStrings.remainingCredits.tr}: 2 consultations",
+                style: TextStyle(color: AppColors.darkGrey, fontSize: 14.sp),
+              ),
+              10.verticalSpace,
+              Text(
+                "${AppStrings.expires.tr}: 14 Feb 2026",
+                style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+              ),
+              10.verticalSpace,
+              Text(
+                "${AppStrings.planStatus.tr}: \"OK\"",
+                style: TextStyle(color: AppColors.lightGrey, fontSize: 14.sp),
+              ),
+            ],
+          ),
+        ),
+        15.verticalSpace,
+        CardHeader(title: AppStrings.clinicalSummary.tr),
+        10.verticalSpace,
+        Container(
+          padding: EdgeInsets.all(10.sp),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.sp),
+          ),
+          child: Column(
+            children: [
+              Obx(
+                    () =>
+                    DiagnosisHistoryCard(
+                      diagnosis: appointmentModel.prescriptionId?.diagnosis ??
+                          "No diagnosis",
+                      icd: "ICD-10",
+                      appointmentId: appointmentModel.id,
+                      notes: doctorAppointmentController.notesText.value.isEmpty
+                          ? (appointmentModel.prescriptionId?.notes ??
+                          "No notes available")
+                          : doctorAppointmentController.notesText.value,
+                    ),
+              ),
+              15.verticalSpace,
+              if (appointmentModel.prescriptionId != null)
+                ...appointmentModel.prescriptionId!.medications.map((
+                    medication) =>
+                    PrescriptionHistoryCard(
+                      medication: medication.name,
+                      dosage: "${medication.dosage} - ${medication
+                          .frequency} - ${medication.duration}",
+                      daysRemaining: _calculateDaysRemaining(
+                          appointmentModel.prescriptionId!.validUntil),
+                      prescriptionNumber: appointmentModel.prescriptionId!
+                          .prescriptionNumber,
+                      issueDate: appointmentModel.prescriptionId!.issueDate,
+                      validUntil: appointmentModel.prescriptionId!.validUntil,
+                    ),
+                ).toList()
+              else
+                const PrescriptionHistoryCard(
+                  medication: "No prescription available",
+                  dosage: "",
+                  daysRemaining: 0,
+                  prescriptionNumber: "",
+                ),
+            ],
+          ),
+        ),
+
+        if (appointmentModel.soap != null)
+          _buildMainSoapSection(),
+
+        if (appointmentModel.followUps != null &&
+            appointmentModel.followUps!.isNotEmpty)
+          ..._buildFollowUpsSections(),
+
+        15.verticalSpace,
+        MedicalReportCard(
+          onlyView: false, patientId: appointmentModel.patientId.id, doctorId:appointmentModel.doctorId,
+        ),
+        15.verticalSpace,
+        FollowUpRecommendationCard(
+          appointmentModel: appointmentModel,
+          recommendation: AppStrings.chooseOptionFutureAction.tr,
+          options: [
+            AppStrings.scheduleFollowUp.tr,
+            AppStrings.closeConsultation.tr,
+            AppStrings.referPatient.tr,
+          ],
+        ),
+        15.verticalSpace,
+        appointmentModel.reviews!=null?ReviewCard(
+          image: "assets/demo_images/Frame 1000000981.png",
+          reviewerName: "Emily Anderson",
+          appoitment: appointmentModel,
+        ):SizedBox(),
+        15.verticalSpace,
+        40.verticalSpace,
+      ],
+    );
+  }
+
+  Widget _buildMainSoapSection() {
+    return Column(
+      children: [
+        15.verticalSpace,
+        CardHeader(title: "SOAP Notes"),
+        10.verticalSpace,
+        Container(
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            children: [
+              _buildSoapCard(
+                title: "Subjective",
+                content: appointmentModel.soap!.subjective,
+                icon: Icons.person_outline,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Objective",
+                content: appointmentModel.soap!.objective,
+                icon: Icons.science,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Assessment",
+                content: appointmentModel.soap!.assessment,
+                icon: Icons.assessment_outlined,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Plan",
+                content: appointmentModel.soap!.plan,
+                icon: Icons.assignment_outlined,
+              ),
+              SizedBox(height: 12.h),
+              _buildSoapCard(
+                title: "Diagnosis",
+                content: appointmentModel.soap!.diagnosis,
+                icon: Icons.medical_services_outlined,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSoapCard({
+    required String title,
+    required String content,
+    required IconData icon,
+  }) {
+    return Container(
+      width: 1.sw,
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: AppColors.lightGrey.withOpacity(0.1)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Icon(
+              icon,
+              size: 16.sp,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    fontFamily: AppFonts.jakartaMedium,
+                  ),
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  content.isNotEmpty ? content : "No $title notes available",
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: content.isNotEmpty ? Colors.grey.shade700 : Colors.grey.shade400,
+                    fontStyle: content.isEmpty ? FontStyle.italic : FontStyle.normal,
+                    fontFamily: AppFonts.jakartaRegular,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildFollowUpsSections() {
+    List<Widget> followUpSections = [];
+
+    for (var followUp in appointmentModel.followUps!) {
+      if (followUp.soap != null) {
+        followUpSections.addAll([
+          15.verticalSpace,
+          CardHeader(title: "SOAP Notes - ${_formatDate(followUp.createdAt)}"),
+          10.verticalSpace,
+          Container(
+            padding: EdgeInsets.all(15.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+              borderRadius: BorderRadius.circular(15.r),
+            ),
+            child: Column(
+              children: [
+                _buildSoapCard(
+                  title: "Subjective",
+                  content: followUp.soap!.subjective,
+                  icon: Icons.person_outline,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Objective",
+                  content: followUp.soap!.objective,
+                  icon: Icons.science,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Assessment",
+                  content: followUp.soap!.assessment,
+                  icon: Icons.assessment_outlined,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Plan",
+                  content: followUp.soap!.plan,
+                  icon: Icons.assignment_outlined,
+                ),
+                SizedBox(height: 12.h),
+                _buildSoapCard(
+                  title: "Diagnosis",
+                  content: followUp.soap!.diagnosis,
+                  icon: Icons.medical_services_outlined,
+                ),
+              ],
+            ),
+          ),
+        ]);
+      }
+
+      followUpSections.addAll([
+        15.verticalSpace,
+        CardHeader(title: "Follow-up Visit - ${_formatDate(followUp.timeSlotId.startTime)}"),
+        10.verticalSpace,
+        Container(
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.2)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.access_time,
+                      size: 16.sp,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Appointment Time",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey.shade600,
+                            fontFamily: AppFonts.jakartaRegular,
+                          ),
+                        ),
+                        Text(
+                          "${followUp.timeSlotId.formattedStartDate} • ${followUp.timeSlotId.formattedTimeRange}",
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: AppFonts.jakartaMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      color: followUp.paymentStatus.toLowerCase() == "paid"
+                          ? Colors.green.withOpacity(0.1)
+                          : Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.payment,
+                      size: 16.sp,
+                      color: followUp.paymentStatus.toLowerCase() == "paid"
+                          ? Colors.green
+                          : Colors.orange,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Payment Status",
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey.shade600,
+                            fontFamily: AppFonts.jakartaRegular,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              followUp.paymentStatus.capitalizeFirst ?? "Pending",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: followUp.paymentStatus.toLowerCase() == "paid"
+                                    ? Colors.green
+                                    : Colors.orange,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              "• \$${followUp.followupPrice}",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                                fontFamily: AppFonts.jakartaMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if (followUp.prescriptions.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.medication,
+                        size: 16.sp,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Prescriptions",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey.shade600,
+                              fontFamily: AppFonts.jakartaRegular,
+                            ),
+                          ),
+                          Text(
+                            "${followUp.prescriptions.length} medication(s) prescribed",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (followUp.paymentIntent.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                      child: Icon(
+                        Icons.receipt_long,
+                        size: 16.sp,
+                        color: Colors.purple,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Payment Intent",
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey.shade600,
+                              fontFamily: AppFonts.jakartaRegular,
+                            ),
+                          ),
+                          Text(
+                            "ID: ${followUp.paymentIntent.substring(0, 8)}...",
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.purple,
+                              fontFamily: AppFonts.jakartaMedium,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
+      ]);
+    }
+
+    return followUpSections;
+  }
+
+  int _calculateDaysRemaining(DateTime validUntil) {
+    final now = DateTime.now();
+    final difference = validUntil
+        .difference(now)
+        .inDays;
+    return difference > 0 ? difference : 0;
+  }
+}
+
+class CardHeader extends StatelessWidget {
+  final String title;
+  final double fontSize;
+  final FontWeight fontWeight;
+  final Color color;
+
+  const CardHeader({
+    required this.title,
+    super.key,
+    this.fontSize = 18,
+    this.fontWeight = FontWeight.w700,
+    this.color = Colors.black,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.topStart,
+      child: Text(
+        title,
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize.sp,
+          fontWeight: fontWeight,
+          fontFamily: AppFonts.jakartaBold,
+        ),
+      ),
+    );
+  }
+}
+
+class DiagnosisHistoryCard extends StatelessWidget {
+  final String notes;
+  final String diagnosis;
+  final String icd;
+  final String appointmentId;
+
+  const DiagnosisHistoryCard({
+    required this.notes,
+    required this.diagnosis,
+    required this.icd,
+    required this.appointmentId,
+    super.key,
+  });
+
+  static const Color _primaryColor = Color(0xFF1F2937);
+  static const Color _secondaryColor = Color(0xFF6B7280);
+
+  @override
+  Widget build(BuildContext context) {
+    DoctorAppointmentController controller = Get.find<DoctorAppointmentController>();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.all(15.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: AppColors.lightGrey.withOpacity(0.1)),
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppStrings.diagnosis.tr,
+                    style: TextStyle(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: AppFonts.jakartaBold,
+                      color: _primaryColor,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.description,
+                    size: 16,
+                    color: AppColors.primaryColor,
+                  ),
+                ],
+              ),
+              SizedBox(height: 5.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: 0.5.sw,
+                    child: Text(
+                      diagnosis,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.lightGrey,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'ID: ($icd)',
+                    style: TextStyle(fontSize: 14.sp, color: _secondaryColor),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppStrings.diagnosisNotes.tr,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: _primaryColor,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Get.to(EditNotesScreen(appointmentId: appointmentId));
+                    },
+                    child: const Icon(
+                      Icons.edit,
+                      size: 16,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5.h),
+              Obx(() {
+                final clinicalNote = controller.clinicalNote.value;
+                final displayNotes = clinicalNote.drNotes.isNotEmpty
+                    ? clinicalNote.drNotes
+                    : notes;
+                return Text(
+                  displayNotes,
+                  style: TextStyle(fontSize: 14.sp, color: _secondaryColor),
+                );
+              }),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class PrescriptionHistoryCard extends StatelessWidget {
+  final String medication;
+  final String dosage;
+  final int daysRemaining;
+  final String? prescriptionNumber;
+  final DateTime? issueDate;
+  final DateTime? validUntil;
+
+  const PrescriptionHistoryCard({
+    required this.medication,
+    required this.dosage,
+    required this.daysRemaining,
+    this.prescriptionNumber,
+    this.issueDate,
+    this.validUntil,
+    super.key,
+  });
+
+  static const Color _primaryColor = Color(0xFF1F2937);
+  static const Color _secondaryColor = Color(0xFF6B7280);
+  static const Color _blueColor = AppColors.primaryColor;
+  static const Color _buttonBgColor = Color(0xFFE5E7EB);
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+    return DateFormat('dd MMM yyyy').format(date);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(15.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: AppColors.lightGrey.withOpacity(0.1)),
+        borderRadius: BorderRadius.circular(15.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                AppStrings.prescriptions.tr,
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontFamily: AppFonts.jakartaBold,
+                  fontSize: 16.sp,
+                ),
+              ),
+              if (prescriptionNumber != null && prescriptionNumber!.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    color: _blueColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  child: Text(
+                    prescriptionNumber!,
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: _blueColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    5.verticalSpace,
+                    Text(
+                      medication,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: _primaryColor,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      dosage,
+                      style: TextStyle(fontSize: 14.sp, color: _secondaryColor),
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(Icons.description, size: 16, color: _secondaryColor),
+            ],
+          ),
+          if (issueDate != null && validUntil != null) ...[
+            SizedBox(height: 8.h),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, size: 12.sp, color: _secondaryColor),
+                SizedBox(width: 4.w),
+                Text(
+                  "Issued: ${_formatDate(issueDate)}",
+                  style: TextStyle(fontSize: 11.sp, color: _secondaryColor),
+                ),
+                SizedBox(width: 12.w),
+                Icon(
+                    Icons.event_available, size: 12.sp, color: _secondaryColor),
+                SizedBox(width: 4.w),
+                Text(
+                  "Valid until: ${_formatDate(validUntil)}",
+                  style: TextStyle(fontSize: 11.sp, color: _secondaryColor),
+                ),
+              ],
+            ),
+          ],
+          SizedBox(height: 8.h),
+          Row(
+            children: [
+              const Icon(Icons.lock, color: _secondaryColor, size: 16),
+              SizedBox(width: 4.w),
+              Text(
+                AppStrings.encryptedCompliant.tr,
+                style: TextStyle(fontSize: 12.sp, color: _secondaryColor),
+              ),
+            ],
+          ),
+          if (daysRemaining > 0) ...[
+            SizedBox(height: 8.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: daysRemaining > 5
+                    ? Colors.green.withOpacity(0.1)
+                    : Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(4.r),
+              ),
+              child: Text(
+                "$daysRemaining days remaining",
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  color: daysRemaining > 5 ? Colors.green : Colors.orange,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+          SizedBox(height: 16.h),
+          if (prescriptionNumber != null && prescriptionNumber!.isNotEmpty)
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _buttonBgColor,
+                      foregroundColor: _primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      AppStrings.downloadPdf.tr,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _blueColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      AppStrings.refill.tr,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class MedicalReportCard extends StatelessWidget {
+  final String patientId;
+  final String doctorId;
+  final bool onlyView;
+
+  const MedicalReportCard({
+    super.key,
+    required this.patientId,
+    required this.doctorId,
+    required this.onlyView,
+  });
+
+  static const Color _primaryColor = Color(0xFF1F2937);
+  static const Color _secondaryColor = Color(0xFF6B7280);
+  static const Color _blueColor = Color(0xFF4C86F7);
+  static const Color _iconBgColor = Color(0xFFE0EFFF);
+
+  @override
+  Widget build(BuildContext context) {
+    final ReportController reportController = Get.put(ReportController());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (patientId.isNotEmpty) {
+        reportController.initialize(patientId, doctorId);
+      }
+    });
+
+    return Obx(() {
+      if (reportController.isLoading.value) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (reportController.reports.isEmpty) {
+        return Column(
+          children: [
+            CardHeader(title: AppStrings.medicalReports.tr),
+            20.verticalSpace,
+            CustomButton(borderRadius: 15, text: "Add Report", onTap: (){
+              Get.to(() => AddReportScreen(
+                patientId: patientId,
+                doctorId: doctorId,
+              ));
+            }),
+          ],
+        );
+      }
+
+      return Column(
+        children: [
+          CardHeader(title: AppStrings.medicalReports.tr),
+          5.verticalSpace,
+          SizedBox(
+            height: reportController.reports.length < 2
+                ? onlyView ? 100.h : 200.h
+                : 200.h,
+            child: ListView.builder(
+                padding: EdgeInsets.zero,
+                itemCount: reportController.reports.length,
+                itemBuilder: (context, index) {
+                  final report = reportController.reports[index];
+                  return Container(
+                    padding: EdgeInsets.all(onlyView ? 0.sp : 10.sp),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                          color: onlyView ? Colors.transparent : AppColors.lightGrey.withOpacity(0.2)
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(16.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: AppColors.lightGrey.withOpacity(0.2),
+                            ),
+                            borderRadius: BorderRadius.circular(13.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                spreadRadius: 2,
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: _iconBgColor,
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: Icon(
+                                  reportController.getIconForCategory(report.category),
+                                  color: _blueColor,
+                                  size: 24,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      report.name,
+                                      maxLines: 3,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: _primaryColor,
+                                      ),
+                                    ),
+                                    4.verticalSpace,
+                                    Text(
+                                      reportController.formatDate(report.createdAt),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: _secondaryColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              onlyView
+                                  ? InkWell(
+                                onTap: () {
+                                  reportController.viewReport(report);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.sp,
+                                    vertical: 4.sp,
+                                  ),
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(9.sp),
+                                  ),
+                                  child: Text(
+                                    AppStrings.view.tr,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15.sp,
+                                      fontFamily: AppFonts.jakartaMedium,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              )
+                                  : InkWell(
+                                onTap: () {
+                                  Get.dialog(
+                                    AlertDialog(
+                                      title: const Text('Delete Report'),
+                                      content: const Text('Are you sure you want to delete this report?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Get.back(),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Get.back();
+                                            reportController.deleteReport(report.id);
+                                          },
+                                          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: AppColors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        onlyView ? 0.verticalSpace : 12.verticalSpace,
+                        onlyView
+                            ? const SizedBox()
+                            : Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.to(() => AddReportScreen(
+                                    patientId: patientId,
+                                    doctorId: doctorId,
+                                  ));
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.inACtiveButtonColor,
+                                  foregroundColor: _primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  AppStrings.addReport.tr,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  // Implement download functionality
+                                  Get.snackbar(
+                                    'Info',
+                                    'Download feature coming soon',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryColor,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  elevation: 0,
+                                ),
+                                child: Text(
+                                  AppStrings.downloadReport.tr,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+            ),
+          ),
+        ],
+      );
+    });
+  }
+}
+
+class FollowUpRecommendationCard extends StatelessWidget {
+  final String recommendation;
+  final List<String> options;
+  final DoctorAppointment appointmentModel;
+
+  FollowUpRecommendationCard({
+    required this.recommendation,
+    required this.options,
+    required this.appointmentModel,
+    super.key,
+  });
+  DoctorAppointmentController appointmentController=Get.find();
+
+  void _showReferPatientDialog() {
+    TextEditingController commentController = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Refer Patient",
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Please provide referral comments:",
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
+            ),
+            SizedBox(height: 12.h),
+            TextField(
+              controller: commentController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: "Enter referral reason and comments...",
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: AppColors.primaryColor),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (commentController.text.trim().isNotEmpty) {
+                Get.back();
+                await appointmentController.referPatient(
+                  appointmentModel.id,
+                  commentController.text.trim(),
+                );
+              } else {
+                Get.snackbar(
+                  "Warning",
+                  "Please enter referral comments",
+                  snackPosition: SnackPosition.BOTTOM,
+                  duration: Duration(seconds: 2),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              "Refer",
+              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    appointmentModel.status==AppointmentStatus.CANCELLED?options.remove(AppStrings.closeConsultation.tr):null;
+    appointmentModel.status==AppointmentStatus.CANCELLED?options.remove(AppStrings.referPatient.tr):null;
+    appointmentModel.status==AppointmentStatus.COMPLETED?options.remove(AppStrings.closeConsultation.tr):null;
+    appointmentModel.status==AppointmentStatus.COMPLETED?options.remove(AppStrings.referPatient.tr):null;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CardHeader(title: AppStrings.nextStep.tr),
+        10.verticalSpace,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              recommendation,
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+                color: AppColors.lightGrey,
+              ),
+            ),
+            10.verticalSpace,
+            ...options.map(
+                  (option) => Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.h),
+                child: InkWell(
+                  onTap: (){
+                    if(option == AppStrings.scheduleFollowUp.tr){
+                      Get.to(DoctorFollowupScreen(appointmentId: appointmentModel.id));
+                    }else if(option == AppStrings.closeConsultation.tr){
+                      showCancelConfirmationDialog(appointmentModel.id);
+                    }else if(option == AppStrings.referPatient.tr){
+                      _showReferPatientDialog();
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 24.w,
+                        height: 24.h,
+                        child: Checkbox(
+                          activeColor: AppColors.primaryColor,
+                          value: false,
+                          onChanged: (bool? newValue) {
+                            if(option == AppStrings.scheduleFollowUp.tr){
+                              Get.to(DoctorFollowupScreen(appointmentId: appointmentModel.id));
+                            }else if(option == AppStrings.closeConsultation.tr){
+                              showCancelConfirmationDialog(appointmentModel.id);
+                            }else if(option == AppStrings.referPatient.tr){
+                              _showReferPatientDialog();
+                            }
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        option,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.lightGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  void showCancelConfirmationDialog(String appointmentId) {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: Colors.white,
+        title: Text(
+          "Close Appointment",
+          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          "Do you really want to Close this appointment?",
+          style: TextStyle(fontSize: 16.sp),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              "No",
+              style: TextStyle(color: Colors.grey, fontSize: 16.sp),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Get.back();
+              await appointmentController.updateAppointmentStatus(appointmentId, AppointmentStatus.COMPLETED,false);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: Text(
+              "Yes, Cancel",
+              style: TextStyle(color: Colors.white, fontSize: 16.sp),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReviewCard extends StatelessWidget {
+  final String reviewerName;
+  final DoctorAppointment appoitment;
+  final String image;
+
+  const ReviewCard({
+    required this.reviewerName,
+    required this.appoitment,
+    required this.image,
+    super.key,
+  });
+
+  static const Color _primaryColor = Color(0xFF1F2937);
+  static const Color _starColor = Color(0xFFF59E0B);
+
+  @override
+  Widget build(BuildContext context) {
+    return appoitment.reviews!.isNotEmpty?Padding(
+      padding: EdgeInsets.symmetric(horizontal: 0.sp),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CardHeader(title: AppStrings.review.tr),
+          10.verticalSpace,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 40.r,
+                    backgroundImage: NetworkImage(appoitment.reviews!.first.patientId.profileImage),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          AppStrings.patientReviewConsultation.tr,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          reviewerName,
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: _primaryColor,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Row(
+                          children: [
+                            Text(
+                              "${appoitment.reviews!.first.rating}.0",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: _starColor,
+                              ),
+                            ),
+                            SizedBox(width: 4.w),
+                            ...List.generate(5, (index) {
+                              return Icon(
+                                index < appoitment.reviews!.first.rating.floor()
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                color: _starColor,
+                                size: 18.sp,
+                              );
+                            }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                appoitment.reviews!.first.review,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  height: 1.4,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ):SizedBox();
+  }
+}

@@ -1,10 +1,4 @@
-
-enum PrescriptionStatus {
-  active,
-  expirySoon,
-  expired,
-  completed,
-}
+enum PrescriptionStatus { active, expirySoon, expired, completed }
 
 class PrescriptionModel {
   final String id;
@@ -16,6 +10,11 @@ class PrescriptionModel {
   final String dateInfo;
   final int? refillsLeft;
   final String doctorImageUrl;
+  final String? diagnosis;
+  final String? notes;
+  final String? prescriptionNumber;
+  final List<Map<String, dynamic>>? medications;
+  final Map<String, dynamic>? appointmentData;
 
   PrescriptionModel({
     required this.id,
@@ -27,5 +26,10 @@ class PrescriptionModel {
     required this.dateInfo,
     this.refillsLeft,
     required this.doctorImageUrl,
+    this.diagnosis,
+    this.notes,
+    this.prescriptionNumber,
+    this.medications,
+    this.appointmentData,
   });
 }

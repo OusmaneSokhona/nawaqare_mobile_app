@@ -1,19 +1,14 @@
-import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/auth_controllers/sign_up_controller.dart';
-import 'package:patient_app/screens/auth_screens/sign_in_screen.dart';
-import 'package:patient_app/widgets/display_field.dart';
-import 'package:patient_app/widgets/profile_picture_widget.dart';
-import 'package:patient_app/widgets/success_dialog.dart';
-
+import 'package:patient_app/client/api_client.dart';
+import 'package:patient_app/widgets/patient_widgets/profile_widgets/success_dialog.dart';
+import '../../controllers/auth_controllers/sign_up_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_fonts.dart';
+import '../../utils/app_strings.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/custom_text_field.dart';
 import '../../widgets/progress_stepper.dart';
-import '../../widgets/validation_check_list.dart';
 
 class DocumentsReports extends StatelessWidget {
   DocumentsReports({super.key});
@@ -54,7 +49,7 @@ class DocumentsReports extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Documents & Reports",
+                      AppStrings.docsAndReports.tr,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: AppFonts.jakartaBold,
@@ -66,15 +61,15 @@ class DocumentsReports extends StatelessWidget {
                 ],
               ),
 
-                  20.verticalSpace,
-                  ProgressStepper(currentStep:4, totalSteps: 4),
-                  15.verticalSpace,
+              20.verticalSpace,
+              ProgressStepper(currentStep:4, totalSteps: 4),
+              15.verticalSpace,
               Column(
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Upload Document/Test Report',
+                      AppStrings.uploadLabel.tr,
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.w600,
@@ -84,7 +79,9 @@ class DocumentsReports extends StatelessWidget {
                   ),
                   3.verticalSpace,
                   InkWell(
-                    onTap: signUpController.pickFile,
+                    onTap: (){
+                      signUpController.pickFile(signUpController.selectedFileName);
+                    },
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       width: double.infinity,
@@ -113,10 +110,11 @@ class DocumentsReports extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Text(
-                              signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'
-                                  ? 'Upload PDF/JPEG'
+                              signUpController.selectedFileName.value == null ||signUpController.selectedFileName.value == 'No file selected' || signUpController.selectedFileName.value == 'File selection cancelled'
+                                  ? AppStrings.uploadFormat.tr
                                   : signUpController.selectedFileName.value!,
                               textAlign: TextAlign.center,
+                              maxLines: 3,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -124,9 +122,9 @@ class DocumentsReports extends StatelessWidget {
                               ),
                             ),
                             if (signUpController.selectedFileName.value != 'No file selected' && signUpController.selectedFileName.value != 'File selection cancelled')
-                              const Text(
-                                'Tap to select a new file',
-                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              Text(
+                                AppStrings.tapToSelectNew.tr,
+                                style: const TextStyle(fontSize: 12, color: Colors.grey),
                               ),
                           ],
                         ),
@@ -137,16 +135,29 @@ class DocumentsReports extends StatelessWidget {
               ),
 
               40.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Submit", onTap: () async {
-                Get.dialog(SuccessDialog());
-                await Future.delayed(Duration(seconds: 3),(){
-                  signUpController.moveToSignInScreen();
-                });
-              }),
+              Obx(
+                  ()=>signUpController.isLoading.value?CircularProgressIndicator(color: AppColors.primaryColor,):CustomButton(borderRadius: 15, text: AppStrings.submit.tr, onTap: () async {
+                  bool isSuccessRegister=await signUpController.registerUser();
+                  print("isSuccessRegister: $isSuccessRegister");
+                  if(isSuccessRegister){
+                    Future.delayed(Duration(seconds: 1));
+                    ApiClient.getToken();
+                    Future.delayed(Duration(seconds: 1));
+                    bool isSuccessUpdate=await signUpController.updatePatientProfile();
+                    if(isSuccessUpdate){
+                      Get.dialog(SuccessDialog());
+                      await Future.delayed(Duration(seconds: 3),(){
+                        signUpController.signInController.moveToMainScreenBasedOnRole(signUpController.type.value);
+                      });
+                    }
+                  }
+
+                }),
+              ),
               20.verticalSpace,
-              CustomButton(borderRadius: 15, text: "Skip", onTap: () {
-                signUpController.moveToSignInScreen();
-              },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
+              // CustomButton(borderRadius: 15, text: AppStrings.skip.tr, onTap: () {
+              //   signUpController.moveToSignInScreen();
+              // },bgColor: AppColors.inACtiveButtonColor,fontColor: Colors.black,),
               50.verticalSpace,
             ],
           ),

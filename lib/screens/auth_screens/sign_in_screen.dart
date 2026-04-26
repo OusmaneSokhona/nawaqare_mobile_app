@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:patient_app/controllers/auth_controllers/sign_in_controller.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_fonts.dart';
+import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/custom_button.dart';
 import 'package:patient_app/widgets/custom_text_field.dart';
-
+import '../../controllers/auth_controllers/sign_in_controller.dart';
 import '../../widgets/validation_check_list.dart';
 
 class SignInScreen extends StatelessWidget {
   SignInScreen({super.key});
-  SignInController signInController = Get.put(SignInController());
+  final SignInController signInController = Get.put(SignInController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +20,7 @@ class SignInScreen extends StatelessWidget {
           height: 1.sh,
           width: 1.sw,
           decoration: BoxDecoration(
-            image: DecorationImage(image: AssetImage("assets/images/sign_in_bg.png")),
+            image: const DecorationImage(image: AssetImage("assets/images/sign_in_bg.png")),
             gradient: LinearGradient(colors:[
               AppColors.onboardingBackground,
               Colors.white,
@@ -34,7 +35,7 @@ class SignInScreen extends StatelessWidget {
                   padding:  EdgeInsets.symmetric(horizontal: 20.w),
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Text("Sign In",style: TextStyle(
+                    child: Text(AppStrings.signIn.tr,style: TextStyle(
                       color: Colors.black,
                       fontSize: 32.sp,fontFamily: AppFonts.jakartaBold,
                       fontWeight: FontWeight.w700,
@@ -45,7 +46,7 @@ class SignInScreen extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding:  EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Text("Access Your Secure Medical Account",style: TextStyle(
+                    child: Text(AppStrings.resetPasswordSub.tr,style: TextStyle(
                       color: AppColors.darkGrey,
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w400,
@@ -56,7 +57,8 @@ class SignInScreen extends StatelessWidget {
                 Padding(
                   padding:  EdgeInsets.symmetric(horizontal:20.w),
                   child: CustomTextField(
-                    labelText: "Email",
+                    maxLength: 30,
+                    labelText: AppStrings.email.tr,
                     controller: signInController.emailController,
                     hintText: 'Saira@gmail.com',
                     prefixIcon: Icons.mail_outline,
@@ -69,12 +71,13 @@ class SignInScreen extends StatelessWidget {
                       () => Padding(
                     padding:  EdgeInsets.symmetric(horizontal: 20.w),
                     child: CustomTextField(
-                      labelText: 'Password',
+                      maxLength: 30,
+                      labelText: AppStrings.password.tr,
                       hintText: '********',
                       controller: signInController.passwordController,
                       prefixIcon: Icons.lock,
                       isPasswordField: true,
-                      isEnabled: !signInController.passwordVisibility.value,
+                      isEnabled: signInController.passwordVisibility.value,
                       onChanged: (value) {
                         signInController.currentPassword.value = value;
                       },
@@ -98,7 +101,7 @@ class SignInScreen extends StatelessWidget {
                     onTap: (){
                       signInController.goToForgotPasswordScreen();
                     },
-                    child: Text("Forget Password",
+                    child: Text(AppStrings.forgetPasswordTitle.tr,
                       style: TextStyle(
                         color: AppColors.primaryColor,
                         fontSize: 14.sp,
@@ -111,12 +114,20 @@ class SignInScreen extends StatelessWidget {
                 ),
                 40.verticalSpace,
 
-                CustomButton(borderRadius: 15, text: "Sign In", onTap: (){
-signInController.signInTap();
-                },fontSize: 18),
+                Obx(() => signInController.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : CustomButton(
+                    borderRadius: 15,
+                    text: AppStrings.signIn.tr,
+                    onTap: (){
+                      signInController.signInTap();
+                    },
+                    fontSize: 18
+                )
+                ),
                 20.verticalSpace,
                 Row(mainAxisAlignment: MainAxisAlignment.center,children: [
-                  Text("Don't have an account?",style: TextStyle(
+                  Text(AppStrings.dontHaveAccount.tr,style: TextStyle(
                     color: AppColors.darkGrey,
                     fontSize: 15.sp,
                     fontWeight: FontWeight.w600,
@@ -126,7 +137,7 @@ signInController.signInTap();
                     onTap: (){
                       signInController.goToSignUpScreen();
                     },
-                    child: Text("Sign Up",style: TextStyle(
+                    child: Text(AppStrings.signUp.tr,style: TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w700,
@@ -139,7 +150,6 @@ signInController.signInTap();
               ],),
             ),
           ),
-
         )
     );
   }

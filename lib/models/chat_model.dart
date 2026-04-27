@@ -7,6 +7,8 @@ class Conversation {
   final LastMessage? lastMessage;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final bool isClosed;
+  final String? contextLabel;
 
   Conversation({
     required this.id,
@@ -14,6 +16,8 @@ class Conversation {
     this.lastMessage,
     required this.createdAt,
     required this.updatedAt,
+    this.isClosed = false,
+    this.contextLabel,
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
@@ -27,6 +31,8 @@ class Conversation {
           : null,
       createdAt: DateTime.parse(json['createdAt'] as String).toLocal(),
       updatedAt: DateTime.parse(json['updatedAt'] as String).toLocal(),
+      isClosed: json['is_closed'] as bool? ?? false,
+      contextLabel: json['contextLabel']?.toString(),
     );
   }
 }

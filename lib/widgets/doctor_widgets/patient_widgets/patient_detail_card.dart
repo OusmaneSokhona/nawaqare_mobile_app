@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:patient_app/screens/doctor_screens/patient_screens/add_notes_screen.dart';
+import 'package:patient_app/screens/doctor_screens/patient_screens/patient_overview_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import '../../../models/patient_model_doctor.dart';
@@ -212,6 +213,24 @@ class PatientDetailCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          // NEW: Patient Overview button — 30-second clinical summary
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Get.to(() => PatientOverviewScreen(patientId: patientSummary.patientId));
+              },
+              icon: const Icon(Icons.person_search, size: 18),
+              label: const Text('Patient Overview (30s)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF4285F4),
+                side: const BorderSide(color: Color(0xFF4285F4)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+              ),
+            ),
           ),
         ],
       ),

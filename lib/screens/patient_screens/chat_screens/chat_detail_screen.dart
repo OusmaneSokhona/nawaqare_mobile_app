@@ -15,7 +15,10 @@ class ChatDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ChatController controller = Get.find();
     final doctor = controller.otherParticipant;
-controller.fetchMessages(controller.selectedConversation.value!.id);
+    final conversation = controller.selectedConversation.value;
+
+    controller.fetchMessages(controller.selectedConversation.value!.id);
+
     return Scaffold(
       body: Container(
         height: 1.sh,
@@ -27,52 +30,199 @@ controller.fetchMessages(controller.selectedConversation.value!.id);
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w),
-          child: Column(
-            children: [
-              SizedBox(height: isWeb ? 10.h : 60.h),
-              buildAppBar(context, controller, doctor),
-              Expanded(
-                child: Obx(
-                      () => controller.isLoadingMessages.value
-                      ? const Center(child: CircularProgressIndicator())
-                      : controller.messages.isEmpty
-                      ? const Center(
-                    child: Text('No messages yet'),
-                  )
-                      : ListView.builder(
-                    key: const PageStorageKey<String>('chat_messages_list'),
-                    reverse: true,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 10,
-                    ),
-                    itemCount: controller.messages.length,
-                    itemBuilder: (context, index) {
-                      final message = controller.messages[index];
+        child: Stack(
+          children: [
+            // Contenu principal
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 5.w),
+              child: Column(
+                children: [
+                  SizedBox(height: isWeb ? 10.h : 60.h),
+                  buildAppBar(context, controller, doctor),
 
-                      final bool showDateSeparator = index == controller.messages.length - 1 ||
-                          !_isSameDay(
-                            message.createdAt,
-                            controller.messages[index + 1].createdAt,
+                  // Banner d'urgence
+                  _buildEmergencyBanner(),
+
+                  // Contexte médical
+                  _buildMedicalContextBanner(conversation),
+
+                  Expanded(
+                    child: Obx(
+                          () => controller.isLoadingMessages.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : controller.messages.isEmpty
+                          ? const Center(
+                        child: Text('No messages yet'),
+                      )
+                          : ListView.builder(
+                        key: const PageStorageKey<String>('chat_messages_list'),
+                        reverse: true,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 10,
+                        ),
+                        itemCount: controller.messages.length,
+                        itemBuilder: (context, index) {
+                          final message = controller.messages[index];
+
+                          final bool showDateSeparator = index == controller.messages.length - 1 ||
+                              !_isSameDay(
+                                message.createdAt,
+                                controller.messages[index + 1].createdAt,
+                              );
+
+                          return Column(
+                            children: [
+                              MessageBubble(
+                                message: message,
+                                doctorImageUrl: doctor?.profileImage ?? '',
+                              ),
+                              if (showDateSeparator)
+                                DateSeparator(date: message.createdAt),
+                            ],
                           );
+                        },
+                      ),
+                    ),
+                  ),
 
-                      return Column(
-                        children: [
-                          MessageBubble(
-                            message: message,
-                            doctorImageUrl: doctor?.profileImage ?? '',
-                          ),
-                          if (showDateSeparator)
-                            DateSeparator(date: message.createdAt),
-                        ],
-                      );
-                    },
+                  // Footer - Messages may be added to medical record
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: Text(
+                      'Messages may be added to your medical record',
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        color: AppColors.lightGrey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  8.verticalSpace,
+
+                  ChatInputField(controller: controller),
+                ],
+              ),
+            ),
+
+            // Overlay si conversation fermée
+            if (conversation?.isClosed ?? false)
+              _buildClosedConversationOverlay(controller),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmergencyBanner() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(6.sp),
+        border: Border.all(color: Colors.amber.shade300),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning, color: Colors.amber.shade700, size: 16.sp),
+          8.horizontalSpace,
+          Expanded(
+            child: Text(
+              'This messaging channel is not for emergencies. In case of emergency, call 15 or go to nearest emergency service.',
+              style: TextStyle(
+                fontSize: 10.sp,
+                color: Colors.amber.shade700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMedicalContextBanner(Conversation? conversation) {
+    String contextLabel = 'General follow-up';
+    // Vous pouvez ajouter la logique pour obtenir le contexte du modèle si disponible
+
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(6.sp),
+      ),
+      child: Text(
+        'Conversation about: $contextLabel',
+        style: TextStyle(
+          fontSize: 11.sp,
+          color: AppColors.primaryColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildClosedConversationOverlay(ChatController controller) {
+    return Container(
+      color: Colors.black.withOpacity(0.7),
+      child: Center(
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.all(20.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12.sp),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.lock,
+                size: 40.sp,
+                color: AppColors.primaryColor,
+              ),
+              16.verticalSpace,
+              Text(
+                'This conversation has been closed.',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              8.verticalSpace,
+              Text(
+                'Please book a new consultation if needed.',
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  color: AppColors.lightGrey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              20.verticalSpace,
+              SizedBox(
+                width: 1.sw * 0.6,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                  ),
+                  onPressed: () {
+                    // Rediriger vers la page de réservation
+                    Get.back();
+                  },
+                  child: Text(
+                    'Book Consultation',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
-              ChatInputField(controller: controller),
             ],
           ),
         ),
@@ -247,40 +397,54 @@ class MessageBubble extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 4, left: 4, right: 4),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Column(
+                    crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        chatController.formatTime(message.createdAt),
-                        style: const TextStyle(fontSize: 10, color: Colors.grey),
-                      ),
-                      const SizedBox(width: 4),
-                      if (message.isMe) ...[
-                        if (message.status == 'sending')
-                          const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
-                            ),
-                          )
-                        else if (message.status == 'failed')
-                          GestureDetector(
-                            onTap: () => chatController.retryFailedMessage(message),
-                            child: const Icon(
-                              Icons.error,
-                              size: 14,
-                              color: Colors.red,
-                            ),
-                          )
-                        else
-                          Icon(
-                            message.isSeen ? Icons.done_all : Icons.done,
-                            size: 14,
-                            color: message.isSeen ? Colors.blue : Colors.grey,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            chatController.formatTime(message.createdAt),
+                            style: const TextStyle(fontSize: 10, color: Colors.grey),
                           ),
-                      ],
+                          const SizedBox(width: 4),
+                          if (message.isMe) ...[
+                            if (message.status == 'sending')
+                              const SizedBox(
+                                width: 14,
+                                height: 14,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.grey),
+                                ),
+                              )
+                            else if (message.status == 'failed')
+                              GestureDetector(
+                                onTap: () => chatController.retryFailedMessage(message),
+                                child: const Icon(
+                                  Icons.error,
+                                  size: 14,
+                                  color: Colors.red,
+                                ),
+                              )
+                            else
+                              Icon(
+                                message.isSeen ? Icons.done_all : Icons.done,
+                                size: 14,
+                                color: message.isSeen ? Colors.blue : Colors.grey,
+                              ),
+                          ],
+                        ],
+                      ),
+                      // Statut du message
+                      if (message.isMe)
+                        Text(
+                          _getMessageStatus(message),
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: Colors.grey,
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -292,15 +456,37 @@ class MessageBubble extends StatelessWidget {
       ),
     );
   }
+
+  String _getMessageStatus(ChatMessage message) {
+    if (message.isSeen) {
+      return 'Answered';
+    } else if (message.isDelivered) {
+      return 'Seen';
+    } else {
+      return 'Sent';
+    }
+  }
 }
 
-class ChatInputField extends StatelessWidget {
+class ChatInputField extends StatefulWidget {
   final ChatController controller;
 
   const ChatInputField({
     super.key,
     required this.controller,
   });
+
+  @override
+  State<ChatInputField> createState() => _ChatInputFieldState();
+}
+
+class _ChatInputFieldState extends State<ChatInputField> {
+  final List<String> messageCategories = [
+    'Question about my treatment',
+    'Side effects',
+    'Administrative question',
+    'Follow-up update',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -322,25 +508,111 @@ class ChatInputField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(24.0),
               ),
               child: TextField(
-                controller: controller.messageInputController,
+                controller: widget.controller.messageInputController,
                 decoration: InputDecoration(
                   hintText: AppStrings.typeAMessage.tr,
                   hintStyle: TextStyle(color: Colors.grey.shade600),
                   border: InputBorder.none,
                 ),
-                onSubmitted: (_) => controller.sendMessage(),
+                onSubmitted: (_) => _showCategoryDialog(),
               ),
             ),
           ),
           Obx(() => IconButton(
             icon: Icon(
               Icons.send,
-              color: controller.socketService.isConnected.value ? Colors.blue : Colors.grey,
+              color: widget.controller.socketService.isConnected.value ? Colors.blue : Colors.grey,
             ),
-            onPressed: controller.socketService.isConnected.value ? controller.sendMessage : null,
+            onPressed: widget.controller.socketService.isConnected.value
+                ? _showCategoryDialog
+                : null,
           )),
         ],
       ),
     );
+  }
+
+  void _showCategoryDialog() {
+    if (widget.controller.messageInputController.text.isEmpty) {
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.sp)),
+      ),
+      builder: (context) => Container(
+        padding: EdgeInsets.all(16.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Categorize your message',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+            16.verticalSpace,
+            ...messageCategories.map((category) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: 8.h),
+                child: InkWell(
+                  onTap: () {
+                    widget.controller.sendMessage();
+                    Get.back();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(8.sp),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.check, color: AppColors.primaryColor, size: 18.sp),
+                        12.horizontalSpace,
+                        Expanded(
+                          child: Text(
+                            category,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+            16.verticalSpace,
+            SizedBox(
+              width: 1.sw,
+              child: TextButton(
+                onPressed: () {
+                  widget.controller.sendMessage();
+                  Get.back();
+                },
+                child: Text(
+                  'Skip categorization',
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: AppColors.lightGrey,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
   }
 }

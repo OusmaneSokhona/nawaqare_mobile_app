@@ -77,4 +77,19 @@ class ApiUrls {
   static String profileCompletion="api/profile/rate";
   static String doctorNotes="api/clinicalNotes/add";
   static String getDoctorNotes="api/clinicalNotes/get/";
+
+  // New NestJS backend (api/v1 prefix)
+  static String nestBaseUrl = "http://localhost:3000/api/v1";
+  static String patientTimelineUrl = "/patients/";  // + patientId + "/records/timeline"
+  static String patientVaccinationsUrl = "/patients/"; // + patientId + "/records/vaccinations"
+  static String patientOverviewUrl = "/patients/"; // + patientId + "/records/overview"
+  static String consultationDetailUrl = "/consultations/";
+  static String soapNotesUrl = "/consultations/"; // + consultationId + "/soap-notes"
+  static String examOrdersUrl = "/consultations/"; // + consultationId + "/exam-orders"
+  static String referencesUrl = "/consultations/"; // + consultationId + "/reference-letters"
+  static String certificatesUrl = "/consultations/"; // + consultationId + "/certificates"
+  static String followUpUrl = "/consultations/"; // + consultationId + "/follow-up-plans"
+  static String conversationsUrlV2 = "/conversations";
+  static String accessControlUrl = "/access-control/me";
+  static String pharmacyPrescriptionsUrl = "/pharmacy/prescriptions";
 }

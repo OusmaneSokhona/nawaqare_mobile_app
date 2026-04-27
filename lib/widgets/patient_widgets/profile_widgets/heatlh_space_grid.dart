@@ -10,6 +10,9 @@ import '../../../screens/patient_screens/profile_screens/blood_type.dart';
 import '../../../screens/patient_screens/profile_screens/medical_history.dart';
 import '../../../screens/patient_screens/profile_screens/privacy_security.dart';
 import '../../../screens/patient_screens/profile_screens/update_password.dart';
+import '../../../screens/patient_screens/profile_screens/health_timeline_screen.dart';
+import '../../../screens/patient_screens/profile_screens/vaccination_carnet_screen.dart';
+import '../../../screens/patient_screens/profile_screens/access_management_screen.dart';
 import '../../../utils/app_bindings.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/locat_storage.dart';
@@ -65,6 +68,30 @@ class HeatlhSpaceGrid extends StatelessWidget {
           title: AppStrings.privacySecurity.tr,
           onTap: () {
             profileController.handleHealthSpaceTap( PrivacySecurity());
+          },
+        ),
+        // NEW: Health Timeline - chronological medical history view
+        HealthSpaceCard(
+          icon: "assets/images/medical_history_icon.png",
+          title: "Health Timeline",
+          onTap: () {
+            Get.to(() => HealthTimelineScreen());
+          },
+        ),
+        // NEW: Vaccination Carnet - structured vaccination record
+        HealthSpaceCard(
+          icon: "assets/images/medical_history_icon.png",
+          title: "Vaccination Record",
+          onTap: () {
+            Get.to(() => VaccinationCarnetScreen());
+          },
+        ),
+        // NEW: Access Management - who can access my data
+        HealthSpaceCard(
+          icon: "assets/images/privacy_security_icon.png",
+          title: "Data Access Control",
+          onTap: () {
+            Get.to(() => AccessManagementScreen());
           },
         ),
         HealthSpaceCard(

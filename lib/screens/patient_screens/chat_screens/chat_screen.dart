@@ -385,80 +385,125 @@ chatController.fetchConversations();
                 return const SizedBox.shrink();
               }
 
-              return ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                leading: ClipOval(
-                  child: SizedBox(
-                    width: 56,
-                    height: 56,
-                    child: Image.network(
-                      otherParticipant.profileImage.isNotEmpty
-                          ? otherParticipant.profileImage
-                          : 'assets/demo_images/home_demo_image.png',
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Image.asset(
-                        'assets/demo_images/home_demo_image.png',
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-                title: Text(
-                  otherParticipant.fullName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  lastMessage?.message ?? 'No messages yet',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: SizedBox(
-                  width: 70,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
+              return Container(
+                color: conversation.isClosed ? Colors.grey.shade100 : Colors.white,
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  leading: Stack(
                     children: [
-                      if (lastMessage != null)
-                        Flexible(
-                          child: Text(
-                            controller.getLastMessageTime(lastMessage.createdAt),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: lastMessage.status == 'unseen' &&
-                                  lastMessage.sender != currentUser.userId
-                                  ? Colors.blue.shade600
-                                  : Colors.grey,
+                      ClipOval(
+                        child: SizedBox(
+                          width: 56,
+                          height: 56,
+                          child: Image.network(
+                            otherParticipant.profileImage.isNotEmpty
+                                ? otherParticipant.profileImage
+                                : 'assets/demo_images/home_demo_image.png',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Image.asset(
+                              'assets/demo_images/home_demo_image.png',
+                              fit: BoxFit.cover,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      if (lastMessage != null &&
-                          lastMessage.status == 'unseen' &&
-                          lastMessage.sender != currentUser.userId)
-                        Container(
-                          margin: const EdgeInsets.only(left: 4),
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade600,
-                            shape: BoxShape.circle,
+                      ),
+                      // Badge si conversation fermée
+                      if (conversation.isClosed)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade600,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.lock,
+                              color: Colors.white,
+                              size: 12,
+                            ),
                           ),
-                          constraints: const BoxConstraints(
-                            minWidth: 10,
-                            minHeight: 10,
-                          ),
-
                         ),
                     ],
                   ),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        otherParticipant.fullName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: conversation.isClosed ? Colors.grey : Colors.black,
+                        ),
+                      ),
+                      // Contexte de la conversation
+                      Text(
+                        'General follow-up', // Vous pouvez adapter selon votre modèle
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  subtitle: Text(
+                    lastMessage?.message ?? 'No messages yet',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: conversation.isClosed ? Colors.grey : Colors.black87,
+                    ),
+                  ),
+                  trailing: SizedBox(
+                    width: 70,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (lastMessage != null)
+                          Flexible(
+                            child: Text(
+                              controller.getLastMessageTime(lastMessage.createdAt),
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: lastMessage.status == 'unseen' &&
+                                    lastMessage.sender != currentUser.userId &&
+                                    !conversation.isClosed
+                                    ? Colors.blue.shade600
+                                    : Colors.grey,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        if (lastMessage != null &&
+                            lastMessage.status == 'unseen' &&
+                            lastMessage.sender != currentUser.userId &&
+                            !conversation.isClosed)
+                          Container(
+                            margin: const EdgeInsets.only(left: 4),
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade600,
+                              shape: BoxShape.circle,
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 10,
+                              minHeight: 10,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    controller.selectConversation(conversation);
+                    Get.to(
+                          () => const ChatDetailScreen(),
+                      binding: AppBinding(),
+                    );
+                  },
                 ),
-                onTap: () {
-                  controller.selectConversation(conversation);
-                  Get.to(
-                        () => ChatDetailScreen(),
-                    binding: AppBinding(),
-                  );
-                },
               );
             },
           ),

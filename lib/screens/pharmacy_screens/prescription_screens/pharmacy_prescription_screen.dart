@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:patient_app/screens/pharmacy_screens/pharmacy_prescription_detail_screen.dart';
+import 'package:patient_app/screens/pharmacy_screens/prescription_screens/pharmacy_dispensing_screen.dart';
 import 'package:patient_app/screens/pharmacy_screens/prescription_screens/pharmacy_prescription_record.dart';
 import 'package:patient_app/utils/app_strings.dart';
 import 'package:patient_app/widgets/pharmacy_widgets/pharmacy_prescription_card.dart';
@@ -237,11 +238,13 @@ class PharmacyPrescriptionScreen extends StatelessWidget {
         padding: EdgeInsets.only(bottom: 20.h),
         itemCount: pharmacyPrescriptionController.prescriptions.length,
         itemBuilder: (context, index) {
+          final prescription = pharmacyPrescriptionController.prescriptions[index];
           return PharmacyPrescriptionCard(
             onTap: () {
-              Get.to(PharmacyPrescriptionDetailScreen());
+              // Navigate to the full dispensing screen with the prescription ID
+              Get.to(() => PharmacyDispensingScreen(prescriptionId: prescription.id));
             },
-            prescription: pharmacyPrescriptionController.prescriptions[index],
+            prescription: prescription,
           );
         },
       ),

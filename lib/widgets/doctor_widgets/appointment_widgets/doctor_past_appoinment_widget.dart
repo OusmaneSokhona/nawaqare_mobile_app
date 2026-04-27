@@ -6,6 +6,11 @@ import 'package:patient_app/controllers/doctor_controllers/doctor_appoinment_con
 import 'package:patient_app/screens/doctor_screens/appointment_screens/add_report_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/doctor_follow_up_screen.dart';
 import 'package:patient_app/screens/doctor_screens/appointment_screens/edit_notes_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/soap_note_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/exam_orders_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/reference_letter_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/medical_certificate_screen.dart';
+import 'package:patient_app/screens/doctor_screens/appointment_screens/follow_up_plan_screen.dart';
 import 'package:patient_app/screens/document_view_screen.dart';
 import 'package:patient_app/utils/app_colors.dart';
 import 'package:patient_app/utils/appointment_status.dart';
@@ -193,6 +198,9 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
           ..._buildFollowUpsSections(),
 
         15.verticalSpace,
+        // NEW: Clinical Actions Panel — connects to NestJS backend
+        _buildClinicalActionsPanel(),
+        15.verticalSpace,
         MedicalReportCard(
           onlyView: false, patientId: appointmentModel.patientId.id, doctorId:appointmentModel.doctorId,
         ),
@@ -215,6 +223,96 @@ class DoctorPastAppoinmentWidget extends StatelessWidget {
         15.verticalSpace,
         40.verticalSpace,
       ],
+    );
+  }
+
+  /// Clinical actions panel connecting to NestJS backend features
+  Widget _buildClinicalActionsPanel() {
+    // Extract consultation ID from appointment if available
+    final String consultationId = appointmentModel.id;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Clinical Actions',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.black),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _actionChip(
+                icon: Icons.medical_services,
+                label: 'SOAP Notes',
+                color: const Color(0xFF4285F4),
+                onTap: () => Get.to(() => SoapNoteScreen(consultationId: consultationId)),
+              ),
+              _actionChip(
+                icon: Icons.science,
+                label: 'Exam Orders',
+                color: const Color(0xFF34A853),
+                onTap: () => Get.to(() => ExamOrdersScreen(consultationId: consultationId)),
+              ),
+              _actionChip(
+                icon: Icons.send,
+                label: 'Referral',
+                color: const Color(0xFFFBBC04),
+                onTap: () => Get.to(() => ReferenceLetterScreen(consultationId: consultationId)),
+              ),
+              _actionChip(
+                icon: Icons.description,
+                label: 'Certificate',
+                color: const Color(0xFFEA4335),
+                onTap: () => Get.to(() => MedicalCertificateScreen(consultationId: consultationId)),
+              ),
+              _actionChip(
+                icon: Icons.calendar_today,
+                label: 'Follow-up Plan',
+                color: const Color(0xFF9334E6),
+                onTap: () => Get.to(() => FollowUpPlanScreen(consultationId: consultationId)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionChip({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: color),
+            const SizedBox(width: 6),
+            Text(label, style: TextStyle(fontSize: 13, color: color, fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ),
     );
   }
 

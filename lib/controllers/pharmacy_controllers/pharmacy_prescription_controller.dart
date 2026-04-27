@@ -1,112 +1,21 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:patient_app/client/api_client.dart';
 import 'package:patient_app/models/pharmacy_prescription_model.dart';
+import 'package:patient_app/utils/nest_api_urls.dart';
 
 class PharmacyPrescriptionController extends GetxController{
+  final ApiClient apiClient = ApiClient();
+
   RxString slectedCompany="DHL".obs;
   RxString slectedReasons="Invalid Signature".obs;
-RxString type="myPrescription".obs;
+  RxString type="myPrescription".obs;
 
-  final prescriptions = <PharmacyPrescriptionModel>[
-    PharmacyPrescriptionModel(
-      id: "#1234567",
-      patientId: "#PH1234",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Approved",
-      hasQr: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#1234567",
-      patientId: "#PH1234",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Pending",
-      hasDoc: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#1234567",
-      patientId: "#PH1234",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Ready to Ship",
-      hasQr: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#1234567",
-      patientId: "#PH1234",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Delivered",
-      hasQr: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#8901234",
-      patientId: "#PH5678",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Approved",
-      hasDoc: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#5432109",
-      patientId: "#PH9876",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Pending",
-      hasQr: true,
-      hasDoc: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#1122334",
-      patientId: "#PH0011",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Delivered",
-      hasQr: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#5566778",
-      patientId: "#PH2233",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Ready to Ship",
-      hasDoc: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#9900112",
-      patientId: "#PH4455",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Approved",
-      hasQr: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#3344556",
-      patientId: "#PH6677",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Pending",
-      hasQr: true,
-      hasDoc: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#7788990",
-      patientId: "#PH8899",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Ready to Ship",
-      hasQr: true,
-    ),
-    PharmacyPrescriptionModel(
-      id: "#2211009",
-      patientId: "#PH0123",
-      doctorName: "Dr.Alina shah",
-      date: "12/Sep/2025",
-      status: "Delivered",
-      hasDoc: true,
-    ),
-  ].obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
+
+  final prescriptions = <PharmacyPrescriptionModel>[].obs;
   final List<Map<String, dynamic>> demoData = const [
     {
       "id": "#RX-20391",
@@ -170,5 +79,97 @@ RxString type="myPrescription".obs;
 
   void updateDate(DateTime? newDate) {
     _selectedDate.value = newDate;
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    fetchPharmacyPrescriptions();
+  }
+
+  /// Récupère la liste des prescriptions de la pharmacie
+  Future<void> fetchPharmacyPrescriptions() async {
+    try {
+      isLoading.value = true;
+      errorMessage.value = '';
+
+      final response = await apiClient.dio.get(
+        NestApiUrls.baseUrl + NestApiUrls.getPharmacyPrescriptions(),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data as List?;
+        if (data != null) {
+          prescriptions.value = data
+              .map((p) => PharmacyPrescriptionModel.fromJson(p as Map<String, dynamic>))
+              .toList();
+        }
+      }
+    } on DioException catch (e) {
+      errorMessage.value = e.message ?? 'Erreur de chargement';
+      // Garder les données mockées comme fallback
+      _loadMockData();
+    } catch (e) {
+      errorMessage.value = 'Erreur: ${e.toString()}';
+      _loadMockData();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Récupère une prescription par token QR
+  Future<PharmacyPrescriptionModel?> getPrescriptionByQR(String token) async {
+    try {
+      final response = await apiClient.dio.get(
+        NestApiUrls.baseUrl + NestApiUrls.getPharmacyPrescriptionByQR(token),
+      );
+
+      if (response.statusCode == 200) {
+        return PharmacyPrescriptionModel.fromJson(response.data as Map<String, dynamic>);
+      }
+    } on DioException catch (e) {
+      errorMessage.value = e.message ?? 'Erreur QR';
+    } catch (e) {
+      errorMessage.value = 'Erreur: ${e.toString()}';
+    }
+    return null;
+  }
+
+  /// Charge les données mockées en tant que fallback
+  void _loadMockData() {
+    prescriptions.value = [
+      PharmacyPrescriptionModel(
+        id: "#1234567",
+        patientId: "#PH1234",
+        doctorName: "Dr. Alina Shah",
+        date: "12/Sep/2025",
+        status: "Approved",
+        hasQr: true,
+      ),
+      PharmacyPrescriptionModel(
+        id: "#1234568",
+        patientId: "#PH1235",
+        doctorName: "Dr. Jean Dupont",
+        date: "13/Sep/2025",
+        status: "Pending",
+        hasDoc: true,
+      ),
+      PharmacyPrescriptionModel(
+        id: "#1234569",
+        patientId: "#PH1236",
+        doctorName: "Dr. Marie Bernard",
+        date: "14/Sep/2025",
+        status: "Ready to Ship",
+        hasQr: true,
+      ),
+      PharmacyPrescriptionModel(
+        id: "#1234570",
+        patientId: "#PH1237",
+        doctorName: "Dr. Pierre Martin",
+        date: "15/Sep/2025",
+        status: "Delivered",
+        hasQr: true,
+      ),
+    ];
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/patient_controllers/appointment_controllers/feedback_controller.dart';
+import '../../../screens/patient_screens/video_call_screens/consultation_summary_screen.dart';
 import '../../../utils/app_colors.dart';
 import '../../../utils/app_strings.dart';
 
@@ -90,6 +91,8 @@ class ConsultaionFinishedScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
+                _buildViewSummaryButton(),
+                const SizedBox(height: 12),
                 _buildBottomButtons(controller),
               ],
             ),
@@ -175,6 +178,32 @@ class ConsultaionFinishedScreen extends StatelessWidget {
           )),
         ),
       ],
+    );
+  }
+
+  /// "View Consultation Summary" button — navigates to patient-friendly post-consultation summary
+  Widget _buildViewSummaryButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: SizedBox(
+        width: double.infinity,
+        height: 48,
+        child: OutlinedButton.icon(
+          onPressed: () => Get.to(
+            () => ConsultationSummaryScreen(consultationId: appointmentId),
+          ),
+          icon: const Icon(Icons.summarize_outlined, size: 18),
+          label: const Text(
+            'View Consultation Summary',
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.primaryColor,
+            side: const BorderSide(color: AppColors.primaryColor),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+        ),
+      ),
     );
   }
 }

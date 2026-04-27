@@ -79,7 +79,7 @@ class ApiUrls {
   static String getDoctorNotes="api/clinicalNotes/get/";
 
   // New NestJS backend (api/v1 prefix)
-  static String nestBaseUrl = "http://localhost:3000/api/v1";
+  static String nestBaseUrl = "http://54.219.14.133/api/v1";
   static String patientTimelineUrl = "/patients/";  // + patientId + "/records/timeline"
   static String patientVaccinationsUrl = "/patients/"; // + patientId + "/records/vaccinations"
   static String patientOverviewUrl = "/patients/"; // + patientId + "/records/overview"

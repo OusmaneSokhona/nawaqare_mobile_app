@@ -1,7 +1,7 @@
 /// NestJS Backend API URLs
-/// Base URL: http://localhost:3000/api/v1/
+/// Base URL: http://54.219.14.133/api/v1/
 class NestApiUrls {
-  static String baseUrl = "http://localhost:3000";
+  static String baseUrl = "http://54.219.14.133";
   static String apiVersion = "/api/v1";
 
   // SOAP Notes Endpoints
